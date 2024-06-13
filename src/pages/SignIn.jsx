@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   signInStart,
   signInSuccess,
@@ -9,6 +8,7 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../components/OAuth";
+import api from "../config";
 
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -27,7 +27,7 @@ function SignIn() {
 
     try {
       dispatch(signInStart());
-      const response = await axios.post(`/api/v1/auth/sign-in`, formData);
+      const response = await api.post(`/api/v1/auth/sign-in`, formData);
       const data = await response.data;
       console.log(data);
 

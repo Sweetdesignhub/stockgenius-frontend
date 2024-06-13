@@ -7,7 +7,6 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import axios from "axios";
 import {
   updateUserStart,
   updateUserSuccess,
@@ -17,6 +16,7 @@ import {
   deleteUserFailure,
 } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import api from "../config";
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ export default function Profile() {
     e.preventDefault();
     dispatch(updateUserStart());
     try {
-      const res = await axios.post(
+      const res = await api.post(
         `/api/v1/users/update/${currentUser._id}`,
         formData
       );
@@ -84,7 +84,7 @@ export default function Profile() {
   const handleDeleteAccount = async () => {
     dispatch(deleteUserStart());
     try {
-      const res = await axios.delete(`/api/v1/users/delete/${currentUser._id}`);
+      const res = await api.delete(`/api/v1/users/delete/${currentUser._id}`);
       const data = res.data;
 
       dispatch(deleteUserSuccess(data));

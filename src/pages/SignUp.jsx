@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import OAuth from "../components/OAuth";
+import api from "../config";
 
 function SignUp() {
   const [formData, setFormData] = useState({});
@@ -18,7 +18,7 @@ function SignUp() {
 
     try {
       setLoading(true);
-      const response = await axios.post(`/api/v1/auth/sign-up`, formData);
+      const response = await api.post(`/api/v1/auth/sign-up`, formData);
       const data = await response.data;
 
       setLoading(false);
