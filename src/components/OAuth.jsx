@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signInSuccess } from "../redux/user/userSlice";
+import api from "../config";
 
 export default function OAuth() {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ export default function OAuth() {
       const auth = getAuth(app);
 
       const result = await signInWithPopup(auth, provider);
-      const res = await axios.post(`/api/v1/auth/google-signin`, {
+      const res = await api.post(`/api/v1/auth/google-signin`, {
         name: result.user.displayName,
         email: result.user.email,
         avatar: result.user.photoURL,
