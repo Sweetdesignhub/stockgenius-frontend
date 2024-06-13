@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target:"https://stockgenius-backend.onrender.com/",
+        target:"https://stockgenius-backend.onrender.com",
         changeOrigin: true,
         secure:false,
       },
