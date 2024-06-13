@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-image: url(https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9366f5b36c8d45ee957a34a655934e88);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  color: black;
+}
+
+.dark body {
+  background-image: url(https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fae391894a9e24213ace28816a6407bc6);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  color: white;
+}
+
+.dark .started {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) -40.91%,
+    #402788 132.95%
+  );
+  border: 1.27px solid;
+
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(39, 55, 207, 0.4) 17.19%,
+    rgba(101, 98, 251, 0.77) 100%
+  );
+
+  box-shadow: 0px 12.73px 38.18px 0px #497bffb2 inset;
+
+  box-shadow: 0px 12.73px 50.91px 0px #3f4aaf80;
+}
+
+.started {
+  background: #000000;
+  border: 1.27px solid;
+
+  border-image-source: linear-gradient(
+      180deg,
+      rgba(118, 131, 255, 0.4) 17.19%,
+      rgba(24, 22, 101, 0.77) 79.5%
+    ),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+    linear-gradient(
+      180deg,
+      rgba(39, 55, 207, 0) -4.69%,
+      rgba(189, 252, 254, 0.3) 100%
+    );
+
+  box-shadow: 0px 12.73px 38.18px 0px #497bffb2 inset;
+
+  box-shadow: 0px 12.73px 50.91px 0px #3f4aaf80;
+}
+
+.navhover {
+  background: #000000;
+
+  border-image-source: linear-gradient(
+      180deg,
+      rgba(39, 55, 207, 0.4) 17.19%,
+      rgba(101, 98, 251, 0.77) 100%
+    ),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+    linear-gradient(
+      180deg,
+      rgba(39, 55, 207, 0) -4.69%,
+      rgba(189, 252, 254, 0.3) 100%
+    );
+
+  box-shadow: 0px 10px 30px 0px #497bffb2 inset;
+
+  box-shadow: 0px 10px 40px 0px #3f4aaf80;
+  color: white;
+}
+
+.dark .news-table {
+  background: linear-gradient(
+    180deg,
+    rgba(61, 66, 68, 0) -40.91%,
+    rgba(158, 170, 176, 0.62) 132.95%
+  );
+  /* border: 0.5px solid; */
+
+  border-image-source: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.2)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(39, 55, 207, 0) -4.69%,
+      rgba(189, 252, 254, 0.5) 100%
+    );
+
+  box-shadow: 0px 8px 10px 0px #f6f9ff33 inset;
+
+  box-shadow: 0px 10px 40px 0px #ffffff26;
+
+  box-shadow: 0px 10px 10px 0px #0000001a;
+
+  box-shadow: 0px 4px 4px 0px #0000000d;
+}
+
+.news-table {
+  background: #ffffff;
+}
+
+.table-main{
+  background: #CCD7FF40;
+  border: 0.75px solid #FFFFFF1A;
+  box-shadow: 0px 22.5px 45px 0px #0000001A;
+
+box-shadow: 0px 11.25px 22.5px 0px #0000000D;
+
+box-shadow: 0px 3.75px 7.5px 0px #0000000D;
+
+box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
+
+}
+
+.dark .table-main {
+  background: #050505E5;
+  border: 0.75px solid #FFFFFF1A;
+  box-shadow: 0px 22.5px 45px 0px #0000001A;
+
+box-shadow: 0px 11.25px 22.5px 0px #0000000D;
+
+box-shadow: 0px 3.75px 7.5px 0px #0000000D;
+
+box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
+
+
+}
+
+.table-wrapper {
+  display: flex;
+}
+
+.fixed-table,
+.scrollable-table {
+  display: block;
+}
+
+.fixed-table {
+  flex-shrink: 0;
+}
+
+.scrollable-table {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.fixed-columns th,
+.fixed-columns td {
+  background-color: white;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.scrollable-columns th,
+.scrollable-columns td {
+  min-width: 120px;
+}
+
+.fixed-columns th {
+  z-index: 20;
+}
+
+.dark .auth {
+  position: relative; /* Ensure the pseudo-element is positioned relative to the auth div */
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) -40.91%,
+    #402788 132.95%
+  );
+  box-shadow: 0px 10.35px 31.05px 0px #497bffb2 inset;
+
+  box-shadow: 0px 10.35px 41.41px 0px #3f4aaf80;
+
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.auth {
+  position: relative;
+  background: #ffffff;
+
+  box-shadow: 0px 10.35px 31.05px 0px #497bffb2 inset;
+
+  box-shadow: 0px 10.35px 41.41px 0px #3f4aaf80;
+}
+
+.auth::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: inherit;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.auth > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .auth-btn {
+  background: linear-gradient(
+    180deg,
+    rgba(61, 66, 68, 0) -40.91%,
+    rgba(158, 170, 176, 0.62) 132.95%
+  );
+  box-shadow: 0px 8px 10px 0px #f6f9ff33 inset;
+
+  box-shadow: 0px 10px 40px 0px #ffffff26;
+
+  box-shadow: 0px 10px 10px 0px #0000001a;
+
+  box-shadow: 0px 4px 4px 0px #0000000d;
+}
+
