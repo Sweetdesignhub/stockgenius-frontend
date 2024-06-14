@@ -1,17 +1,15 @@
 import axios from 'axios';
 
-// Update the backend URL for deployment
 export const BACKEND_URL = process.env.NODE_ENV === 'development'
-  ? "https://stockgenius-backend.onrender.com"
-  : "http://localhost:8080";
-
+  ? "http://localhost:8080"
+  : "https://stockgenius-backend.onrender.com";
 
 const api = axios.create({
-  baseURL: BACKEND_URL, 
+  baseURL: BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 export default api;

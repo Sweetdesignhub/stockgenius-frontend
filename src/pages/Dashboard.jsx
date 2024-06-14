@@ -12,8 +12,8 @@ function Dashboard() {
   const [gainersData, setGainersData] = useState([]);
   const [losersData, setLosersData] = useState([]);
   const bucketName = "automationdatabucket";
-  const gainerFile = "EOD_Reports/Reports/top_gaineres.xlsx";
-  const loserFile = "EOD_Reports/Reports/top_losers.xlsx";
+  const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
+  const loserFile = "Realtime_Reports/top_losers.xlsx";
 
   const [selectedOption, setSelectedOption] = useState(null);
 
