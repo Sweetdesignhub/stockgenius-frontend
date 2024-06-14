@@ -16,6 +16,7 @@ import { signOut } from "../../redux/user/userSlice";
 import { MdDashboard } from "react-icons/md";
 import { FaNewspaper, FaBell, FaUsers } from "react-icons/fa";
 import ToggleButton from "../common/ToggleButton";
+import api from "../../config";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -56,7 +57,7 @@ export default function Header() {
 
   const handleSignOut = async () => {
     try {
-      await axios.post("/api/v1/auth/sign-out");
+      await api.post("/api/v1/auth/sign-out");
       dispatch(signOut());
     } catch (error) {
       console.error(error);
