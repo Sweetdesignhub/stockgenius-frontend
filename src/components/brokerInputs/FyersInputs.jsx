@@ -1,5 +1,5 @@
 import React from "react";
-import Input from "../dashboard/Input";
+import Input from "../common/Input";
 
 function FyersInputs({ formData, handleInputChange }) {
   return (

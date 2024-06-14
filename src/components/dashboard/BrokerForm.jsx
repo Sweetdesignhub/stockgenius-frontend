@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Dropdown from "./Dropdown";
-import Input from "./Input";
+import Input from "../common/Input";
 import FyersInputs from "../brokerInputs/FyersInputs";
 import ZerodhaInputs from "../brokerInputs/ZerodhaInputs";
 
