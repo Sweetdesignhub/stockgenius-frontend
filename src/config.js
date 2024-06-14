@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-export const BACKEND_URL = process.env.NODE_ENV === 'development'
-  ? "http://localhost:8080"
-  : "https://stockgenius-backend.onrender.com";
+export const BACKEND_URL = "https://stockgenius-backend.onrender.com";
 
 const api = axios.create({
   baseURL: BACKEND_URL,
