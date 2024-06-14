@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Input from "./Input";
 import Dropdown from "../dashboard/Dropdown";
 import FyersBuyButton from "../FyersBuyButton";
@@ -15,6 +15,11 @@ export default function Modal({
   handleInputChange,
 }) {
   if (!rowData) return null;
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -44,7 +49,10 @@ export default function Modal({
                     Are you sure you want to {actionType} the following item?
                   </p>
                   <div className="flex flex-col gap-4 mt-4">
-                    <Dropdown />
+                    <Dropdown
+                      selectedOption={selectedOption}
+                      handleOptionSelect={handleOptionSelect}
+                    />
                     <Input
                       label="Company Name"
                       name="Company Name"

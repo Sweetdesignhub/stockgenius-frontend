@@ -102,7 +102,7 @@ function BrokerForm() {
       <form onSubmit={handleSubmit} className="mt-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="flex flex-col">
-            <label className="text-[#FFFFFFCC] text-sm mb-2">
+            <label className="dark:text-[#FFFFFFCC] text-black text-sm mb-2">
               Select Broker
             </label>
             <Dropdown
