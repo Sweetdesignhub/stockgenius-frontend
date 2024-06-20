@@ -7,7 +7,7 @@ const fetchFile = async (bucketName, fileName) => {
     Bucket: bucketName,
     Key: fileName,
   };
-  console.log(params);
+  // console.log(params);
 
   try {
     const data = await s3Client.send(new GetObjectCommand(params));

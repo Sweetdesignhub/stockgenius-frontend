@@ -9,7 +9,7 @@ function Table({
   buttonAction,
   buttonColor,
   actionButtonColor,
-  roiColor
+  roiColor,
 }) {
   return (
     <div className="flex-1 overflow-auto rounded-xl">
@@ -44,24 +44,26 @@ function Table({
               <tbody>
                 {data.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    {columns.map((column, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className={`w-full h-20 min-w-24 capitalize px-2 whitespace-nowrap ${
-                          colIndex === 1
-                            ? "text-[#4882F3]"
-                            : colIndex === 2
-                            ? roiColor
-                            : ""
-                        }`}
-                      >
-                        {colIndex === 3 ? (
-                          <Speedometer value={parseFloat(row[column])} />
-                        ) : (
-                          row[column]
-                        )}
-                      </td>
-                    ))}
+                    {columns.map((column, colIndex) => {
+                      const getClassNames = () => {
+                        if (colIndex === 1) return "text-[#4882F3]";
+                        if (colIndex === 2) return roiColor;
+                        return "";
+                      };
+
+                      return (
+                        <td
+                          key={colIndex}
+                          className={`w-full h-20 min-w-24 capitalize px-2 whitespace-nowrap ${getClassNames()}`}
+                        >
+                          {colIndex === 3 ? (
+                            <Speedometer value={parseFloat(row[column])} />
+                          ) : (
+                            row[column]
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

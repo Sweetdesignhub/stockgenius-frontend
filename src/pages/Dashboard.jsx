@@ -5,6 +5,7 @@ import Loading from "../components/common/Loading";
 import ErrorComponent from "../components/common/Error";
 import Table from "../components/dashboard/Table";
 import BrokerForm from "../components/dashboard/BrokerForm";
+import Modal from "../components/common/Modal"; // Import the Modal component
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,10 @@ function Dashboard() {
   const loserFile = "Realtime_Reports/top_losers.xlsx";
 
   const [selectedOption, setSelectedOption] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [actionType, setActionType] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   const fetchData = async () => {
     try {
@@ -28,7 +33,7 @@ function Dashboard() {
       setGainersData(gainersJsonData);
       setLosersData(losersJsonData);
       setLoading(false);
-      console.log("Data fetched and updated");
+      // console.log("Data fetched and updated");
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -41,7 +46,7 @@ function Dashboard() {
 
     // interval to fetch data every 10 minutes
     const intervalId = setInterval(fetchData, 600000); // 600000 milliseconds = 10 minutes
-    console.log("Interval set to fetch data every 10 minutes");
+    // console.log("Interval set to fetch data every 10 minutes");
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -52,13 +57,47 @@ function Dashboard() {
   };
 
   const handleBuy = (row) => {
-    console.log("Buy action for:", row);
-    // Implement your buy logic here
+    setSelectedRow(row);
+    // console.log('buy', row);
+    setActionType("buy");
+    setQuantity(1); // Reset quantity
+    setModalOpen(true);
   };
 
   const handleSell = (row) => {
-    console.log("Sell action for:", row);
-    // Implement your sell logic here
+    setSelectedRow(row);
+    // console.log('sell',row);
+    setActionType("sell");
+    setQuantity(1); // Reset quantity
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedRow(null);
+    setActionType(null);
+  };
+
+  const handleQuantityChange = (event) => {
+    setQuantity(parseInt(event.target.value));
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setSelectedRow((prevRow) => ({
+      ...prevRow,
+      [name]: value,
+    }));
+  };
+
+  const handleConfirm = () => {
+    console.log(
+      `${actionType} button confirmed for row:`,
+      selectedRow,
+      "Quantity:",
+      quantity
+    );
+    setModalOpen(false);
   };
 
   if (loading) {
@@ -119,6 +158,16 @@ function Dashboard() {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={modalOpen}
+        closeModal={closeModal}
+        rowData={selectedRow}
+        actionType={actionType}
+        quantity={quantity}
+        handleQuantityChange={handleQuantityChange}
+        handleConfirm={handleConfirm}
+        handleInputChange={handleInputChange}
+      />
     </div>
   );
 }

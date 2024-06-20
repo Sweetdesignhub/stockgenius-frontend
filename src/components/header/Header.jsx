@@ -11,11 +11,10 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import axios from "axios";
-import { signOut } from "../../redux/user/userSlice";
 import { MdDashboard } from "react-icons/md";
 import { FaNewspaper, FaBell, FaUsers } from "react-icons/fa";
 import ToggleButton from "../common/ToggleButton";
+import { signOut } from "../../redux/user/userSlice";
 import api from "../../config";
 
 function classNames(...classes) {
@@ -25,35 +24,16 @@ function classNames(...classes) {
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    {
-      name: "Dashboard",
-      to: "/dashboard",
-      icon: MdDashboard,
-      current: location.pathname === "/dashboard",
-    },
-    {
-      name: "NSE 100 AI Insights",
-      to: "/NSE100-ai-insights",
-      icon: FaNewspaper,
-      current: location.pathname === "/NSE100-ai-insights",
-    },
-    {
-      name: "Notifications",
-      to: "/notifications",
-      icon: FaBell,
-      current: location.pathname === "/notifications",
-    },
-    {
-      name: "Referrals",
-      to: "/referrals",
-      icon: FaUsers,
-      current: location.pathname === "/referrals",
-    },
+    { name: "Dashboard", to: "/dashboard", icon: MdDashboard },
+    { name: "NSE 100 AI Insights", to: "/NSE100-ai-insights", icon: FaNewspaper },
+    { name: "Notifications", to: "/notifications", icon: FaBell },
+    { name: "Referrals", to: "/referrals", icon: FaUsers },
   ];
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const dispatch = useDispatch();
 
   const handleSignOut = async () => {
     try {
@@ -68,16 +48,13 @@ export default function Header() {
 
   return (
     <header>
-      <nav
-        className="flex items-center justify-between p-6 lg:px-8"
-        aria-label="Global"
-      >
+      <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex items-center lg:flex-1">
           <Link to="/">
             <img
               className="h-7 mr-3"
               src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F44c1d4cdd7274260a729d09f18bb553e"
-              alt=""
+              alt="Stockgenius.ai"
             />
           </Link>
           <Link to="/" className="-m-1.5 p-1.5 text-xl font-[aldrich]">
@@ -100,10 +77,12 @@ export default function Header() {
             <NavLink
               key={item.name}
               to={item.to}
-              className={classNames(
-                item.current ? "bg-[#3A6FF8] text-white" : "",
-                "rounded-md px-3 py-2 text-sm flex items-center gap-2"
-              )}
+              className={({ isActive }) =>
+                classNames(
+                  isActive ? "bg-[#3A6FF8] text-white" : "",
+                  "rounded-md px-3 py-2 text-sm flex items-center gap-2"
+                )
+              }
               exact="true"
             >
               <item.icon className="h-5 w-5" aria-hidden="true" />
@@ -119,12 +98,11 @@ export default function Header() {
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="absolute -inset-1.5" />
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
                         src={currentUser.avatar}
-                        alt="user"
+                        alt="User avatar"
                       />
                     </MenuButton>
                   </div>
@@ -138,11 +116,11 @@ export default function Header() {
                   >
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <MenuItem>
-                        {({ focus }) => (
+                        {({ active }) => (
                           <Link
                             to="/profile"
                             className={classNames(
-                              focus ? "bg-gray-100" : "",
+                              active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
@@ -151,11 +129,11 @@ export default function Header() {
                         )}
                       </MenuItem>
                       <MenuItem>
-                        {({ focus }) => (
+                        {({ active }) => (
                           <Link
                             onClick={handleSignOut}
                             className={classNames(
-                              focus ? "bg-gray-100" : "",
+                              active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
@@ -173,27 +151,22 @@ export default function Header() {
           </div>
         </div>
       </nav>
-      <Dialog
-        className="lg:hidden"
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-      >
+      <Dialog className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
         <div className="fixed inset-0 z-50" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white dark:bg-[#1C1E55] px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-        
-           <div className="flex">
-           <Link to="/">
-              <img
-                className="h-7 mr-2"
-                src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F44c1d4cdd7274260a729d09f18bb553e"
-                alt=""
-              />
-            </Link>
-            <Link to="/" className="-m-1.5 p-1.5 text-xl font-[aldrich]">
-              Stockgenius.ai
-            </Link>
-           </div>
+            <div className="flex">
+              <Link to="/">
+                <img
+                  className="h-7 mr-2"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F44c1d4cdd7274260a729d09f18bb553e"
+                  alt="Stockgenius.ai"
+                />
+              </Link>
+              <Link to="/" className="-m-1.5 p-1.5 text-xl font-[aldrich]">
+                Stockgenius.ai
+              </Link>
+            </div>
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
@@ -210,7 +183,7 @@ export default function Header() {
                   <Link
                     key={item.name}
                     to={item.to}
-                    className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins]  leading-7 dark:text-white text-gray-900 "
+                    className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
                     onClick={handleMenuClose}
                   >
                     <item.icon className="h-5 w-5" aria-hidden="true" />
@@ -221,11 +194,20 @@ export default function Header() {
               <div className="py-6">
                 <Link to="/profile" onClick={handleMenuClose}>
                   {currentUser ? (
-                    <img
-                      src={currentUser.avatar}
-                      alt="profile"
-                      className="h-7 w-7 rounded-full object-cover"
-                    />
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={currentUser.avatar}
+                        alt="profile"
+                        className="h-7 w-7 rounded-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSignOut}
+                        className="text-base font-[poppins] leading-7 dark:text-white text-gray-900"
+                      >
+                        Sign out
+                      </button>
+                    </div>
                   ) : (
                     <p>Log in</p>
                   )}

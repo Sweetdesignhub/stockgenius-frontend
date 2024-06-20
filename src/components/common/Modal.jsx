@@ -11,7 +11,6 @@ export default function Modal({
   actionType,
   quantity,
   handleQuantityChange,
-  handleConfirm,
   handleInputChange,
 }) {
   if (!rowData) return null;
@@ -77,24 +76,25 @@ export default function Modal({
                     />
                   </div>
                 </div>
-                <div className="mt-4 flex justify-end items-center">
-                  {/* <button
+                {/* <button
                     className="inline-flex justify-center rounded-md border border-transparent  py-2 px-4 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                     onClick={handleConfirm}
                   > */}
-                  {/* {actionType === "buy" ? "Confirm Buy" : "Confirm Sell"} */}
-                  <div className="h-14 w-52 overflow-hidden">
-                    <FyersBuyButton
-                      apiKey="SH4XR0GZIF-100"
-                      symbol={`NSE:${rowData["Ticker"]}-EQ`}
-                      product="INTRADAY"
-                      quantity={quantity}
-                      orderType="MARKET"
-                      price={101}
-                      transactionType={actionType === "buy" ? "BUY" : "SELL"}
-                    />
-                  </div>
-                  {/* </button> */}
+                {/* {actionType === "buy" ? "Confirm Buy" : "Confirm Sell"} */}
+                <div className="mt-4 flex justify-end items-center">
+                  {selectedOption === "Fyers" && (
+                    <div className="mr-3">
+                      <FyersBuyButton
+                        apiKey="SH4XR0GZIF-100"
+                        symbol={`NSE:${rowData["Ticker"]}-EQ`}
+                        product="INTRADAY"
+                        quantity={quantity}
+                        orderType="MARKET"
+                        price={101}
+                        transactionType={actionType === "buy" ? "BUY" : "SELL"}
+                      />
+                    </div>
+                  )}
                   <button
                     className="inline-flex py-[9px] justify-center items-center rounded-md border border-transparent bg-gray-700  px-4 text-sm font-medium text-white hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                     onClick={closeModal}

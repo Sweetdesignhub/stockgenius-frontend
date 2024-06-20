@@ -14,10 +14,10 @@ function ToggleButton() {
       icon: "moon",
       text: "dark",
     },
-    {
-      icon: "desktop-outline",
-      text: "system",
-    },
+    // {
+    //   icon: "desktop-outline",
+    //   text: "system",
+    // },
   ];
 
   const handleClick = (selectedTheme) => {
@@ -39,7 +39,7 @@ function ToggleButton() {
           {options?.map((opt) => (
             <button
               key={opt.text}
-              className={`flex justify-start items-center w-full  px-8 py-2 text-left text-[15px] rounded-lg ${
+              className={`flex capitalize justify-start items-center w-full  px-8 py-2 text-left text-[15px] rounded-lg ${
                 theme === opt.text ? "text-sky-600" : ""
               }`}
               onClick={() => handleClick(opt.text)}
