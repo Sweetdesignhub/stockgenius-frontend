@@ -13,42 +13,87 @@ function AccountInfo() {
   console.log(profile);
   const [holdings, setHoldings] = useState([]);
   console.log(holdings);
-  const [funds, setFunds] = useState(null);
-  const [positions, setPositions] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [funds, setFunds] = useState([]);
+  console.log(funds);
+  const [positions, setPositions] = useState([]);
+  console.log(positions);
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const profileData = await fetchProfile();
+  //       setProfile(profileData);
+
+  //       const holdingsData = await fetchHoldings();
+  //       setHoldings(holdingsData.holdings);
+
+  //       const fundsData = await fetchFunds();
+  //       const availableBalance = fundsData.fund_limit.find(
+  //         (item) => item.title === "Available Balance"
+  //       );
+  //       setFunds(availableBalance?.equityAmount || 0);
+
+  //       const positionsData = await fetchPositions();
+  //       const positionsPL = positionsData.overall.pl_total;
+  //       setPositions(positionsPL);
+
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfile = async () => {
       try {
-        const profileData = await fetchProfile();
-        setProfile(profileData);
-
-        const holdingsData = await fetchHoldings();
-        setHoldings(holdingsData.holdings);
-
-        const fundsData = await fetchFunds();
-        const availableBalance = fundsData.fund_limit.find(
-          (item) => item.title === "Available Balance"
-        );
-        setFunds(availableBalance?.equityAmount || 0);
-
-        const positionsData = await fetchPositions();
-        const positionsPL = positionsData.overall.pl_total;
-        setPositions(positionsPL);
-
-        setLoading(false);
+        const response = await api.get("/api/v1/fyers/fetchProfile");
+        setProfile(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
+        console.error("Failed to fetch profile:", error);
       }
     };
 
-    fetchData();
+    const fetchHoldings = async () => {
+      try {
+        const response = await api.get("/api/v1/fyers/fetchHoldings");
+        setHoldings(response.data);
+      } catch (error) {
+        console.error("Failed to fetch holdings:", error);
+      }
+    };
+
+    const fetchFunds = async () => {
+      try {
+        const response = await api.get("/api/v1/fyers/fetchFunds");
+        setFunds(response.data);
+      } catch (error) {
+        console.error("Failed to fetch funds:", error);
+      }
+    };
+
+    const fetchPositions = async () => {
+      try {
+        const response = await api.get("/api/v1/fyers/fetchPositions");
+        setPositions(response.data);
+      } catch (error) {
+        console.error("Failed to fetch positions:", error);
+      }
+    };
+
+    fetchProfile();
+    fetchHoldings();
+    fetchFunds();
+    fetchPositions();
   }, []);
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   if (!profile) {
     return (
