@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "../../common/Dropdown";
 import api from "../../../config";
+import { BrowserRouter as  useNavigate } from "react-router-dom";
 
 function Header() {
   const [selectedOption, setSelectedOption] = useState("");
   const [accessToken, setAccessToken] = useState("");
+
+  const navigate = useNavigate();
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -26,12 +29,11 @@ function Header() {
 
   const generateFyersAccessToken = async (uri) => {
     try {
-      const response = await api.post("/api/v1/fyers/generateAccessToken", {
-        uri,
-      });
+      const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
       const { accessToken } = response.data;
-      localStorage.setItem("accessToken", accessToken);
       setAccessToken(accessToken);
+      console.log("Access Token:", accessToken);
+      navigate("/portfolio");
     } catch (error) {
       console.error("Failed to generate access token:", error);
     }
