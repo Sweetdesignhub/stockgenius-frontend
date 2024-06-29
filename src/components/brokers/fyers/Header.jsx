@@ -36,7 +36,7 @@ function Header() {
       setAccessToken(accessToken);
       localStorage.setItem("accessToken", accessToken);
       console.log("Access Token:", accessToken);
-      navigate("/portfolio");
+      // navigate("/portfolio");
     } catch (error) {
       console.error("Failed to generate access token:", error);
     }
