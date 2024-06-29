@@ -7,8 +7,8 @@ import Loading from "../components/common/Loading";
 function LandingPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const [isLoading, setIsLoading] = useState(true); // State to track loading status
-  const imagesLoaded = useRef(0); // Ref to track loaded images count
+  const [isLoading, setIsLoading] = useState(true);
+  const imagesLoaded = useRef(0);
 
   useEffect(() => {
     const images = document.querySelectorAll("img");
@@ -41,10 +41,10 @@ function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen pt-6">
+    <div className="min-h-[91vh] pt-6">
       {isLoading && (
         <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <Loading/>
+          <Loading />
         </div>
       )}
       <div className="flex flex-col lg:flex-row">
@@ -62,7 +62,7 @@ function LandingPage() {
         </div>
         <div className="w-full lg:w-[70%]">
           <img
-          loading="lazy"
+            loading="lazy"
             className="w-full"
             src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F2ef01924933544a6b74d9ab48c8cf6b6"
             alt="buy sell"

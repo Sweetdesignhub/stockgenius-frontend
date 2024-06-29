@@ -389,8 +389,8 @@ function NSE100AiInsights() {
           {/* First Table */}
           <div className="lg:max-w-[92%] max-w-[75%]">
             <div className="overflow-x-auto">
-              <table className="table-auto w-full bg-transparent">
-                {/* Table header */}
+              {/* <table className="table-auto w-full bg-transparent">
+               
                 <thead>
                   <tr>
                     {dataTable.map((column, index) => (
@@ -403,7 +403,7 @@ function NSE100AiInsights() {
                     ))}
                   </tr>
                 </thead>
-                {/* Table body */}
+            
                 <tbody>
                   {data.map((row, rowIndex) => (
                     <tr key={rowIndex}>
@@ -429,6 +429,53 @@ function NSE100AiInsights() {
                           )}
                         </td>
                       ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table> */}
+
+              <table className="table-auto w-full bg-transparent">
+                {/* Table header */}
+                <thead>
+                  <tr>
+                    {dataTable.map(
+                      (column, index) =>
+                        index !== 4 && (
+                          <th
+                            key={index}
+                            className="w-full py-3 px-2 text-left text-xs font-medium tracking-wider"
+                          >
+                            {column.split(" ")[0]}
+                          </th>
+                        )
+                    )}
+                  </tr>
+                </thead>
+                {/* Table body */}
+                <tbody>
+                  {data.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {dataTable.map(
+                        (column, colIndex) =>
+                          colIndex !== 4 && (
+                            <td
+                              key={colIndex}
+                              className={`h-20 w-full min-w-24 capitalize px-2 whitespace-nowrap ${
+                                colIndex === 1
+                                  ? "text-[#4882F3]"
+                                  : colIndex === 2
+                                  ? "text-[#1ECB4F]"
+                                  : colIndex === 5
+                                  ? getColorClass(parseInt(row[column]))
+                                  : colIndex === 6
+                                  ? "text-[#1ECB4F] font-semibold"
+                                  : ""
+                              }`}
+                            >
+                              {row[column]}
+                            </td>
+                          )
+                      )}
                     </tr>
                   ))}
                 </tbody>

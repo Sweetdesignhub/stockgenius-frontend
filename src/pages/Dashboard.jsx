@@ -150,12 +150,12 @@ function Dashboard() {
               actionButtonColor=" border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
             />
           </div>
-          <div className="flex flex-col h-3/10 news-table rounded-lg p-4 mt-6">
+          {/* <div className="flex flex-col h-3/10 news-table rounded-lg p-4 mt-6">
             <BrokerForm
               selectedOption={selectedOption}
               handleOptionSelect={handleOptionSelect}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <Modal

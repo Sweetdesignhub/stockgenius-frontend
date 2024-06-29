@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Dropdown from "./Dropdown";
+import Dropdown from "../common/Dropdown";
 import Input from "../common/Input";
 import FyersInputs from "../brokerInputs/FyersInputs";
 import ZerodhaInputs from "../brokerInputs/ZerodhaInputs";
@@ -74,7 +74,7 @@ function BrokerForm() {
       };
     }
 
-    //  form submission logic 
+    //  form submission logic
     console.log("Form submitted with data:", submitData);
 
     // Clear the form after submission
@@ -108,7 +108,7 @@ function BrokerForm() {
             <Dropdown
               selectedOption={selectedOption}
               handleOptionSelect={handleOptionSelect}
-              required 
+              required
             />
           </div>
           <Input

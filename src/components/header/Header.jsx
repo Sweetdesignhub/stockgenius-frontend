@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { FaNewspaper, FaBell, FaUsers } from "react-icons/fa";
+import { FaBagShopping } from "react-icons/fa6";
 import ToggleButton from "../common/ToggleButton";
 import { signOut } from "../../redux/user/userSlice";
 import api from "../../config";
@@ -30,9 +31,14 @@ export default function Header() {
 
   const navigation = [
     { name: "Dashboard", to: "/dashboard", icon: MdDashboard },
-    { name: "NSE 100 AI Insights", to: "/NSE100-ai-insights", icon: FaNewspaper },
-    { name: "Notifications", to: "/notifications", icon: FaBell },
-    { name: "Referrals", to: "/referrals", icon: FaUsers },
+    {
+      name: "NSE 100 AI Insights",
+      to: "/NSE100-ai-insights",
+      icon: FaNewspaper,
+    },
+    { name: "Portfolio", to: "/portfolio", icon: FaBagShopping },
+    // { name: "Notifications", to: "/notifications", icon: FaBell },
+    // { name: "Referrals", to: "/referrals", icon: FaUsers },
   ];
 
   const handleSignOut = async () => {
@@ -48,7 +54,10 @@ export default function Header() {
 
   return (
     <header>
-      <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav
+        className="flex items-center justify-between p-6 lg:px-8"
+        aria-label="Global"
+      >
         <div className="flex items-center lg:flex-1">
           <Link to="/">
             <img
@@ -72,24 +81,28 @@ export default function Header() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12">
-          {navigation.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.to}
-              className={({ isActive }) =>
-                classNames(
-                  isActive ? "bg-[#3A6FF8] text-white" : "",
-                  "rounded-md px-3 py-2 text-sm flex items-center gap-2"
-                )
-              }
-              exact="true"
-            >
-              <item.icon className="h-5 w-5" aria-hidden="true" />
-              {item.name}
-            </NavLink>
-          ))}
-        </div>
+        {currentUser ? (
+          <div className="hidden lg:flex lg:gap-x-12">
+            {navigation.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.to}
+                className={({ isActive }) =>
+                  classNames(
+                    isActive ? "bg-[#3A6FF8] text-white" : "",
+                    "rounded-md px-3 py-2 text-sm flex items-center gap-2"
+                  )
+                }
+                exact="true"
+              >
+                <item.icon className="h-5 w-5" aria-hidden="true" />
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+        ) : (
+          ""
+        )}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <div className="flex items-center gap-3">
             <ToggleButton className="mr-4" />
@@ -151,7 +164,11 @@ export default function Header() {
           </div>
         </div>
       </nav>
-      <Dialog className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
+      <Dialog
+        className="lg:hidden"
+        open={mobileMenuOpen}
+        onClose={setMobileMenuOpen}
+      >
         <div className="fixed inset-0 z-50" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white dark:bg-[#1C1E55] px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
@@ -178,19 +195,23 @@ export default function Header() {
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.to}
-                    className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
-                    onClick={handleMenuClose}
-                  >
-                    <item.icon className="h-5 w-5" aria-hidden="true" />
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
+              {currentUser ? (
+                <div className="space-y-2 py-6">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.to}
+                      className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
+                      onClick={handleMenuClose}
+                    >
+                      <item.icon className="h-5 w-5" aria-hidden="true" />
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
               <div className="py-6">
                 <Link to="/profile" onClick={handleMenuClose}>
                   {currentUser ? (
@@ -209,7 +230,9 @@ export default function Header() {
                       </button>
                     </div>
                   ) : (
-                    <p>Log in</p>
+                    <p className="text-base font-[poppins] leading-7 dark:text-white text-gray-900">
+                      Log in
+                    </p>
                   )}
                 </Link>
               </div>

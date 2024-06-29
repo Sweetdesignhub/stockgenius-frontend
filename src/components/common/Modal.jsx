@@ -1,8 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import Input from "./Input";
-import Dropdown from "../dashboard/Dropdown";
-import FyersBuyButton from "../FyersBuyButton";
+import Dropdown from "./Dropdown";
+import FyersBuyButton from "../brokers/fyers/FyersBuyButton";
+import ZerodhaButton from "../brokers/zerodha/ZerodhaButton";
+import MotilalOswalButton from "../brokers/motilal/MotilalOswalButton";
 
 export default function Modal({
   isOpen,
@@ -87,6 +89,32 @@ export default function Modal({
                       <FyersBuyButton
                         apiKey="SH4XR0GZIF-100"
                         symbol={`NSE:${rowData["Ticker"]}-EQ`}
+                        product="CNC"
+                        quantity={quantity}
+                        orderType="MARKET"
+                        price={101}
+                        transactionType={actionType === "buy" ? "BUY" : "SELL"}
+                      />
+                    </div>
+                  )}
+                  {selectedOption === "Zerodha" && (
+                    <div className="mr-3">
+                      <ZerodhaButton
+                        apiKey="wgqefoihxiz2fitk"
+                        exchange="NSE"
+                        tradingSymbol={rowData["Ticker"]}
+                        transactionType={actionType === "buy" ? "BUY" : "SELL"}
+                        quantity={quantity}
+                        orderType="LIMIT"
+                        price={101}
+                      />
+                    </div>
+                  )}
+                  {selectedOption === "Motilal Oswal" && (
+                    <div className="mr-3">
+                      <MotilalOswalButton
+                        apiKey="your_api_key"
+                        symbol={`NSE:${rowData["Ticker"]}`}
                         product="INTRADAY"
                         quantity={quantity}
                         orderType="MARKET"

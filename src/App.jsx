@@ -11,6 +11,7 @@ import LandingPage from "./pages/LandingPage";
 import NSE100AiInsights from "./pages/NSE100AiInsights";
 import Notifications from "./pages/Notifications";
 import Referral from "./pages/Referral";
+import Portfolio from "./pages/Portfolio";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/NSE100-ai-insights" element={<NSE100AiInsights />} />
               <Route path="/referrals" element={<Referral/>}/>
+              <Route path="/portfolio" element={<Portfolio/>}/>
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<Profile />} />
             </Route>

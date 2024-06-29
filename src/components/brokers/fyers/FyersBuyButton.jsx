@@ -172,8 +172,8 @@
 
 import React, { useEffect, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
-import "../lib/fyers.js";
-import Loading from "./common/Loading";
+import "../../../lib/fyers.js";
+import Loading from "../../common/Loading.jsx";
 
 const FyersButton = ({
   apiKey,
