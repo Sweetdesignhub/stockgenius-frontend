@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "../../common/Dropdown";
 import api from "../../../config";
-import { BrowserRouter as  useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 function Header() {
   const [selectedOption, setSelectedOption] = useState("");
