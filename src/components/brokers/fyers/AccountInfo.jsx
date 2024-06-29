@@ -10,7 +10,9 @@ import {
 
 function AccountInfo() {
   const [profile, setProfile] = useState(null);
+  console.log(profile);
   const [holdings, setHoldings] = useState([]);
+  console.log(holdings);
   const [funds, setFunds] = useState(null);
   const [positions, setPositions] = useState(null);
   const [loading, setLoading] = useState(true);
