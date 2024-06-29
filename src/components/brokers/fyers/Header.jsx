@@ -19,7 +19,9 @@ function Header() {
 
   const handleFyersAuth = async () => {
     try {
-      const response = await api.get("/api/v1/fyers/generateAuthCodeUrl");
+      console.log("entered");
+      const response = await api.get("/fyers");
+      console.log("auth code : ", response);
       const { authCodeURL } = response.data;
       window.location.href = authCodeURL;
     } catch (error) {
@@ -29,7 +31,7 @@ function Header() {
 
   const generateFyersAccessToken = async (uri) => {
     try {
-      const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
+      const response = await api.post("/generateAccessToken", { uri });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
       localStorage.setItem("accessToken", accessToken);
@@ -47,7 +49,7 @@ function Header() {
       const uri = window.location.href;
       generateFyersAccessToken(uri);
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="flex justify-between items-center pb-2 border-b">
