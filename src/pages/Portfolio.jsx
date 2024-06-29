@@ -21,13 +21,13 @@ function Portfolio() {
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F87dfd2fd4eea4f378d9e578d4c5dd7d0"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
           alt="bull"
         />
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9815d9f59dfd4f65b9e50d5dcbb0152c"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
           alt="bear"
         />
 
