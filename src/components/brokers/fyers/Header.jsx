@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "../../common/Dropdown";
 import api from "../../../config";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const [selectedOption, setSelectedOption] = useState("");
@@ -32,6 +32,7 @@ function Header() {
       const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
+      localStorage.setItem("accessToken", accessToken);
       console.log("Access Token:", accessToken);
       navigate("/portfolio");
     } catch (error) {
@@ -46,7 +47,7 @@ function Header() {
       const uri = window.location.href;
       generateFyersAccessToken(uri);
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="flex justify-between items-center pb-2 border-b">
