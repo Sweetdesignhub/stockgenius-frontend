@@ -35,7 +35,7 @@ const App = () => {
       const { accessToken } = response.data;
       setAccessToken(accessToken);
       console.log("Access Token:", accessToken);
-      navigate("/porfolio");
+      navigate("/portfolio");
     } catch (error) {
       console.error("Failed to generate access token:", error);
     }
