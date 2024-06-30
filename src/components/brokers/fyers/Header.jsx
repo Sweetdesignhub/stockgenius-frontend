@@ -32,7 +32,7 @@ function Header() {
       });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
-      console.log("Access Token:", accessToken);
+      // console.log("Access Token:", accessToken);
       navigate("/portfolio");
     } catch (error) {
       console.error("Failed to generate access token:", error);
@@ -61,8 +61,8 @@ function Header() {
                 src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fb0f59404dbfe4720b7475114d61a6db6"
                 alt="Fyers"
               />
-              <button onClick={handleFyersAuth} className="ml-4">
-                Authenticate with Fyers
+              <button onClick={handleFyersAuth} className="auth px-4 py-1 mb-4">
+                <span className="underline">Click here</span> to Authenticate with Fyers
               </button>
             </div>
           )}
