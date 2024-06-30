@@ -14,48 +14,48 @@ import Referral from "./pages/Referral";
 import Portfolio from "./pages/Portfolio";
 import api from "./config";
 
-const App = () => {
-  const [authCodeURL, setAuthCodeURL] = useState("");
-  const [accessToken, setAccessToken] = useState("");
-  const navigate = useNavigate();
+// const App = () => {
+//   const [authCodeURL, setAuthCodeURL] = useState("");
+//   const [accessToken, setAccessToken] = useState("");
+//   const navigate = useNavigate();
 
-  const handleFyersAuth = async () => {
-    try {
-      const response = await api.get("/api/v1/fyers/generateAuthCodeUrl");
-      const { authCodeURL } = response.data;
-      window.location.href = authCodeURL;
-    } catch (error) {
-      console.error("Failed to retrieve Fyers auth URL:", error);
-    }
-  };
+//   const handleFyersAuth = async () => {
+//     try {
+//       const response = await api.get("/api/v1/fyers/generateAuthCodeUrl");
+//       const { authCodeURL } = response.data;
+//       window.location.href = authCodeURL;
+//     } catch (error) {
+//       console.error("Failed to retrieve Fyers auth URL:", error);
+//     }
+//   };
 
-  const generateAccessToken = async (uri) => {
-    try {
-      const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
-      const { accessToken } = response.data;
-      setAccessToken(accessToken);
-      console.log("Access Token:", accessToken);
-      navigate("/portfolio");
-    } catch (error) {
-      console.error("Failed to generate access token:", error);
-    }
-  };
+//   const generateAccessToken = async (uri) => {
+//     try {
+//       const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
+//       const { accessToken } = response.data;
+//       setAccessToken(accessToken);
+//       console.log("Access Token:", accessToken);
+//       navigate("/portfolio");
+//     } catch (error) {
+//       console.error("Failed to generate access token:", error);
+//     }
+//   };
 
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    const authCode = query.get("auth_code");
-    if (authCode) {
-      const uri = window.location.href;
-      generateAccessToken(uri);
-    }
-  }, []);
+//   useEffect(() => {
+//     const query = new URLSearchParams(window.location.search);
+//     const authCode = query.get("auth_code");
+//     if (authCode) {
+//       const uri = window.location.href;
+//       generateAccessToken(uri);
+//     }
+//   }, []);
 
-  return (
-    <div>
-      <button onClick={handleFyersAuth}>Authenticate with Fyers</button>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <button onClick={handleFyersAuth}>Authenticate with Fyers</button>
+//     </div>
+//   );
+// };
 
 function MainApp() {
   return (
@@ -64,7 +64,7 @@ function MainApp() {
         <Header />
         <div className="flex-grow">
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route element={<PrivateRoute />}>
