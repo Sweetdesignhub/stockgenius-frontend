@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import Loading from "../components/common/Loading";
-import api from "../config";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -40,43 +39,6 @@ function LandingPage() {
   const handleClick = () => {
     navigate("/dashboard");
   };
-
-  const [authCodeURL, setAuthCodeURL] = useState("");
-  const [accessToken, setAccessToken] = useState("");
-  // const navigate = useNavigate();
-
-  const handleFyersAuth = async () => {
-    try {
-      const response = await api.get("/api/v1/fyers/generateAuthCodeUrl");
-      const { authCodeURL } = response.data;
-      window.location.href = authCodeURL;
-    } catch (error) {
-      console.error("Failed to retrieve Fyers auth URL:", error);
-    }
-  };
-
-  const generateAccessToken = async (uri) => {
-    try {
-      const response = await api.post("/api/v1/fyers/generateAccessToken", {
-        uri,
-      });
-      const { accessToken } = response.data;
-      setAccessToken(accessToken);
-      console.log("Access Token:", accessToken);
-      navigate("/portfolio");
-    } catch (error) {
-      console.error("Failed to generate access token:", error);
-    }
-  };
-
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    const authCode = query.get("auth_code");
-    if (authCode) {
-      const uri = window.location.href;
-      generateAccessToken(uri);
-    }
-  }, []);
 
   return (
     <div className="min-h-[91vh] pt-6">
@@ -127,10 +89,6 @@ function LandingPage() {
           >
             <p className="mr-5">Get Started</p> <FaChevronRight />
           </button>
-
-          <div>
-            <button onClick={handleFyersAuth}>Authenticate with Fyers</button>
-          </div>
         </div>
       </div>
     </div>
