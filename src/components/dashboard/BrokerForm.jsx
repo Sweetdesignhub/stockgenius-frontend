@@ -11,7 +11,7 @@ function BrokerForm() {
   const [selectedOption, setSelectedOption] = useState("");
     // const [authCodeURL, setAuthCodeURL] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  console.log(accessToken);
+  console.log('access token : ',accessToken);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   console.log(currentUser);
@@ -55,6 +55,7 @@ function BrokerForm() {
   const generateAccessToken = async (uri) => {
     try {
       const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
+      console.log('response : ', response);
       const { accessToken } = response.data;
       setAccessToken(accessToken);
       console.log("Access Token:", accessToken);
