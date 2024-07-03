@@ -73,6 +73,7 @@ function BrokerForm() {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
+    console.log('authcode');
     if (authCode) {
       const uri = window.location.href;
       generateAccessToken(uri);
