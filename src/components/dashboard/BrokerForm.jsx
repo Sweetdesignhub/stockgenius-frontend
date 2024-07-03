@@ -54,12 +54,17 @@ function BrokerForm() {
 
   const generateAccessToken = async (uri) => {
     try {
-      const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
+      // Make sure to include userId in the request body
+      const response = await api.post("/api/v1/fyers/generateAccessToken", {
+        uri,
+        userId: currentUser._id, // Include userId from state or props
+      });
       console.log('response : ', response);
       const { accessToken } = response.data;
       setAccessToken(accessToken);
       console.log("Access Token:", accessToken);
-      // navigate("/portfolio");
+  
+      // Navigate based on localStorage country setting
       if (localStorage.getItem("country") === "india") {
         navigate(`/india/portfolio`);
       } else if (localStorage.getItem("country") === "us") {
@@ -69,6 +74,7 @@ function BrokerForm() {
       console.error("Failed to generate access token:", error);
     }
   };
+  
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
