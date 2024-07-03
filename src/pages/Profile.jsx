@@ -75,6 +75,12 @@ export default function Profile() {
         formData
       );
       const data = res.data;
+
+      if (data.success === false) {
+        dispatch(updateUserFailure(data));
+        return;
+      }
+      
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (error) {

@@ -147,10 +147,10 @@ function SignIn() {
   
     try {
       dispatch(signInStart());
-      console.log("Form Data:", formData); // Check formData before API call
+      // console.log("Form Data:", formData); 
       const response = await api.post(`/api/v1/auth/sign-in`, formData);
       const data = await response.data;
-      console.log("Sign-in Response:", data); // Log API response
+      // console.log("Sign-in Response:", data);
   
       // Handle response logic based on API data
       if (data.success === false) {
@@ -168,7 +168,7 @@ function SignIn() {
       navigate(`/${selectedCountry}/dashboard`);
     } catch (error) {
       dispatch(signInFailure(error));
-      console.error("Sign-in Error:", error); // Log any caught errors
+      console.error("Sign-in Error:", error); 
     }
   };
   
