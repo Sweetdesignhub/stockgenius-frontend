@@ -27,6 +27,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const { currentUser, loading, error } = useSelector((state) => state.user);
+  // console.log('current user : ',currentUser);
 
   const navigate = useNavigate();
 

@@ -143,11 +143,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../config";
+import { useSelector } from "react-redux";
 
 function LandingPage() {
   const navigate = useNavigate();
   const [authCodeURL, setAuthCodeURL] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const { currentUser, loading, error } = useSelector((state) => state.user);
 
   const handleFyersAuth = async () => {
     try {
@@ -176,7 +178,6 @@ function LandingPage() {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
-    console.log('auth code and generate access tokne hitted ...', authCode);
     if (authCode) {
       const uri = window.location.href;
       console.log(uri);
