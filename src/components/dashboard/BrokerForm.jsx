@@ -1,20 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown from "../common/Dropdown";
 import Input from "../common/Input";
 import FyersInputs from "../brokerInputs/FyersInputs";
 import ZerodhaInputs from "../brokerInputs/ZerodhaInputs";
+import api from "../../config";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function BrokerForm() {
   const [selectedOption, setSelectedOption] = useState("");
+    // const [authCodeURL, setAuthCodeURL] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+  console.log(accessToken);
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
 
   const [formData, setFormData] = useState({
-    nickname: "",
+    nickname: currentUser ? currentUser.username : "",
     mobileNumber: "",
-    email: "",
+    email: currentUser ? currentUser.email : "",
     fyersId: "",
     appId: "",
     secretId: "",
@@ -30,9 +39,9 @@ function BrokerForm() {
 
   const handleClear = () => {
     setFormData({
-      nickname: "",
+      nickname: currentUser ? currentUser.username : "",
       mobileNumber: "",
-      email: "",
+      email: currentUser ? currentUser.email : "",
       fyersId: "",
       appId: "",
       secretId: "",
@@ -43,7 +52,33 @@ function BrokerForm() {
     setSelectedOption("");
   };
 
-  const handleSubmit = (e) => {
+  const generateAccessToken = async (uri) => {
+    try {
+      const response = await api.post("/api/v1/fyers/generateAccessToken", { uri });
+      const { accessToken } = response.data;
+      setAccessToken(accessToken);
+      console.log("Access Token:", accessToken);
+      // navigate("/portfolio");
+      if (localStorage.getItem("country") === "india") {
+        navigate(`/india/portfolio`);
+      } else if (localStorage.getItem("country") === "us") {
+        navigate(`/us/portfolio`);
+      }
+    } catch (error) {
+      console.error("Failed to generate access token:", error);
+    }
+  };
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const authCode = query.get("auth_code");
+    if (authCode) {
+      const uri = window.location.href;
+      generateAccessToken(uri);
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!selectedOption) {
@@ -64,24 +99,54 @@ function BrokerForm() {
         fyersId: formData.fyersId,
         appId: formData.appId,
         secretId: formData.secretId,
+        userId: currentUser._id,
       };
+
+      try {
+        // Save broker details in the database
+        await api.post("/api/v1/fyers/saveCredentials", submitData);
+        alert('Data saved successfully, Redirecting to Fyers ....')
+
+        // Generate auth code URL
+        const response = await api.get(`/api/v1/fyers/generateAuthCodeUrl/${currentUser._id}`);
+        const { authCodeURL } = response.data;
+
+        // Redirect to auth code URL
+        window.location.href = authCodeURL;
+
+        // Save authentication date in the database
+        await api.post("/api/v1/fyers/saveAuthDate", {
+          userId: currentUser.id, 
+          date: new Date().toISOString(),
+        });
+
+        console.log("Authentication date saved for Fyers in database.");
+      } catch (error) {
+        console.error("Failed to retrieve Fyers auth URL or save auth date:", error);
+      }
     } else if (selectedOption === "Zerodha") {
       submitData = {
         ...submitData,
         zerodhaId: formData.zerodhaId,
         zerodhaPassword: formData.zerodhaPassword,
         totpKey: formData.totpKey,
+        userId: currentUser._id,
       };
-    }
+      try {
+        // Save broker details in the database
+        await api.post("/api/v1/zerodha/saveCredentials", submitData);
 
-    //  form submission logic
-    console.log("Form submitted with data:", submitData);
+        // Implement Zerodha authentication flow here
+      } catch (error) {
+        console.error("Failed to save Zerodha credentials:", error);
+      }
+    }
 
     // Clear the form after submission
     setFormData({
-      nickname: "",
+      nickname: currentUser ? currentUser.username : "",
       mobileNumber: "",
-      email: "",
+      email: currentUser ? currentUser.email : "",
       fyersId: "",
       appId: "",
       secretId: "",
@@ -114,6 +179,7 @@ function BrokerForm() {
           <Input
             label="Nickname"
             name="nickname"
+            defaultValue={currentUser ? currentUser.username : ""}
             value={formData.nickname}
             onChange={handleInputChange}
             placeholder="Enter Nickname"
@@ -129,6 +195,7 @@ function BrokerForm() {
             label="Email Id"
             name="email"
             type="email"
+            defaultValue={currentUser ? currentUser.email : ""}
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Enter Email"

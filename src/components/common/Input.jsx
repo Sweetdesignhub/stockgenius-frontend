@@ -1,12 +1,13 @@
 import React from "react";
 
-const Input = ({ label, name, type, value, onChange, min, placeholder }) => {
+const Input = ({ label, name, type, value, onChange, min, placeholder, defaultValue }) => {
   return (
     <div className="mb-4">
       <label className="block dark:text-white text-black text-sm mb-2" htmlFor={name}>
         {label}
       </label>
       <input
+      defaultValue={defaultValue}
         id={name}
         name={name}
         type={type}
@@ -14,6 +15,7 @@ const Input = ({ label, name, type, value, onChange, min, placeholder }) => {
         onChange={onChange}
         min={min}
         placeholder={placeholder}
+        required
         className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
       />
     </div>
