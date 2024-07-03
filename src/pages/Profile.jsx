@@ -27,7 +27,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  // console.log('current user : ',currentUser);
+  console.log('current user : ',currentUser);
 
   const navigate = useNavigate();
 
@@ -61,15 +61,19 @@ export default function Profile() {
     );
   };
 
+  // const handleChange = (e) => {
+  //   const { id, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [id]: value }));
+  // };
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(updateUserStart());
+    
     try {
+      dispatch(updateUserStart());
       const res = await api.post(
         `/api/v1/users/update/${currentUser._id}`,
         formData
@@ -80,11 +84,11 @@ export default function Profile() {
         dispatch(updateUserFailure(data));
         return;
       }
-      
+
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (error) {
-      dispatch(updateUserFailure(error));
+      dispatch(updateUserFailure(error.message));
     }
   };
 

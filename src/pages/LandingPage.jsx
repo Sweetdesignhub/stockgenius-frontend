@@ -150,6 +150,10 @@ function LandingPage() {
   const [authCodeURL, setAuthCodeURL] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const { currentUser, loading, error } = useSelector((state) => state.user);
+  // const [selectedCountry, setSelectedCountry] = useState(
+  //   localStorage.getItem("country")
+  // );
+  console.log(localStorage.getItem("country"));
 
   const handleFyersAuth = async () => {
     try {
@@ -169,7 +173,13 @@ function LandingPage() {
       });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
-      navigate("/portfolio");
+
+      if (localStorage.getItem("country") === "india") {
+        navigate(`/india/portfolio`);
+      } else if (localStorage.getItem("country") === "us") {
+        navigate(`/us/portfolio`);
+      }
+      // navigate(`/${country}/portfolio`);
     } catch (error) {
       console.error("Failed to generate access token:", error);
     }
