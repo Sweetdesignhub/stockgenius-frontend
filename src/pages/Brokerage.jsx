@@ -46,10 +46,16 @@ const Brokerage = () => {
     }
   };
 
-  const handleConnect = async () => {
-    const response = await api.get(`/api/v1/fyers/generateAuthCodeUrl/${currentUser._id}`);
-    const { authCodeURL } = response.data;
-    window.location.href = authCodeURL;
+  const handleConnect = async (credentialsId) => {
+    try {
+      const response = await api.post(`/api/v1/fyers/generateAuthCodeUrl/${credentialsId}`, {
+        userId: currentUser._id,
+      });
+      const { authCodeURL } = response.data;
+      window.location.href = authCodeURL;
+    } catch (error) {
+      console.error("Error generating auth code URL:", error);
+    }
   };
 
   const generateAccessToken = async (uri) => {
@@ -57,6 +63,7 @@ const Brokerage = () => {
       const response = await api.post("/api/v1/fyers/generateAccessToken", {
         uri,
         userId: currentUser._id,
+        credentialsId,
       });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
