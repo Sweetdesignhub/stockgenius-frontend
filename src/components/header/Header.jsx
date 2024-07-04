@@ -386,7 +386,7 @@ export default function Header() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <div className="flex items-center gap-3">
             <ToggleButton className="mr-4" />
-            <Link to={`/${selectedCountry}/profile`}>
+         
               {currentUser ? (
                 <Menu as="div" className="relative ml-3">
                   <div>
@@ -424,6 +424,19 @@ export default function Header() {
                       <MenuItem>
                         {({ active }) => (
                           <Link
+                            to={`/${selectedCountry}/brokerage`}
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                            Your Brokerage
+                          </Link>
+                        )}
+                      </MenuItem>
+                      <MenuItem>
+                        {({ active }) => (
+                          <Link
                             onClick={handleSignOut}
                             className={classNames(
                               active ? "bg-gray-100" : "",
@@ -440,7 +453,7 @@ export default function Header() {
               ) : (
                 <p>Log in / Register</p>
               )}
-            </Link>
+       
           </div>
         </div>
       </nav>

@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import Loading from "../components/common/Loading";
 import api from "../config";
+import { useSelector } from "react-redux";
 
 function LandingPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const imagesLoaded = useRef(0);
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const images = document.querySelectorAll("img");
@@ -59,6 +61,7 @@ function LandingPage() {
     try {
       const response = await api.post("/api/v1/fyers/generateAccessToken", {
         uri,
+        userId: currentUser._id,
       });
       const { accessToken } = response.data;
       setAccessToken(accessToken);

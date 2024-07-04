@@ -98,6 +98,7 @@ import NSE100AiInsights from "./pages/NSE100AiInsights";
 import Notifications from "./pages/Notifications";
 import Referral from "./pages/Referral";
 import Portfolio from "./pages/Portfolio";
+import Brokerage from "./pages/Brokerage";
 
 function MainApp() {
   const [country, setCountry] = useState("");
@@ -126,6 +127,7 @@ function MainApp() {
               <Route path="/india/portfolio" element={<Portfolio />} />
               <Route path="/india/notifications" element={<Notifications />} />
               <Route path="/india/profile" element={<Profile />} />
+              <Route path="/india/brokerage" element={<Brokerage/>} />
 
               {/* US routes */}
               <Route path="/us/dashboard" element={<Dashboard />} />
@@ -134,6 +136,7 @@ function MainApp() {
               <Route path="/us/portfolio" element={<Portfolio />} />
               <Route path="/us/notifications" element={<Notifications />} />
               <Route path="/us/profile" element={<Profile />} />
+              <Route path="/us/brokerage" element={<Brokerage/>} />
             </Route>
           </Routes>
         </div>

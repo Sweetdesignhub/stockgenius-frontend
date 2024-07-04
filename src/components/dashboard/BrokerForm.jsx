@@ -54,10 +54,10 @@ function BrokerForm() {
 
   const generateAccessToken = async (uri) => {
     try {
-      // Make sure to include userId in the request body
+      console.log(currentUser._id);
       const response = await api.post("/api/v1/fyers/generateAccessToken", {
         uri,
-        userId: currentUser._id, // Include userId from state or props
+        userId: currentUser._id, 
       });
       console.log('response : ', response);
       const { accessToken } = response.data;
@@ -79,7 +79,7 @@ function BrokerForm() {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
-    console.log('authcode');
+    console.log('authcode', authCode);
     if (authCode) {
       const uri = window.location.href;
       generateAccessToken(uri);
