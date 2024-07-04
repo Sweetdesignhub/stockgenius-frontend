@@ -1,4 +1,4 @@
-const BASE_URL = "/api/v1/fyers";
+const BASE_URL = "/api/v1/fyers"; // Replace with your actual base URL
 
 export const fetchProfile = async () => {
   try {

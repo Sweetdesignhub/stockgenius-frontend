@@ -100,6 +100,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../common/Loading.jsx";
 import Cards from "./Cards.jsx";
 import api from "../../../config.js";
+import { useSelector } from "react-redux";
 
 function AccountInfo() {
   const [profile, setProfile] = useState(null);
@@ -108,34 +109,66 @@ function AccountInfo() {
   const [positions, setPositions] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const { currentUser } = useSelector((state) => state.user);
+  console.log('profile', currentUser._id);
+  // const [profileData, setProfileData] = useState(null);
+  // const [fundsData, setFundsData] = useState(null);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const profileResponse = await api.get("/api/v1/fyers/fetchProfile");
+  //       setProfile(profileResponse.data);
+
+  //       const holdingsResponse = await api.get("/api/v1/fyers/fetchHoldings");
+  //       setHoldings(holdingsResponse.data.holdings);
+
+  //       const fundsResponse = await api.get("/api/v1/fyers/fetchFunds");
+  //       const availableBalance = fundsResponse.data.fund_limit.find(
+  //         (item) => item.title === "Available Balance"
+  //       );
+  //       setFunds(availableBalance?.equityAmount || 0);
+
+  //       const positionsResponse = await api.get("/api/v1/fyers/fetchPositions");
+  //       const positionsPL = positionsResponse.data.overall.pl_total;
+  //       setPositions(positionsPL);
+
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileResponse = await api.get("/api/v1/fyers/fetchProfile");
-        setProfile(profileResponse.data);
+        if (currentUser) {
+          // Fetch profile data
+          const profileResponse = await api.get(`/api/v1/fyers/fetchProfile`, { userId: currentUser._id });
+          setProfile(profileResponse.data);
 
-        const holdingsResponse = await api.get("/api/v1/fyers/fetchHoldings");
-        setHoldings(holdingsResponse.data.holdings);
+          // Fetch funds data
+          const fundsResponse = await api.get(`/api/v1/fyers/fetchFunds/${currentUser._id}`);
+          setFunds(fundsResponse.data);
 
-        const fundsResponse = await api.get("/api/v1/fyers/fetchFunds");
-        const availableBalance = fundsResponse.data.fund_limit.find(
-          (item) => item.title === "Available Balance"
-        );
-        setFunds(availableBalance?.equityAmount || 0);
-
-        const positionsResponse = await api.get("/api/v1/fyers/fetchPositions");
-        const positionsPL = positionsResponse.data.overall.pl_total;
-        setPositions(positionsPL);
-
-        setLoading(false);
+          // Fetch funds data
+          const holdingsResponse = await api.get(`/api/v1/fyers/fetchHoldings/${currentUser._id}`);
+          setHoldings(holdingsResponse.data);
+          // Fetch funds data
+          const positionsResponse = await api.get(`/api/v1/fyers/fetchPositions/${currentUser._id}`);
+          setPositions(positionsResponse.data);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
+        console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [currentUser]);
 
   if (loading) {
     return <Loading />;
