@@ -12,6 +12,7 @@ function LandingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const imagesLoaded = useRef(0);
   const { currentUser } = useSelector((state) => state.user);
+  const region = useSelector((state) => state.region);
 
   useEffect(() => {
     const images = document.querySelectorAll("img");
@@ -40,7 +41,11 @@ function LandingPage() {
   }, []);
 
   const handleClick = () => {
-    navigate("/dashboard");
+    if (currentUser) {
+      navigate(`${region}/dashboard`);
+    } else {
+      navigate("/sign-in");
+    }
   };
 
   const [authCodeURL, setAuthCodeURL] = useState("");

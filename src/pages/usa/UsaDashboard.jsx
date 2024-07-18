@@ -1,28 +1,41 @@
 import React, { useEffect, useState } from "react";
-import fetchFile from "../utils/fetchFile";
-import parseExcel from "../utils/parseExcel";
-import Loading from "../components/common/Loading";
-import ErrorComponent from "../components/common/Error";
-import Table from "../components/dashboard/Table";
-import BrokerForm from "../components/dashboard/BrokerForm";
-import Modal from "../components/common/Modal"; // Import the Modal component
+import fetchFile from "../../utils/usa/fetchFile";
+import parseExcel from "../../utils/usa/parseExcel";
+import Loading from "../../components/common/Loading";
+import ErrorComponent from "../../components/common/Error";
+import Table from "../../components/dashboard/Table";
+import BrokerForm from "../../components/dashboard/BrokerForm";
+import Modal from "../../components/common/Modal";
+import { useSelector } from "react-redux";
 
-function Dashboard() {
+function UsaDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [gainersData, setGainersData] = useState([]);
   const [losersData, setLosersData] = useState([]);
-  const bucketName = "automationdatabucket";
-  const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
-  const loserFile = "Realtime_Reports/top_losers.xlsx";
-
   const [selectedOption, setSelectedOption] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
+  const market = useSelector((state) => state.market);
+
+  let bucketName = "";
+  const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
+  const loserFile = "Realtime_Reports/top_losers.xlsx";
+
+  // Set bucketName based on the market
+  if (market === "NYSE") {
+    bucketName = "stock-genius-ai";
+  } else if (market === "NASDAQ") {
+    bucketName = "nasdaq-stockgenius-ai";
+  }
+
+  // Fetch data from the bucket
   const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const [gainersFileData, losersFileData] = await Promise.all([
         fetchFile(bucketName, gainerFile),
@@ -41,47 +54,40 @@ function Dashboard() {
     }
   };
 
+  // Use effect to fetch data and set an interval for periodic refresh
   useEffect(() => {
     fetchData();
-
-    // interval to fetch data every 10 minutes
-    const intervalId = setInterval(fetchData, 600000); // 600000 milliseconds = 10 minutes
-    // console.log("Interval set to fetch data every 10 minutes");
-
-    // Clean up the interval when the component unmounts
+    const intervalId = setInterval(fetchData, 600000); // Refresh every 10 minutes
     return () => clearInterval(intervalId);
-  }, []);
+  }, [market]);
 
+  // Handle option selection
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
 
+  // Handle buy and sell actions
   const handleBuy = (row) => {
-    setSelectedRow(row);
-    // console.log('buy', row);
-    setActionType("buy");
-    setQuantity(1); // Reset quantity
-    setModalOpen(true);
+    console.log("buy", row);
   };
 
   const handleSell = (row) => {
-    setSelectedRow(row);
-    // console.log('sell',row);
-    setActionType("sell");
-    setQuantity(1); // Reset quantity
-    setModalOpen(true);
+    console.log("sell", row);
   };
 
+  // Close modal
   const closeModal = () => {
     setModalOpen(false);
     setSelectedRow(null);
     setActionType(null);
   };
 
+  // Handle quantity change
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
   };
 
+  // Handle input change
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setSelectedRow((prevRow) => ({
@@ -90,6 +96,7 @@ function Dashboard() {
     }));
   };
 
+  // Handle confirm action in the modal
   const handleConfirm = () => {
     console.log(
       `${actionType} button confirmed for row:`,
@@ -100,10 +107,12 @@ function Dashboard() {
     setModalOpen(false);
   };
 
+  // Render loading component if data is still loading
   if (loading) {
     return <Loading />;
   }
 
+  // Render error component if there was an error
   if (error) {
     return <ErrorComponent error={error} />;
   }
@@ -150,12 +159,6 @@ function Dashboard() {
               actionButtonColor=" border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
             />
           </div>
-          <div className="flex flex-col h-3/10 news-table rounded-lg p-4 mt-6">
-            <BrokerForm
-              selectedOption={selectedOption}
-              handleOptionSelect={handleOptionSelect}
-            />
-          </div>
         </div>
       </div>
       <Modal
@@ -172,4 +175,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default UsaDashboard;

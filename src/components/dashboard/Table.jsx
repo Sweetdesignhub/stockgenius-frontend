@@ -1,5 +1,6 @@
 import React from "react";
 import Speedometer from "../common/Speedometer";
+import { useSelector } from "react-redux";
 
 function Table({
   title,
@@ -11,6 +12,23 @@ function Table({
   actionButtonColor,
   roiColor,
 }) {
+
+  const region = localStorage.getItem('region');
+  // console.log('local : ',region);
+
+  const stateRegion = useSelector((state) => state.region);
+  // console.log('state: ',stateRegion);
+
+  let maxHeight;
+  if (region === 'india' && stateRegion === 'india') {
+    maxHeight = "calc(70vh - 8rem)";
+  } else if (region === 'usa' && stateRegion === 'usa') {
+    maxHeight = "80vh";
+  } else {
+    maxHeight = ""; // default or other condition
+  }
+
+
   return (
     <div className="flex-1 overflow-auto rounded-xl">
       <div className="flex justify-between pb-2 border-b border-gray-500">
@@ -23,8 +41,9 @@ function Table({
       </div>
 
       <div
-        className="overflow-scroll p-4 flex news-table rounded-xl mt-4"
-        style={{ maxHeight: "calc(70vh - 8rem)" }}
+        className="overflow-scroll p-4 flex max-h-[80vh] news-table rounded-xl mt-4"
+        style={{ maxHeight }}
+        // style={{ maxHeight: "calc(70vh - 8rem)" }}
       >
         <div className="lg:max-w-[85%] max-w-[75%]">
           <div className="overflow-x-auto">

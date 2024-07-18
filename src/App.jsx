@@ -86,7 +86,6 @@
 
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import Dashboard from "./pages/Dashboard";
 import Header from "./components/header/Header";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignIn from "./pages/SignIn";
@@ -94,22 +93,17 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import LandingPage from "./pages/LandingPage";
-import NSE100AiInsights from "./pages/NSE100AiInsights";
 import Notifications from "./pages/Notifications";
 import Referral from "./pages/Referral";
-import Portfolio from "./pages/Portfolio";
+import IndiaPortfolio from "./pages/india/IndiaPortfolio";
 import Brokerage from "./pages/Brokerage";
+import IndiaDashboard from "./pages/india/IndiaDashboard";
+import UsaDashboard from "./pages/usa/UsaDashboard";
+import NSE100AiInsights from "./pages/india/NSE100AiInsights";
+import StockLists from "./pages/usa/StockLists";
+import UsaPortfolio from "./pages/usa/UsaPortfolio";
 
 function MainApp() {
-  const [country, setCountry] = useState("");
-
-  useEffect(() => {
-    const storedCountry = localStorage.getItem("country");
-    if (storedCountry) {
-      setCountry(storedCountry);
-    }
-  }, []);
-
   return (
     <div className="flex flex-col min-h-screen">
       <BrowserRouter>
@@ -117,26 +111,29 @@ function MainApp() {
         <div className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/sign-in" element={<SignIn setCountry={setCountry} />} />
+            <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route element={<PrivateRoute />}>
               {/* India routes */}
-              <Route path="/india/dashboard" element={<Dashboard />} />
-              <Route path="/india/NSE100-ai-insights" element={<NSE100AiInsights />} />
+              <Route path="/india/dashboard" element={<IndiaDashboard />} />
+              <Route
+                path="/india/NSE100-ai-insights"
+                element={<NSE100AiInsights />}
+              />
               <Route path="/india/referrals" element={<Referral />} />
-              <Route path="/india/portfolio" element={<Portfolio />} />
+              <Route path="/india/portfolio" element={<IndiaPortfolio/>} />
               <Route path="/india/notifications" element={<Notifications />} />
               <Route path="/india/profile" element={<Profile />} />
-              <Route path="/india/brokerage" element={<Brokerage/>} />
+              <Route path="/india/brokerage" element={<Brokerage />} />
 
-              {/* US routes */}
-              <Route path="/us/dashboard" element={<Dashboard />} />
-              <Route path="/us/NSE100-ai-insights" element={<NSE100AiInsights />} />
-              <Route path="/us/referrals" element={<Referral />} />
-              <Route path="/us/portfolio" element={<Portfolio />} />
-              <Route path="/us/notifications" element={<Notifications />} />
-              <Route path="/us/profile" element={<Profile />} />
-              <Route path="/us/brokerage" element={<Brokerage/>} />
+              {/* USA routes */}
+              <Route path="/usa/dashboard" element={<UsaDashboard />} />
+              <Route path="/usa/stock-lists" element={<StockLists />} />
+              <Route path="/usa/referrals" element={<Referral />} />
+              <Route path="/usa/portfolio" element={<UsaPortfolio/>} />
+              <Route path="/usa/notifications" element={<Notifications />} />
+              <Route path="/usa/profile" element={<Profile />} />
+              <Route path="/usa/brokerage" element={<Brokerage />} />
             </Route>
           </Routes>
         </div>

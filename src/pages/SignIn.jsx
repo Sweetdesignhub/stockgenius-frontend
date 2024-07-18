@@ -112,7 +112,7 @@
 
 // export default SignIn;
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   signInStart,
@@ -122,56 +122,79 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../components/OAuth";
 import api from "../config";
+import { setRegion } from "../redux/region/regionSlice";
+import ConfirmationModal from "../components/common/ConfirmationModal";
 
 function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const selectedRegion = useSelector((state) => state.region);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // State to manage the selected country
-  const [selectedCountry, setSelectedCountry] = useState("");
+  // const [selectedCountry, setSelectedCountry] = useState("");
   // console.log(selectedCountry);
+
+  // const [selectedRegion, setSelectedRegion] = useState("");
+  // console.log("selectedRegion : ", selectedRegion);
+
+  useEffect(() => {
+    const region = localStorage.getItem("region");
+    if (region) {
+      dispatch(setRegion(region));
+    }
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleCountryChange = (e) => {
-    console.log(e.target.value);
-    setSelectedCountry(e.target.value);
-  };
+  // const handleCountryChange = (e) => {
+  //   console.log(e.target.value);
+  //   setSelectedCountry(e.target.value);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (!selectedRegion) {
+      setIsModalOpen(true);
+      return;
+    }
+
     try {
       dispatch(signInStart());
-      // console.log("Form Data:", formData); 
+      // console.log("Form Data:", formData);
       const response = await api.post(`/api/v1/auth/sign-in`, formData);
       const data = await response.data;
       // console.log("Sign-in Response:", data);
-  
+
       // Handle response logic based on API data
       if (data.success === false) {
         dispatch(signInFailure(data.message));
         return;
       }
-  
+
       // Successful sign-in logic
-      const country = selectedCountry;
-  
+      // const country = selectedCountry;
+
       // Store selected country in local storage
-      localStorage.setItem("country", country);
-  
+      // localStorage.setItem("country", country);
+
       dispatch(signInSuccess(data));
-      navigate(`/${selectedCountry}/dashboard`);
+      navigate(`/${selectedRegion}/dashboard`);
     } catch (error) {
       dispatch(signInFailure(error));
-      console.error("Sign-in Error:", error); 
+      console.error("Sign-in Error:", error);
     }
   };
-  
+
+  const handleConfirm = () => {
+    setIsModalOpen(false);
+  };
+
 
   return (
     <div className="max-w-xl px-20 py-10 mx-auto auth rounded-2xl">
@@ -215,7 +238,7 @@ function SignIn() {
         </div>
 
         {/* Country selection */}
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
           <label htmlFor="country" className="dark:text-[#FFFFFFCC]">
             Select Country
           </label>
@@ -226,11 +249,13 @@ function SignIn() {
             onChange={handleCountryChange}
             required
           >
-            <option disabled value="">Select Country</option>
+            <option disabled value="">
+              Select Country
+            </option>
             <option value="india">India</option>
             <option value="us">United States</option>
           </select>
-        </div>
+        </div> */}
 
         <button
           disabled={loading}
@@ -250,11 +275,21 @@ function SignIn() {
         </p>
       </div>
       <p className="text-red-500 text-center mt-5">
-        {error ? error.message || "Something went wrong, please try again !!" : ""}
+        {error
+          ? error.message || "Something went wrong, please try again !!"
+          : ""}
       </p>
+      {isModalOpen && (
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          title="Region not selected"
+          message="Please select a region before signing in."
+          onConfirm={handleConfirm}
+          onClose={handleConfirm}
+        />
+      )}
     </div>
   );
 }
 
 export default SignIn;
-

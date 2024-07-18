@@ -8,7 +8,6 @@ const Brokerage = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [brokerDetails, setBrokerDetails] = useState([]);
   const [accessToken, setAccessToken] = useState("");
-  console.log(accessToken);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,24 +45,24 @@ const Brokerage = () => {
     }
   };
 
-  const handleConnect = async (credentialsId) => {
+  const handleConnect = async (id) => {
     try {
-      const response = await api.post(`/api/v1/fyers/generateAuthCodeUrl/${credentialsId}`, {
+      const response = await api.post(`/api/v1/fyers/generateAuthCodeUrl/${id}`, {
         userId: currentUser._id,
       });
       const { authCodeURL } = response.data;
-      window.location.href = authCodeURL;
+      window.location.href = `${authCodeURL}&state_id=${id}`;
     } catch (error) {
       console.error("Error generating auth code URL:", error);
     }
   };
 
-  const generateAccessToken = async (uri) => {
+  const generateAccessToken = async (uri, id) => {
     try {
       const response = await api.post("/api/v1/fyers/generateAccessToken", {
         uri,
         userId: currentUser._id,
-        credentialsId,
+        id,
       });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
@@ -81,23 +80,31 @@ const Brokerage = () => {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
-    if (authCode) {
+    const id = query.get("state_id"); 
+    console.log("state_id",id);
+    if (authCode && id) {
       const uri = window.location.href;
-      generateAccessToken(uri);
+      generateAccessToken(uri, id);
     }
   }, []);
 
   return (
     <div className="p-6">
-      {brokerDetails.map((credentials) => (
-        <BrokerDetails
-          key={credentials._id}
-          credentials={credentials}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-          onConnect={handleConnect}
-        />
-      ))}
+      {brokerDetails.length === 0 ? (
+        <div className="text-center">
+          <p>No brokers connected. Connect your broker.</p>
+        </div>
+      ) : (
+        brokerDetails.map((credentials) => (
+          <BrokerDetails
+            key={credentials._id}
+            credentials={credentials}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+            onConnect={handleConnect}
+          />
+        ))
+      )}
     </div>
   );
 };

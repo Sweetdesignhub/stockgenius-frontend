@@ -229,5 +229,11 @@ box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
   box-shadow: 0px 4px 4px 0px #0000000d;
 }
 
+.theme-changer{
+  background: linear-gradient(180deg, #081938 47.79%, #1C5CD3 100%);
+  border: 0.5px solid #FFFFFF26;
+  box-shadow: 0px -2px 3px 0px #0000004A inset;
+
+}
 
 

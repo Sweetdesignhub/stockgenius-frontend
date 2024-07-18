@@ -1,7 +1,10 @@
 import React from 'react';
 import GaugeChart from 'react-gauge-chart';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const Speedometer = ({ value }) => {
+
+  const { theme } = useTheme();
   //  if value is NaN, if so, set it to zero
   if (isNaN(value)) {
     value = 0;
@@ -20,7 +23,7 @@ const Speedometer = ({ value }) => {
         cornerRadius={1}
         percent={mappedValue}
         needleColor="black"
-        // textColor="black"
+        textColor={theme === 'light' ? 'black' : 'white'}
         // hideText={true} 
         arcWidth={0.3}
       />

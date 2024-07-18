@@ -262,12 +262,13 @@
 // export default AiNewsAnalysis;
 
 import React, { useEffect, useState } from "react";
-import fetchFile from "../utils/fetchFile";
-import parseExcel from "../utils/parseExcel";
-import Loading from "../components/common/Loading";
-import ErrorComponent from "../components/common/Error";
-import Speedometer from "../components/common/Speedometer";
-import Modal from "../components/common/Modal";
+import fetchFile from "../../utils/india/fetchFile";
+import parseExcel from "../../utils/india/parseExcel";
+import Loading from "../../components/common/Loading";
+import ErrorComponent from "../../components/common/Error";
+import Speedometer from "../../components/common/Speedometer";
+import Modal from "../../components/common/Modal";
+import * as XLSX from "xlsx";
 
 function NSE100AiInsights() {
   const [loading, setLoading] = useState(true);
@@ -277,6 +278,8 @@ function NSE100AiInsights() {
   const [modalOpen, setModalOpen] = useState(false);
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  console.log(lastUpdated);
 
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
@@ -284,12 +287,25 @@ function NSE100AiInsights() {
 
   const bucketName = "automationdatabucket";
   const fileName = "Realtime_Reports/Final_Report.xlsx";
+  const timeFileName = "last_run_time.json";
 
   const fetchData = async () => {
     try {
       const fileData = await fetchFile(bucketName, fileName);
       const jsonData = parseExcel(fileData);
       setData(jsonData);
+
+      // Fetch the last updated time
+      const timeFileData = await fetchFile(bucketName, timeFileName);
+
+      // Convert the ArrayBuffer to a string
+      const decoder = new TextDecoder("utf-8");
+      const timeFileString = decoder.decode(timeFileData);
+
+      // Parse the string as JSON
+      const parsedTimeData = JSON.parse(timeFileString);
+      setLastUpdated(parsedTimeData.Time);
+
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -351,6 +367,13 @@ function NSE100AiInsights() {
     }
   };
 
+  const downloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "NSE100_AI_Insights.xlsx");
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -380,11 +403,29 @@ function NSE100AiInsights() {
       />
 
       <div className="bg-white p-4 table-main rounded-2xl">
-        <div className="p-4">
-          <h1 className="font-semibold font-[poppins] text-xl">
+        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
+          <h1 className="font-semibold text-xl mb-4 lg:mb-0 lg:mr-4">
             NSE 100 AI Insights
           </h1>
+          <div className="flex items-center">
+            <div className="mr-2 flex items-center">
+              <h1 className="text-sm font-bold">At Close : &nbsp;</h1>
+              <p className="text-xs font-semibold">{lastUpdated}</p>
+            </div>
+            <button
+              onClick={downloadExcel}
+              className="px-2 py-1 rounded-lg border border-gray-500"
+            >
+              <img
+                className="h-6 w-6"
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
+                alt="Download excel"
+              />
+            </button>
+          </div>
         </div>
+
         <div className="p-4 flex news-table h-[80vh] overflow-scroll rounded-2xl">
           {/* First Table */}
           <div className="lg:max-w-[92%] max-w-[75%]">
