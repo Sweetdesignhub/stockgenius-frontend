@@ -15,6 +15,10 @@ const categories = [
 ];
 
 const StockDetails = () => {
+  const fyersAccessToken = localStorage.getItem("fyers_access_token");
+  if (!fyersAccessToken) {
+    return <div className="text-center">Please connect your broker...</div>;
+  }
   return (
     <div className="flex h-[60vh] w-full">
       <div className="w-full">
@@ -23,7 +27,7 @@ const StockDetails = () => {
             {categories.map(({ name }) => (
               <Tab
                 key={name}
-                className="rounded-full py-1 px-3 text-sm/6 font-semibold text-white focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white"
+                className="rounded-full py-1 px-3 text-sm/6 font-semibold dark:text-white focus:outline-none data-[selected]:bg-gray-300 dark:data-[selected]:bg-white/10 data-[hover]:bg-gray-300 dark:data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-gray-300 dark:data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white"
               >
                 {name}
               </Tab>

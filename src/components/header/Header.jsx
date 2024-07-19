@@ -363,6 +363,7 @@ export default function Header() {
     try {
       await api.post("/api/v1/auth/sign-out");
       dispatch(clearRegion());
+      localStorage.removeItem("fyers_access_token")
       dispatch(signOut());
     } catch (error) {
       console.error(error);

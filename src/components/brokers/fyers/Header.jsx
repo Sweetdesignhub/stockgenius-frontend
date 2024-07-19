@@ -6,14 +6,19 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../config";
 
 function Header() {
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("Fyers");
   const [authCodeURL, setAuthCodeURL] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
+
+  // localStorage.setItem("fyers_access_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkuZnllcnMuaW4iLCJpYXQiOjE3MjE0MTYzNTMsImV4cCI6MTcyMTQzNTQzMywibmJmIjoxNzIxNDE2MzUzLCJhdWQiOlsieDowIiwieDoxIiwieDoyIiwiZDoxIiwiZDoyIl0sInN1YiI6ImFjY2Vzc190b2tlbiIsImF0X2hhc2giOiJnQUFBQUFCbW1ycWhSb29yd3poenJLWmVJblQ0d21yT0JkVXI0cEhiNm1pbU1uTGI4U2NDM3QwWEtBaUg4dHNuTVRuVWNWekIyZ0QtR19kN2h5NXk5a090T3FwWmdGOWhzcDNzMFFER0sxbzM0UUpnb29nTDJJRT0iLCJkaXNwbGF5X25hbWUiOiJBU1dJTkkgR0FKSkFMQSIsIm9tcyI6IksxIiwiaHNtX2tleSI6ImQ5NWQ0MTZmNDc2ZmFiZmUzNzVjMDFiOTA3ZTIwMjc2OTEwNTJiNzZhZmI5OTQ0ZjIwMjA1ZjJlIiwiZnlfaWQiOiJZQTE0MjIxIiwiYXBwVHlwZSI6MTAyLCJwb2FfZmxhZyI6Ik4ifQ.MrmC98yb8E_IfufIUPpNTaOQ1WdR62WTH6GQCpH-SoA");
+
+  const fyersAccessToken = localStorage.getItem("fyers_access_token");
 
   const handleFyersAuth = async () => {
     try {
@@ -33,7 +38,12 @@ function Header() {
       const { accessToken } = response.data;
       setAccessToken(accessToken);
       // console.log("Access Token:", accessToken);
-      navigate("/portfolio");
+      localStorage.setItem(
+        "fyers_access_token",
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkuZnllcnMuaW4iLCJpYXQiOjE3MjE0MTYzNTMsImV4cCI6MTcyMTQzNTQzMywibmJmIjoxNzIxNDE2MzUzLCJhdWQiOlsieDowIiwieDoxIiwieDoyIiwiZDoxIiwiZDoyIl0sInN1YiI6ImFjY2Vzc190b2tlbiIsImF0X2hhc2giOiJnQUFBQUFCbW1ycWhSb29yd3poenJLWmVJblQ0d21yT0JkVXI0cEhiNm1pbU1uTGI4U2NDM3QwWEtBaUg4dHNuTVRuVWNWekIyZ0QtR19kN2h5NXk5a090T3FwWmdGOWhzcDNzMFFER0sxbzM0UUpnb29nTDJJRT0iLCJkaXNwbGF5X25hbWUiOiJBU1dJTkkgR0FKSkFMQSIsIm9tcyI6IksxIiwiaHNtX2tleSI6ImQ5NWQ0MTZmNDc2ZmFiZmUzNzVjMDFiOTA3ZTIwMjc2OTEwNTJiNzZhZmI5OTQ0ZjIwMjA1ZjJlIiwiZnlfaWQiOiJZQTE0MjIxIiwiYXBwVHlwZSI6MTAyLCJwb2FfZmxhZyI6Ik4ifQ.MrmC98yb8E_IfufIUPpNTaOQ1WdR62WTH6GQCpH-SoA"
+      );
+      localStorage.setItem("fyers_access_token", accessToken);
+      navigate("/india/portfolio");
     } catch (error) {
       console.error("Failed to generate access token:", error);
     }
@@ -61,9 +71,6 @@ function Header() {
                 src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fb0f59404dbfe4720b7475114d61a6db6"
                 alt="Fyers"
               />
-              <button onClick={handleFyersAuth} className="auth px-4 py-1 mb-4">
-                <span className="underline">Click here</span> to Authenticate with Fyers
-              </button>
             </div>
           )}
           {selectedOption === "Zerodha" && (
@@ -85,10 +92,22 @@ function Header() {
         </div>
       </div>
       <div>
-        <Dropdown
+        {/* <Dropdown
           selectedOption={selectedOption}
           handleOptionSelect={handleOptionSelect}
-        />
+        /> */}
+
+        {fyersAccessToken ? (
+          ""
+        ) : (
+          <button
+            onClick={handleFyersAuth}
+            className="auth px-4 py-1 mb-4"
+            disabled={loading}
+          >
+            {loading ? "Connecting..." : "Connect Fyers"}
+          </button>
+        )}
       </div>
     </div>
   );

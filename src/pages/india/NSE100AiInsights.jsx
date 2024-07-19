@@ -279,7 +279,6 @@ function NSE100AiInsights() {
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [lastUpdated, setLastUpdated] = useState(null);
-  console.log(lastUpdated);
 
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value));
@@ -287,7 +286,7 @@ function NSE100AiInsights() {
 
   const bucketName = "automationdatabucket";
   const fileName = "Realtime_Reports/Final_Report.xlsx";
-  const timeFileName = "last_run_time.json";
+  const timeFileName = "Realtime_Reports/last_run_time.json";
 
   const fetchData = async () => {
     try {
@@ -412,17 +411,22 @@ function NSE100AiInsights() {
               <h1 className="text-sm font-bold">At Close : &nbsp;</h1>
               <p className="text-xs font-semibold">{lastUpdated}</p>
             </div>
-            <button
-              onClick={downloadExcel}
-              className="px-2 py-1 rounded-lg border border-gray-500"
-            >
-              <img
-                className="h-6 w-6"
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
-                alt="Download excel"
-              />
-            </button>
+            <div class="relative group">
+              <button
+                onClick={downloadExcel}
+                class="px-2 py-1 rounded-lg border border-gray-500"
+              >
+                <img
+                  class="h-6 w-6"
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
+                  alt="Download excel"
+                />
+              </button>
+              <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Download excel
+              </span>
+            </div>
           </div>
         </div>
 
