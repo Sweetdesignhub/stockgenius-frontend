@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
 import api from "../../../../config.js";
+import NotAvailable from "../../../common/NotAvailable.jsx";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -49,7 +50,8 @@ const OrdersTable = () => {
   }
 
   if (!orders || orders.length === 0) {
-    return <div className="text-center p-4">There are no orders</div>;
+    // return <div className="text-center p-4">There are no orders</div>;
+    return <NotAvailable/>
   }
 
   const excludedColumns = ["message", "pan"];

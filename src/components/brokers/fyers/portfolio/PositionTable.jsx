@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
 import api from "../../../../config.js";
+import NotAvailable from "../../../common/NotAvailable.jsx";
 
 const PositionsTable = () => {
   const [positions, setPositions] = useState([]);
@@ -49,7 +50,8 @@ const PositionsTable = () => {
   }
 
   if (!positions || positions.length === 0) {
-    return <div className="text-center p-4">There are no positions</div>;
+    // return <div className="text-center p-4">There are no positions</div>;
+    return <NotAvailable/>
   }
 
   const excludedColumns = [];

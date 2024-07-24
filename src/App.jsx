@@ -102,6 +102,7 @@ import UsaDashboard from "./pages/usa/UsaDashboard";
 import NSE100AiInsights from "./pages/india/NSE100AiInsights";
 import StockLists from "./pages/usa/StockLists";
 import UsaPortfolio from "./pages/usa/UsaPortfolio";
+import Sample from "./pages/Sample";
 
 function MainApp() {
   return (
@@ -125,6 +126,7 @@ function MainApp() {
               <Route path="/india/notifications" element={<Notifications />} />
               <Route path="/india/profile" element={<Profile />} />
               <Route path="/india/brokerage" element={<Brokerage />} />
+              <Route path="/sample" element={<Sample/>} />
 
               {/* USA routes */}
               <Route path="/usa/dashboard" element={<UsaDashboard />} />

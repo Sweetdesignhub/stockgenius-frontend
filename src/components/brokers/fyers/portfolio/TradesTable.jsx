@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
 import api from "../../../../config.js";
+import NotAvailable from "../../../common/NotAvailable.jsx";
 
 const TradesTable = () => {
   const [trades, setTrades] = useState([]);
@@ -49,7 +50,8 @@ const TradesTable = () => {
   }
 
   if (!trades || trades.length === 0) {
-    return <div className="text-center p-4">There are no trades</div>;
+    // return <div className="text-center p-4">There are no trades</div>;
+    return <NotAvailable/>
   }
 
   const columnNames = Object.keys(trades[0]);
