@@ -1,43 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AccountInfo from "../../components/brokers/fyers/AccountInfo";
 import Header from "../../components/brokers/fyers/Header";
 import StockDetails from "../../components/brokers/fyers/portfolio/StockDetails";
-import api from "../../config";
+import BrokerModal from "../../components/brokers/BrokerModal";
+import { useSelector } from "react-redux";
 
 function IndiaPortfolio() {
-  const [fyersAccessToken, setFyersAccessToken] = useState(localStorage.getItem("fyers_access_token"));
-  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const fyersAccessToken = useSelector((state) => state.fyers);
+  // console.log('porfolio access token : ', fyersAccessToken);
+  const [brokerModalOpen, setBrokerModalOpen] = useState(!fyersAccessToken);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    const authCode = query.get("auth_code");
-
-    const generateAccessToken = async (uri) => {
-      try {
-        const response = await api.post("/api/v1/fyers/generateAccessToken", {
-          uri,
-        });
-        const { accessToken } = response.data;
-        localStorage.setItem("fyers_access_token", accessToken);
-        setFyersAccessToken(accessToken);
-      } catch (error) {
-        console.error("Failed to generate access token:", error);
-      } finally {
-        setIsAuthenticating(false);
-      }
-    };
-
-    if (authCode) {
-      const uri = window.location.href;
-      generateAccessToken(uri);
-    } else {
-      setIsAuthenticating(false);
+  const handleBroker = () => {
+    if (!fyersAccessToken) {
+      setLoading(true);
+      setBrokerModalOpen(true);
+      console.log("First connect to your broker to start auto trade feature.");
+      setLoading(false); // Set to true when actual connection logic is implemented
     }
-  }, []);
+  };
 
-  if (isAuthenticating) {
-    return <div>Loading...</div>;
-  }
+  const closeBrokerModal = () => {
+    setBrokerModalOpen(false);
+  };
 
   return (
     <div className="-z-10">
@@ -64,13 +49,20 @@ function IndiaPortfolio() {
                 <StockDetails />
               </div>
             ) : (
-              <div>
-                <Header />
-                <StockDetails />
+              <div className="flex flex-col items-center justify-center">
+                <button
+                  onClick={handleBroker}
+                  className="auth px-4 py-1 mb-4"
+                  disabled={loading}
+                >
+                  {loading ? "Connecting..." : "Connect your Broker"}
+                </button>
               </div>
             )}
           </div>
         </div>
+
+        <BrokerModal isOpen={brokerModalOpen} onClose={closeBrokerModal} />
       </div>
     </div>
   );

@@ -267,6 +267,7 @@ import { clearRegion, setRegion } from "../../redux/region/regionSlice";
 import Select from "react-select";
 import Flag from "react-world-flags";
 import { setMarket } from "../../redux/region/marketSlice";
+import { clearFyersAccessToken } from "../../redux/brokers/fyersSlice";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -363,7 +364,7 @@ export default function Header() {
     try {
       await api.post("/api/v1/auth/sign-out");
       dispatch(clearRegion());
-      localStorage.removeItem("fyers_access_token")
+      dispatch(clearFyersAccessToken())
       dispatch(signOut());
     } catch (error) {
       console.error(error);

@@ -4,23 +4,29 @@ import parseExcel from "../../utils/india/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
 import Table from "../../components/dashboard/Table";
-import BrokerForm from "../../components/dashboard/BrokerForm";
 import Modal from "../../components/common/Modal";
+import BrokerModal from "../../components/brokers/BrokerModal";
+import { useSelector } from "react-redux";
+import AutoTradeModal from "../../components/brokers/AutoTradeModal";
 
-function IndiaDashboard() {
+const bucketName = "automationdatabucket";
+const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
+const loserFile = "Realtime_Reports/top_losers.xlsx";
+
+const IndiaDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [gainersData, setGainersData] = useState([]);
   const [losersData, setLosersData] = useState([]);
-  const bucketName = "automationdatabucket";
-  const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
-  const loserFile = "Realtime_Reports/top_losers.xlsx";
+  const fyersAccessToken = useSelector((state) => state.fyers);
+  // console.log('india access token : ', fyersAccessToken);
 
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [brokerModalOpen, setBrokerModalOpen] = useState(false);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -32,33 +38,21 @@ function IndiaDashboard() {
       const losersJsonData = parseExcel(losersFileData);
       setGainersData(gainersJsonData);
       setLosersData(losersJsonData);
-      setLoading(false);
-      // console.log("Data fetched and updated");
     } catch (error) {
       setError(error.message);
+    } finally {
       setLoading(false);
-      console.error("Error fetching and parsing file:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
-
-    // interval to fetch data every 10 minutes
-    const intervalId = setInterval(fetchData, 600000); // 600000 milliseconds = 10 minutes
-    // console.log("Interval set to fetch data every 10 minutes");
-
-    // Clean up the interval when the component unmounts
+    const intervalId = setInterval(fetchData, 600000); // 10 minutes
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleOptionSelect = (option) => {
-    setSelectedOption(option);
-  };
-
   const handleBuy = (row) => {
     setSelectedRow(row);
-    // console.log('buy', row);
     setActionType("buy");
     setQuantity(1); // Reset quantity
     setModalOpen(true);
@@ -66,7 +60,6 @@ function IndiaDashboard() {
 
   const handleSell = (row) => {
     setSelectedRow(row);
-    // console.log('sell',row);
     setActionType("sell");
     setQuantity(1); // Reset quantity
     setModalOpen(true);
@@ -78,8 +71,16 @@ function IndiaDashboard() {
     setActionType(null);
   };
 
+  const closeBrokerModal = () => {
+    setBrokerModalOpen(false);
+  };
+
+  const closeAutoTradeModal = () => {
+    setAutoTradeModalOpen(false);
+  };
+
   const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value));
+    setQuantity(parseInt(event.target.value, 10));
   };
 
   const handleInputChange = (event) => {
@@ -98,6 +99,19 @@ function IndiaDashboard() {
       quantity
     );
     setModalOpen(false);
+  };
+
+  const confirmAutoTrade = () => {
+    if (!fyersAccessToken) {
+      setBrokerModalOpen(true);
+      console.log("First connect to your broker to start auto trade feature.");
+    }
+
+    if (fyersAccessToken) {
+      console.log(fyersAccessToken);
+      console.log("successfully conected to broker");
+      setAutoTradeModalOpen(true);
+    }
   };
 
   if (loading) {
@@ -147,14 +161,16 @@ function IndiaDashboard() {
               roiColor="text-[#CB2C2C]"
               buttonAction={handleSell}
               buttonColor="text-[#FF0000]"
-              actionButtonColor=" border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
+              actionButtonColor="border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
             />
           </div>
-          <div className="flex flex-col h-3/10 news-table rounded-lg p-4 mt-6">
-            <BrokerForm
-              selectedOption={selectedOption}
-              handleOptionSelect={handleOptionSelect}
-            />
+          <div className="flex items-center justify-center p-4 mt-3">
+            <button
+              onClick={confirmAutoTrade}
+              className="bg-[#3A6FF8] text-white px-4 py-2 rounded-xl"
+            >
+              Activate Auto-Trades
+            </button>
           </div>
         </div>
       </div>
@@ -168,8 +184,13 @@ function IndiaDashboard() {
         handleConfirm={handleConfirm}
         handleInputChange={handleInputChange}
       />
+      <BrokerModal isOpen={brokerModalOpen} onClose={closeBrokerModal} />
+      <AutoTradeModal
+        isOpen={autoTradeModalOpen}
+        onClose={closeAutoTradeModal}
+      />
     </div>
   );
-}
+};
 
 export default IndiaDashboard;

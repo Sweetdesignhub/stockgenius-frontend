@@ -21,7 +21,8 @@ function Table({
 
   let maxHeight;
   if (region === 'india' && stateRegion === 'india') {
-    maxHeight = "calc(70vh - 8rem)";
+    // maxHeight = "calc(70vh - 8rem)";
+    maxHeight = "62vh";
   } else if (region === 'usa' && stateRegion === 'usa') {
     maxHeight = "80vh";
   } else {

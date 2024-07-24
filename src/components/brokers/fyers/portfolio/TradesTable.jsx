@@ -7,36 +7,41 @@ const TradesTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getTradesData = async () => {
-      try {
-        const fyersAccessToken = localStorage.getItem("fyers_access_token");
-        if (!fyersAccessToken) {
-          setError("No authorization token found. Please authenticate and try again.");
-          setLoading(false);
-          return;
-        }
-
-        const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-        const response = await api.get("/api/v1/fyers/fetchTrades", { headers });
-        if (response.data.s === "ok") {
-          setTrades(response.data.tradeBook);
-        } else {
-          setError(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching trades:", error);
-        setError("Failed to fetch trades. Please authenticate and try again.");
-      } finally {
-        setLoading(false);
+  const getTradesData = async () => {
+    try {
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      if (!fyersAccessToken) {
+        throw new Error("No authorization token found. Please authenticate and try again.");
       }
-    };
 
+      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+      const response = await api.get("/api/v1/fyers/fetchTrades", { headers });
+
+      if (response.data.s === "ok") {
+        setTrades(response.data.tradeBook);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching trades:", error);
+      setError(error.message || "Failed to fetch trades. Please authenticate and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     getTradesData();
+    const interval = setInterval(getTradesData, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
-    return <div className="flex h-40 items-center justify-center p-4"><Loading/></div>
+    return (
+      <div className="flex h-40 items-center justify-center p-4">
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {

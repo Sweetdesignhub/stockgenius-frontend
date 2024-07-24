@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Dropdown from "../../common/Dropdown";
-import api from "../../../config";
+import { useDispatch, useSelector } from "react-redux";
+import Dropdown from "../common/Dropdown";
+import api from "../../config";
+import { setFyersAccessToken } from "../../redux/brokers/fyersSlice";
+import { useNavigate } from "react-router-dom";
 
 const BrokerModal = ({ isOpen, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");
-  const [accessToken, setAccessToken] = useState("");
+  const fyersAccessToken = useSelector((state) => state.fyers);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -20,12 +25,16 @@ const BrokerModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const generateFyersAccessToken = async (uri) => {
+  const generateAccessToken = async (uri) => {
     try {
-      const response = await axios.post("/generateAccessToken", { uri });
+      const response = await api.post("/api/v1/fyers/generateAccessToken", {
+        uri,
+      });
       const { accessToken } = response.data;
-      setAccessToken(accessToken);
-      // console.log("Access Token:", accessToken);
+      // console.log("setting access");
+      dispatch(setFyersAccessToken(accessToken));
+      // console.log('set sucess');
+      navigate("/india/dashboard");
     } catch (error) {
       console.error("Failed to generate access token:", error);
     }
@@ -36,7 +45,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
     const authCode = query.get("auth_code");
     if (authCode) {
       const uri = window.location.href;
-      generateFyersAccessToken(uri);
+      generateAccessToken(uri);
     }
   }, []);
 

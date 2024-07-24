@@ -3,12 +3,14 @@ import userReducer from "./user/userSlice.js";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import regionReducer from "./region/regionSlice.js";
-import marketSlice from "./region/marketSlice.js";
+import marketReducer from "./region/marketSlice.js";
+import fyersReducer from './brokers/fyersSlice.js'
 
 const rootReducer = combineReducers({
   user: userReducer,
   region: regionReducer,
-  market: marketSlice,
+  market: marketReducer,
+  fyers:fyersReducer
 });
 
 const persistConfig = {

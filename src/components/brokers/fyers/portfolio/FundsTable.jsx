@@ -7,36 +7,41 @@ const FundsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getFundsData = async () => {
-      try {
-        const fyersAccessToken = localStorage.getItem("fyers_access_token");
-        if (!fyersAccessToken) {
-          setError("No authorization token found. Please authenticate and try again.");
-          setLoading(false);
-          return;
-        }
-
-        const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-        const response = await api.get("/api/v1/fyers/fetchFunds", { headers });
-        if (response.data.s === "ok") {
-          setFunds(response.data.fund_limit);
-        } else {
-          setError(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching funds:", error);
-        setError("Failed to fetch funds. Please authenticate and try again....");
-      } finally {
-        setLoading(false);
+  const getFundsData = async () => {
+    try {
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      if (!fyersAccessToken) {
+        throw new Error("No authorization token found. Please authenticate and try again.");
       }
-    };
 
+      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+      const response = await api.get("/api/v1/fyers/fetchFunds", { headers });
+      
+      if (response.data.s === "ok") {
+        setFunds(response.data.fund_limit);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching funds:", error);
+      setError(error.message || "Failed to fetch funds. Please authenticate and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     getFundsData();
+    const interval = setInterval(getFundsData, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
-    return <div className="flex h-40 items-center justify-center p-4"><Loading/></div>;
+    return (
+      <div className="flex h-40 items-center justify-center p-4">
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {
@@ -48,7 +53,6 @@ const FundsTable = () => {
   }
 
   const excludedColumns = [];
-
   let columnNames = Object.keys(funds[0]).filter(
     (columnName) => !excludedColumns.includes(columnName)
   );

@@ -7,38 +7,41 @@ const HoldingsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getHoldingsData = async () => {
-      console.log('entered holdings');
-      try {
-        const fyersAccessToken = localStorage.getItem("fyers_access_token");
-        if (!fyersAccessToken) {
-          setError("No authorization token found. Please authenticate and try again.");
-          setLoading(false);
-          return;
-        }
-
-        const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-        const response = await api.get("/api/v1/fyers/fetchHoldings", { headers });
-        console.log('response : ',response);
-        if (response.data.s === "ok") {
-          setHoldings(response.data.holdings);
-        } else {
-          setError(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching holdings:", error);
-        setError("Failed to fetch holdings. Please authenticate and try again.");
-      } finally {
-        setLoading(false);
+  const getHoldingsData = async () => {
+    try {
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      if (!fyersAccessToken) {
+        throw new Error("No authorization token found. Please authenticate and try again.");
       }
-    };
 
+      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+      const response = await api.get("/api/v1/fyers/fetchHoldings", { headers });
+
+      if (response.data.s === "ok") {
+        setHoldings(response.data.holdings);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching holdings:", error);
+      setError(error.message || "Failed to fetch holdings. Please authenticate and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     getHoldingsData();
+    const interval = setInterval(getHoldingsData, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
-    return <div className="flex h-40 items-center justify-center p-4"><Loading/></div>
+    return (
+      <div className="flex h-40 items-center justify-center p-4">
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {
