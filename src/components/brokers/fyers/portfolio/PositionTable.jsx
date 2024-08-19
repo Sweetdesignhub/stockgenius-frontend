@@ -2,30 +2,40 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
 import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
+import { useSelector } from "react-redux";
+
 
 const PositionsTable = () => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const getPositionsData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
       if (!fyersAccessToken) {
-        throw new Error("No authorization token found. Please authenticate and try again.");
+        throw new Error(
+          "No authorization token found. Please authenticate and try again."
+        );
       }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get("/api/v1/fyers/fetchPositions", { headers });
-      
-      if (response.data.s === "ok") {
+      const response = await api.get(`/api/v1/fyers/positionsByUserId/${currentUser._id}`, {
+        headers,
+      });
+
+      if (response.statusText === "OK") {
         setPositions(response.data.netPositions);
       } else {
         throw new Error(response.data.message);
       }
     } catch (error) {
       console.error("Error fetching positions:", error);
-      setError(error.message || "Failed to fetch positions. Please authenticate and try again.");
+      setError(
+        error.message ||
+          "Failed to fetch positions. Please authenticate and try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -33,7 +43,7 @@ const PositionsTable = () => {
 
   useEffect(() => {
     getPositionsData();
-    const interval = setInterval(getPositionsData, 1000);
+    const interval = setInterval(getPositionsData, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -51,7 +61,9 @@ const PositionsTable = () => {
 
   if (!positions || positions.length === 0) {
     // return <div className="text-center p-4">There are no positions</div>;
-    return <NotAvailable/>
+    return (
+      <NotAvailable dynamicText={"Start by taking your <strong>first position!</strong>"} />
+    );
   }
 
   const excludedColumns = [];

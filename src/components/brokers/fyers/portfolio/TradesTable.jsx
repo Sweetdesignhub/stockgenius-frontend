@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
 import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
+import { useSelector } from "react-redux";
 
 const TradesTable = () => {
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
 
   const getTradesData = async () => {
     try {
@@ -16,9 +18,9 @@ const TradesTable = () => {
       }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get("/api/v1/fyers/fetchTrades", { headers });
+      const response = await api.get(`/api/v1/fyers/tradesByUserId/${currentUser._id}`, { headers });
 
-      if (response.data.s === "ok") {
+      if (response.statusText === "OK") {
         setTrades(response.data.tradeBook);
       } else {
         throw new Error(response.data.message);
@@ -32,10 +34,11 @@ const TradesTable = () => {
   };
 
   useEffect(() => {
-    getTradesData();
-    const interval = setInterval(getTradesData, 1000);
-    return () => clearInterval(interval);
+    getTradesData(); // Initial call when component mounts
+    const interval = setInterval(getTradesData, 5000); 
+    return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
+  
 
   if (loading) {
     return (
@@ -51,7 +54,7 @@ const TradesTable = () => {
 
   if (!trades || trades.length === 0) {
     // return <div className="text-center p-4">There are no trades</div>;
-    return <NotAvailable/>
+    return <NotAvailable dynamicText={"The <strong>best</strong> time to start is now!"} />
   }
 
   const columnNames = Object.keys(trades[0]);

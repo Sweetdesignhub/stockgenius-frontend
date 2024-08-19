@@ -7,7 +7,10 @@ import { useNavigate } from "react-router-dom";
 
 const BrokerModal = ({ isOpen, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const fyersAccessToken = useSelector((state) => state.fyers);
+  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -16,28 +19,84 @@ const BrokerModal = ({ isOpen, onClose }) => {
   };
 
   const handleFyersAuth = async () => {
+    setLoading(true);
     try {
-      const response = await api.get("/api/v1/fyers/generateAuthCodeUrl");
+      const response = await api.get(
+        `/api/v1/fyers/generateAuthCodeUrl/${currentUser._id}`
+      );
       const { authCodeURL } = response.data;
       window.location.href = authCodeURL;
     } catch (error) {
       console.error("Failed to retrieve Fyers auth URL:", error);
+      setError("Failed to retrieve Fyers auth URL");
+      setLoading(false);
     }
   };
 
   const generateAccessToken = async (uri) => {
+    setLoading(true);
     try {
-      const response = await api.post("/api/v1/fyers/generateAccessToken", {
-        uri,
-      });
+      const response = await api.post(
+        `/api/v1/fyers/generateAccessToken/${currentUser._id}`,
+        {
+          uri,
+        }
+      );
       const { accessToken } = response.data;
-      // console.log("setting access");
       dispatch(setFyersAccessToken(accessToken));
-      // console.log('set sucess');
+
+      startFetchingData(accessToken);
       navigate("/india/dashboard");
     } catch (error) {
       console.error("Failed to generate access token:", error);
+      setError("Failed to generate access token");
+      setLoading(false);
     }
+  };
+
+  const startFetchingData = () => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('fyers_access_token');
+
+        if (!token) {
+          console.warn("Access token is missing, stopping data fetching.");
+          clearInterval(fetchInterval); // Stop fetching if token is missing
+          return; // Exit if token is not available
+        }
+
+        await api.post(`/api/v1/fyers/fetchProfileAndSave/${currentUser._id}`, {
+          accessToken: token,
+        });
+        await api.post(`/api/v1/fyers/fetchFundsAndSave/${currentUser._id}`, {
+          accessToken: token,
+        });
+        await api.post(`/api/v1/fyers/fetchOrdersAndSave/${currentUser._id}`, {
+          accessToken: token,
+        });
+        await api.post(
+          `/api/v1/fyers/fetchHoldingsAndSave/${currentUser._id}`,
+          { accessToken: token }
+        );
+        await api.post(
+          `/api/v1/fyers/fetchPositionsAndSave/${currentUser._id}`,
+          { accessToken: token }
+        );
+        await api.post(`/api/v1/fyers/fetchTradesAndSave/${currentUser._id}`, {
+          accessToken: token,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Error fetching data from Fyers");
+      }
+    };
+
+    // Start fetching data immediately and set interval
+    fetchData();
+    const fetchInterval = setInterval(fetchData, 3000);
+
+    // Cleanup function to clear interval on unmount
+    return () => clearInterval(fetchInterval);
   };
 
   useEffect(() => {
@@ -52,6 +111,8 @@ const BrokerModal = ({ isOpen, onClose }) => {
   const handleAuthenticate = () => {
     if (selectedOption === "Fyers") {
       handleFyersAuth();
+    } else {
+      setError("Please select a valid broker");
     }
   };
 
@@ -76,7 +137,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
             handleOptionSelect={handleOptionSelect}
           />
 
-          <div className=" flex justify-center items-center">
+          <div className="flex justify-center items-center">
             {selectedOption === "Fyers" && (
               <div className="mr-3">
                 <img
@@ -108,9 +169,13 @@ const BrokerModal = ({ isOpen, onClose }) => {
           <button
             onClick={handleAuthenticate}
             className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            disabled={loading}
           >
-            Authenticate
+            {loading ? "Authenticating..." : "Authenticate"}
           </button>
+          {error && (
+            <p className="text-red-500 text-center mt-2">{error}</p>
+          )}
         </div>
       </div>
     </div>

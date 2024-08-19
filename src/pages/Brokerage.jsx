@@ -89,7 +89,7 @@ const Brokerage = () => {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6" >
       {brokerDetails.length === 0 ? (
         <div className="text-center">
           <p>No brokers connected. Connect your broker.</p>

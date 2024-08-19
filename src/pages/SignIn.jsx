@@ -168,6 +168,7 @@ function SignIn() {
       dispatch(signInStart());
       // console.log("Form Data:", formData);
       const response = await api.post(`/api/v1/auth/sign-in`, formData);
+      // console.log(response);
       const data = await response.data;
       // console.log("Sign-in Response:", data);
 

@@ -14,7 +14,6 @@ function BrokerForm() {
   console.log('access token : ',accessToken);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
-  console.log(currentUser);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
