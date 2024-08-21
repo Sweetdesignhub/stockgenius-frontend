@@ -24,18 +24,22 @@ const SignUp = () => {
         return (
           <VerificationForm
             onValidSubmit={handleValidSubmit}
-            userData={userData}
             step={currentStep}
+            userData={userData}
+            setUserData={setUserData}
             label="Enter Email Verification Code"
+            verificationType="email"
           />
         );
       case 3:
         return (
           <VerificationForm
             onValidSubmit={handleValidSubmit}
-            userData={userData}
             step={currentStep}
+            userData={userData}
+            setUserData={setUserData}
             label="Enter Phone Verification Code"
+            verificationType="phone"
           />
         );
       default:

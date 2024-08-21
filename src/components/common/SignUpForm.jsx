@@ -7,6 +7,7 @@ import { Country, State } from "country-state-city";
 import PhoneInput from "react-phone-number-input";
 import InputField from "./InputField";
 import "react-phone-number-input/style.css";
+import api from "../../config";
 
 const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
   const [countries, setCountries] = useState([]);
@@ -43,7 +44,7 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Confirm password is required"),
-    phone: Yup.string().required("Phone number is required"),
+    phoneNumber: Yup.string().required("Phone number is required"),
     country: Yup.string().required("Country is required"),
     state: Yup.string().required("State is required"),
   });
@@ -59,15 +60,23 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
     defaultValues: userData,
   });
   const handlePhoneChange = (value) => {
-    setValue("phone", value, { shouldValidate: true });
+    setValue("phoneNumber", value, { shouldValidate: true });
   };
 
   const onSubmit = (data) => {
     setUserData(data);
-    onValidSubmit(2);
+    api
+      .post("/api/v1/auth/signup", data)
+      .then((response) => {
+        console.log("Signup Successful:", response.data);
+        onValidSubmit(2);
+      })
+      .catch((error) => {
+        console.error("Signup Error:", error);
+      });
   };
 
-  watch("country"); // Reacting to changes in the selected country
+  watch("country");
 
   return (
     <div>
@@ -112,7 +121,7 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
         <PhoneInput
           international
           defaultCountry="IN"
-          value={watch("phone")}
+          value={watch("phoneNumber")}
           onChange={handlePhoneChange}
           className="bg-slate-100 text-black p-3 rounded-md w-full"
         />

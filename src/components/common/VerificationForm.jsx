@@ -1,12 +1,59 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import api from "../../config";
 
-const VerificationForm = ({ onValidSubmit, step, label }) => {
-  const { register, handleSubmit } = useForm();
+const VerificationForm = ({
+  onValidSubmit,
+  step,
+  label,
+  verificationType,
+  userData,
+  setUserData,
+}) => {
+  const { register, handleSubmit, watch } = useForm();
 
   const onSubmit = (data) => {
-    console.log("Verification Data:", data);
-    onValidSubmit(step + 1); 
+    // Extract and combine digits into a single verification code
+    const otp =
+      watch("digit1") +
+      watch("digit2") +
+      watch("digit3") +
+      watch("digit4") +
+      watch("digit5") +
+      watch("digit6");
+
+    console.log("Complete Verification Code:", otp);
+
+    // Determine the endpoint based on the verification type
+    const endpoint =
+      verificationType === "email"
+        ? "/api/v1/auth/verify-email"
+        : "/api/v1/auth/verify-phone";
+
+    // Prepare data to be sent to the server, only include relevant user data
+    const postData = {
+      otp,
+    };
+
+    if (verificationType === "email") {
+      postData.email = userData.email; // Include email only if verification type is email
+    } else {
+      postData.phoneNumber = userData.phoneNumber; // Include phoneNumber only if verification type is phone
+    }
+
+    // Post request to the server
+    api
+      .post(endpoint, postData)
+      .then((response) => {
+        console.log(
+          `${verificationType} Verification Successful:`,
+          response.data
+        );
+        onValidSubmit(step + 1);
+      })
+      .catch((error) => {
+        console.error(`${verificationType} Verification Error:`, error);
+      });
   };
 
   return (
@@ -16,7 +63,7 @@ const VerificationForm = ({ onValidSubmit, step, label }) => {
     >
       <p className="text-center mb-4">{label}</p>
       <div className="flex gap-3">
-        {Array.from({ length: 6 }).map((_, index) => (
+        {Array.from({ length: 6 }, (_, index) => (
           <input
             key={index}
             type="text"
@@ -35,14 +82,6 @@ const VerificationForm = ({ onValidSubmit, step, label }) => {
       </button>
     </form>
   );
-
-  function handleKeyUp(e, index) {
-    if (e.key !== "Backspace" && e.target.nextSibling) {
-      e.target.nextSibling.focus();
-    } else if (e.key === "Backspace" && e.target.previousSibling) {
-      e.target.previousSibling.focus();
-    }
-  }
 };
 
 export default VerificationForm;
