@@ -1,5 +1,5 @@
 import { FaChevronRight } from "react-icons/fa";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import Loading from "../components/common/Loading";
@@ -142,7 +142,9 @@ function LandingPage() {
           </button>
 
           <div>
-            <button style={{display:"none"}} onClick={handleFyersAuth}>Authenticate with Fyers</button>
+            <button style={{ display: "none" }} onClick={handleFyersAuth}>
+              Authenticate with Fyers
+            </button>
           </div>
         </div>
       </div>

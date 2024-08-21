@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import fetchFile from "../../utils/usa/fetchFile";
 import parseExcel from "../../utils/usa/parseExcel";
 import Loading from "../../components/common/Loading";
@@ -144,7 +144,6 @@ function StockLists() {
     return null;
   };
 
-
   const downloadExcel = () => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -193,7 +192,7 @@ function StockLists() {
         {/* <div className="p-4">{renderMarketTitle()}</div> */}
         <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
           <h1 className="font-semibold text-xl mb-4 lg:mb-0 lg:mr-4">
-          {renderMarketTitle()}
+            {renderMarketTitle()}
           </h1>
           <div className="flex items-center">
             <div className="mr-2 flex items-center">

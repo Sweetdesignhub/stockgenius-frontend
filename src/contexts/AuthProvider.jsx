@@ -1,7 +1,7 @@
-import React, { useEffect, useState, createContext, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import { useEffect, useState, createContext, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -14,31 +14,31 @@ const AuthProvider = ({ children }) => {
   const [showLogoutWarning, setShowLogoutWarning] = useState(false);
 
   useEffect(() => {
-    console.log('Available cookies:', Cookies.get());
-    
-    const token = Cookies.get('access_token');
-    console.log('Retrieved token:', token);
-  
+    console.log("Available cookies:", Cookies.get());
+
+    const token = Cookies.get("access_token");
+    console.log("Retrieved token:", token);
+
     if (token) {
       try {
         // Decode the JWT token to get expiration time
-        const parts = token.split('.');
+        const parts = token.split(".");
         if (parts.length === 3) {
           const decodedToken = JSON.parse(atob(parts[1]));
           const expirationTime = decodedToken.exp * 1000 - Date.now();
           const warningTime = expirationTime - 5000; // Show warning 5 seconds before logout
-  
+
           if (expirationTime <= 0) {
             handleLogout();
           } else {
             const timer = setTimeout(() => {
               setShowLogoutWarning(true);
             }, warningTime);
-  
+
             const logoutTimer = setTimeout(() => {
               handleLogout();
             }, expirationTime);
-  
+
             // Cleanup timers on component unmount
             return () => {
               clearTimeout(timer);
@@ -46,26 +46,27 @@ const AuthProvider = ({ children }) => {
             };
           }
         } else {
-          console.error('Invalid token format');
+          console.error("Invalid token format");
           handleLogout();
         }
       } catch (error) {
-        console.error('Token decoding error', error);
+        console.error("Token decoding error", error);
         handleLogout();
       }
     } else {
-      console.warn('No token found, user might be logged out');
+      console.warn("No token found, user might be logged out");
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    axios.post('/api/v1/auth/sign-out')
+    axios
+      .post("/api/v1/auth/sign-out")
       .then(() => {
-        Cookies.remove('access_token');
-        navigate('/sign-in');
+        Cookies.remove("access_token");
+        navigate("/sign-in");
       })
-      .catch(err => {
-        console.error('Logout error', err);
+      .catch((err) => {
+        console.error("Logout error", err);
       });
   };
 

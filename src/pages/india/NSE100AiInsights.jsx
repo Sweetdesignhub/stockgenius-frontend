@@ -1,4 +1,4 @@
-// import React, { useEffect, useState } from "react";
+// import  { useEffect, useState } from "react";
 // import fetchFile from "../utils/fetchFile";
 // import parseExcel from "../utils/parseExcel";
 // import Loading from "../components/common/Loading";
@@ -261,7 +261,7 @@
 
 // export default AiNewsAnalysis;
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import fetchFile from "../../utils/india/fetchFile";
 import parseExcel from "../../utils/india/parseExcel";
 import Loading from "../../components/common/Loading";

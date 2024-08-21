@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -15,23 +15,14 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
   const [selectedCountry, setSelectedCountry] = useState(
     userData.country || ""
   );
+
   useEffect(() => {
-    setCountries(
-      Country.getAllCountries().map(({ isoCode, name }) => ({
-        value: isoCode,
-        label: name,
-      }))
-    );
+    setCountries(Country.getAllCountries());
   }, []);
 
   useEffect(() => {
     if (selectedCountry) {
-      setStates(
-        State.getStatesOfCountry(selectedCountry).map(({ isoCode, name }) => ({
-          value: isoCode,
-          label: name,
-        }))
-      );
+      setStates(State.getStatesOfCountry(selectedCountry.isoCode));
     }
   }, [selectedCountry]);
 
@@ -59,12 +50,15 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
     resolver: yupResolver(validationSchema),
     defaultValues: userData,
   });
+
   const handlePhoneChange = (value) => {
     setValue("phoneNumber", value, { shouldValidate: true });
   };
 
   const onSubmit = (data) => {
     setUserData(data);
+    console.log(data);
+
     api
       .post("/api/v1/auth/signup", data)
       .then((response) => {
@@ -86,7 +80,7 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
         <div className="flex items-center justify-center">
           <div className="flex-grow border-t border-[#FFFFFF66]"></div>
           <p className="text-[#FFFFFF] text-center mx-3">Or</p>
-          <div className="flex-grow border-t border-[#FFFFFF66]"></div>{" "}
+          <div className="flex-grow border-t border-[#FFFFFF66]"></div>
         </div>
         <InputField
           label="Email address"
@@ -125,8 +119,8 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
           onChange={handlePhoneChange}
           className="bg-slate-100 text-black p-3 rounded-md w-full"
         />
-        {errors.phone && (
-          <div className="text-red-500">{errors.phone.message}</div>
+        {errors.phoneNumber && (
+          <div className="text-red-500">{errors.phoneNumber.message}</div>
         )}
         <div className="flex gap-4">
           <InputField
@@ -134,17 +128,23 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
             name="country"
             register={() =>
               register("country", {
-                onChange: (e) => setSelectedCountry(e.target.value),
+                onChange: (e) =>
+                  setSelectedCountry(
+                    countries.find((c) => c.name === e.target.value)
+                  ),
               })
             }
-            options={countries}
+            options={countries.map(({ name }) => ({
+              value: name,
+              label: name,
+            }))}
             error={errors.country?.message}
           />
           <InputField
             label="Select State"
             name="state"
             register={register}
-            options={states}
+            options={states.map(({ name }) => ({ value: name, label: name }))}
             error={errors.state?.message}
           />
         </div>

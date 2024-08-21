@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AccountInfo from "../../components/brokers/fyers/AccountInfo";
 import Header from "../../components/brokers/fyers/Header";
 import StockDetails from "../../components/brokers/fyers/portfolio/StockDetails";

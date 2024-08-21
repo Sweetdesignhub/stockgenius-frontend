@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import api from "../config";
 import BrokerDetails from "../components/brokers/BrokerDetails";
@@ -18,7 +18,9 @@ const Brokerage = () => {
 
   const loadBrokerDetails = async (userId) => {
     try {
-      const response = await api.get(`/api/v1/fyers/getBrokerDetails/${userId}`);
+      const response = await api.get(
+        `/api/v1/fyers/getBrokerDetails/${userId}`
+      );
       setBrokerDetails(response.data);
     } catch (error) {
       console.error("Error fetching broker details:", error);
@@ -47,9 +49,12 @@ const Brokerage = () => {
 
   const handleConnect = async (id) => {
     try {
-      const response = await api.post(`/api/v1/fyers/generateAuthCodeUrl/${id}`, {
-        userId: currentUser._id,
-      });
+      const response = await api.post(
+        `/api/v1/fyers/generateAuthCodeUrl/${id}`,
+        {
+          userId: currentUser._id,
+        }
+      );
       const { authCodeURL } = response.data;
       window.location.href = `${authCodeURL}&state_id=${id}`;
     } catch (error) {
@@ -80,8 +85,8 @@ const Brokerage = () => {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
-    const id = query.get("state_id"); 
-    console.log("state_id",id);
+    const id = query.get("state_id");
+    console.log("state_id", id);
     if (authCode && id) {
       const uri = window.location.href;
       generateAccessToken(uri, id);
@@ -89,7 +94,7 @@ const Brokerage = () => {
   }, []);
 
   return (
-    <div className="p-6" >
+    <div className="p-6">
       {brokerDetails.length === 0 ? (
         <div className="text-center">
           <p>No brokers connected. Connect your broker.</p>

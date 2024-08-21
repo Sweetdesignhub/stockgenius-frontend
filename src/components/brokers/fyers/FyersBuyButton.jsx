@@ -1,4 +1,4 @@
-// import React, { useEffect, useState } from "react";
+// import  { useEffect, useState } from "react";
 // import { AiOutlineLoading } from "react-icons/ai";
 
 // const FyersBuyButton = ({
@@ -50,8 +50,7 @@
 
 // export default FyersBuyButton;
 
-
-// import React, { useEffect, useState } from "react";
+// import  { useEffect, useState } from "react";
 // import { AiOutlineLoading } from "react-icons/ai";
 
 // const FyersBuyButton = ({
@@ -108,9 +107,7 @@
 
 // export default FyersBuyButton;
 
-
-
-// import React, { useEffect, useState } from "react";
+// import  { useEffect, useState } from "react";
 // import { AiOutlineLoading } from "react-icons/ai";
 // import "../lib/fyers.js";
 
@@ -122,16 +119,14 @@
 //   price,
 //   orderType,
 //   transactionType,
-//   ticker, 
+//   ticker,
 // }) => {
 //   const [loading, setLoading] = useState(true);
-
 
 //   const handleBuy = () => {
 //     console.log("Buy button clicked for row:", ticker);
 //     console.log(quantity);
 //   };
-
 
 //   useEffect(() => {
 //     // Simulating loading state
@@ -143,7 +138,7 @@
 //     if (!loading) {
 //       const fyers = new Fyers(apiKey);
 //       fyers.add({
-            
+
 //         "symbol": "NSE:RELIANCE-EQ",
 //         "quantity": 4,
 //         "order_type": "LIMIT",
@@ -151,7 +146,7 @@
 //         "product":"INTRADAY",
 //         "disclosed_quantity":0,
 //         "price":200
-        
+
 //     });
 //       fyers.link("#buy-button");
 //     }
@@ -170,7 +165,7 @@
 
 // export default FyersBuyButton;
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import "../../../lib/fyers.js";
 import Loading from "../../common/Loading.jsx";
@@ -185,7 +180,9 @@ const FyersButton = ({
   transactionType,
 }) => {
   const [loading, setLoading] = useState(true);
-  const [buttonId] = useState(`custom-button-${symbol.replace(/:/g, '-')}-${transactionType}`);
+  const [buttonId] = useState(
+    `custom-button-${symbol.replace(/:/g, "-")}-${transactionType}`
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -218,7 +215,17 @@ const FyersButton = ({
         document.body.removeChild(script);
       };
     }
-  }, [loading, apiKey, symbol, product, quantity, price, orderType, transactionType, buttonId]);
+  }, [
+    loading,
+    apiKey,
+    symbol,
+    product,
+    quantity,
+    price,
+    orderType,
+    transactionType,
+    buttonId,
+  ]);
 
   console.log("Received props:", {
     apiKey,
@@ -230,14 +237,17 @@ const FyersButton = ({
     transactionType,
   });
 
-  const buttonStyle = transactionType === "BUY" ? "bg-green-500 hover:bg-green-400" : "bg-red-500 hover:bg-red-400";
+  const buttonStyle =
+    transactionType === "BUY"
+      ? "bg-green-500 hover:bg-green-400"
+      : "bg-red-500 hover:bg-red-400";
 
   return (
     <>
       {loading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           {/* <AiOutlineLoading className="animate-spin text-white text-6xl" /> */}
-          <Loading/>
+          <Loading />
         </div>
       )}
       {!loading && (
@@ -253,4 +263,3 @@ const FyersButton = ({
 };
 
 export default FyersButton;
-

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import fetchFile from "../../utils/usa/fetchFile";
 import parseExcel from "../../utils/usa/parseExcel";
 import Loading from "../../components/common/Loading";

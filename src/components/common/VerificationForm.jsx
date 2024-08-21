@@ -1,7 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import api from "../../config";
-
+import { signInSuccess } from "../../redux/user/userSlice";
 const VerificationForm = ({
   onValidSubmit,
   step,
@@ -11,9 +13,10 @@ const VerificationForm = ({
   setUserData,
 }) => {
   const { register, handleSubmit, watch } = useForm();
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const selectedRegion = useSelector((state) => state.region);
   const onSubmit = (data) => {
-    // Extract and combine digits into a single verification code
     const otp =
       watch("digit1") +
       watch("digit2") +
@@ -21,24 +24,19 @@ const VerificationForm = ({
       watch("digit4") +
       watch("digit5") +
       watch("digit6");
-
     console.log("Complete Verification Code:", otp);
-
-    // Determine the endpoint based on the verification type
     const endpoint =
       verificationType === "email"
         ? "/api/v1/auth/verify-email"
         : "/api/v1/auth/verify-phone";
-
-    // Prepare data to be sent to the server, only include relevant user data
     const postData = {
       otp,
     };
 
     if (verificationType === "email") {
-      postData.email = userData.email; // Include email only if verification type is email
+      postData.email = userData?.email; // Include email only if verification type is email
     } else {
-      postData.phoneNumber = userData.phoneNumber; // Include phoneNumber only if verification type is phone
+      postData.phoneNumber = userData?.phoneNumber; // Include phoneNumber only if verification type is phone
     }
 
     // Post request to the server
@@ -49,11 +47,31 @@ const VerificationForm = ({
           `${verificationType} Verification Successful:`,
           response.data
         );
-        onValidSubmit(step + 1);
+        if (step < 3) {
+          onValidSubmit(step + 1);
+        }
+        if (step == 3) {
+          dispatch(signInSuccess(userData));
+          navigate(`/${selectedRegion}/dashboard`);
+        }
       })
       .catch((error) => {
         console.error(`${verificationType} Verification Error:`, error);
       });
+  };
+
+  const handleKeyUp = (event, index) => {
+    if (event.key === "Backspace" && event.target.value === "") {
+      const prevInput = document.querySelector(`input[name=digit${index}]`);
+      if (prevInput) {
+        prevInput.focus();
+      }
+    } else {
+      const nextInput = document.querySelector(`input[name=digit${index + 2}]`);
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
   };
 
   return (

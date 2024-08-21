@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+// import  { useState } from "react";
 // import { useTheme } from "../../contexts/ThemeContext";
 
 // function ToggleButton() {
@@ -51,35 +51,38 @@
 
 // export default ToggleButton;
 
-import { Switch } from '@headlessui/react';
-import { useEffect, useState } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
+import { Switch } from "@headlessui/react";
+import { useEffect, useState } from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function ToggleButton() {
   const { theme, updateTheme } = useTheme(); // Access theme state and setter using useTheme hook
-  const [enabled, setEnabled] = useState(theme === 'dark');
+  const [enabled, setEnabled] = useState(theme === "dark");
 
   useEffect(() => {
-    setEnabled(theme === 'dark');
+    setEnabled(theme === "dark");
   }, [theme]);
 
   const handleToggle = () => {
-    const newTheme = enabled ? 'light' : 'dark';
+    const newTheme = enabled ? "light" : "dark";
     setEnabled(!enabled);
-    updateTheme(newTheme); 
+    updateTheme(newTheme);
   };
 
   return (
     <Switch
       checked={enabled}
       onChange={handleToggle}
-      className={`group relative flex flex-col h-11 w-6 cursor-pointer rounded-full theme-changer p-1 transition-colors duration-200 ease-in-out focus:outline-none ${enabled ? 'bg-white' : ''}`}
+      className={`group relative flex flex-col h-11 w-6 cursor-pointer rounded-full theme-changer p-1 transition-colors duration-200 ease-in-out focus:outline-none ${
+        enabled ? "bg-white" : ""
+      }`}
     >
       <span
         aria-hidden="true"
-        className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-lg transform transition-transform ease-in-out ${enabled ? 'rotate-90 translate-y-5' : 'rotate-90 translate-y-0'}`}
+        className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-lg transform transition-transform ease-in-out ${
+          enabled ? "rotate-90 translate-y-5" : "rotate-90 translate-y-0"
+        }`}
       />
     </Switch>
   );
 }
-

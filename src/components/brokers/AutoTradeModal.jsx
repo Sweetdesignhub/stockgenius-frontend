@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import ConfirmationModal from "../common/ConfirmationModal";
 import api from "../../config";
 
 const AutoTradeModal = ({ isOpen, onClose }) => {
-  const [marginProfitPercentage, setMarginProfitPercentage] = useState('');
-  const [marginLossPercentage, setMarginLossPercentage] = useState('');
-  const [botAccess, setBotAccess] = useState('Yes');
-  const [profitError, setProfitError] = useState('');
-  const [lossError, setLossError] = useState('');
+  const [marginProfitPercentage, setMarginProfitPercentage] = useState("");
+  const [marginLossPercentage, setMarginLossPercentage] = useState("");
+  const [botAccess, setBotAccess] = useState("Yes");
+  const [profitError, setProfitError] = useState("");
+  const [lossError, setLossError] = useState("");
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [confirmationMessage, setConfirmationMessage] = useState("");
 
   const { currentUser } = useSelector((state) => state.user);
   const fyersAccessToken = useSelector((state) => state.fyers);
@@ -19,17 +19,20 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
 
   const activateAutoTradeBot = async () => {
     try {
-      const response = await api.post(`/api/v1/users/auto-trade-bot/activate/${currentUser._id}`, {
-        marginProfitPercentage,
-        marginLossPercentage,
-      });
+      const response = await api.post(
+        `/api/v1/users/auto-trade-bot/activate/${currentUser._id}`,
+        {
+          marginProfitPercentage,
+          marginLossPercentage,
+        }
+      );
       if (response.status === 200) {
-        setConfirmationMessage('Congratulations! Your bot is activated.');
+        setConfirmationMessage("Congratulations! Your bot is activated.");
       } else {
-        setConfirmationMessage('Failed to activate the bot. Please try again.');
+        setConfirmationMessage("Failed to activate the bot. Please try again.");
       }
     } catch (error) {
-      setConfirmationMessage('An error occurred. Please try again.');
+      setConfirmationMessage("An error occurred. Please try again.");
     }
     setConfirmationOpen(true);
   };
@@ -38,30 +41,40 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
     let valid = true;
 
     if (!marginProfitPercentage) {
-      setProfitError('Please enter profit percentage.');
+      setProfitError("Please enter profit percentage.");
       valid = false;
-    } else if (isNaN(marginProfitPercentage) || marginProfitPercentage < 5 || marginProfitPercentage > 50) {
-      setProfitError('Profit percentage must be a number between 5 and 50.');
+    } else if (
+      isNaN(marginProfitPercentage) ||
+      marginProfitPercentage < 5 ||
+      marginProfitPercentage > 50
+    ) {
+      setProfitError("Profit percentage must be a number between 5 and 50.");
       valid = false;
     } else {
-      setProfitError('');
+      setProfitError("");
     }
 
     if (!marginLossPercentage) {
-      setLossError('Please enter loss percentage.');
+      setLossError("Please enter loss percentage.");
       valid = false;
-    } else if (isNaN(marginLossPercentage) || marginLossPercentage < 5 || marginLossPercentage > 50) {
-      setLossError('Loss percentage must be a number between 5 and 50.');
+    } else if (
+      isNaN(marginLossPercentage) ||
+      marginLossPercentage < 5 ||
+      marginLossPercentage > 50
+    ) {
+      setLossError("Loss percentage must be a number between 5 and 50.");
       valid = false;
     } else {
-      setLossError('');
+      setLossError("");
     }
 
     if (valid) {
-      if (botAccess === 'Yes') {
+      if (botAccess === "Yes") {
         activateAutoTradeBot();
       } else {
-        setConfirmationMessage('Please set bot access to Yes to start the auto trade bot.');
+        setConfirmationMessage(
+          "Please set bot access to Yes to start the auto trade bot."
+        );
         setConfirmationOpen(true);
       }
     }
@@ -69,7 +82,7 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
 
   const handleConfirmationClose = () => {
     setConfirmationOpen(false);
-    if (confirmationMessage === 'Congratulations! Your bot is activated.') {
+    if (confirmationMessage === "Congratulations! Your bot is activated.") {
       onClose();
     }
   };
@@ -109,7 +122,9 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
                     onChange={(e) => setMarginProfitPercentage(e.target.value)}
                     className="rounded-lg py-2 px-4 mt-1 text-black"
                   />
-                  {profitError && <p className="text-red-500 text-sm mt-1">{profitError}</p>}
+                  {profitError && (
+                    <p className="text-red-500 text-sm mt-1">{profitError}</p>
+                  )}
                 </div>
                 <div className="flex flex-col w-1/2">
                   <label htmlFor="loss-percentage" className="text-white">
@@ -122,7 +137,9 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
                     onChange={(e) => setMarginLossPercentage(e.target.value)}
                     className="rounded-lg py-2 px-4 mt-1 text-black"
                   />
-                  {lossError && <p className="text-red-500 text-sm mt-1">{lossError}</p>}
+                  {lossError && (
+                    <p className="text-red-500 text-sm mt-1">{lossError}</p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-3 py-3">
@@ -174,9 +191,6 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
 
 export default AutoTradeModal;
 
-
-
-
 // const Card = ({ imageSrc, value, description, valueColor }) => {
 //   return (
 //     <div className="flex items-center justify-center border border-[#00000012] shadow rounded-lg px-2 py-4 flex-1">
@@ -194,30 +208,31 @@ export default AutoTradeModal;
 // };
 
 // const cardData = [
-  //   {
-  //     imageSrc:
-  //       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F369e05e6515b47da97509b147d5221bf",
-  //     value: "10000",
-  //     description: "Capital Required",
-  //     valueColor: "#0F0AF4",
-  //   },
-  //   {
-  //     imageSrc:
-  //       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F3d792fc678664d9abf93f22d36e3aa0c",
-  //     value: "Not Recorded",
-  //     description: "Hit Ratio",
-  //     valueColor: "#0EBC34",
-  //   },
-  //   {
-  //     imageSrc:
-  //       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F5c5ae447ffaf4119857892309e5f70e3",
-  //     value: "0.00%",
-  //     description: "Risk",
-  //     valueColor: "#FF0000",
-  //   },
-  // ];
+//   {
+//     imageSrc:
+//       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F369e05e6515b47da97509b147d5221bf",
+//     value: "10000",
+//     description: "Capital Required",
+//     valueColor: "#0F0AF4",
+//   },
+//   {
+//     imageSrc:
+//       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F3d792fc678664d9abf93f22d36e3aa0c",
+//     value: "Not Recorded",
+//     description: "Hit Ratio",
+//     valueColor: "#0EBC34",
+//   },
+//   {
+//     imageSrc:
+//       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F5c5ae447ffaf4119857892309e5f70e3",
+//     value: "0.00%",
+//     description: "Risk",
+//     valueColor: "#FF0000",
+//   },
+// ];
 
-        {/* <div className="px-5 py-3 text-black rounded-bl-lg rounded-br-lg">
+{
+  /* <div className="px-5 py-3 text-black rounded-bl-lg rounded-br-lg">
           <div className="flex space-x-4">
             {cardData.map((card, index) => (
               <Card
@@ -301,4 +316,5 @@ export default AutoTradeModal;
               Activate
             </button>
           </div>
-        </div> */}
+        </div> */
+}

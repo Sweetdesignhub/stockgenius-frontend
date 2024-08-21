@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+// import  { useState } from "react";
 // import { Link, useNavigate } from "react-router-dom";
 // import {
 //   signInStart,
@@ -112,7 +112,7 @@
 
 // export default SignIn;
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   signInStart,
@@ -167,10 +167,10 @@ function SignIn() {
     try {
       dispatch(signInStart());
       // console.log("Form Data:", formData);
-      const response = await api.post(`/api/v1/auth/sign-in`, formData);
+      const response = await api.post(`/api/v1/auth/login`, formData);
       // console.log(response);
-      const data = await response.data;
-      // console.log("Sign-in Response:", data);
+      const data = await response.data.data;
+      console.log("Sign-in Response:", data);
 
       // Handle response logic based on API data
       if (data.success === false) {
@@ -195,7 +195,6 @@ function SignIn() {
   const handleConfirm = () => {
     setIsModalOpen(false);
   };
-
 
   return (
     <div className="max-w-xl px-20 py-10 mx-auto auth rounded-2xl">
@@ -269,7 +268,7 @@ function SignIn() {
 
       <div className="mt-6 text-center">
         <p className="dark:text-[#FFFFFF99] text-gray-500">
-          Don't have an account?{" "}
+          Don`&apos;`t have an account?{" "}
           <Link to={"/sign-up"}>
             <span className="dark:text-white text-gray-800">Sign up</span>
           </Link>

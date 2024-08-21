@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../common/Loading";
 
 const MotilalOswalButton = ({
@@ -11,7 +11,9 @@ const MotilalOswalButton = ({
   transactionType,
 }) => {
   const [loading, setLoading] = useState(true);
-  const [buttonId] = useState(`motilal-button-${symbol.replace(/:/g, '-')}-${transactionType}`);
+  const [buttonId] = useState(
+    `motilal-button-${symbol.replace(/:/g, "-")}-${transactionType}`
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -44,7 +46,17 @@ const MotilalOswalButton = ({
         document.body.removeChild(script);
       };
     }
-  }, [loading, apiKey, symbol, product, quantity, price, orderType, transactionType, buttonId]);
+  }, [
+    loading,
+    apiKey,
+    symbol,
+    product,
+    quantity,
+    price,
+    orderType,
+    transactionType,
+    buttonId,
+  ]);
 
   console.log("Received props:", {
     apiKey,
@@ -56,7 +68,10 @@ const MotilalOswalButton = ({
     transactionType,
   });
 
-  const buttonStyle = transactionType === "BUY" ? "bg-green-500 hover:bg-green-400" : "bg-red-500 hover:bg-red-400";
+  const buttonStyle =
+    transactionType === "BUY"
+      ? "bg-green-500 hover:bg-green-400"
+      : "bg-red-500 hover:bg-red-400";
 
   return (
     <>

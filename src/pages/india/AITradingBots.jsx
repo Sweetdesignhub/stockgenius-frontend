@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Bot from "../../components/aiTradingBots/Bot";
 
 function Cards({ title, value }) {
@@ -123,8 +123,6 @@ function AITradingBots() {
     { title: "Total Investment", value: "42350.38" },
     { title: "Total Profit", value: "98675.91" },
   ];
-
- 
 
   const isWithinTradingHours = () => {
     const now = new Date();

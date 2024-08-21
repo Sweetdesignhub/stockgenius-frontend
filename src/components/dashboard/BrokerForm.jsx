@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Dropdown from "../common/Dropdown";
 import Input from "../common/Input";
 import FyersInputs from "../brokerInputs/FyersInputs";
@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 function BrokerForm() {
   const [selectedOption, setSelectedOption] = useState("");
-    // const [authCodeURL, setAuthCodeURL] = useState("");
+  // const [authCodeURL, setAuthCodeURL] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  console.log('access token : ',accessToken);
+  console.log("access token : ", accessToken);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -20,7 +20,7 @@ function BrokerForm() {
   };
 
   const [formData, setFormData] = useState({
-    nickname: currentUser ? currentUser.username : "",
+    nickname: currentUser ? currentUser.name : "",
     mobileNumber: "",
     email: currentUser ? currentUser.email : "",
     fyersId: "",
@@ -38,7 +38,7 @@ function BrokerForm() {
 
   const handleClear = () => {
     setFormData({
-      nickname: currentUser ? currentUser.username : "",
+      nickname: currentUser ? currentUser.name : "",
       mobileNumber: "",
       email: currentUser ? currentUser.email : "",
       fyersId: "",
@@ -56,13 +56,13 @@ function BrokerForm() {
       console.log(currentUser._id);
       const response = await api.post("/api/v1/fyers/generateAccessToken", {
         uri,
-        userId: currentUser._id, 
+        userId: currentUser._id,
       });
-      console.log('response : ', response);
+      console.log("response : ", response);
       const { accessToken } = response.data;
       setAccessToken(accessToken);
       console.log("Access Token:", accessToken);
-  
+
       // Navigate based on localStorage country setting
       if (localStorage.getItem("country") === "india") {
         navigate(`/india/portfolio`);
@@ -73,12 +73,11 @@ function BrokerForm() {
       console.error("Failed to generate access token:", error);
     }
   };
-  
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
-    console.log('authcode', authCode);
+    console.log("authcode", authCode);
     if (authCode) {
       const uri = window.location.href;
       generateAccessToken(uri);
@@ -112,10 +111,12 @@ function BrokerForm() {
       try {
         // Save broker details in the database
         await api.post("/api/v1/fyers/saveCredentials", submitData);
-        alert('Data saved successfully, Redirecting to Fyers ....')
+        alert("Data saved successfully, Redirecting to Fyers ....");
 
         // Generate auth code URL
-        const response = await api.get(`/api/v1/fyers/generateAuthCodeUrl/${currentUser._id}`);
+        const response = await api.get(
+          `/api/v1/fyers/generateAuthCodeUrl/${currentUser._id}`
+        );
         const { authCodeURL } = response.data;
 
         // Redirect to auth code URL
@@ -123,13 +124,16 @@ function BrokerForm() {
 
         // Save authentication date in the database
         await api.post("/api/v1/fyers/saveAuthDate", {
-          userId: currentUser.id, 
+          userId: currentUser.id,
           date: new Date().toISOString(),
         });
 
         console.log("Authentication date saved for Fyers in database.");
       } catch (error) {
-        console.error("Failed to retrieve Fyers auth URL or save auth date:", error);
+        console.error(
+          "Failed to retrieve Fyers auth URL or save auth date:",
+          error
+        );
       }
     } else if (selectedOption === "Zerodha") {
       submitData = {
@@ -151,7 +155,7 @@ function BrokerForm() {
 
     // Clear the form after submission
     setFormData({
-      nickname: currentUser ? currentUser.username : "",
+      nickname: currentUser ? currentUser.name : "",
       mobileNumber: "",
       email: currentUser ? currentUser.email : "",
       fyersId: "",
@@ -186,7 +190,7 @@ function BrokerForm() {
           <Input
             label="Nickname"
             name="nickname"
-            defaultValue={currentUser ? currentUser.username : ""}
+            defaultValue={currentUser ? currentUser.name : ""}
             value={formData.nickname}
             onChange={handleInputChange}
             placeholder="Enter Nickname"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../common/Loading.jsx";
 import Cards from "./Cards.jsx";
 import api from "../../../config.js";
@@ -17,7 +17,10 @@ function AccountInfo() {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
       if (currentUser && fyersAccessToken) {
         const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-        const response = await api.get(`/api/v1/fyers/fetchAllFyersUserDetails/${currentUser._id}`, { headers });
+        const response = await api.get(
+          `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser._id}`,
+          { headers }
+        );
         const data = response.data[0];
 
         setProfile(data.profile);
@@ -40,7 +43,7 @@ function AccountInfo() {
 
     const dataInterval = setInterval(() => {
       fetchData();
-    }, 5000); 
+    }, 5000);
 
     return () => {
       clearInterval(dataInterval);

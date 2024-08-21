@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
 import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
 import { useSelector } from "react-redux";
-
 
 const PositionsTable = () => {
   const [positions, setPositions] = useState([]);
@@ -21,9 +20,12 @@ const PositionsTable = () => {
       }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get(`/api/v1/fyers/positionsByUserId/${currentUser._id}`, {
-        headers,
-      });
+      const response = await api.get(
+        `/api/v1/fyers/positionsByUserId/${currentUser._id}`,
+        {
+          headers,
+        }
+      );
 
       if (response.statusText === "OK") {
         setPositions(response.data.netPositions);
@@ -62,7 +64,9 @@ const PositionsTable = () => {
   if (!positions || positions.length === 0) {
     // return <div className="text-center p-4">There are no positions</div>;
     return (
-      <NotAvailable dynamicText={"Start by taking your <strong>first position!</strong>"} />
+      <NotAvailable
+        dynamicText={"Start by taking your <strong>first position!</strong>"}
+      />
     );
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   MenuButton,
@@ -35,7 +35,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // console.log(region);
+  console.log(currentUser);
 
   const dispatch = useDispatch();
 
@@ -368,7 +368,7 @@ export default function Header() {
                         />
                         <div className="flex items-center">
                           <h2 className="mr-2 capitalize">
-                            {currentUser.username.slice(0, 10)}
+                            {currentUser.name.slice(0, 10)}
                           </h2>
                           <FaAngleDown />
                         </div>

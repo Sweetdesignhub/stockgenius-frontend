@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Dropdown from "../common/Dropdown";
 import api from "../../config";
@@ -57,7 +57,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
   const startFetchingData = () => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('fyers_access_token');
+        const token = localStorage.getItem("fyers_access_token");
 
         if (!token) {
           console.warn("Access token is missing, stopping data fetching.");
@@ -173,9 +173,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
           >
             {loading ? "Authenticating..." : "Authenticate"}
           </button>
-          {error && (
-            <p className="text-red-500 text-center mt-2">{error}</p>
-          )}
+          {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         </div>
       </div>
     </div>

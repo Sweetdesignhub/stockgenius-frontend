@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../common/Loading";
 
 const ZerodhaButton = ({
@@ -77,9 +77,7 @@ const ZerodhaButton = ({
           data-order_type={orderType}
           data-price={price}
         >
-          {transactionType === "BUY"
-            ? `Buy`
-            : `Sell`}
+          {transactionType === "BUY" ? `Buy` : `Sell`}
         </button>
       )}
     </>

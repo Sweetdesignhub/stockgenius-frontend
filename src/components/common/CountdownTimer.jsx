@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const CountdownTimer = () => {
   const calculateTimeLeft = () => {
@@ -10,7 +10,7 @@ const CountdownTimer = () => {
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hrs: Math.floor((difference / (1000 * 60 * 60)) % 24),
         min: Math.floor((difference / 1000 / 60) % 60),
-        sec: Math.floor((difference / 1000) % 60)
+        sec: Math.floor((difference / 1000) % 60),
       };
     }
 
@@ -29,7 +29,7 @@ const CountdownTimer = () => {
 
   const timerComponents = [];
 
-  Object.keys(timeLeft).forEach(interval => {
+  Object.keys(timeLeft).forEach((interval) => {
     if (!timeLeft[interval]) {
       return;
     }

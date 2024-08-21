@@ -71,7 +71,7 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       dispatch(updateUserStart());
       const res = await api.post(
@@ -106,7 +106,6 @@ export default function Profile() {
     }
   };
 
-
   return (
     <div className="max-w-xl px-20 py-10 mx-auto auth rounded-2xl">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -138,10 +137,10 @@ export default function Profile() {
           )}
         </p>
         <input
-          defaultValue={currentUser.username}
+          defaultValue={currentUser.name}
           type="text"
-          id="username"
-          placeholder="Username"
+          id="name"
+          placeholder="name"
           className="bg-slate-100 rounded-lg p-3 text-black"
           onChange={handleChange}
         />
