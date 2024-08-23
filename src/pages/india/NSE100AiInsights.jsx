@@ -327,9 +327,12 @@ function NSE100AiInsights() {
   useEffect(() => {
     const filterData = () => {
       const filtered = data.filter((item) => {
+        console.log(item);
         return (
           item['ROI'].toString().includes(roiFilter) &&
-          item['Company'].toLowerCase().includes(companyFilter.toLowerCase())
+          item['Company Name']
+            .toLowerCase()
+            .includes(companyFilter.toLowerCase())
         );
       });
       setFilteredData(filtered);
