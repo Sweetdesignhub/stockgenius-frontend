@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config';
 import { signInSuccess } from '../../redux/user/userSlice';
+
 const VerificationForm = ({
   onValidSubmit,
   step,
@@ -12,10 +13,11 @@ const VerificationForm = ({
   userData,
   setUserData,
 }) => {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch, reset } = useForm(); // Including reset here
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selectedRegion = useSelector((state) => state.region);
+
   const onSubmit = (data) => {
     const otp =
       watch('digit1') +
@@ -34,9 +36,9 @@ const VerificationForm = ({
     };
 
     if (verificationType === 'email') {
-      postData.email = userData?.email; // Include email only if verification type is email
+      postData.email = userData?.email;
     } else {
-      postData.phoneNumber = userData?.phoneNumber; // Include phoneNumber only if verification type is phone
+      postData.phoneNumber = userData?.phoneNumber;
     }
 
     // Post request to the server
@@ -49,6 +51,7 @@ const VerificationForm = ({
         );
         if (step < 3) {
           onValidSubmit(step + 1);
+          reset(); // Reset form fields after successful submission
         }
         if (step == 3) {
           dispatch(
@@ -59,6 +62,7 @@ const VerificationForm = ({
             })
           );
           navigate(`/sign-in`);
+          reset(); // Reset form fields after successful submission
         }
       })
       .catch((error) => {

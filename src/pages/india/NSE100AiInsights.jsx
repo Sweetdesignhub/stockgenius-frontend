@@ -266,7 +266,6 @@ import fetchFile from '../../utils/india/fetchFile';
 import parseExcel from '../../utils/india/parseExcel';
 import Loading from '../../components/common/Loading';
 import ErrorComponent from '../../components/common/Error';
-import Speedometer from '../../components/common/Speedometer';
 import Modal from '../../components/common/Modal';
 import * as XLSX from 'xlsx';
 
@@ -276,6 +275,7 @@ function NSE100AiInsights() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [sortOrder, setSortOrder] = useState('desc');
   const [modalOpen, setModalOpen] = useState(false);
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -317,6 +317,16 @@ function NSE100AiInsights() {
       setLoading(false);
     }
   };
+  const handleSort = () => {
+    const newSortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+    setSortOrder(newSortOrder);
+    const sorted = [...filteredData].sort((a, b) => {
+      const valueA = parseFloat(a.ROI);
+      const valueB = parseFloat(b.ROI);
+      return newSortOrder === 'desc' ? valueB - valueA : valueA - valueB;
+    });
+    setFilteredData(sorted);
+  };
 
   useEffect(() => {
     fetchData();
@@ -325,9 +335,8 @@ function NSE100AiInsights() {
   }, []);
 
   useEffect(() => {
-    const filterData = () => {
+    const filterAndSortData = () => {
       const filtered = data.filter((item) => {
-        console.log(item);
         return (
           item['ROI'].toString().includes(roiFilter) &&
           item['Company Name']
@@ -335,11 +344,18 @@ function NSE100AiInsights() {
             .includes(companyFilter.toLowerCase())
         );
       });
-      setFilteredData(filtered);
+      const sorted = filtered.sort((a, b) => {
+        if (sortOrder === 'desc') {
+          return parseFloat(b.ROI) - parseFloat(a.ROI);
+        } else {
+          return parseFloat(a.ROI) - parseFloat(b.ROI);
+        }
+      });
+      setFilteredData(sorted);
     };
 
-    filterData();
-  }, [roiFilter, companyFilter, data]);
+    filterAndSortData();
+  }, [roiFilter, companyFilter, data, sortOrder]);
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
@@ -543,9 +559,51 @@ function NSE100AiInsights() {
                         index !== 4 && (
                           <th
                             key={index}
-                            className='w-full py-3 px-2 text-left text-xs font-medium tracking-wider'
+                            className='w-full py-3 px-2 text-left text-xs font-medium tracking-wider cursor-pointer'
+                            onClick={
+                              column.split(' ')[0] === 'ROI'
+                                ? handleSort
+                                : undefined
+                            }
                           >
-                            {column.split(' ')[0]}
+                            <div
+                              style={{ display: 'flex', alignItems: 'center' }}
+                            >
+                              {column.split(' ')[0]}
+                              {column.split(' ')[0] === 'ROI' && (
+                                <span className='ml-1'>
+                                  {sortOrder === 'desc' ? (
+                                    <svg
+                                      viewBox='0 0 24 24'
+                                      width='16'
+                                      height='16'
+                                      stroke='currentColor'
+                                      strokeWidth='2'
+                                      fill='none'
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                      className='mx-2'
+                                    >
+                                      <polyline points='18 15 12 9 6 15'></polyline>
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      viewBox='0 0 24 24'
+                                      width='16'
+                                      height='16'
+                                      stroke='currentColor'
+                                      strokeWidth='2'
+                                      fill='none'
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                      className='mx-2'
+                                    >
+                                      <polyline points='6 9 12 15 18 9'></polyline>
+                                    </svg>
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </th>
                         )
                     )}
@@ -593,9 +651,15 @@ function NSE100AiInsights() {
                       {decision.map((column, index) => (
                         <th
                           key={index}
-                          className='w-full px-2 text-center py-3 text-xs font-medium tracking-wider'
+                          className='w-full py-3 px-2 text-left text-xs font-medium tracking-wider cursor-pointer'
+                          onClick={column === 'ROI' ? handleSort : undefined}
                         >
-                          {column}
+                          {column.split(' ')[0]}
+                          {column === 'ROI' && (
+                            <span className='ml-1'>
+                              {sortOrder === 'desc' ? '▼' : '▲'}
+                            </span>
+                          )}
                         </th>
                       ))}
                     </tr>
