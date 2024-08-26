@@ -4,8 +4,7 @@ import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
 import { useSelector } from "react-redux";
 
-
-const PositionsTable = () => {
+const PositionsTable = ({ setCount, selectedColumns, setColumnNames }) => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,12 +20,23 @@ const PositionsTable = () => {
       }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get(`/api/v1/fyers/positionsByUserId/${currentUser._id}`, {
-        headers,
-      });
+      const response = await api.get(
+        `/api/v1/fyers/positionsByUserId/${currentUser._id}`,
+        {
+          headers,
+        }
+      );
 
       if (response.statusText === "OK") {
-        setPositions(response.data.netPositions);
+        const positionsData = response.data.netPositions;
+        setPositions(positionsData);
+        setCount(positionsData.length);
+
+        const excludedColumns = ["message", "pan"];
+        const allColumnNames = Object.keys(positionsData[0]).filter(
+          (columnName) => !excludedColumns.includes(columnName)
+        );
+        setColumnNames(allColumnNames);
       } else {
         throw new Error(response.data.message);
       }
@@ -62,21 +72,23 @@ const PositionsTable = () => {
   if (!positions || positions.length === 0) {
     // return <div className="text-center p-4">There are no positions</div>;
     return (
-      <NotAvailable dynamicText={"Start by taking your <strong>first position!</strong>"} />
+      <NotAvailable
+        dynamicText={"Start by taking your <strong>first position!</strong>"}
+      />
     );
   }
 
-  const excludedColumns = [];
-  const columnNames = Object.keys(positions[0]).filter(
-    (columnName) => !excludedColumns.includes(columnName)
-  );
+  // const excludedColumns = [];
+  // const columnNames = Object.keys(positions[0]).filter(
+  //   (columnName) => !excludedColumns.includes(columnName)
+  // );
 
   return (
     <div className="h-[55vh] overflow-auto">
       <table className="min-w-full border-collapse">
         <thead>
           <tr>
-            {columnNames.map((columnName) => (
+            {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
                 className="px-4 whitespace-nowrap capitalize py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
@@ -89,7 +101,7 @@ const PositionsTable = () => {
         <tbody>
           {positions.map((position, index) => (
             <tr key={index} className="text-center">
-              {columnNames.map((columnName) => (
+              {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
                   className="px-4 whitespace-nowrap text-left font-semibold py-4"
