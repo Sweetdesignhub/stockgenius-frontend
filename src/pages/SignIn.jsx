@@ -112,18 +112,18 @@
 
 // export default SignIn;
 
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   signInStart,
   signInSuccess,
   signInFailure,
-} from "../redux/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
-import OAuth from "../components/OAuth";
-import api from "../config";
-import { setRegion } from "../redux/region/regionSlice";
-import ConfirmationModal from "../components/common/ConfirmationModal";
+} from '../redux/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import OAuth from '../components/OAuth';
+import api from '../config';
+import { setRegion } from '../redux/region/regionSlice';
+import ConfirmationModal from '../components/common/ConfirmationModal';
 
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -141,7 +141,7 @@ function SignIn() {
   // console.log("selectedRegion : ", selectedRegion);
 
   useEffect(() => {
-    const region = localStorage.getItem("region");
+    const region = localStorage.getItem('region');
     if (region) {
       dispatch(setRegion(region));
     }
@@ -170,7 +170,7 @@ function SignIn() {
       const response = await api.post(`/api/v1/auth/login`, formData);
       // console.log(response);
       const data = await response.data.data;
-      console.log("Sign-in Response:", data);
+      console.log('Sign-in Response:', data);
 
       // Handle response logic based on API data
       if (data.success === false) {
@@ -188,7 +188,7 @@ function SignIn() {
       navigate(`/${selectedRegion}/dashboard`);
     } catch (error) {
       dispatch(signInFailure(error));
-      console.error("Sign-in Error:", error);
+      console.error('Sign-in Error:', error);
     }
   };
 
@@ -197,42 +197,42 @@ function SignIn() {
   };
 
   return (
-    <div className="max-w-xl px-20 py-10 mx-auto auth rounded-2xl">
-      <h1 className="text-3xl text-center font-semibold my-8">Sign In</h1>
+    <div className='max-w-xl px-20 py-10 mx-auto auth rounded-2xl'>
+      <h1 className='text-3xl text-center font-semibold my-8'>Sign In</h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
         <OAuth />
 
-        <div className="flex items-center justify-center">
-          <div className="flex-grow border-t border-[#FFFFFF66]"></div>
-          <p className="text-[#FFFFFF] text-center mx-3">Or</p>
-          <div className="flex-grow border-t border-[#FFFFFF66]"></div>
+        <div className='flex items-center justify-center'>
+          <div className='flex-grow border-t border-[#FFFFFF66]'></div>
+          <p className='text-[#FFFFFF] text-center mx-3'>Or</p>
+          <div className='flex-grow border-t border-[#FFFFFF66]'></div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="email" className="dark:text-[#FFFFFFCC]">
+        <div className='flex flex-col gap-2'>
+          <label htmlFor='email' className='dark:text-[#FFFFFFCC]'>
             Email address
           </label>
           <input
             required
-            type="email"
-            placeholder="email@domain.com"
-            id="email"
-            className="bg-slate-100 text-black p-3 rounded-sm"
+            type='email'
+            placeholder='email@domain.com'
+            id='email'
+            className='bg-slate-100 text-black p-3 rounded-sm'
             onChange={handleChange}
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="password" className="dark:text-[#FFFFFFCC]">
+        <div className='flex flex-col gap-2'>
+          <label htmlFor='password' className='dark:text-[#FFFFFFCC]'>
             Password
           </label>
           <input
             required
-            type="password"
-            placeholder="Password"
-            id="password"
-            className="bg-slate-100 text-black p-3 rounded-sm"
+            type='password'
+            placeholder='Password'
+            id='password'
+            className='bg-slate-100 text-black p-3 rounded-sm'
             onChange={handleChange}
           />
         </div>
@@ -259,31 +259,34 @@ function SignIn() {
 
         <button
           disabled={loading}
-          type="submit"
-          className="auth-btn bg-[#1A2C5C] text-white p-3 rounded-lg hover:opacity-85 disabled:opacity-80"
+          type='submit'
+          className='auth-btn bg-[#1A2C5C] text-white p-3 rounded-lg hover:opacity-85 disabled:opacity-80'
         >
-          {loading ? "Loading ..." : "Sign in"}
+          {loading ? 'Loading ...' : 'Sign in'}
         </button>
       </form>
 
-      <div className="mt-6 text-center">
-        <p className="dark:text-[#FFFFFF99] text-gray-500">
-          Don`&apos;`t have an account?{" "}
-          <Link to={"/sign-up"}>
-            <span className="dark:text-white text-gray-800">Sign up</span>
+      <div className='mt-6 text-center'>
+        <p className='dark:text-[#FFFFFF99] text-gray-500'>
+          Don&apos;t have an account?{' '}
+          <Link to={'/sign-up'}>
+            <span className='dark:text-white text-gray-800'>Sign up</span>
           </Link>
         </p>
+        <Link to='/forgot-password' className='text-blue-500 hover:underline'>
+          Forgot Password?
+        </Link>
       </div>
-      <p className="text-red-500 text-center mt-5">
+      <p className='text-red-500 text-center mt-5'>
         {error
-          ? error.message || "Something went wrong, please try again !!"
-          : ""}
+          ? error.message || 'Something went wrong, please try again !!'
+          : ''}
       </p>
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}
-          title="Region not selected"
-          message="Please select a region before signing in."
+          title='Region not selected'
+          message='Please select a region before signing in.'
           onConfirm={handleConfirm}
           onClose={handleConfirm}
         />
