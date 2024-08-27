@@ -48,7 +48,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="max-w-xl px-20 py-10 mx-auto auth rounded-2xl">
+    <div className="max-w-xl px-20 py-10 mb-10 mx-auto auth rounded-2xl">
       {renderStep()}
     </div>
   );

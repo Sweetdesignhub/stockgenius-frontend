@@ -30,7 +30,9 @@ const ForgotPassword = () => {
 
   return (
     <div className='max-w-md mx-auto mt-8'>
-      <h2 className='text-2xl font-bold mb-4'>Forgot Password</h2>
+      <h2 className='text-2xl font-bold mb-4 dark:text-[#fffff]'>
+        Forgot Password
+      </h2>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div>
           <label htmlFor='email' className='block mb-1'>
@@ -46,7 +48,7 @@ const ForgotPassword = () => {
                 message: 'Invalid email address',
               },
             })}
-            className='w-full px-3 py-2 border rounded'
+            className='w-full px-3 py-2 text-black border rounded'
           />
           {errors.email && (
             <p className='text-red-500 text-sm mt-1'>{errors.email.message}</p>

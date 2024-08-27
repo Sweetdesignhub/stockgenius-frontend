@@ -127,7 +127,11 @@ import ConfirmationModal from '../components/common/ConfirmationModal';
 
 function SignIn() {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user);
+  const [useOTP, setUseOTP] = useState(false);
+  const [load, setLoad] = useState(false);
+  const [otp, setOTP] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const { error } = useSelector((state) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const selectedRegion = useSelector((state) => state.region);
   const navigate = useNavigate();
@@ -167,15 +171,36 @@ function SignIn() {
     try {
       dispatch(signInStart());
       // console.log("Form Data:", formData);
-      const response = await api.post(`/api/v1/auth/login`, formData);
-      // console.log(response);
-      const data = await response.data.data;
-      console.log('Sign-in Response:', data);
+      if (otpSent) {
+        // Verify OTP
+        const response = await api.post('/api/v1/auth/verify-login-otp', {
+          ...formData,
+          otp,
+        });
+        const data = await response.data.data;
+        if (data.success === false) {
+          dispatch(signInFailure(data.message));
+          return;
+        }
+        dispatch(signInSuccess(data));
+        navigate(`/${selectedRegion}/dashboard`);
+      } else {
+        // Initial login attempt
+        const response = await api.post('/api/v1/auth/login', {
+          ...formData,
+          useOTP,
+        });
+        const data = await response.data.data;
 
-      // Handle response logic based on API data
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
-        return;
+        if (useOTP) {
+          setOtpSent(true);
+        } else if (data.success === false) {
+          dispatch(signInFailure(data.message));
+          return;
+        } else {
+          dispatch(signInSuccess(data));
+          navigate(`/${selectedRegion}/dashboard`);
+        }
       }
 
       // Successful sign-in logic
@@ -183,9 +208,6 @@ function SignIn() {
 
       // Store selected country in local storage
       // localStorage.setItem("country", country);
-
-      dispatch(signInSuccess(data));
-      navigate(`/${selectedRegion}/dashboard`);
     } catch (error) {
       dispatch(signInFailure(error));
       console.error('Sign-in Error:', error);
@@ -211,58 +233,70 @@ function SignIn() {
 
         <div className='flex flex-col gap-2'>
           <label htmlFor='email' className='dark:text-[#FFFFFFCC]'>
-            Email address
+            Email address / Phone Number
           </label>
           <input
             required
-            type='email'
-            placeholder='email@domain.com'
-            id='email'
+            type='string'
+            placeholder='email@domain.com / +91XXXXXXXXXX'
+            id='identifier'
             className='bg-slate-100 text-black p-3 rounded-sm'
             onChange={handleChange}
           />
         </div>
 
-        <div className='flex flex-col gap-2'>
-          <label htmlFor='password' className='dark:text-[#FFFFFFCC]'>
-            Password
-          </label>
-          <input
-            required
-            type='password'
-            placeholder='Password'
-            id='password'
-            className='bg-slate-100 text-black p-3 rounded-sm'
-            onChange={handleChange}
-          />
-        </div>
+        {!useOTP && (
+          <div className='flex flex-col gap-2'>
+            <label htmlFor='password' className='dark:text-[#FFFFFFCC]'>
+              Password
+            </label>
+            <input
+              required
+              type='password'
+              placeholder='Password'
+              id='password'
+              className='bg-slate-100 text-black p-3 rounded-sm'
+              onChange={handleChange}
+            />
+          </div>
+        )}
 
-        {/* Country selection */}
-        {/* <div className="flex flex-col gap-2">
-          <label htmlFor="country" className="dark:text-[#FFFFFFCC]">
-            Select Country
-          </label>
-          <select
-            id="country"
-            className="bg-slate-100 text-black p-3 rounded-sm"
-            value={selectedCountry}
-            onChange={handleCountryChange}
-            required
-          >
-            <option disabled value="">
-              Select Country
-            </option>
-            <option value="india">India</option>
-            <option value="us">United States</option>
-          </select>
-        </div> */}
+        {otpSent && (
+          <div className='flex flex-col gap-2'>
+            <label htmlFor='otp' className='dark:text-[#FFFFFFCC]'>
+              Enter OTP
+            </label>
+            <input
+              required
+              type='text'
+              placeholder='Enter OTP'
+              id='otp'
+              className='bg-slate-100 text-black p-3 rounded-sm'
+              onChange={(e) => setOTP(e.target.value)}
+            />
+          </div>
+        )}
+
+        {!otpSent && (
+          <div className='flex items-center gap-2'>
+            <input
+              type='checkbox'
+              id='useOTP'
+              checked={useOTP}
+              onChange={() => setUseOTP(!useOTP)}
+            />
+            <label htmlFor='useOTP' className='dark:text-[#FFFFFFCC]'>
+              Use OTP
+            </label>
+          </div>
+        )}
 
         <button
-          disabled={loading}
+          disabled={load}
           type='submit'
           className='auth-btn bg-[#1A2C5C] text-white p-3 rounded-lg hover:opacity-85 disabled:opacity-80'
         >
-          {loading ? 'Loading ...' : 'Sign in'}
+          {load ? 'Loading ...' : otpSent ? 'Verify OTP' : 'Sign in'}
         </button>
       </form>
 

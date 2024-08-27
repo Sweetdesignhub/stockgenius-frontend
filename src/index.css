@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body {
   background-image: url(https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9366f5b36c8d45ee957a34a655934e88);
   background-size: cover;
+  background-color: #ffffff;
   background-repeat: no-repeat;
   background-position: center center;
   color: black;
@@ -14,6 +14,7 @@ body {
 .dark body {
   background-image: url(https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fae391894a9e24213ace28816a6407bc6);
   background-size: cover;
+  background-color: #000000;
   background-repeat: no-repeat;
   background-position: center center;
   color: white;
@@ -112,31 +113,28 @@ body {
   background: #ffffff;
 }
 
-.table-main{
-  background: #CCD7FF40;
-  border: 0.75px solid #FFFFFF1A;
-  box-shadow: 0px 22.5px 45px 0px #0000001A;
+.table-main {
+  background: #ccd7ff40;
+  border: 0.75px solid #ffffff1a;
+  box-shadow: 0px 22.5px 45px 0px #0000001a;
 
-box-shadow: 0px 11.25px 22.5px 0px #0000000D;
+  box-shadow: 0px 11.25px 22.5px 0px #0000000d;
 
-box-shadow: 0px 3.75px 7.5px 0px #0000000D;
+  box-shadow: 0px 3.75px 7.5px 0px #0000000d;
 
-box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
-
+  box-shadow: 0px 37.5px 75px 0px #ffffff26 inset;
 }
 
 .dark .table-main {
-  background: #050505E5;
-  border: 0.75px solid #FFFFFF1A;
-  box-shadow: 0px 22.5px 45px 0px #0000001A;
+  background: #050505e5;
+  border: 0.75px solid #ffffff1a;
+  box-shadow: 0px 22.5px 45px 0px #0000001a;
 
-box-shadow: 0px 11.25px 22.5px 0px #0000000D;
+  box-shadow: 0px 11.25px 22.5px 0px #0000000d;
 
-box-shadow: 0px 3.75px 7.5px 0px #0000000D;
+  box-shadow: 0px 3.75px 7.5px 0px #0000000d;
 
-box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
-
-
+  box-shadow: 0px 37.5px 75px 0px #ffffff26 inset;
 }
 
 .table-wrapper {
@@ -199,7 +197,7 @@ box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
 }
 
 .auth::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   right: 0;
@@ -230,24 +228,20 @@ box-shadow: 0px 37.5px 75px 0px #FFFFFF26 inset;
   box-shadow: 0px 4px 4px 0px #0000000d;
 }
 
-.theme-changer{
-  background: linear-gradient(180deg, #081938 47.79%, #1C5CD3 100%);
-  border: 0.5px solid #FFFFFF26;
-  box-shadow: 0px -2px 3px 0px #0000004A inset;
-
+.theme-changer {
+  background: linear-gradient(180deg, #081938 47.79%, #1c5cd3 100%);
+  border: 0.5px solid #ffffff26;
+  box-shadow: 0px -2px 3px 0px #0000004a inset;
 }
 
-.auto-popup{
-  background: #050505E5;
-  border: 0.81px solid #FFFFFF1A;
-  box-shadow: 0px 24.33px 48.67px 0px #0000001A;
+.auto-popup {
+  background: #050505e5;
+  border: 0.81px solid #ffffff1a;
+  box-shadow: 0px 24.33px 48.67px 0px #0000001a;
 
-box-shadow: 0px 12.17px 24.33px 0px #0000000D;
+  box-shadow: 0px 12.17px 24.33px 0px #0000000d;
 
-box-shadow: 0px 4.06px 8.11px 0px #0000000D;
+  box-shadow: 0px 4.06px 8.11px 0px #0000000d;
 
-box-shadow: 0px 40.56px 81.11px 0px #FFFFFF26 inset;
-
+  box-shadow: 0px 40.56px 81.11px 0px #ffffff26 inset;
 }
-
-
