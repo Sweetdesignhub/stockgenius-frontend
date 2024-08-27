@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import Loading from '../../../common/Loading';
-import api from '../../../../config.js';
-import NotAvailable from '../../../common/NotAvailable.jsx';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import Loading from "../../../common/Loading";
+import api from "../../../../config.js";
+import NotAvailable from "../../../common/NotAvailable.jsx";
+import { useSelector } from "react-redux";
 
-const PositionsTable = () => {
+const PositionsTable = ({ setCount, selectedColumns, setColumnNames }) => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,8 +27,16 @@ const PositionsTable = () => {
         }
       );
 
-      if (response.statusText === 'OK') {
-        setPositions(response.data.netPositions);
+      if (response.statusText === "OK") {
+        const positionsData = response.data.netPositions;
+        setPositions(positionsData);
+        setCount(positionsData.length);
+
+        const excludedColumns = ["message", "pan"];
+        const allColumnNames = Object.keys(positionsData[0]).filter(
+          (columnName) => !excludedColumns.includes(columnName)
+        );
+        setColumnNames(allColumnNames);
       } else {
         throw new Error(response.data.message);
       }
@@ -70,17 +78,17 @@ const PositionsTable = () => {
     );
   }
 
-  const excludedColumns = [];
-  const columnNames = Object.keys(positions[0]).filter(
-    (columnName) => !excludedColumns.includes(columnName)
-  );
+  // const excludedColumns = [];
+  // const columnNames = Object.keys(positions[0]).filter(
+  //   (columnName) => !excludedColumns.includes(columnName)
+  // );
 
   return (
     <div className='h-[55vh] overflow-auto'>
       <table className='min-w-full border-collapse'>
         <thead>
           <tr>
-            {columnNames.map((columnName) => (
+            {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
                 className='px-4 whitespace-nowrap capitalize py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left'
@@ -92,8 +100,8 @@ const PositionsTable = () => {
         </thead>
         <tbody>
           {positions.map((position, index) => (
-            <tr key={index} className='text-center'>
-              {columnNames.map((columnName) => (
+            <tr key={index} className="text-center">
+              {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
                   className='px-4 whitespace-nowrap text-left font-semibold py-4'
