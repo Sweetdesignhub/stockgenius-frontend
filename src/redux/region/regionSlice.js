@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = localStorage.getItem('region') || '';
+const initialState = localStorage.getItem('region') || 'india';
 
 const regionSlice = createSlice({
   name: 'region',
@@ -14,8 +14,8 @@ const regionSlice = createSlice({
     clearRegion: () => {
       localStorage.removeItem('region');
       return '';
-    }
-  }
+    },
+  },
 });
 
 export const { setRegion, clearRegion } = regionSlice.actions;

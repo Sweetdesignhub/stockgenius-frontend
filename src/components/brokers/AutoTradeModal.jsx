@@ -43,30 +43,23 @@ const AutoTradeModal = ({ isOpen, onClose }) => {
     if (!marginProfitPercentage) {
       setProfitError('Please enter profit percentage.');
       valid = false;
-    } else if (
-      isNaN(marginProfitPercentage) ||
-      marginProfitPercentage < 5 ||
-      marginProfitPercentage > 50
-    ) {
-      setProfitError('Profit percentage must be a number between 5 and 50.');
+    } else if (isNaN(marginProfitPercentage) || marginProfitPercentage < 0.1 || marginProfitPercentage > 50) {
+      setProfitError('Profit percentage must be a number between 0.1 and 50.');
       valid = false;
     } else {
       setProfitError('');
     }
-
+    
     if (!marginLossPercentage) {
       setLossError('Please enter loss percentage.');
       valid = false;
-    } else if (
-      isNaN(marginLossPercentage) ||
-      marginLossPercentage < 5 ||
-      marginLossPercentage > 50
-    ) {
-      setLossError('Loss percentage must be a number between 5 and 50.');
+    } else if (isNaN(marginLossPercentage) || marginLossPercentage < 0.1 || marginLossPercentage > 50) {
+      setLossError('Loss percentage must be a number between 0.1 and 50.');
       valid = false;
     } else {
       setLossError('');
     }
+    
 
     if (valid) {
       if (botAccess === 'Yes') {

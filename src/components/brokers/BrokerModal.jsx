@@ -54,10 +54,55 @@ const BrokerModal = ({ isOpen, onClose }) => {
     }
   };
 
+  // const startFetchingData = () => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const token = localStorage.getItem('fyers_access_token');
+
+  //       if (!token) {
+  //         console.warn("Access token is missing, stopping data fetching.");
+  //         clearInterval(fetchInterval); // Stop fetching if token is missing
+  //         return; // Exit if token is not available
+  //       }
+
+  //       await api.post(`/api/v1/fyers/fetchProfileAndSave/${currentUser._id}`, {
+  //         accessToken: token,
+  //       });
+  //       await api.post(`/api/v1/fyers/fetchFundsAndSave/${currentUser._id}`, {
+  //         accessToken: token,
+  //       });
+  //       await api.post(`/api/v1/fyers/fetchOrdersAndSave/${currentUser._id}`, {
+  //         accessToken: token,
+  //       });
+  //       await api.post(
+  //         `/api/v1/fyers/fetchHoldingsAndSave/${currentUser._id}`,
+  //         { accessToken: token }
+  //       );
+  //       await api.post(
+  //         `/api/v1/fyers/fetchPositionsAndSave/${currentUser._id}`,
+  //         { accessToken: token }
+  //       );
+  //       await api.post(`/api/v1/fyers/fetchTradesAndSave/${currentUser._id}`, {
+  //         accessToken: token,
+  //       });
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setError("Error fetching data from Fyers");
+  //     }
+  //   };
+
+  //   // Start fetching data immediately and set interval
+  //   fetchData();
+  //   const fetchInterval = setInterval(fetchData, 3000);
+
+  //   // Cleanup function to clear interval on unmount
+  //   return () => clearInterval(fetchInterval);
+  // };
+
   const startFetchingData = () => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('fyers_access_token');
+        const token = localStorage.getItem("fyers_access_token");
 
         if (!token) {
           console.warn('Access token is missing, stopping data fetching.');
@@ -90,12 +135,42 @@ const BrokerModal = ({ isOpen, onClose }) => {
       }
     };
 
-    // Start fetching data immediately and set interval
-    fetchData();
-    const fetchInterval = setInterval(fetchData, 3000);
+    // Get current time
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    const currentMinutes = currentTime.getMinutes();
 
-    // Cleanup function to clear interval on unmount
-    return () => clearInterval(fetchInterval);
+    // Define start and end time for the trading hours
+    const startHour = 9;
+    const startMinutes = 15;
+    const endHour = 15;
+    const endMinutes = 30;
+
+    // Function to check if current time is within trading hours
+    const isTradingHours = () => {
+      if (
+        (currentHour > startHour ||
+          (currentHour === startHour && currentMinutes >= startMinutes)) &&
+        (currentHour < endHour ||
+          (currentHour === endHour && currentMinutes <= endMinutes))
+      ) {
+        return true;
+      }
+      return false;
+    };
+
+    // Check if current time is within trading hours
+    if (isTradingHours()) {
+      // Fetch data immediately and set interval to fetch every 3 seconds
+      fetchData();
+      const fetchInterval = setInterval(fetchData, 3000);
+
+      // Cleanup function to clear interval on unmount
+      return () => clearInterval(fetchInterval);
+    } else {
+      // Fetch data only once if outside trading hours
+      fetchData();
+    }
   };
 
   useEffect(() => {
