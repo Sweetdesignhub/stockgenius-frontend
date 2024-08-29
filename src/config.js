@@ -13,5 +13,41 @@ const api = axios.create({
   },
   withCredentials: true,
 });
+const refreshAccessToken = async () => {
+  const response = await api.post("api/v1/auth/refresh-token");
+  return response.data;
+};
+
+// Request interceptor
+api.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        await refreshAccessToken();
+        
+      } catch (refreshError) {
+        console.error("Failed to refresh token:", refreshError);
+        window.location.href = '/sign-in';
+        
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;
