@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react';
-import Loading from '../../../common/Loading';
-import api from '../../../../config.js';
-import NotAvailable from '../../../common/NotAvailable.jsx';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from "react";
+import Loading from "../../../common/Loading";
+import api from "../../../../config.js";
+import NotAvailable from "../../../common/NotAvailable.jsx";
+import { useSelector } from "react-redux";
 
-const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
+const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
   const [trades, setTrades] = useState([]);
   console.log("trades", trades);
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
   const getTradesData = async () => {
     try {
-      const fyersAccessToken = localStorage.getItem('fyers_access_token');
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
       if (!fyersAccessToken) {
         throw new Error(
-          'No authorization token found. Please authenticate and try again.'
+          "No authorization token found. Please authenticate and try again."
         );
       }
 
@@ -26,9 +26,8 @@ const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
         `/api/v1/fyers/tradesByUserId/${currentUser.id}`,
         { headers }
       );
-      
 
-      if (response.statusText === 'OK') {
+      if (response.statusText === "OK") {
         // setTrades(response.data.tradeBook);
         const tradesData = response.data.tradeBook;
         setTrades(tradesData);
@@ -43,10 +42,10 @@ const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
         throw new Error(response.data.message);
       }
     } catch (error) {
-      console.error('Error fetching trades:', error);
+      console.error("Error fetching trades:", error);
       setError(
         error.message ||
-          'Failed to fetch trades. Please authenticate and try again.'
+          "Failed to fetch trades. Please authenticate and try again."
       );
     } finally {
       setLoading(false);
@@ -61,21 +60,21 @@ const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
 
   if (loading) {
     return (
-      <div className='flex h-40 items-center justify-center p-4'>
+      <div className="flex h-40 items-center justify-center p-4">
         <Loading />
       </div>
     );
   }
 
   if (error) {
-    return <div className='text-center p-4 text-red-500'>{error}</div>;
+    return <div className="text-center p-4 text-red-500">{error}</div>;
   }
 
   if (!trades || trades.length === 0) {
     // return <div className="text-center p-4">There are no trades</div>;
     return (
       <NotAvailable
-        dynamicText={'The <strong>best</strong> time to start is now!'}
+        dynamicText={"The <strong>best</strong> time to start is now!"}
       />
     );
   }
@@ -86,14 +85,14 @@ const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
   // );
 
   return (
-    <div className='h-[55vh] overflow-auto'>
-      <table className='min-w-full border-collapse'>
+    <div className="h-[55vh] overflow-auto">
+      <table className="min-w-full border-collapse">
         <thead>
           <tr>
             {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
-                className='px-4 whitespace-nowrap capitalize py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left'
+                className="px-4 whitespace-nowrap capitalize py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
               >
                 {columnName}
               </th>
@@ -102,11 +101,11 @@ const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
         </thead>
         <tbody>
           {trades.map((trade, index) => (
-            <tr key={index} className='text-center'>
+            <tr key={index} className="text-center">
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className='px-4 whitespace-nowrap text-left font-semibold py-4'
+                  className="px-4 whitespace-nowrap text-left font-semibold py-4"
                 >
                   {trade[columnName]}
                 </td>

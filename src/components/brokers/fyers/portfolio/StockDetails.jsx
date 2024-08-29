@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import HoldingsTable from "./HoldingsTable";
 import FundsTable from "./FundsTable";
@@ -18,6 +18,10 @@ const StockDetails = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const filterRef = useRef(null);
 
+  const updatePositionCount = useCallback((count) => {
+    setPositionsCount(count);
+  }, []);
+
   const categories = [
     {
       name: `Orders (${ordersCount})`,
@@ -28,7 +32,7 @@ const StockDetails = () => {
     {
       name: `All Positions (${positionsCount})`,
       component: PositionsTable,
-      setCount: setPositionsCount,
+      updatePositionCount: updatePositionCount,
       key: "positions",
     },
     {
@@ -75,26 +79,38 @@ const StockDetails = () => {
     }));
   };
 
-  const setTabColumnNames = (names) => {
-    const currentTabKey = categories[currentTab].key;
-    setColumnNames(names);
-    setSelectedColumns((prev) => {
-      const existingSelections = prev[currentTabKey] || {};
-      const newSelections = names.reduce((acc, name) => {
-        acc[name] =
-          name in existingSelections ? existingSelections[name] : true;
-        return acc;
-      }, {});
-      return { ...prev, [currentTabKey]: newSelections };
-    });
-  };
+  const setTabColumnNames = useCallback(
+    (names) => {
+      const currentTabKey = categories[currentTab].key;
+      setColumnNames(names);
+      setSelectedColumns((prev) => {
+        const existingSelections = prev[currentTabKey] || {};
+        const newSelections = names.reduce((acc, name) => {
+          acc[name] =
+            name in existingSelections ? existingSelections[name] : true;
+          return acc;
+        }, {});
+        return { ...prev, [currentTabKey]: newSelections };
+      });
+    },
+    [currentTab, categories]
+  );
 
   const getSelectedColumns = () => {
     const currentTabKey = categories[currentTab].key;
     const currentSelections = selectedColumns[currentTabKey] || {};
-    return Object.keys(currentSelections).filter(
+    const selected = Object.keys(currentSelections).filter(
       (col) => currentSelections[col]
     );
+
+    // Move "symbol" to the beginning if it exists
+    const symbolIndex = selected.indexOf("symbol");
+    if (symbolIndex > -1) {
+      selected.splice(symbolIndex, 1);
+      selected.unshift("symbol");
+    }
+
+    return selected;
   };
 
   const fyersAccessToken = localStorage.getItem("fyers_access_token");
@@ -158,15 +174,26 @@ const StockDetails = () => {
 
           <div className="mt-3 overflow-hidden h-[55vh] rounded-lg auth">
             <TabPanels className="h-full">
-              {categories.map(({ name, component: Component, setCount }) => (
-                <TabPanel key={name} className="rounded-xl p-3 overflow-y-auto">
-                  <Component
-                    setCount={setCount}
-                    selectedColumns={getSelectedColumns()}
-                    setColumnNames={setTabColumnNames}
-                  />
-                </TabPanel>
-              ))}
+              {categories.map(
+                ({
+                  name,
+                  component: Component,
+                  setCount,
+                  updatePositionCount,
+                }) => (
+                  <TabPanel
+                    key={name}
+                    className="rounded-xl p-3 overflow-y-auto"
+                  >
+                    <Component
+                      setCount={setCount}
+                      updatePositionCount={updatePositionCount}
+                      selectedColumns={getSelectedColumns()}
+                      setColumnNames={setTabColumnNames}
+                    />
+                  </TabPanel>
+                )
+              )}
             </TabPanels>
           </div>
         </TabGroup>
