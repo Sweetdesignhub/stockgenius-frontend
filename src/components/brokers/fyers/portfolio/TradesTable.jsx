@@ -4,8 +4,10 @@ import api from '../../../../config.js';
 import NotAvailable from '../../../common/NotAvailable.jsx';
 import { useSelector } from 'react-redux';
 
-const TradesTable = ({ selectedColumns, setColumnNames }) => {
+const TradesTable = ({setCount, selectedColumns, setColumnNames }) => {
   const [trades, setTrades] = useState([]);
+  console.log("trades", trades);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -24,9 +26,19 @@ const TradesTable = ({ selectedColumns, setColumnNames }) => {
         `/api/v1/fyers/tradesByUserId/${currentUser.id}`,
         { headers }
       );
+      
 
       if (response.statusText === 'OK') {
-        setTrades(response.data.tradeBook);
+        // setTrades(response.data.tradeBook);
+        const tradesData = response.data.tradeBook;
+        setTrades(tradesData);
+        setCount(tradesData.length);
+
+        const excludedColumns = [];
+        const allColumnNames = Object.keys(tradesData[0]).filter(
+          (columnName) => !excludedColumns.includes(columnName)
+        );
+        setColumnNames(allColumnNames);
       } else {
         throw new Error(response.data.message);
       }
@@ -68,7 +80,10 @@ const TradesTable = ({ selectedColumns, setColumnNames }) => {
     );
   }
 
-  // const columnNames = Object.keys(trades[0]);
+  // const excludedColumns = [];
+  // const columnNames = Object.keys(trades[0]).filter(
+  //   (columnName) => !excludedColumns.includes(columnName)
+  // );
 
   return (
     <div className='h-[55vh] overflow-auto'>

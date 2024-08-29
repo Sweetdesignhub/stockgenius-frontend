@@ -9,6 +9,7 @@ import { RiMenuLine } from "react-icons/ri";
 
 const StockDetails = () => {
   const [ordersCount, setOrdersCount] = useState(0);
+  const [tradesCount, setTradesCount] = useState(0);
   const [positionsCount, setPositionsCount] = useState(0);
   const [holdingsCount, setHoldingsCount] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
@@ -30,7 +31,12 @@ const StockDetails = () => {
       setCount: setPositionsCount,
       key: "positions",
     },
-    { name: "Trades", component: TradesTable, key: "trades" },
+    {
+      name: "Trades",
+      component: TradesTable,
+      setCount: setTradesCount,
+      key: "trades",
+    },
     {
       name: `Holdings (${holdingsCount})`,
       component: HoldingsTable,

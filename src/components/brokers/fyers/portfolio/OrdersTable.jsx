@@ -22,7 +22,7 @@ const OrdersTable = ({ setCount, selectedColumns, setColumnNames }) => {
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
       const response = await api.get(
-        `/api/v1/fyers/ordersByUserId/${currentUser._id}`,
+        `/api/v1/fyers/ordersByUserId/${currentUser.id}`,
         { headers }
       );
 
