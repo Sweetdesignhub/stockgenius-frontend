@@ -10,6 +10,9 @@ const Brokerage = () => {
   const [accessToken, setAccessToken] = useState('');
   const navigate = useNavigate();
 
+  console.log(brokerDetails);
+  
+
   useEffect(() => {
     if (currentUser) {
       loadBrokerDetails(currentUser.id);
@@ -19,9 +22,13 @@ const Brokerage = () => {
   const loadBrokerDetails = async (userId) => {
     try {
       const response = await api.get(
-        `/api/v1/fyers/getBrokerDetails/${userId}`
+        `/api/v1/fyers/fetchAllFyersUserDetails/${userId}`
       );
-      setBrokerDetails(response.data);
+
+      if(response.status === 200){
+        setBrokerDetails(response.data[0].profile)
+      }
+      
     } catch (error) {
       console.error('Error fetching broker details:', error);
     }
@@ -62,36 +69,6 @@ const Brokerage = () => {
     }
   };
 
-  const generateAccessToken = async (uri, id) => {
-    try {
-      const response = await api.post('/api/v1/fyers/generateAccessToken', {
-        uri,
-        userId: currentUser.id,
-        id,
-      });
-      const { accessToken } = response.data;
-      setAccessToken(accessToken);
-      // Redirect based on localStorage country setting
-      if (localStorage.getItem('country') === 'india') {
-        navigate(`/india/portfolio`);
-      } else if (localStorage.getItem('country') === 'us') {
-        navigate(`/us/portfolio`);
-      }
-    } catch (error) {
-      console.error('Failed to generate access token:', error);
-    }
-  };
-
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    const authCode = query.get('auth_code');
-    const id = query.get('state_id');
-    console.log('state_id', id);
-    if (authCode && id) {
-      const uri = window.location.href;
-      generateAccessToken(uri, id);
-    }
-  }, []);
 
   return (
     <div className='p-6'>
