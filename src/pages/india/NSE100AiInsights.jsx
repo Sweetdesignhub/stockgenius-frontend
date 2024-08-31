@@ -268,6 +268,7 @@ import Loading from '../../components/common/Loading';
 import ErrorComponent from '../../components/common/Error';
 import Modal from '../../components/common/Modal';
 import * as XLSX from 'xlsx';
+import NotAvailable from '../../components/common/NotAvailable';
 
 function NSE100AiInsights() {
   const [loading, setLoading] = useState(true);
@@ -567,7 +568,7 @@ function NSE100AiInsights() {
                             }
                           >
                             <div
-                              style={{ display: 'flex', alignItems: 'center' }}
+                              style={{ display: 'flex', alignItems: 'center',width:'max-content' }}
                             >
                               {column.split(' ')[0]}
                               {column.split(' ')[0] === 'ROI' && (
@@ -611,31 +612,42 @@ function NSE100AiInsights() {
                 </thead>
                 {/* Table body */}
                 <tbody>
-                  {filteredData.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {dataTable.map(
-                        (column, colIndex) =>
-                          colIndex !== 4 && (
-                            <td
-                              key={colIndex}
-                              className={`h-20 w-full min-w-24 capitalize px-2 whitespace-nowrap ${
-                                colIndex === 1
-                                  ? 'text-[#4882F3]'
-                                  : colIndex === 2
-                                  ? 'text-[#1ECB4F]'
-                                  : colIndex === 5
-                                  ? getColorClass(parseInt(row[column]))
-                                  : colIndex === 6
-                                  ? 'text-[#1ECB4F] font-semibold'
-                                  : ''
-                              }`}
-                            >
-                              {row[column]}
-                            </td>
-                          )
-                      )}
+                  {filteredData.length > 0 ? (
+                    filteredData.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        {dataTable.map(
+                          (column, colIndex) =>
+                            colIndex !== 4 && (
+                              <td
+                                key={colIndex}
+                                className={`h-20 w-full min-w-24 capitalize px-2 whitespace-nowrap ${
+                                  colIndex === 1
+                                    ? 'text-[#4882F3]'
+                                    : colIndex === 2
+                                    ? 'text-[#1ECB4F]'
+                                    : colIndex === 5
+                                    ? getColorClass(parseInt(row[column]))
+                                    : colIndex === 6
+                                    ? 'text-[#1ECB4F] font-semibold'
+                                    : ''
+                                }`}
+                              >
+                                {row[column]}
+                              </td>
+                            )
+                        )}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={Object.keys(data[0] || {}).length}
+                        className='text-center py-10'
+                      >
+                        <NotAvailable dynamicText='No data to display.' />
+                      </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
