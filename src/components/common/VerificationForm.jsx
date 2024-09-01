@@ -32,15 +32,18 @@ const VerificationForm = ({
         `${verificationType} Verification Successful:`,
         response.data
       );
+      console.log(step);
 
       if (step < 3) {
         onValidSubmit(step + 1);
         reset();
       } else {
+        const avatar =
+          userData?.avatar ||
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAd5avdba8EiOZH8lmV3XshrXx7dKRZvhx-A&s';
         dispatch(
           signInSuccess({
-            avatar:
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAd5avdba8EiOZH8lmV3XshrXx7dKRZvhx-A&s',
+            avatar: avatar,
             ...userData,
           })
         );

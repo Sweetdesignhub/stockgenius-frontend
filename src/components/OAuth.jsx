@@ -21,17 +21,9 @@ export default function OAuth() {
     console.log(tokenResponse);
 
     try {
-      const userInfoResponse = await fetch(
-        'https://www.googleapis.com/oauth2/v3/userinfo',
-        {
-          headers: { Authorization: `Bearer ${tokenResponse.credential}` },
-        }
-      );
-      const userInfo = await userInfoResponse.json();
-
       const res = await api.post('/api/v1/auth/google-auth', {
         token: tokenResponse.credential,
-        country: userInfo.locale ? userInfo.locale.split('_')[1] : '',
+        country: '',
         state: '',
       });
 
@@ -39,7 +31,7 @@ export default function OAuth() {
 
       if (requiresAdditionalInfo) {
         navigate(`/complete-profile`, {
-          state: { userId, email: userInfo.email },
+          state: { userId, email: data?.email },
         });
       } else {
         dispatch(signInSuccess(data));
@@ -58,21 +50,13 @@ export default function OAuth() {
 
   return (
     <>
-      {/* <button
-        onClick={() => login()}
-        className='rounded-lg p-3 flex items-center justify-center bg-white text-black dark:border-collapse border'
-      >
-        <img
-          src='https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc7f00d03c7224a7b97423ef6bf741a1f'
-          alt='Google'
-          className='h-6 mr-3'
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <GoogleLogin
+          onSuccess={handleGoogleSignIn}
+          onError={() => console.log('Login Failed')}
+          style={{ width: '100%', maxWidth: '620px' }}
         />
-        <p>Continue with Google</p>
-      </button> */}
-      <GoogleLogin
-        onSuccess={handleGoogleSignIn}
-        onError={() => console.log('Login Failed')}
-      />
+      </div>
       <ConfirmationModal
         isOpen={isModalOpen}
         title='Region Not Selected'

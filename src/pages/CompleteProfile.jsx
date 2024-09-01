@@ -59,24 +59,31 @@ const CompleteProfile = () => {
         fdata
       );
       console.log('Signup Successful:', response.data);
-      setUserData(data);
-      setStep(2);
+      setUserData(response.data);
+      setStep(3);
     } catch (error) {
       console.error('Signup Error:', error);
     }
   };
   if (step === 1) {
     return (
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <PhoneInput
-          international
-          defaultCountry='US'
-          value={watch('phoneNumber')}
-          className='text-black'
-          onChange={handlePhoneChange}
-        />
-        {errors.phoneNumber && <p>{errors.phoneNumber.message}</p>}
-        <div className='flex gap-4'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='flex flex-col mx-auto gap-4 items-center w-full max-w-2xl p-4'
+      >
+        <div className='w-full'>
+          <PhoneInput
+            international
+            defaultCountry='IN'
+            value={watch('phoneNumber')}
+            className='bg-slate-100 text-black p-3 rounded-md w-full'
+            onChange={handlePhoneChange}
+          />
+          {errors.phoneNumber && (
+            <p className='text-red-500'>{errors.phoneNumber.message}</p>
+          )}
+        </div>
+        <div className='flex justify-between gap-4 w-full'>
           <InputField
             label='Select Country'
             name='country'
@@ -102,14 +109,20 @@ const CompleteProfile = () => {
             error={errors.state?.message}
           />
         </div>
-        <button type='submit'>Submit</button>
+
+        <button
+          type='submit'
+          className='mt-4 bg-[#1A2C5C] text-white py-2 px-6 rounded-lg hover:opacity-95 w-full md:w-auto'
+        >
+          Submit
+        </button>
       </form>
     );
-  } else if (step === 2) {
+  } else if (step === 3) {
     return (
       <VerificationForm
         onValidSubmit={handleValidSubmit}
-        step={currentStep}
+        step={3}
         userData={userData}
         setUserData={setUserData}
         label='Enter Phone Verification Code'
@@ -117,7 +130,6 @@ const CompleteProfile = () => {
       />
     );
   }
-  
 };
 
 export default CompleteProfile;
