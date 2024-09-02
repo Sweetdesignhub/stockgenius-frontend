@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import api from '../config';
-import BrokerDetails from '../components/brokers/BrokerDetails';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import api from "../config";
+import BrokerDetails from "../components/brokers/BrokerDetails";
+import { useNavigate } from "react-router-dom";
 
 const Brokerage = () => {
   const { currentUser } = useSelector((state) => state.user);
-  const [brokerDetails, setBrokerDetails] = useState([]);
-  const [accessToken, setAccessToken] = useState('');
-  const navigate = useNavigate();
+  const [brokerDetails, setBrokerDetails] = useState(null);
 
   console.log(brokerDetails);
-  
 
   useEffect(() => {
     if (currentUser) {
@@ -19,73 +16,54 @@ const Brokerage = () => {
     }
   }, [currentUser]);
 
-  const loadBrokerDetails = async (userId) => {
+  const loadBrokerDetails = async () => {
     try {
-      const response = await api.get(
-        `/api/v1/fyers/fetchAllFyersUserDetails/${userId}`
-      );
-
-      if(response.status === 200){
-        setBrokerDetails(response.data[0].profile)
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      if (currentUser && fyersAccessToken) {
+        const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+        const response = await api.get(
+          `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
+          { headers }
+        );
+        const data = response.data[0];
+        setBrokerDetails(data.profile);
       }
-      
     } catch (error) {
-      console.error('Error fetching broker details:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
-  const handleUpdate = async (id, formData) => {
-    try {
-      await api.put(`/api/v1/fyers/updateFyersCredentials/${id}`, formData);
-      loadBrokerDetails(currentUser.id);
-      window.alert('Successfully updated credentials!');
-    } catch (error) {
-      console.error('Error updating broker credentials:', error);
-    }
-  };
+  // const handleUpdate = async (id, formData) => {
+  //   try {
+  //     await api.put(`/api/v1/fyers/updateFyersCredentials/${id}`, formData);
+  //     loadBrokerDetails(currentUser.id);
+  //     window.alert('Successfully updated credentials!');
+  //   } catch (error) {
+  //     console.error('Error updating broker credentials:', error);
+  //   }
+  // };
 
   const handleDelete = async (id) => {
-    try {
-      await api.delete(`/api/v1/fyers/deleteFyersCredentials/${id}`);
-      loadBrokerDetails(currentUser.id);
-      window.alert('Successfully deleted credentials!');
-    } catch (error) {
-      console.error('Error deleting broker credentials:', error);
-    }
+    console.log("hanlde delete");
   };
 
-  const handleConnect = async (id) => {
-    try {
-      const response = await api.post(
-        `/api/v1/fyers/generateAuthCodeUrl/${id}`,
-        {
-          userId: currentUser.id,
-        }
-      );
-      const { authCodeURL } = response.data;
-      window.location.href = `${authCodeURL}&state_id=${id}`;
-    } catch (error) {
-      console.error('Error generating auth code URL:', error);
-    }
+  const handleConnect = async () => {
+    console.log("clicked handle click");
   };
-
 
   return (
-    <div className='p-6'>
-      {brokerDetails.length === 0 ? (
-        <div className='text-center'>
+    <div className="p-6">
+      {!brokerDetails ? (
+        <div className="text-center">
           <p>No brokers connected. Connect your broker.</p>
         </div>
       ) : (
-        brokerDetails.map((credentials) => (
-          <BrokerDetails
-            key={credentials._id}
-            credentials={credentials}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
-            onConnect={handleConnect}
-          />
-        ))
+        <BrokerDetails
+          credentials={brokerDetails}
+          // onUpdate={handleUpdate}
+          // onDelete={handleDelete}
+          // onConnect={handleConnect}
+        />
       )}
     </div>
   );
