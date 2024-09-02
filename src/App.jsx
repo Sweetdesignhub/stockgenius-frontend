@@ -22,9 +22,9 @@ import CompleteProfile from './pages/CompleteProfile';
 
 function MainApp() {
   return (
-    <div className='flex flex-col min-h-screen'>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <div className='flex-grow'>
+      <div className="flex-grow">
         <Routes>
           <Route path='/' element={<LandingPage />} />
           <Route path='/sign-in' element={<SignIn />} />
@@ -34,26 +34,26 @@ function MainApp() {
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route element={<PrivateRoute />}>
             {/* India routes */}
-            <Route path='/india/dashboard' element={<IndiaDashboard />} />
+            <Route path="/india/dashboard" element={<IndiaDashboard />} />
             <Route
-              path='/india/NSE100-ai-insights'
+              path="/india/NSE100-ai-insights"
               element={<NSE100AiInsights />}
             />
-            <Route path='/india/referrals' element={<Referral />} />
-            <Route path='/india/portfolio' element={<IndiaPortfolio />} />
-            <Route path='/india/notifications' element={<Notifications />} />
-            <Route path='/india/profile' element={<Profile />} />
-            <Route path='/india/brokerage' element={<Brokerage />} />
-            <Route path='/india/AI-Trading-Bots' element={<AITradingBots />} />
+            <Route path="/india/referrals" element={<Referral />} />
+            <Route path="/india/portfolio" element={<IndiaPortfolio />} />
+            <Route path="/india/notifications" element={<Notifications />} />
+            <Route path="/india/profile" element={<Profile />} />
+            <Route path="/india/brokerage" element={<Brokerage />} />
+            <Route path="/india/AI-Trading-Bots" element={<AITradingBots />} />
 
             {/* USA routes */}
-            <Route path='/usa/dashboard' element={<UsaDashboard />} />
-            <Route path='/usa/stock-lists' element={<StockLists />} />
-            <Route path='/usa/referrals' element={<Referral />} />
-            <Route path='/usa/portfolio' element={<UsaPortfolio />} />
-            <Route path='/usa/notifications' element={<Notifications />} />
-            <Route path='/usa/profile' element={<Profile />} />
-            <Route path='/usa/brokerage' element={<Brokerage />} />
+            <Route path="/usa/dashboard" element={<UsaDashboard />} />
+            <Route path="/usa/stock-lists" element={<StockLists />} />
+            <Route path="/usa/referrals" element={<Referral />} />
+            <Route path="/usa/portfolio" element={<UsaPortfolio />} />
+            <Route path="/usa/notifications" element={<Notifications />} />
+            <Route path="/usa/profile" element={<Profile />} />
+            <Route path="/usa/brokerage" element={<Brokerage />} />
           </Route>
         </Routes>
       </div>

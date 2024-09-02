@@ -1,13 +1,47 @@
 import React from "react";
 import { Switch } from "@headlessui/react";
 
+// New component for Trade Ratio Bar
+const TradeRatioBar = ({ ratio }) => {
+  const percentage = parseFloat(ratio);
+  const greenPercentage = percentage.toFixed(1);
+  const redPercentage = (100 - percentage).toFixed(1);
+  return (
+    <div className="w-32">
+      <div className="flex justify-between mb-1">
+        <span className="text-[#00FF47] font-semibold text-xs">
+          {greenPercentage}%
+        </span>
+        <span className="text-[#FF0000] font-semibold text-xs">
+          {redPercentage}%
+        </span>
+      </div>
+      <div className="w-full h-1.5 flex rounded-full overflow-hidden">
+        <div
+          style={{ width: `${greenPercentage}%` }}
+          className="h-full bg-[#00FF47]"
+        ></div>
+        <div
+          style={{ width: `${redPercentage}%`, backgroundColor: "#FF0000" }}
+          className="h-full"
+        ></div>
+      </div>
+    </div>
+  );
+};
+
 function Bot({ botData, isEnabled, onToggle, currentStatus }) {
   const data = botData.dynamicData.map((item) =>
     item.title === "Status"
       ? {
           ...item,
           value: currentStatus,
-          valueColor: currentStatus === "Inactive" ? "#FF4D4D" : (currentStatus === "Running" ? "#00FF47" : "#FFBF00"),
+          valueColor:
+            currentStatus === "Inactive"
+              ? "#FF4D4D"
+              : currentStatus === "Running"
+              ? "#00FF47"
+              : "#FFBF00",
         }
       : item
   );
@@ -34,14 +68,17 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         <div className="py-6 text-center lg:text-left">
           <div className="flex justify-center lg:justify-start">
             <h3 className="font-semibold text-md mr-2 text-[#63ECFF]">
-              Profit % : <span>{botData.profitPercentage}</span>
+              Profit % : <span>{botData.profitPercentage}%</span>
             </h3>
             <h3 className="font-semibold text-md text-[#FBFF4E]">
-              Risk % : <span>{botData.riskPercentage}</span>
+              Risk % : <span>{botData.riskPercentage}%</span>
             </h3>
           </div>
           <h3 className="text-sm text-[#FFA8A8]">{botData.market}</h3>
           <p className="text-[10px] mt-1 text-[#A6B2CD]">{botData.timestamp}</p>
+          <p className="text-sm mt-2 text-[#63ECFF]">
+            Product Type: {botData.productType}
+          </p>
         </div>
         <div className="w-full lg:w-auto">
           <img
@@ -58,19 +95,17 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
             key={index}
             className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-1/5 mb-4"
           >
-            <h1
-              className={`text-[#A6B2CDB2] text-xs ${
-                item.title === "Status" ? "text-center lg:text-start" : ""
-              }`}
-            >
-              {item.title}
-            </h1>
-            <p
-              className={`text-sm font-semibold`}
-              style={{ color: item.valueColor }}
-            >
-              {item.value}
-            </p>
+            <h1 className="text-[#A6B2CDB2] text-xs mb-1">{item.title}</h1>
+            {item.title === "Trade Ratio" ? (
+              <TradeRatioBar ratio={item.value} />
+            ) : (
+              <p
+                className="text-sm font-semibold"
+                style={{ color: item.valueColor }}
+              >
+                {item.value}
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -83,7 +118,9 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         >
           <span
             className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive" ? "opacity-0" : "opacity-100"
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-0"
+                : "opacity-100"
             }`}
           >
             OFF
@@ -91,7 +128,9 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
 
           <span
             className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive" ? "opacity-100" : "opacity-0"
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-100"
+                : "opacity-0"
             }`}
           >
             ON
