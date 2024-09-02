@@ -18,6 +18,7 @@ import UsaDashboard from './pages/usa/UsaDashboard';
 import UsaPortfolio from './pages/usa/UsaPortfolio';
 import ForgotPassword from './components/common/ForgotPassword';
 import ResetPassword from './components/common/ResetPassword';
+import CompleteProfile from './pages/CompleteProfile';
 
 function MainApp() {
   return (
@@ -28,6 +29,7 @@ function MainApp() {
           <Route path='/' element={<LandingPage />} />
           <Route path='/sign-in' element={<SignIn />} />
           <Route path='/sign-up' element={<SignUp />} />
+          <Route path='complete-profile' element={<CompleteProfile />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route element={<PrivateRoute />}>
