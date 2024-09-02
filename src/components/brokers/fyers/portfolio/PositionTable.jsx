@@ -4,6 +4,7 @@ import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
 import { useSelector } from "react-redux";
 import { X } from "lucide-react";
+import YesNoConfirmationModal from "../../../common/YesNoConfirmationModal.jsx";
 
 const PositionsTable = ({
   selectedColumns,
@@ -14,15 +15,17 @@ const PositionsTable = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [positionToExit, setPositionToExit] = useState(null);
 
   const getPositionsData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      if (!fyersAccessToken) {
-        throw new Error(
-          "No authorization token found. Please authenticate and try again."
-        );
-      }
+      // if (!fyersAccessToken) {
+      //   throw new Error(
+      //     "No authorization token found. Please authenticate and try again."
+      //   );
+      // }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
       // const response = await api.get(
@@ -189,7 +192,7 @@ const PositionsTable = ({
       updatePositionCount(positionsData.length);
 
       const excludedColumns = ["message", "pan"];
-      const allColumnNames = Object.keys(positionsData[0]).filter(
+      const allColumnNames = Object.keys(positionsData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
       setColumnNames(allColumnNames);
@@ -210,15 +213,41 @@ const PositionsTable = ({
     return () => clearInterval(interval);
   }, []);
 
-  const handleExitPosition = (id) => {
-    console.log(id);
-    setPositions((prevPositions) => {
-      const updatedPositions = prevPositions.filter(
-        (position) => position.id !== id
-      );
-      updatePositionCount(updatedPositions.length);
-      return updatedPositions;
-    });
+  const handleExitPosition = (event, position) => {
+    event.stopPropagation();
+    setPositionToExit(position);
+    setIsModalOpen(true);
+  };
+
+  const confirmExitPosition = async () => {
+    if (positionToExit) {
+      try {
+        // const response = await api.post(
+        //   `/api/v1/fyers/exitPosition/${currentUser.id}`,
+        //   { positionId: positionToExit.id }
+        // );
+
+        // if (response.status === 200) {
+        setPositions((prevPositions) => {
+          const updatedPositions = prevPositions.filter(
+            (position) => position.id !== positionToExit.id
+          );
+          updatePositionCount(updatedPositions.length);
+          return updatedPositions;
+        });
+        alert("Position exited successfully");
+        // } else {
+        //   throw new Error("Failed to exit position");
+        // }
+      } catch (error) {
+        console.error("Error exiting position:", error);
+        // Show error message to user
+        alert(`Failed to exit position: ${error.message}`);
+      } finally {
+        setIsModalOpen(false);
+        setPositionToExit(null);
+      }
+    }
   };
 
   if (loading) {
@@ -242,71 +271,75 @@ const PositionsTable = ({
     );
   }
 
-  // const excludedColumns = [];
-  // const columnNames = Object.keys(positions[0]).filter(
-  //   (columnName) => !excludedColumns.includes(columnName)
-  // );
-
   return (
-    <div className="h-[55vh] overflow-auto relative">
-      <div className="flex">
-        <div className="flex-grow overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-transparent sticky top-0 z-10">
-              <tr>
-                {selectedColumns.map((columnName) => (
-                  <th
-                    key={columnName}
-                    className="px-4 py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left whitespace-nowrap"
-                  >
-                    {columnName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {positions.map((position, index) => (
-                <tr key={index}>
+    <>
+      <div className="h-[55vh] overflow-auto relative">
+        <div className="flex">
+          <div className="flex-grow overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-transparent sticky top-0 z-10">
+                <tr>
                   {selectedColumns.map((columnName) => (
-                    <td
-                      key={`${columnName}-${index}`}
-                      className="px-4 py-4 whitespace-nowrap text-left font-semibold"
+                    <th
+                      key={columnName}
+                      className="px-4 py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left whitespace-nowrap"
                     >
-                      {position[columnName]}
-                    </td>
+                      {columnName}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="w-16 flex-shrink-0 sticky right-0 bg-white dark:bg-transparent">
-          <table className="w-full h-full border-collapse ">
-            <thead className="bg-transparent sticky top-0 z-10 ">
-              <tr>
-                <th className="py-5 "></th>
-              </tr>
-            </thead>
-            <tbody>
-              {positions.map((position, index) => (
-                <tr key={index}>
-                  <td className="p-0">
-                    <div className="flex justify-center items-center h-[41px] ">
-                      <button
-                        onClick={() => handleExitPosition(position.id)}
-                        className="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
+              </thead>
+              <tbody>
+                {positions.map((position, index) => (
+                  <tr key={position.id}>
+                    {selectedColumns.map((columnName) => (
+                      <td
+                        key={`${columnName}-${position.id}`}
+                        className="px-4 py-4 whitespace-nowrap text-left font-semibold"
                       >
-                        <X className="w-4 h-4 text-red-600 dark:text-white" />
-                      </button>
-                    </div>
-                  </td>
+                        {position[columnName]}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="w-16 flex-shrink-0 sticky right-0 bg-transparent">
+            <table className="w-full h-full border-collapse">
+              <thead className="bg-transparent sticky top-0 z-10">
+                <tr>
+                  <th className="py-5"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {positions.map((position, index) => (
+                  <tr key={position.id} className="h-1">
+                    <td className="px-4 py-4">
+                      <div className="flex justify-center py-0">
+                        <button
+                          onClick={(e) => handleExitPosition(e, position)}
+                          className="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
+                        >
+                          <X className="w-4 h-4 text-red-600 dark:text-white" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+      <YesNoConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Exit Position"
+        message={`Are you sure you want to exit the position with ID: <strong>${positionToExit?.id}?</strong>`}
+        onConfirm={confirmExitPosition}
+      />
+    </>
   );
 };
 

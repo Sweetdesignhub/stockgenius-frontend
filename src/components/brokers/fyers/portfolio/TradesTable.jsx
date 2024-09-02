@@ -15,11 +15,11 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
   const getTradesData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      if (!fyersAccessToken) {
-        throw new Error(
-          "No authorization token found. Please authenticate and try again."
-        );
-      }
+      // if (!fyersAccessToken) {
+      //   throw new Error(
+      //     "No authorization token found. Please authenticate and try again."
+      //   );
+      // }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
       const response = await api.get(
@@ -34,7 +34,7 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
         setCount(tradesData.length);
 
         const excludedColumns = [];
-        const allColumnNames = Object.keys(tradesData[0]).filter(
+        const allColumnNames = Object.keys(tradesData[0] || {}).filter(
           (columnName) => !excludedColumns.includes(columnName)
         );
         setColumnNames(allColumnNames);

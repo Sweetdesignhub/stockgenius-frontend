@@ -115,9 +115,9 @@ const StockDetails = () => {
 
   const fyersAccessToken = localStorage.getItem("fyers_access_token");
 
-  if (!fyersAccessToken) {
-    return <div className="text-center">Please connect your broker...</div>;
-  }
+  // if (!fyersAccessToken) {
+  //   return <div className="text-center">Please connect your broker...</div>;
+  // }
 
   return (
     <div className="flex h-[60vh] w-full">
