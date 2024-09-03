@@ -27,7 +27,7 @@ const PositionsTable = ({
       //   );
       // }
 
-      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+//      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
       // const response = await api.get(
       //   `/api/v1/fyers/positionsByUserId/${currentUser.id}`,
       //   {
@@ -174,20 +174,18 @@ const PositionsTable = ({
         updatedAt: "2024-08-22T20:34:58.747Z",
       };
 
-      // if (response.statusText === "OK") {
-      //   const positionsData = response.data.netPositions;
-      //   setPositions(positionsData);
-      //   setCount(positionsData.length);
 
-      //   const excludedColumns = ["message", "pan"];
-      //   const allColumnNames = Object.keys(positionsData[0]).filter(
-      //     (columnName) => !excludedColumns.includes(columnName)
-      //   );
-      //   setColumnNames(allColumnNames);
-      // } else {
-      //   throw new Error(response.data.message);
-      // }
-      const positionsData = response.netPositions;
+  let positionsData;
+      if (response.netPositions) {
+        // If using mock data
+        positionsData = response.netPositions;
+      } else if (response.data && response.data.netPositions) {
+        // If using real API response
+        positionsData = response.data.netPositions;
+      } else {
+        throw new Error("Unexpected response format");
+      }
+
       setPositions(positionsData);
       updatePositionCount(positionsData.length);
 
@@ -222,26 +220,33 @@ const PositionsTable = ({
   const confirmExitPosition = async () => {
     if (positionToExit) {
       try {
-        // const response = await api.post(
-        //   `/api/v1/fyers/exitPosition/${currentUser.id}`,
-        //   { positionId: positionToExit.id }
-        // );
+        const fyersAccessToken = localStorage.getItem("fyers_access_token");
+        if (!fyersAccessToken) {
+          throw new Error("No authorization token found. Please authenticate and try again.");
+        }
 
-        // if (response.status === 200) {
-        setPositions((prevPositions) => {
-          const updatedPositions = prevPositions.filter(
-            (position) => position.id !== positionToExit.id
-          );
-          updatePositionCount(updatedPositions.length);
-          return updatedPositions;
-        });
-        alert("Position exited successfully");
-        // } else {
-        //   throw new Error("Failed to exit position");
-        // }
+        const response = await api.post(
+          `/api/v1/fyers/exitPosition/${currentUser.id}`,
+          { 
+            accessToken: fyersAccessToken,
+            positionId: positionToExit.id 
+          }
+        );
+
+        if (response.status === 200) {
+          setPositions((prevPositions) => {
+            const updatedPositions = prevPositions.filter(
+              (position) => position.id !== positionToExit.id
+            );
+            updatePositionCount(updatedPositions.length);
+            return updatedPositions;
+          });
+          alert("Position exited successfully");
+        } else {
+          throw new Error("Failed to exit position");
+        }
       } catch (error) {
         console.error("Error exiting position:", error);
-        // Show error message to user
         alert(`Failed to exit position: ${error.message}`);
       } finally {
         setIsModalOpen(false);
