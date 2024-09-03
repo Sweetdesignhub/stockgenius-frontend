@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import SignUpForm from '../components/common/SignUpForm';
 import VerificationForm from '../components/common/VerificationForm';
+import { Eye, EyeOff } from 'lucide-react';
 
 const SignUp = () => {
   const [currentStep, setCurrentStep] = useState(1);

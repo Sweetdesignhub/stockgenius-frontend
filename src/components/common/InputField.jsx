@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Country, State } from "country-state-city";
+import { Eye, EyeOff } from 'lucide-react'; 
 
 const InputField = ({
   label,
@@ -11,6 +12,8 @@ const InputField = ({
   className,
   options, // New prop for dropdown options
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const getWidth = () => {
     switch (name) {
       case "password":
@@ -21,6 +24,11 @@ const InputField = ({
       default:
         return "w-full";
     }
+  };
+
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const renderInput = () => {
@@ -37,6 +45,29 @@ const InputField = ({
             </option>
           ))}
         </select>
+      );
+    } else if (type === "password") {
+      return (
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder={placeholder}
+            id={name}
+            {...register(name)}
+            className={`bg-slate-100 text-black p-3 rounded-md w-full ${className}`}
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5 text-gray-500" />
+            ) : (
+              <Eye className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
+        </div>
       );
     } else {
       return (

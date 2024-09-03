@@ -124,6 +124,7 @@ import OAuth from '../components/OAuth';
 import api from '../config';
 import { setRegion } from '../redux/region/regionSlice';
 import ConfirmationModal from '../components/common/ConfirmationModal';
+import { Eye, EyeOff } from 'lucide-react'; 
 
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -136,6 +137,7 @@ function SignIn() {
   const selectedRegion = useSelector((state) => state.region);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false); // New state for password visibility
 
   // State to manage the selected country
   // const [selectedCountry, setSelectedCountry] = useState("");
@@ -218,6 +220,10 @@ function SignIn() {
     setIsModalOpen(false);
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className='max-w-xl px-20 py-10 mx-auto auth rounded-2xl'>
       <h1 className='text-3xl text-center font-semibold my-8'>Sign In</h1>
@@ -250,14 +256,27 @@ function SignIn() {
             <label htmlFor='password' className='dark:text-[#FFFFFFCC]'>
               Password
             </label>
+            <div className='relative'>
             <input
               required
-              type='password'
+              type={showPassword ? 'text' : 'password'}
               placeholder='Password'
               id='password'
-              className='bg-slate-100 text-black p-3 rounded-sm'
+              className='bg-slate-100 text-black p-3 rounded-sm w-full'
               onChange={handleChange}
             />
+                          <button
+                type='button'
+                className='absolute right-3 top-1/2 transform -translate-y-1/2'
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <EyeOff className='h-5 w-5 text-gray-500' />
+                ) : (
+                  <Eye className='h-5 w-5 text-gray-500' />
+                )}
+              </button>
+            </div>
           </div>
         )}
 
