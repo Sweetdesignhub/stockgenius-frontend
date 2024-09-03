@@ -85,7 +85,7 @@ const PositionsTable = ({
         }
 
         const response = await api.post(
-          `/api/v1/fyers/exitPosition/${currentUser.id}`,
+          `/api/v1/fyers/exit-position/${currentUser.id}`,
           {
             accessToken: fyersAccessToken,
             positionId: positionToExit.id,
