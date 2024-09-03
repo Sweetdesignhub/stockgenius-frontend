@@ -5,9 +5,9 @@ import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
 import Table from "../../components/dashboard/Table";
 import { useSelector } from "react-redux";
-// import Modal from "../../components/common/Modal";
-// import BrokerModal from "../../components/brokers/BrokerModal";
-// import AutoTradeModal from "../../components/brokers/AutoTradeModal";
+import Modal from "../../components/common/Modal";
+import BrokerModal from "../../components/brokers/BrokerModal";
+import AutoTradeModal from "../../components/brokers/AutoTradeModal";
 
 const bucketName = "automationdatabucket";
 const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
@@ -65,54 +65,54 @@ const IndiaDashboard = () => {
     setModalOpen(true);
   };
 
-  // const closeModal = () => {
-  //   setModalOpen(false);
-  //   setSelectedRow(null);
-  //   setActionType(null);
-  // };
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedRow(null);
+    setActionType(null);
+  };
 
-  // const closeBrokerModal = () => {
-  //   setBrokerModalOpen(false);
-  // };
+  const closeBrokerModal = () => {
+    setBrokerModalOpen(false);
+  };
 
-  // const closeAutoTradeModal = () => {
-  //   setAutoTradeModalOpen(false);
-  // };
+  const closeAutoTradeModal = () => {
+    setAutoTradeModalOpen(false);
+  };
 
-  // const handleQuantityChange = (event) => {
-  //   setQuantity(parseInt(event.target.value, 10));
-  // };
+  const handleQuantityChange = (event) => {
+    setQuantity(parseInt(event.target.value, 10));
+  };
 
-  // const handleInputChange = (event) => {
-  //   const { name, value } = event.target;
-  //   setSelectedRow((prevRow) => ({
-  //     ...prevRow,
-  //     [name]: value,
-  //   }));
-  // };
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setSelectedRow((prevRow) => ({
+      ...prevRow,
+      [name]: value,
+    }));
+  };
 
-  // const handleConfirm = () => {
-  //   console.log(
-  //     `${actionType} button confirmed for row:`,
-  //     selectedRow,
-  //     "Quantity:",
-  //     quantity
-  //   );
-  //   setModalOpen(false);
-  // };
+  const handleConfirm = () => {
+    console.log(
+      `${actionType} button confirmed for row:`,
+      selectedRow,
+      "Quantity:",
+      quantity
+    );
+    setModalOpen(false);
+  };
 
-  // const confirmAutoTrade = () => {
-  //   if (!fyersAccessToken) {
-  //     setBrokerModalOpen(true);
-  //     console.log("First connect to your broker to start auto trade feature.");
-  //   }
+  const confirmAutoTrade = () => {
+    if (!fyersAccessToken) {
+      setBrokerModalOpen(true);
+      console.log("First connect to your broker to start auto trade feature.");
+    }
 
-  //   if (fyersAccessToken) {
-  //     console.log(fyersAccessToken);
-  //     console.log("successfully conected to broker");
-  //     setAutoTradeModalOpen(true);
-  //   }
-  // };
+    if (fyersAccessToken) {
+      console.log(fyersAccessToken);
+      console.log("successfully conected to broker");
+      setAutoTradeModalOpen(true);
+    }
+  };
 
   if (loading) {
     return <Loading />;
@@ -164,17 +164,17 @@ const IndiaDashboard = () => {
               actionButtonColor="border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
             />
           </div>
-          {/* <div className="flex items-center justify-center p-4 mt-3">
+          <div className="flex items-center justify-center p-4 mt-3">
             <button
               onClick={confirmAutoTrade}
               className="bg-[#3A6FF8] text-white px-4 py-2 rounded-xl"
             >
               Activate Auto-Trades
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
-      {/* <Modal
+      <Modal
         isOpen={modalOpen}
         closeModal={closeModal}
         rowData={selectedRow}
@@ -188,7 +188,7 @@ const IndiaDashboard = () => {
       <AutoTradeModal
         isOpen={autoTradeModalOpen}
         onClose={closeAutoTradeModal}
-      /> */}
+      />
     </div>
   );
 };

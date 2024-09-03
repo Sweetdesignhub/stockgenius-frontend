@@ -12,6 +12,9 @@ function AccountInfo() {
   const [loading, setLoading] = useState(true);
   const { currentUser } = useSelector((state) => state.user);
 
+  console.log("acc : ", currentUser);
+  
+
   const fetchData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem('fyers_access_token');
@@ -22,6 +25,7 @@ function AccountInfo() {
           { headers }
         );
         const data = response.data[0];
+        
 
         setProfile(data.profile);
         setFunds(data.funds.fund_limit[9]?.equityAmount || 0);
