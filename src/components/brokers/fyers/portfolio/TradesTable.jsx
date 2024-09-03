@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
   const [trades, setTrades] = useState([]);
-  console.log("trades", trades);
+  // console.log("trades", trades);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,11 +15,11 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
   const getTradesData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      // if (!fyersAccessToken) {
-      //   throw new Error(
-      //     "No authorization token found. Please authenticate and try again."
-      //   );
-      // }
+      if (!fyersAccessToken) {
+        throw new Error(
+          "No authorization token found. Please authenticate and try again."
+        );
+      }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
       const response = await api.get(

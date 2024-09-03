@@ -21,173 +21,28 @@ const PositionsTable = ({
   const getPositionsData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      // if (!fyersAccessToken) {
-      //   throw new Error(
-      //     "No authorization token found. Please authenticate and try again."
-      //   );
-      // }
+      if (!fyersAccessToken) {
+        throw new Error(
+          "No authorization token found. Please authenticate and try again."
+        );
+      }
 
       const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      // const response = await api.get(
-      //   `/api/v1/fyers/positionsByUserId/${currentUser.id}`,
-      //   {
-      //     headers,
-      //   }
-      // );
+      const response = await api.get(
+        `/api/v1/fyers/positionsByUserId/${currentUser.id}`,
+        {
+          headers,
+        }
+      );
 
-      const response = {
-        overall: {
-          count_total: 4,
-          count_open: 0,
-          pl_total: 93.24999999999972,
-          pl_realized: 93.24999999999972,
-          pl_unrealized: 0,
-        },
-        netPositions: [
-          {
-            netQty: 0,
-            qty: 0,
-            netAvg: 0,
-            side: 0,
-            productType: "INTRADAY",
-            realized_profit: 1.3500000000011596,
-            unrealized_profit: 0,
-            pl: 1.3500000000011596,
-            ltp: 334,
-            buyQty: 129,
-            buyAvg: 334.0147286821705,
-            buyVal: 43087.9,
-            sellQty: 129,
-            sellAvg: 334.0251937984496,
-            sellVal: 43089.25,
-            slNo: 0,
-            fyToken: "101000000014977",
-            crossCurrency: "",
-            rbiRefRate: 1,
-            qtyMulti_com: 1,
-            segment: 10,
-            symbol: "NSE:POWERGRID-EQ",
-            id: "NSE:POWERGRID-EQ-INTRADAY",
-            cfBuyQty: 0,
-            cfSellQty: 0,
-            dayBuyQty: 129,
-            daySellQty: 129,
-            exchange: 10,
-            _id: "66c7a0f2cf14d38643416c3e",
-          },
-          {
-            netQty: 0,
-            qty: 0,
-            netAvg: 0,
-            side: 0,
-            productType: "INTRADAY",
-            realized_profit: -33.69999999999908,
-            unrealized_profit: 0,
-            pl: -33.69999999999908,
-            ltp: 324.35,
-            buyQty: 109,
-            buyAvg: 326.6788990825688,
-            buyVal: 35608,
-            sellQty: 109,
-            sellAvg: 326.3697247706422,
-            sellVal: 35574.3,
-            slNo: 0,
-            fyToken: "10100000002475",
-            crossCurrency: "",
-            rbiRefRate: 1,
-            qtyMulti_com: 1,
-            segment: 10,
-            symbol: "NSE:ONGC-EQ",
-            id: "NSE:ONGC-EQ-INTRADAY",
-            cfBuyQty: 0,
-            cfSellQty: 0,
-            dayBuyQty: 109,
-            daySellQty: 109,
-            exchange: 10,
-            _id: "66c7a0f2cf14d38643416c3f",
-          },
-          {
-            netQty: 0,
-            qty: 0,
-            netAvg: 0,
-            side: 0,
-            productType: "INTRADAY",
-            realized_profit: 116.09999999999877,
-            unrealized_profit: 0,
-            pl: 116.09999999999877,
-            ltp: 1440.3,
-            buyQty: 27,
-            buyAvg: 1410.9722222222222,
-            buyVal: 38096.25,
-            sellQty: 27,
-            sellAvg: 1415.2722222222221,
-            sellVal: 38212.35,
-            slNo: 0,
-            fyToken: "101000000010099",
-            crossCurrency: "",
-            rbiRefRate: 1,
-            qtyMulti_com: 1,
-            segment: 10,
-            symbol: "NSE:GODREJCP-EQ",
-            id: "NSE:GODREJCP-EQ-INTRADAY",
-            cfBuyQty: 0,
-            cfSellQty: 0,
-            dayBuyQty: 27,
-            daySellQty: 27,
-            exchange: 10,
-            _id: "66c7a0f2cf14d38643416c40",
-          },
-          {
-            netQty: 0,
-            qty: 0,
-            netAvg: 0,
-            side: 0,
-            productType: "INTRADAY",
-            realized_profit: 9.499999999998863,
-            unrealized_profit: 0,
-            pl: 9.499999999998863,
-            ltp: 1205.8,
-            buyQty: 9,
-            buyAvg: 1202.8277777777778,
-            buyVal: 10825.45,
-            sellQty: 9,
-            sellAvg: 1203.8833333333332,
-            sellVal: 10834.95,
-            slNo: 0,
-            fyToken: "10100000003432",
-            crossCurrency: "",
-            rbiRefRate: 1,
-            qtyMulti_com: 1,
-            segment: 10,
-            symbol: "NSE:TATACONSUM-EQ",
-            id: "NSE:TATACONSUM-EQ-INTRADAY",
-            cfBuyQty: 0,
-            cfSellQty: 0,
-            dayBuyQty: 9,
-            daySellQty: 9,
-            exchange: 10,
-            _id: "66c7a0f2cf14d38643416c41",
-          },
-        ],
-        _id: "66c7a0f2cf14d38643416c3d",
-        createdAt: "2024-08-22T20:34:58.747Z",
-        updatedAt: "2024-08-22T20:34:58.747Z",
-      };
+      let positionsData;
+      if (response.data && response.data.netPositions) {
+        // If using real API response
+        positionsData = response.data.netPositions;
+      } else {
+        throw new Error("Unexpected response format");
+      }
 
-      // if (response.statusText === "OK") {
-      //   const positionsData = response.data.netPositions;
-      //   setPositions(positionsData);
-      //   setCount(positionsData.length);
-
-      //   const excludedColumns = ["message", "pan"];
-      //   const allColumnNames = Object.keys(positionsData[0]).filter(
-      //     (columnName) => !excludedColumns.includes(columnName)
-      //   );
-      //   setColumnNames(allColumnNames);
-      // } else {
-      //   throw new Error(response.data.message);
-      // }
-      const positionsData = response.netPositions;
       setPositions(positionsData);
       updatePositionCount(positionsData.length);
 
@@ -222,26 +77,35 @@ const PositionsTable = ({
   const confirmExitPosition = async () => {
     if (positionToExit) {
       try {
-        // const response = await api.post(
-        //   `/api/v1/fyers/exitPosition/${currentUser.id}`,
-        //   { positionId: positionToExit.id }
-        // );
-
-        // if (response.status === 200) {
-        setPositions((prevPositions) => {
-          const updatedPositions = prevPositions.filter(
-            (position) => position.id !== positionToExit.id
+        const fyersAccessToken = localStorage.getItem("fyers_access_token");
+        if (!fyersAccessToken) {
+          throw new Error(
+            "No authorization token found. Please authenticate and try again."
           );
-          updatePositionCount(updatedPositions.length);
-          return updatedPositions;
-        });
-        alert("Position exited successfully");
-        // } else {
-        //   throw new Error("Failed to exit position");
-        // }
+        }
+
+        const response = await api.post(
+          `/api/v1/fyers/exit-position/${currentUser.id}`,
+          {
+            accessToken: fyersAccessToken,
+            positionId: positionToExit.id,
+          }
+        );
+
+        if (response.status === 200) {
+          setPositions((prevPositions) => {
+            const updatedPositions = prevPositions.filter(
+              (position) => position.id !== positionToExit.id
+            );
+            updatePositionCount(updatedPositions.length);
+            return updatedPositions;
+          });
+          alert("Position exited successfully");
+        } else {
+          throw new Error("Failed to exit position");
+        }
       } catch (error) {
         console.error("Error exiting position:", error);
-        // Show error message to user
         alert(`Failed to exit position: ${error.message}`);
       } finally {
         setIsModalOpen(false);

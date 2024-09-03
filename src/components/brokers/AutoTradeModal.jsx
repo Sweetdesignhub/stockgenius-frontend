@@ -15,17 +15,17 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
 
   const { currentUser } = useSelector((state) => state.user);
   const fyersAccessToken = useSelector((state) => state.fyers);
-  console.log(currentUser);
+  // console.log(currentUser);
   if (!isOpen) return null;
 
   const activateAutoTradeBot = async () => {
     try {
       const response = await api.post(
-        `/api/v1/users/auto-trade-bot/activate/${currentUser.id}`,
+        `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
         {
           marginProfitPercentage,
           marginLossPercentage,
-          productType, // Include the new productType in the API call
+          productType, 
         }
       );
       if (response.status === 200) {
