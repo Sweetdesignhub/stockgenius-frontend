@@ -21,7 +21,7 @@ const IndiaDashboard = () => {
   const fyersAccessToken = useSelector((state) => state.fyers);
   // console.log('india access token : ', fyersAccessToken);
 
-  console.log("google clinet : ", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  // console.log("google clinet : ", import.meta.env.VITE_GOOGLE_CLIENT_ID);
   
 
   const [selectedRow, setSelectedRow] = useState(null);
