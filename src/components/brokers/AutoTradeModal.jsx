@@ -80,10 +80,10 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
       valid = false;
     } else if (
       isNaN(marginLossPercentage) ||
-      marginLossPercentage < 5 ||
+      marginLossPercentage < 0.1 ||
       marginLossPercentage > 50
     ) {
-      setLossError("Loss percentage must be a number between 5 and 50.");
+      setLossError("Loss percentage must be a number between 0.1 and 50.");
       valid = false;
     } else {
       setLossError("");
