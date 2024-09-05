@@ -7,11 +7,14 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
   const [marginProfitPercentage, setMarginProfitPercentage] = useState("");
   const [marginLossPercentage, setMarginLossPercentage] = useState("");
   const [botAccess, setBotAccess] = useState("Yes");
-  const [productType, setProductType] = useState("Intraday"); // New state for Product Type
+  const [productType, setProductType] = useState(""); 
   const [profitError, setProfitError] = useState("");
   const [lossError, setLossError] = useState("");
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
+
+  console.log(productType);
+  
 
   const { currentUser } = useSelector((state) => state.user);
   const fyersAccessToken = useSelector((state) => state.fyers);
@@ -20,14 +23,22 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
 
   const activateAutoTradeBot = async () => {
     try {
-      const response = await api.post(
-        `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
-        {
-          marginProfitPercentage,
-          marginLossPercentage,
-          productType, 
-        }
-      );
+      // const response = await api.post(
+      //   `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
+      //   {
+      //     marginProfitPercentage,
+      //     marginLossPercentage,
+      //   }
+      // );
+      const endpoint =
+        productType === "INTRADAY"
+          ? `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`
+          : `/api/v1/users/auto-trade-bot-CNC/activate/${currentUser.id}`;
+
+      const response = await api.post(endpoint, {
+        marginProfitPercentage,
+        marginLossPercentage,
+      });
       if (response.status === 200) {
         setConfirmationMessage(
           isActivatingBot
@@ -37,7 +48,6 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
         onActivate(true, {
           marginProfitPercentage,
           marginLossPercentage,
-          productType,
         });
       } else {
         setConfirmationMessage("Failed to activate the bot. Please try again.");
@@ -166,7 +176,8 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
                   onChange={(e) => setProductType(e.target.value)}
                   className="rounded-lg py-2 px-4 mt-1 text-black"
                 >
-                  <option value="Intraday">INTRADAY</option>
+                  <option value="">Select Product Type</option>
+                  <option value="INTRADAY">INTRADAY</option>
                   <option value="CNC">CNC</option>
                 </select>
               </div>
