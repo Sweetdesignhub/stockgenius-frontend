@@ -65,7 +65,7 @@ function AITradingBots() {
         { title: "Scheduled", value: "24 Apr 05:23 pm" },
         { title: "Number of trades", value: "373" },
         { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "Inactive", valueColor: "#FF4D4D" },
+        { title: "Status", value: "inactive", valueColor: "#FF4D4D" },
         { title: "Re-Investment", value: "29" },
         { title: "Limits", value: "2000" },
       ],
@@ -88,7 +88,7 @@ function AITradingBots() {
         { title: "Scheduled", value: "24 Apr 05:23 pm" },
         { title: "Number of trades", value: "373" },
         { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "Inactive", valueColor: "#FF4D4D" },
+        { title: "Status", value: "inactive", valueColor: "#FF4D4D" },
         { title: "Re-Investment", value: "29" },
         { title: "Limits", value: "2000" },
       ],
@@ -111,7 +111,7 @@ function AITradingBots() {
         { title: "Scheduled", value: "24 Apr 05:23 pm" },
         { title: "Number of trades", value: "373" },
         { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "Inactive", valueColor: "#FF4D4D" },
+        { title: "Status", value: "inactive", valueColor: "#FF4D4D" },
         { title: "Re-Investment", value: "29" },
         { title: "Limits", value: "2000" },
       ],
@@ -128,7 +128,7 @@ function AITradingBots() {
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(true);
   const fyersAccessToken = useSelector((state) => state.fyers);
 
   const formatTime = (seconds) => {
@@ -177,19 +177,19 @@ function AITradingBots() {
 
   const getBotStatus = (isActive) => {
     if (isAfterMarketClose()) {
-      return "Inactive";
+      return "inactive";
     } else if (isWithinTradingHours()) {
-      return isActive ? "Running" : "Inactive";
+      return isActive ? "Running" : "inactive";
     } else if (isBeforeMarketOpen()) {
-      return isActive ? "Active" : "Inactive";
+      return isActive ? "Active" : "inactive";
     } else {
-      return "Inactive";
+      return "inactive";
     }
   };
 
   const [botStates, setBotStates] = useState(() => {
     const initialStates = botDataList.reduce((acc, bot) => {
-      acc[bot.name] = { isActive: false, status: "Inactive" };
+      acc[bot.name] = { isActive: false, status: "inactive"||"stopped" };
       return acc;
     }, {});
     return initialStates;
@@ -470,7 +470,7 @@ function AITradingBots() {
                             ? {
                                 ...item,
                                 value:
-                                  botStates[bot.name]?.status || "Inactive",
+                                  botStates[bot.name]?.status || "inactive",
                                 valueColor:
                                   botStates[bot.name]?.status === "Running"
                                     ? "#00FF47"
@@ -481,7 +481,7 @@ function AITradingBots() {
                       }}
                       isEnabled={botStates[bot.name]?.isActive || false}
                       onToggle={() => handleToggle(bot.name)}
-                      currentStatus={botStates[bot.name]?.status || "Inactive"}
+                      currentStatus={botStates[bot.name]?.status || "inactive"}
                       onAction={(action) => handleBotAction(bot, action)}
                     />
                   ))}
