@@ -2,63 +2,108 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ConfirmationModal from "../common/ConfirmationModal";
 import api from "../../config";
+import { createBot } from "../../botApi";
 
-const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
+const AutoTradeModal = ({ isOpen, onClose, onActivate }) => {
   const [marginProfitPercentage, setMarginProfitPercentage] = useState("");
   const [marginLossPercentage, setMarginLossPercentage] = useState("");
   const [botAccess, setBotAccess] = useState("Yes");
-  const [productType, setProductType] = useState(""); 
+  const [productType, setProductType] = useState("");
   const [profitError, setProfitError] = useState("");
   const [lossError, setLossError] = useState("");
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
 
-  console.log(productType);
-  
+  // console.log(productType);
+
 
   const { currentUser } = useSelector((state) => state.user);
+  console.log("AUTOtrade", currentUser.id)
   const fyersAccessToken = useSelector((state) => state.fyers);
   // console.log(currentUser);
   if (!isOpen) return null;
 
-  const activateAutoTradeBot = async () => {
-    try {
-      // const response = await api.post(
-      //   `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
-      //   {
-      //     marginProfitPercentage,
-      //     marginLossPercentage,
-      //   }
-      // );
-      const endpoint =
-        productType === "INTRADAY"
-          ? `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`
-          : `/api/v1/users/auto-trade-bot-CNC/activate/${currentUser.id}`;
+  // const activateAutoTradeBot = async () => {
+  //   try {
+  //     // const response = await api.post(
+  //     //   `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
+  //     //   {
+  //     //     marginProfitPercentage,
+  //     //     marginLossPercentage,
+  //     //   }
+  //     // );
+  //     // const endpoint =
+  //     //   productType === "INTRADAY"
+  //     //     ? `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`
+  //     //     : `/api/v1/users/auto-trade-bot-CNC/activate/${currentUser.id}`;
 
-      const response = await api.post(endpoint, {
-        marginProfitPercentage,
-        marginLossPercentage,
-      });
-      if (response.status === 200) {
-        setConfirmationMessage(
-          isActivatingBot
-            ? "Bot activated successfully!"
-            : "Auto Trade Bot activated successfully!"
-        );
-        onActivate(true, {
-          marginProfitPercentage,
-          marginLossPercentage,
-        });
-      } else {
-        setConfirmationMessage("Failed to activate the bot. Please try again.");
-      }
-    } catch (error) {
-      setConfirmationMessage("An error occurred. Please try again.");
-    }
-    setConfirmationOpen(true);
-  };
+  //     const response = await api.post(endpoint, {
+  //       marginProfitPercentage,
+  //       marginLossPercentage,
+  //     });
+  //     if (response.status === 200) {
+  //       setConfirmationMessage(
+  //         isActivatingBot
+  //           ? "Bot activated successfully!"
+  //           : "Auto Trade Bot activated successfully!"
+  //       );
+  //       onActivate(true, {
+  //         marginProfitPercentage,
+  //         marginLossPercentage,
+  //       });
+  //     } else {
+  //       setConfirmationMessage("Failed to activate the bot. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     setConfirmationMessage("An error occurred. Please try again.");
+  //   }
+  //   setConfirmationOpen(true);
+  // };
 
-  const handleActivate = () => {
+  // const handleActivate = () => {
+  //   let valid = true;
+
+  //   if (!marginProfitPercentage) {
+  //     setProfitError("Please enter profit percentage.");
+  //     valid = false;
+  //   } else if (
+  //     isNaN(marginProfitPercentage) ||
+  //     marginProfitPercentage < 5 ||
+  //     marginProfitPercentage > 50
+  //   ) {
+  //     setProfitError("Profit percentage must be a number between 5 and 50.");
+  //     valid = false;
+  //   } else {
+  //     setProfitError("");
+  //   }
+
+  //   if (!marginLossPercentage) {
+  //     setLossError("Please enter loss percentage.");
+  //     valid = false;
+  //   } else if (
+  //     isNaN(marginLossPercentage) ||
+  //     marginLossPercentage < 0.1 ||
+  //     marginLossPercentage > 50
+  //   ) {
+  //     setLossError("Loss percentage must be a number between 0.1 and 50.");
+  //     valid = false;
+  //   } else {
+  //     setLossError("");
+  //   }
+
+  //   if (valid) {
+  //     if (botAccess === "Yes") {
+  //       activateAutoTradeBot();
+  //     } else {
+  //       setConfirmationMessage(
+  //         "Please set bot access to Yes to start the auto trade bot."
+  //       );
+  //       setConfirmationOpen(true);
+  //     }
+  //   }
+  // };
+
+  const handleCreateBot = async () => {
     let valid = true;
 
     if (!marginProfitPercentage) {
@@ -89,15 +134,34 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
       setLossError("");
     }
 
+
     if (valid) {
-      if (botAccess === "Yes") {
-        activateAutoTradeBot();
-      } else {
-        setConfirmationMessage(
-          "Please set bot access to Yes to start the auto trade bot."
-        );
-        setConfirmationOpen(true);
+      try {
+        const botData = {
+          profitPercentage: parseFloat(marginProfitPercentage),
+          riskPercentage: parseFloat(marginLossPercentage),
+          productType,
+
+        };
+
+
+
+        console.log('Sending bot data:', botData);
+        const response = await createBot(botData);
+        console.log('Create bot response:', response);
+
+        if (response.error) {
+          console.error('Bot creation error:', response.error);
+          setConfirmationMessage(`Failed to create bot: ${response.message}`);
+        } else {
+          setConfirmationMessage("Bot created successfully!");
+          onActivate(true, response);
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+        setConfirmationMessage("An error occurred while creating the bot. Please try again.");
       }
+      setConfirmationOpen(true);
     }
   };
 
@@ -127,7 +191,7 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
             </button>
             <div>
               <h2 className="text-xl text-white font-poppins font-semibold">
-                {isActivatingBot ? "Activate Bot" : "Activate Auto Trade Bot"}
+                Create Bot
               </h2>
               <p className="text-sm text-gray-300">NSE | EQ | INTRADAY</p>
             </div>
@@ -140,6 +204,7 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
                   <input
                     type="text"
                     id="profit-percentage"
+                    required
                     value={marginProfitPercentage}
                     onChange={(e) => setMarginProfitPercentage(e.target.value)}
                     className="rounded-lg py-2 px-4 mt-1 text-black"
@@ -155,6 +220,7 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
                   <input
                     type="text"
                     id="loss-percentage"
+                    required
                     value={marginLossPercentage}
                     onChange={(e) => setMarginLossPercentage(e.target.value)}
                     className="rounded-lg py-2 px-4 mt-1 text-black"
@@ -173,6 +239,7 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
                 <select
                   id="product-type"
                   value={productType}
+                  required
                   onChange={(e) => setProductType(e.target.value)}
                   className="rounded-lg py-2 px-4 mt-1 text-black"
                 >
@@ -208,10 +275,10 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
                 Cancel
               </button>
               <button
-                onClick={handleActivate}
+                onClick={handleCreateBot}
                 className="rounded-lg py-2 px-4 text-sm text-white bg-[#235CEF]"
               >
-                Activate
+                Create
               </button>
             </div>
           </div>

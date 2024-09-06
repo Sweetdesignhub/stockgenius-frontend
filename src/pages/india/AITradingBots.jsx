@@ -5,6 +5,7 @@ import AutoTradeModal from "../../components/brokers/AutoTradeModal";
 import Modal from "../../components/common/Modal";
 import Bot from "../../components/aiTradingBots/Bot";
 import NotAvailable from "../../components/common/NotAvailable";
+import { getBotsByUserId, updateBot, deleteBot, toggleBotStatus, updateWorkingTime } from "../../botApi";
 
 function Cards({ title, value }) {
   return (
@@ -131,6 +132,89 @@ function AITradingBots() {
   const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
   const fyersAccessToken = useSelector((state) => state.fyers);
 
+  const [bots, setBots] = useState([]);
+  const [selectedBot, setSelectedBot] = useState(null);
+  const { currentUser } = useSelector((state) => state.user);
+  // console.log("Ai tradingbot", currentUser)
+
+  const fetchBots = useCallback(async () => {
+    try {
+      const response = await getBotsByUserId(currentUser.id);
+      setBots(response);
+    } catch (error) {
+      console.error("Error fetching bots:", error);
+    }
+  }, [currentUser.id]);
+
+  useEffect(() => {
+    fetchBots();
+  }, [fetchBots]);
+
+  const handleUpdateBot = async (botId, updatedData) => {
+    try {
+      const response = await updateBot(botId, updatedData);
+      setBots(bots.map(bot => bot._id === botId ? response : bot));
+    } catch (error) {
+      console.error("Error updating bot:", error);
+    }
+  };
+
+  const handleDeleteBot = async (botId) => {
+    try {
+      await deleteBot(botId);
+      setBots(bots.filter(bot => bot._id !== botId));
+    } catch (error) {
+      console.error("Error deleting bot:", error);
+    }
+  };
+
+  // const handleToggle = (botName) => {
+  //   if (isAfterMarketClose()) {
+  //     alert(
+  //       "You can't activate the bot after market closes, but you can schedule the bot tomorrow"
+  //     );
+  //     return;
+  //   }
+
+  //   setBotStates((prevStates) => {
+  //     const currentState = prevStates[botName];
+  //     const newIsActive =
+  //       isWithinTradingHours() || isBeforeMarketOpen()
+  //         ? !currentState.isActive
+  //         : false;
+
+  //     if (newIsActive) {
+  //       setBotStartTimes((prev) => ({ ...prev, [botName]: new Date() }));
+  //     } else {
+  //       setBotStartTimes((prev) => {
+  //         const newStartTimes = { ...prev };
+  //         delete newStartTimes[botName];
+  //         return newStartTimes;
+  //       });
+  //     }
+
+  //     return {
+  //       ...prevStates,
+  //       [botName]: {
+  //         isActive: newIsActive,
+  //         status: getBotStatus(newIsActive),
+  //       },
+  //     };
+  //   });
+  // };
+
+  const handleToggle = async (botId) => {
+    const bot = bots.find(b => b._id === botId);
+    if (!bot) return;
+
+    try {
+      const response = await toggleBotStatus(botId, bot.productType);
+      setBots(bots.map(b => b._id === botId ? response : b));
+    } catch (error) {
+      console.error("Error toggling bot status:", error);
+    }
+  };
+
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return "0hr 0min 0sec";
     const hours = Math.floor(seconds / 3600);
@@ -252,40 +336,7 @@ function AITradingBots() {
     setLastWeekBotTime(lastWeekTotal);
   }, [botWorkingTimes, dailyBotTimes]);
 
-  const handleToggle = (botName) => {
-    if (isAfterMarketClose()) {
-      alert(
-        "You can't activate the bot after market closes, but you can schedule the bot tomorrow"
-      );
-      return;
-    }
 
-    setBotStates((prevStates) => {
-      const currentState = prevStates[botName];
-      const newIsActive =
-        isWithinTradingHours() || isBeforeMarketOpen()
-          ? !currentState.isActive
-          : false;
-
-      if (newIsActive) {
-        setBotStartTimes((prev) => ({ ...prev, [botName]: new Date() }));
-      } else {
-        setBotStartTimes((prev) => {
-          const newStartTimes = { ...prev };
-          delete newStartTimes[botName];
-          return newStartTimes;
-        });
-      }
-
-      return {
-        ...prevStates,
-        [botName]: {
-          isActive: newIsActive,
-          status: getBotStatus(newIsActive),
-        },
-      };
-    });
-  };
 
   const closeModal = () => {
     setModalOpen(false);
@@ -316,10 +367,16 @@ function AITradingBots() {
   };
 
   const handleBotAction = (bot, action) => {
-    setSelectedRow(bot);
+    setSelectedBot(bot);
     setActionType(action);
-    setQuantity(1);
     setModalOpen(true);
+  };
+
+  const handleAutoTradeActivation = (isActivated, newBot) => {
+    if (isActivated) {
+      setBots([...bots, newBot]);
+    }
+    setAutoTradeModalOpen(false);
   };
 
   const closeBrokerModal = () => {
@@ -336,15 +393,15 @@ function AITradingBots() {
   const [isActivatingBot, setIsActivatingBot] = useState(false);
 
   const handleAutoTrade = () => {
-    if (!fyersAccessToken) {
-      setBrokerModalOpen(true);
-      console.log("First connect to your broker to start auto trade feature.");
-    } else {
-      console.log(fyersAccessToken);
-      console.log("Successfully connected to broker");
-      setIsActivatingBot(true);
-      setAutoTradeModalOpen(true);
-    }
+    // if (!fyersAccessToken) {
+    //   setBrokerModalOpen(true);
+    //   console.log("First connect to your broker to start auto trade feature.");
+    // } else {
+    console.log(fyersAccessToken);
+    console.log("Successfully connected to broker");
+    setIsActivatingBot(true);
+    setAutoTradeModalOpen(true);
+    //    }
   };
 
   const activateBot = (botConfig) => {
@@ -360,15 +417,15 @@ function AITradingBots() {
     }
   };
 
-  const handleAutoTradeActivation = (isActivated, botConfig) => {
-    if (!isAutoTradeActivated) {
-      setIsAutoTradeActivated(true);
-    }
-    if (isActivated && availableBots.length > 0) {
-      activateBot(botConfig);
-    }
-    setIsActivatingBot(false);
-  };
+  // const handleAutoTradeActivation = (isActivated, botConfig) => {
+  //   if (!isAutoTradeActivated) {
+  //     setIsAutoTradeActivated(true);
+  //   }
+  //   if (isActivated && availableBots.length > 0) {
+  //     activateBot(botConfig);
+  //   }
+  //   setIsActivatingBot(false);
+  // };
 
   const handleActivateAnotherBot = () => {
     if (availableBots.length > 0) {
@@ -461,13 +518,13 @@ function AITradingBots() {
                         dynamicData: bot.dynamicData.map((item) =>
                           item.title === "Working Time"
                             ? {
-                                ...item,
-                                value: formatTime(
-                                  botWorkingTimes[bot.name] || 0
-                                ),
-                              }
+                              ...item,
+                              value: formatTime(
+                                botWorkingTimes[bot.name] || 0
+                              ),
+                            }
                             : item.title === "Status"
-                            ? {
+                              ? {
                                 ...item,
                                 value:
                                   botStates[bot.name]?.status || "Inactive",
@@ -476,7 +533,7 @@ function AITradingBots() {
                                     ? "#00FF47"
                                     : "#FF4D4D",
                               }
-                            : item
+                              : item
                         ),
                       }}
                       isEnabled={botStates[bot.name]?.isActive || false}
