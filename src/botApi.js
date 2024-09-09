@@ -1,7 +1,5 @@
-import { useSelector } from "react-redux";
 import api from "./config";
 
-const { currentUser } = useSelector((state) => state.user);
 
 const handleApiError = (error) => {
   console.error("API Error:", error);
@@ -23,7 +21,7 @@ export const getBotsByUserId = async () => {
 
 export const createBot = async (botData) => {
   try {
-    const response = await api.post(`/api/v1/ai-trading-bots/createBot/${currentUser.id}`, botData);
+    const response = await api.post(`/api/v1/ai-trading-bots/createBot`, botData);
     return response.data;
   } catch (error) {
     return handleApiError(error);

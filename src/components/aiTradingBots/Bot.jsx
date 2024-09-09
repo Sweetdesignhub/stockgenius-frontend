@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Switch } from "@headlessui/react";
+import moment from "moment";
+import { useData } from "../../contexts/FyersDataContext";
+import Loading from "../common/Loading";
+import ConfirmationModal from "../common/ConfirmationModal";
 
 // New component for Trade Ratio Bar
 const TradeRatioBar = ({ ratio }) => {
-  const percentage = parseFloat(ratio);
+  const percentage = isNaN(parseFloat(ratio)) ? 0 : parseFloat(ratio);
   const greenPercentage = percentage.toFixed(1);
   const redPercentage = (100 - percentage).toFixed(1);
+
   return (
     <div className="w-32">
       <div className="flex justify-between mb-1">
@@ -31,20 +36,113 @@ const TradeRatioBar = ({ ratio }) => {
 };
 
 function Bot({ botData, isEnabled, onToggle, currentStatus }) {
-  const data = botData.dynamicData.map((item) =>
-    item.title === "Status"
-      ? {
-          ...item,
-          value: currentStatus,
-          valueColor:
-            currentStatus === "Inactive"
-              ? "#FF4D4D"
-              : currentStatus === "Running"
-              ? "#00FF47"
-              : "#FFBF00",
-        }
-      : item
-  );
+  const { holdings = {}, funds = { fund_limit: [{}] }, positions = { overall: {} }, loading } = useData();
+  const [isModalOpen, setModalOpen] = useState(false);
+
+
+  if (loading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  if (!botData || !botData.dynamicData || botData.dynamicData.length === 0) {
+    return <div>Error: Bot data is missing or empty</div>;
+  }
+
+  // Get today's date in YYYY-MM-DD format
+  const today = moment().format("YYYY-MM-DD");
+
+  // Format the createdAt date to match the same format as today
+  const botCreatedDate = moment(botData.createdAt).format("YYYY-MM-DD");
+
+  const holdingsTotalPL = holdings.overall.total_pl.toFixed(2) || 0;
+  const positionTotalPL = positions.overall.pl_total.toFixed(2) || 0;
+  const availableFunds = funds.fund_limit[9].equityAmount.toFixed(2) || 0;
+
+  let profitGainedValue;
+  if (botData.productType === "INTRADAY") {
+    profitGainedValue = positionTotalPL;
+  } else if (botData.productType === "CNC") {
+    profitGainedValue = holdingsTotalPL;
+  } else {
+    profitGainedValue = 0;
+  }
+
+  const data = [
+    {
+      title: "Trade Ratio",
+      value: botData.dynamicData[0].tradeRatio || 0,
+      valueColor: "#00FF47",
+    },
+    {
+      title: "Profit Gained",
+      value: profitGainedValue,
+      valueColor: "white",
+    },
+    {
+      title: "Working Time",
+      value: `${botData.dynamicData[0].workingTime} hours`,
+      valueColor: "white",
+    },
+    {
+      title: "Total Balance",
+      value: availableFunds,
+      valueColor: "white",
+    },
+    {
+      title: "Scheduled",
+      value: moment(botData.createdAt).format("D MMM, h:mm a"),
+      valueColor: "white",
+    },
+    {
+      title: "Number of Trades",
+      value: botData.dynamicData[0].numberOfTrades,
+      valueColor: "white",
+    },
+    {
+      title: "Percentage Gain",
+      value: `${botData.dynamicData[0].percentageGain}%`,
+      valueColor: "white",
+    },
+    {
+      title: "Reinvestment",
+      value: `${botData.dynamicData[0].reInvestment}%`,
+      valueColor: "white",
+    },
+    {
+      title: "Limits",
+      value: `$${botData.dynamicData[0].limits.toLocaleString()}`,
+      valueColor: "white",
+    },
+    {
+      title: "Status",
+      value: currentStatus,
+      valueColor:
+        currentStatus === "Inactive"
+          ? "#FF4D4D"
+          : currentStatus === "Running"
+          ? "#00FF47"
+          : "#FFBF00",
+    },
+  ];
+
+  const isCreatedToday = botCreatedDate === today;
+
+  const handleConfirmationClose = () => {
+    setModalOpen(false)
+  };
+
+  const handleToggle = () => {
+    if (!isCreatedToday) {
+      setModalOpen(true); 
+      return;
+    }
+    onToggle();
+  };
+
 
   return (
     <div
@@ -68,10 +166,10 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         <div className="py-6 text-center lg:text-left">
           <div className="flex justify-center lg:justify-start">
             <h3 className="font-semibold text-md mr-2 text-[#63ECFF]">
-              Profit % : <span>{botData.profitPercentage}%</span>
+              Profit % : <span>{botData.profitPercentage}</span>
             </h3>
             <h3 className="font-semibold text-md text-[#FBFF4E]">
-              Risk % : <span>{botData.riskPercentage}%</span>
+              Risk % : <span>{botData.riskPercentage}</span>
             </h3>
           </div>
           <h3 className="text-sm text-[#FFA8A8]">{botData.market}</h3>
@@ -89,7 +187,7 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center lg:justify-start lg:w-[60%] w-full px-4 mt-4 lg:mt-0">
+      <div className="flex flex-wrap justify-center lg:justify-start lg:w-[66%] w-full px-4 mt-4 lg:mt-0">
         {data.map((item, index) => (
           <div
             key={index}
@@ -110,10 +208,11 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         ))}
       </div>
 
-      <div className="w-full lg:w-[15%] flex justify-center lg:justify-end mt-4 lg:mt-0">
+      <div className="w-full lg:w-[8%] flex justify-center lg:justify-end mt-4 lg:mt-0">
         <Switch
           checked={isEnabled && currentStatus !== "Inactive"}
-          onChange={onToggle}
+          onChange={handleToggle}
+          // disabled={!isCreatedToday}
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
@@ -141,6 +240,16 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
           />
         </Switch>
       </div>
+
+
+        <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleConfirmationClose}
+        title="Action Not Allowed"
+        message={`${botData.name} can't be activated, please create new bot `}
+        onConfirm={handleConfirmationClose}
+        />
+
     </div>
   );
 }
