@@ -6,6 +6,7 @@ import Bot from "../../components/aiTradingBots/Bot";
 import NotAvailable from "../../components/common/NotAvailable";
 import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
+import moment from "moment";
 
 const startHour = 9;
 const endHour = 15;
@@ -83,6 +84,13 @@ function AITradingBots() {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [confirmationAction, setConfirmationAction] = useState(null);
+  const [botWorkingTimes, setBotWorkingTimes] = useState({});
+  const [todaysBotTime, setTodaysBotTime] = useState(0);
+  const [lastWeekBotTime, setLastWeekBotTime] = useState(0);
+  const [lastReset, setLastReset] = useState({
+    daily: null,
+    weekly: null
+  });
 
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
@@ -100,7 +108,7 @@ function AITradingBots() {
       console.error("Error fetching bots:", error);
     }
   }, [currentUser.id]);
-  
+
 
   useEffect(() => {
     fetchBots();
@@ -127,6 +135,60 @@ function AITradingBots() {
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
+  const updateBotWorkingTime = useCallback((botName, seconds) => {
+    setBotWorkingTimes(prev => {
+      const updatedTimes = {
+        ...prev,
+        [botName]: (prev[botName] || 0) + seconds
+      };
+
+      // Update today's bot time
+      const newTodaysBotTime = Object.values(updatedTimes).reduce((sum, time) => sum + time, 0);
+      setTodaysBotTime(newTodaysBotTime);
+
+      // Update this week's bot time
+      setLastWeekBotTime(prevWeekTime => prevWeekTime + seconds);
+
+      return updatedTimes;
+    });
+  }, []);
+
+  useEffect(() => {
+    const now = moment();
+    const today = now.startOf('day');
+    const startOfWeek = now.startOf('isoWeek'); // Monday
+
+    // Check and reset daily
+    if (!lastReset.daily || !moment(lastReset.daily).isSame(today, 'day')) {
+      setTodaysBotTime(0);
+      setBotWorkingTimes({});
+      setLastReset(prev => ({ ...prev, daily: today.toDate() }));
+    }
+
+    // Check and reset weekly
+    if (!lastReset.weekly || !moment(lastReset.weekly).isSame(startOfWeek, 'isoWeek')) {
+      setLastWeekBotTime(0);
+      setLastReset(prev => ({ ...prev, weekly: startOfWeek.toDate() }));
+    }
+
+    // Save to localStorage
+    localStorage.setItem('botTimes', JSON.stringify({
+      todaysBotTime,
+      lastWeekBotTime,
+      lastReset
+    }));
+  }, [todaysBotTime, lastWeekBotTime, lastReset]);
+
+  useEffect(() => {
+    // Load from localStorage on component mount
+    const savedTimes = JSON.parse(localStorage.getItem('botTimes'));
+    if (savedTimes) {
+      setTodaysBotTime(savedTimes.todaysBotTime);
+      setLastWeekBotTime(savedTimes.lastWeekBotTime);
+      setLastReset(savedTimes.lastReset);
+    }
+  }, []);
+
   const createBot = async (botData) => {
     try {
       const response = await api.post(
@@ -147,36 +209,11 @@ function AITradingBots() {
       console.error("Unexpected error:", error.response?.data || error.message);
       setMessage(
         error.response?.data?.message ||
-          "An unexpected error occurred. Please try again."
+        "An unexpected error occurred. Please try again."
       );
       setConfirmationOpen(true);
     }
   };
-
-  // const handleToggle = (botName) => {
-  //   if (isAfterMarketClose()) {
-  //     alert(
-  //       "You can't activate the bot after market closes."
-  //     );
-  //     return;
-  //   }
-
-  //   setBotStates((prevStates) => {
-  //     const currentState = prevStates[botName];
-  //     const newIsActive =
-  //       isWithinTradingHours() || isBeforeMarketOpen()
-  //         ? !currentState.isActive
-  //         : false;
-  //     return {
-  //       ...prevStates,
-  //       [botName]: {
-  //         isActive: newIsActive,
-  //         status: getBotStatus(newIsActive),
-  //       },
-  //     };
-  //   });
-  // };
-
 
   const handleToggle = (botName) => {
     if (isAfterMarketClose()) {
@@ -187,27 +224,59 @@ function AITradingBots() {
       return;
     }
 
-    setTitle("Confirm Action");
-    setMessage(`Are you sure you want to ${botStates[botName].isActive ? "deactivate" : "activate"} the bot?`);
-    setConfirmationAction(() => () => {
-      setBotStates((prevStates) => {
-        const currentState = prevStates[botName];
-        const newIsActive =
-          isWithinTradingHours() || isBeforeMarketOpen()
-            ? !currentState.isActive
-            : false;
-        return {
-          ...prevStates,
-          [botName]: {
-            isActive: newIsActive,
-            status: getBotStatus(newIsActive),
-          },
-        };
-      });
-      setConfirmationOpen(false);
+    // setTitle("Confirm Action");
+    // setMessage(`Are you sure you want to ${botStates[botName].isActive ? "deactivate" : "activate"} the bot?`);
+    // setConfirmationAction(() => () => {
+    setBotStates((prevStates) => {
+      const currentState = prevStates[botName];
+      const newIsActive =
+        isWithinTradingHours() || isBeforeMarketOpen()
+          ? !currentState.isActive
+          : false;
+      return {
+        ...prevStates,
+        [botName]: {
+          isActive: newIsActive,
+          status: getBotStatus(newIsActive),
+        },
+      };
     });
-    setConfirmationOpen(true);
+    //   setConfirmationOpen(false);
+    //   });
+    //   setConfirmationOpen(true);
   };
+
+
+  // const handleToggle = (botName) => {
+  //   if (isAfterMarketClose()) {
+  //     setTitle("Action Not Allowed");
+  //     setMessage("You can't activate the bot after market closes.");
+  //     setConfirmationAction(() => () => setConfirmationOpen(false));
+  //     setConfirmationOpen(true);
+  //     return;
+  //   }
+
+  //   setTitle("Confirm Action");
+  //   setMessage(`Are you sure you want to ${botStates[botName].isActive ? "deactivate" : "activate"} the bot?`);
+  //   setConfirmationAction(() => () => {
+  //     setBotStates((prevStates) => {
+  //       const currentState = prevStates[botName];
+  //       const newIsActive =
+  //         isWithinTradingHours() || isBeforeMarketOpen()
+  //           ? !currentState.isActive
+  //           : false;
+  //       return {
+  //         ...prevStates,
+  //         [botName]: {
+  //           isActive: newIsActive,
+  //           status: getBotStatus(newIsActive),
+  //         },
+  //       };
+  //     });
+  //     setConfirmationOpen(false);
+  //   });
+  //   setConfirmationOpen(true);
+  // };
 
   const handleScheduleTrade = () => {
     if (!fyersAccessToken) {
@@ -226,11 +295,17 @@ function AITradingBots() {
     setAutoTradeModalOpen(false);
   };
 
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
   const cardData = [
     { title: "Today's Profit %", value: "12%" },
     { title: "Last Week Profit %", value: "23.12%" },
-    { title: "Today’s Bot Time", value: "3hr 23min" },
-    { title: "Last Week Bot Time", value: "29hr 46min" },
+    { title: "Today's Bot Time", value: formatTime(todaysBotTime) },
+    { title: "Last Week Bot Time", value: formatTime(lastWeekBotTime) },
     { title: "No. of AI Bots", value: botDataList.length },
     { title: "Re-investments", value: "42" },
     { title: "Total Investment", value: "42350.38" },
@@ -286,6 +361,7 @@ function AITradingBots() {
                     isEnabled={botStates[bot.name].isActive}
                     onToggle={() => handleToggle(bot.name)}
                     currentStatus={botStates[bot.name].status}
+                    onUpdateWorkingTime={updateBotWorkingTime}
                   />
                 ))
               ) : (

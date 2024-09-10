@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../common/Loading";
+import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 
 // New component for Trade Ratio Bar
@@ -12,7 +13,7 @@ const TradeRatioBar = ({ ratio }) => {
   const redPercentage = (100 - percentage).toFixed(1);
 
   return (
-    <div className="w-32">
+    <div className="w-full max-w-[6rem] min-w-[4rem]">
       <div className="flex justify-between mb-1">
         <span className="text-[#00FF47] font-semibold text-xs">
           {greenPercentage}%
@@ -35,10 +36,23 @@ const TradeRatioBar = ({ ratio }) => {
   );
 };
 
-function Bot({ botData, isEnabled, onToggle, currentStatus }) {
+function Bot({ botData, isEnabled, onToggle, currentStatus, onUpdateWorkingTime }) {
   const { holdings = {}, funds = { fund_limit: [{}] }, positions = { overall: {} }, loading } = useData();
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
+  const [workingTime, setWorkingTime] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (currentStatus === "Running" && isEnabled) {
+      interval = setInterval(() => {
+        setWorkingTime(prevTime => prevTime + 1);
+        onUpdateWorkingTime(botData.name, 1); // Update by 1 second
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [currentStatus, isEnabled, botData.name, onUpdateWorkingTime]);
 
   if (loading) {
     return (
@@ -71,6 +85,13 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
     profitGainedValue = 0;
   }
 
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
+  };
+
   const data = [
     {
       title: "Trade Ratio",
@@ -84,7 +105,7 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
     },
     {
       title: "Working Time",
-      value: `${botData.dynamicData[0].workingTime} hours`,
+      value: formatTime(workingTime),
       valueColor: "white",
     },
     {
@@ -124,25 +145,29 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-          ? "#00FF47"
-          : "#FFBF00",
+            ? "#00FF47"
+            : "#FFBF00",
     },
   ];
 
   const isCreatedToday = botCreatedDate === today;
 
-  const handleConfirmationClose = () => {
-    setModalOpen(false)
-  };
-
   const handleToggle = () => {
     if (!isCreatedToday) {
-      setModalOpen(true); 
-      return;
+      setConfirmationModalOpen(true);
+    } else {
+      setYesNoModalOpen(true);
     }
+  };
+
+  const handleConfirm = () => {
+    setYesNoModalOpen(false);
     onToggle();
   };
 
+  const handleConfirmationClose = () => {
+    setConfirmationModalOpen(false);
+  };
 
   return (
     <div
@@ -216,21 +241,19 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-0"
-                : "opacity-100"
-            }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-0"
+              : "opacity-100"
+              }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-100"
-                : "opacity-0"
-            }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-100"
+              : "opacity-0"
+              }`}
           >
             ON
           </span>
@@ -240,16 +263,21 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
           />
         </Switch>
       </div>
+      <YesNoConfirmationModal
+        isOpen={isYesNoModalOpen}
+        onClose={() => setYesNoModalOpen(false)}
+        title={isEnabled ? "Deactivate Bot" : "Activate Bot"}
+        message={`Are you sure you want to ${isEnabled ? "deactivate" : "activate"} <strong>${botData.name}?</strong>`}
+        onConfirm={handleConfirm}
+      />
 
-
-        <ConfirmationModal
-        isOpen={isModalOpen}
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
         onClose={handleConfirmationClose}
-        title="Action Not Allowed"
-        message={`${botData.name} can't be activated, please create new bot `}
+        title="Cannot Activate Bot"
+        message={`This bot cannot be activated as it was not created today.`}
         onConfirm={handleConfirmationClose}
-        />
-
+      />
     </div>
   );
 }

@@ -45,7 +45,7 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
       console.error("Error fetching trades:", error);
       setError(
         error.message ||
-          "Failed to fetch trades. Please authenticate and try again."
+        "Failed to fetch trades. Please authenticate and try again."
       );
     } finally {
       setLoading(false);

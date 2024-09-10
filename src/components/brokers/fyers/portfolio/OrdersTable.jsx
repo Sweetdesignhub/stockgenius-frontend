@@ -43,7 +43,7 @@ const OrdersTable = ({ setCount, selectedColumns, setColumnNames }) => {
       console.error("Error fetching orders:", error);
       setError(
         error.message ||
-          "Failed to fetch orders. Please authenticate and try again."
+        "Failed to fetch orders. Please authenticate and try again."
       );
     } finally {
       setLoading(false);

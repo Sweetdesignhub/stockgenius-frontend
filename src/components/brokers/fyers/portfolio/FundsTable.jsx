@@ -41,7 +41,7 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
       console.error("Error fetching funds:", error);
       setError(
         error.message ||
-          "Failed to fetch funds. Please authenticate and try again."
+        "Failed to fetch funds. Please authenticate and try again."
       );
     } finally {
       setLoading(false);
@@ -103,9 +103,8 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
-                    columnName === "title" ? "text-[#6FD4FF]" : ""
-                  }`}
+                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "title" ? "text-[#6FD4FF]" : ""
+                    }`}
                 >
                   {fund[columnName]}
                 </td>
