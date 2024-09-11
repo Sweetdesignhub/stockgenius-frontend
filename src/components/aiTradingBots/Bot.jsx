@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../common/Loading";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { useSelector } from "react-redux";
+import api from "../../config";
+import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 
 // New component for Trade Ratio Bar
 const TradeRatioBar = ({ ratio }) => {
@@ -12,7 +15,7 @@ const TradeRatioBar = ({ ratio }) => {
   const redPercentage = (100 - percentage).toFixed(1);
 
   return (
-    <div className="w-32">
+    <div className="w-full max-w-[6rem] min-w-[4rem]">
       <div className="flex justify-between mb-1">
         <span className="text-[#00FF47] font-semibold text-xs">
           {greenPercentage}%
@@ -35,10 +38,170 @@ const TradeRatioBar = ({ ratio }) => {
   );
 };
 
-function Bot({ botData, isEnabled, onToggle, currentStatus }) {
-  const { holdings = {}, funds = { fund_limit: [{}] }, positions = { overall: {} }, loading } = useData();
-  const [isModalOpen, setModalOpen] = useState(false);
+function Bot({
+  botData,
+  isEnabled,
+  onToggle,
+  currentStatus,
+  onUpdateWorkingTime,
+}) {
+  const {
+    holdings = {},
+    funds = { fund_limit: [{}] },
+    positions = { overall: {} },
+    trades = { tradeBook: [] },
+    orders = { orderBook: [] },
+    loading,
+  } = useData();
+  // const [isModalOpen, setModalOpen] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const [apiBotData, setApiBotData] = useState([]);
+  const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
+  const [workingTime, setWorkingTime] = useState(0);
+
+  // Get today's date in YYYY-MM-DD format
+  const today = moment().format("YYYY-MM-DD");
+
+  // Format the createdAt date to match the same format as today
+  const botCreatedDate = moment(botData.createdAt).format("YYYY-MM-DD");
+
+  const createdAt = moment(apiBotData.createdAt).format("YYYY-MM-DD");
+
+  // const holdingsTotalPL = holdings.overall.total_pl.toFixed(2) || 0;
+  const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
+  const positionTotalPL = positions?.overall?.pl_total?.toFixed(2) || "0.00";
+  const availableFunds =
+    funds?.fund_limit?.[9]?.equityAmount?.toFixed(2) || "0.00";
+
+  // const positionTotalPL = positions.overall.pl_total.toFixed(2) || 0;
+  // const availableFunds = funds.fund_limit[9].equityAmount.toFixed(2) || 0;
+
+  // Compute profitGainedValue
+  let profitGainedValue;
+  if (apiBotData.productType === "INTRADAY") {
+    profitGainedValue =
+      createdAt === today
+        ? positionTotalPL
+        : apiBotData.dynamicData[0].profitGained;
+  } else if (apiBotData.productType === "CNC") {
+    profitGainedValue =
+      createdAt === today
+        ? holdingsTotalPL
+        : apiBotData.dynamicData[0].profitGained;
+  } else {
+    profitGainedValue = 0;
+  }
+
+  // Determine if the bot data needs to be fetched from API or can be used from context
+  const fetchBotFromApi = useCallback(
+    async (botId) => {
+      try {
+        const response = await api.get(
+          `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`
+        );
+
+        setApiBotData(response.data);
+      } catch (error) {
+        console.error("Error fetching bot data from API:", error);
+        setError("Failed to fetch bot data from API.");
+      }
+    },
+    [currentUser.id]
+  );
+
+  useEffect(() => {
+    let interval;
+    if (currentStatus === "Running" && isEnabled) {
+      interval = setInterval(() => {
+        setWorkingTime((prevTime) => prevTime + 1);
+        onUpdateWorkingTime(botData.name, 1); // Update by 1 second
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [currentStatus, isEnabled, botData.name, onUpdateWorkingTime]);
+
+  useEffect(() => {
+    if (botCreatedDate === today) {
+      // Use context data if bot was created today
+      setApiBotData(botData);
+    } else {
+      // Fetch from API if bot was created on a different date
+
+      fetchBotFromApi(botData._id);
+    }
+  }, [botData, botCreatedDate, today, fetchBotFromApi]);
+
+   const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
+  };
+
+  useEffect(() => {
+    const getTimeUntil1025PM = () => {
+      const now = new Date();
+      const next4PM = new Date();
+      next4PM.setHours(16, 0, 0, 0);
+
+      if (now > next4PM) {
+        next4PM.setDate(next4PM.getDate() + 1);
+      }
+
+      return next4PM - now; // Time in milliseconds
+    };
+
+    const performUpdateRequest = async () => {
+      try {
+        const todaysBots = [apiBotData].filter((bot) => {
+          const botCreatedDate = moment(bot.createdAt).format("YYYY-MM-DD");
+          return botCreatedDate === today;
+        });
+
+        await Promise.all(
+          todaysBots.map(async (bot) => {
+            await api.put(
+              `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${bot._id}`,
+              {
+                tradeRatio: 50,
+                profitGained: profitGainedValue,
+                workingTime: 0,
+                totalBalance:
+                  createdAt === today
+                    ? availableFunds
+                    : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+                numberOfTrades:
+                  createdAt === today
+                    ? trades.tradeBook?.length || 0
+                    : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+                percentageGain: 0,
+                status: "Inactive",
+                reInvestment:
+                  createdAt === today
+                    ? orders.orderBook?.length || 0
+                    : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+                limits: 0,
+              }
+            );
+          })
+        );
+      } catch (error) {
+        console.error("Error performing update:", error);
+      }
+    };
+
+    const timeUntil1025PM = getTimeUntil1025PM();
+    const timeoutId = setTimeout(() => {
+      performUpdateRequest();
+
+      const intervalId = setInterval(performUpdateRequest, 24 * 60 * 60 * 1000); // 24 hours
+      return () => clearInterval(intervalId); // Cleanup interval
+    }, timeUntil1025PM);
+
+    return () => clearTimeout(timeoutId); // Cleanup timeout
+  }, [botData, currentUser.id, today]);
 
   if (loading) {
     return (
@@ -48,33 +211,18 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
     );
   }
 
-  if (!botData || !botData.dynamicData || botData.dynamicData.length === 0) {
+  if (
+    !apiBotData ||
+    !apiBotData.dynamicData ||
+    apiBotData.dynamicData.length === 0
+  ) {
     return <div>Error: Bot data is missing or empty</div>;
-  }
-
-  // Get today's date in YYYY-MM-DD format
-  const today = moment().format("YYYY-MM-DD");
-
-  // Format the createdAt date to match the same format as today
-  const botCreatedDate = moment(botData.createdAt).format("YYYY-MM-DD");
-
-  const holdingsTotalPL = holdings.overall.total_pl.toFixed(2) || 0;
-  const positionTotalPL = positions.overall.pl_total.toFixed(2) || 0;
-  const availableFunds = funds.fund_limit[9].equityAmount.toFixed(2) || 0;
-
-  let profitGainedValue;
-  if (botData.productType === "INTRADAY") {
-    profitGainedValue = positionTotalPL;
-  } else if (botData.productType === "CNC") {
-    profitGainedValue = holdingsTotalPL;
-  } else {
-    profitGainedValue = 0;
   }
 
   const data = [
     {
       title: "Trade Ratio",
-      value: botData.dynamicData[0].tradeRatio || 0,
+      value: apiBotData.dynamicData?.[0]?.tradeRatio || 0,
       valueColor: "#00FF47",
     },
     {
@@ -84,37 +232,61 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
     },
     {
       title: "Working Time",
-      value: `${botData.dynamicData[0].workingTime} hours`,
+      value: formatTime(workingTime),
+      // value: `${
+      //   apiBotData.dynamicData?.[0]?.workingTime ||
+      //   botData.dynamicData[0]?.workingTime ||
+      //   "0"
+      // } hours`,
       valueColor: "white",
     },
     {
       title: "Total Balance",
-      value: availableFunds,
+      value:
+        createdAt === today
+          ? availableFunds
+          : apiBotData.dynamicData?.[0]?.totalBalance || "0",
       valueColor: "white",
     },
     {
       title: "Scheduled",
-      value: moment(botData.createdAt).format("D MMM, h:mm a"),
+      value: moment(apiBotData.createdAt || botData.createdAt).format(
+        "D MMM, h:mm a"
+      ),
       valueColor: "white",
     },
     {
       title: "Number of Trades",
-      value: botData.dynamicData[0].numberOfTrades,
+      value:
+        createdAt === today
+          ? trades.tradeBook?.length || 0
+          : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
       valueColor: "white",
     },
     {
       title: "Percentage Gain",
-      value: `${botData.dynamicData[0].percentageGain}%`,
+      value: `${
+        apiBotData.dynamicData?.[0]?.percentageGain ||
+        botData.dynamicData[0]?.percentageGain ||
+        "0"
+      }%`,
       valueColor: "white",
     },
     {
       title: "Reinvestment",
-      value: `${botData.dynamicData[0].reInvestment}%`,
+      value:
+        createdAt === today
+          ? orders.orderBook?.length || 0
+          : apiBotData.dynamicData?.[0]?.reInvestment || 0,
       valueColor: "white",
     },
     {
       title: "Limits",
-      value: `$${botData.dynamicData[0].limits.toLocaleString()}`,
+      value: `$${
+        apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
+        botData.dynamicData[0]?.limits?.toLocaleString() ||
+        "0"
+      }`,
       valueColor: "white",
     },
     {
@@ -131,18 +303,34 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
 
   const isCreatedToday = botCreatedDate === today;
 
-  const handleConfirmationClose = () => {
-    setModalOpen(false)
-  };
+  // const handleConfirmationClose = () => {
+  //   setModalOpen(false);
+  // };
+
+  // const handleToggle = () => {
+  //   if (!isCreatedToday) {
+  //     setModalOpen(true);
+  //     return;
+  //   }
+  //   onToggle();
+  // };
 
   const handleToggle = () => {
     if (!isCreatedToday) {
-      setModalOpen(true); 
-      return;
+      setConfirmationModalOpen(true);
+    } else {
+      setYesNoModalOpen(true);
     }
+  };
+
+  const handleConfirm = () => {
+    setYesNoModalOpen(false);
     onToggle();
   };
 
+  const handleConfirmationClose = () => {
+    setConfirmationModalOpen(false);
+  };
 
   return (
     <div
@@ -241,15 +429,21 @@ function Bot({ botData, isEnabled, onToggle, currentStatus }) {
         </Switch>
       </div>
 
+        <YesNoConfirmationModal
+        isOpen={isYesNoModalOpen}
+        onClose={() => setYesNoModalOpen(false)}
+        title={isEnabled ? "Deactivate Bot" : "Activate Bot"}
+        message={`Are you sure you want to ${isEnabled ? "deactivate" : "activate"} <strong>${botData.name}?</strong>`}
+        onConfirm={handleConfirm}
+      />
 
-        <ConfirmationModal
-        isOpen={isModalOpen}
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
         onClose={handleConfirmationClose}
-        title="Action Not Allowed"
-        message={`${botData.name} can't be activated, please create new bot `}
+        title="Cannot Activate Bot"
+        message={`This bot cannot be activated as it was not created today.`}
         onConfirm={handleConfirmationClose}
-        />
-
+      />
     </div>
   );
 }
