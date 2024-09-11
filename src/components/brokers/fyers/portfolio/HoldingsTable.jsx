@@ -45,7 +45,7 @@ const HoldingsTable = ({ setCount, selectedColumns, setColumnNames }) => {
       console.error("Error fetching holdings:", error);
       setError(
         error.message ||
-          "Failed to fetch holdings. Please authenticate and try again."
+        "Failed to fetch holdings. Please authenticate and try again."
       );
     } finally {
       setLoading(false);
@@ -105,9 +105,8 @@ const HoldingsTable = ({ setCount, selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
-                    columnName === "symbol" ? "text-[#6FD4FF]" : ""
-                  }`}
+                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                    }`}
                 >
                   {holding[columnName] || ""}
                 </td>

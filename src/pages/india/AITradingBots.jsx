@@ -111,7 +111,7 @@ function AITradingBots() {
       console.error("Error fetching bots:", error);
     }
   }, [currentUser.id]);
-  
+
 
   useEffect(() => {
     fetchBots();
@@ -138,6 +138,42 @@ function AITradingBots() {
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
+  useEffect(() => {
+    const now = moment();
+    const today = now.startOf('day');
+    const startOfWeek = now.startOf('isoWeek'); // Monday
+
+    // Check and reset daily
+    if (!lastReset.daily || !moment(lastReset.daily).isSame(today, 'day')) {
+      setTodaysBotTime(0);
+      setBotWorkingTimes({});
+      setLastReset(prev => ({ ...prev, daily: today.toDate() }));
+    }
+
+    // Check and reset weekly
+    if (!lastReset.weekly || !moment(lastReset.weekly).isSame(startOfWeek, 'isoWeek')) {
+      setLastWeekBotTime(0);
+      setLastReset(prev => ({ ...prev, weekly: startOfWeek.toDate() }));
+    }
+
+    // Save to localStorage
+    localStorage.setItem('botTimes', JSON.stringify({
+      todaysBotTime,
+      lastWeekBotTime,
+      lastReset
+    }));
+  }, [todaysBotTime, lastWeekBotTime, lastReset]);
+
+  useEffect(() => {
+    // Load from localStorage on component mount
+    const savedTimes = JSON.parse(localStorage.getItem('botTimes'));
+    if (savedTimes) {
+      setTodaysBotTime(savedTimes.todaysBotTime);
+      setLastWeekBotTime(savedTimes.lastWeekBotTime);
+      setLastReset(savedTimes.lastReset);
+    }
+  }, []);
+
   const createBot = async (botData) => {
     try {
       const response = await api.post(
@@ -158,7 +194,7 @@ function AITradingBots() {
       console.error("Unexpected error:", error.response?.data || error.message);
       setMessage(
         error.response?.data?.message ||
-          "An unexpected error occurred. Please try again."
+        "An unexpected error occurred. Please try again."
       );
       setConfirmationOpen(true);
     }

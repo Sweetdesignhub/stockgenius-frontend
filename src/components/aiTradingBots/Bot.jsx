@@ -3,10 +3,10 @@ import { Switch } from "@headlessui/react";
 import moment from "moment";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../common/Loading";
+import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { useSelector } from "react-redux";
 import api from "../../config";
-import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 
 // New component for Trade Ratio Bar
 const TradeRatioBar = ({ ratio }) => {
@@ -296,8 +296,8 @@ function Bot({
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-          ? "#00FF47"
-          : "#FFBF00",
+            ? "#00FF47"
+            : "#FFBF00",
     },
   ];
 
@@ -318,7 +318,8 @@ function Bot({
   const handleToggle = () => {
     if (!isCreatedToday) {
       setConfirmationModalOpen(true);
-    } else {
+    }
+     else {
       setYesNoModalOpen(true);
     }
   };
@@ -404,21 +405,19 @@ function Bot({
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-0"
-                : "opacity-100"
-            }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-0"
+              : "opacity-100"
+              }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-100"
-                : "opacity-0"
-            }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-100"
+              : "opacity-0"
+              }`}
           >
             ON
           </span>

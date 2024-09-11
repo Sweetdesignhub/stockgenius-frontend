@@ -22,7 +22,7 @@ const IndiaDashboard = () => {
   // console.log('india access token : ', fyersAccessToken);
 
   // console.log("google clinet : ", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-  
+
 
   const [selectedRow, setSelectedRow] = useState(null);
   const [actionType, setActionType] = useState(null);

@@ -6,6 +6,8 @@ import OrdersTable from "./OrdersTable";
 import TradesTable from "./TradesTable";
 import PositionsTable from "./PositionTable";
 import { RiMenuLine } from "react-icons/ri";
+import api from "../../../../config.js";
+import { useSelector } from "react-redux";
 
 const StockDetails = () => {
   const [ordersCount, setOrdersCount] = useState(0);
@@ -17,10 +19,35 @@ const StockDetails = () => {
   const [selectedColumns, setSelectedColumns] = useState({});
   const [currentTab, setCurrentTab] = useState(0);
   const filterRef = useRef(null);
+  const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
 
-  const updatePositionCount = useCallback((count) => {
-    setPositionsCount(count);
-  }, []);
+  const { currentUser } = useSelector((state) => state.user);
+
+  const fetchCounts = useCallback(async () => {
+    try {
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+
+      const [ordersResponse, positionsResponse, holdingsResponse] = await Promise.all([
+        api.get(`/api/v1/fyers/ordersByUserId/${currentUser?.id}`, { headers }),
+        api.get(`/api/v1/fyers/positionsByUserId/${currentUser?.id}`, { headers }),
+        api.get(`/api/v1/fyers/holdingsByUserId/${currentUser?.id}`, { headers })
+      ]);
+
+      setOrdersCount(ordersResponse.data.orders?.length || 0);
+      setPositionsCount(positionsResponse.data.positions?.length || 0);
+      setHoldingsCount(holdingsResponse.data.holdings?.length || 0);
+
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 5000);
+    return () => clearInterval(interval);
+  }, [fetchCounts]);
 
   const categories = [
     {
@@ -32,7 +59,7 @@ const StockDetails = () => {
     {
       name: `All Positions (${positionsCount})`,
       component: PositionsTable,
-      updatePositionCount: updatePositionCount,
+      setCount: setPositionsCount,
       key: "positions",
     },
     {
@@ -92,6 +119,7 @@ const StockDetails = () => {
         }, {});
         return { ...prev, [currentTabKey]: newSelections };
       });
+      setIsInitialDataLoaded(true);
     },
     [currentTab, categories]
   );
@@ -113,6 +141,12 @@ const StockDetails = () => {
     return selected;
   };
 
+  const handleTabChange = (index) => {
+    if (isInitialDataLoaded) {
+      setCurrentTab(index);
+    }
+  };
+
   const fyersAccessToken = localStorage.getItem("fyers_access_token");
 
   // if (!fyersAccessToken) {
@@ -122,7 +156,7 @@ const StockDetails = () => {
   return (
     <div className="flex h-[60vh] w-full">
       <div className="w-full">
-        <TabGroup onChange={setCurrentTab}>
+        <TabGroup selectedIndex={currentTab} onChange={handleTabChange}>
           <div className="flex justify-between items-center">
             <TabList className="flex gap-4">
               {categories.map(({ name }) => (
@@ -158,7 +192,7 @@ const StockDetails = () => {
                       type="checkbox"
                       checked={
                         selectedColumns[categories[currentTab].key]?.[
-                          columnName
+                        columnName
                         ] ?? true
                       }
                       onChange={() => handleColumnToggle(columnName)}
@@ -179,7 +213,7 @@ const StockDetails = () => {
                   name,
                   component: Component,
                   setCount,
-                  updatePositionCount,
+                  key,
                 }) => (
                   <TabPanel
                     key={name}
@@ -187,7 +221,7 @@ const StockDetails = () => {
                   >
                     <Component
                       setCount={setCount}
-                      updatePositionCount={updatePositionCount}
+                      ///                      updatePositionCount={updatePositionCount}
                       selectedColumns={getSelectedColumns()}
                       setColumnNames={setTabColumnNames}
                     />

@@ -7,9 +7,9 @@ import { X } from "lucide-react";
 import YesNoConfirmationModal from "../../../common/YesNoConfirmationModal.jsx";
 
 const PositionsTable = ({
+  setCount,
   selectedColumns,
   setColumnNames,
-  updatePositionCount,
 }) => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ const PositionsTable = ({
       }
 
       setPositions(positionsData);
-      updatePositionCount(positionsData.length);
+      setCount(positionsData.length);
 
       const excludedColumns = ["message", "pan"];
       const allColumnNames = Object.keys(positionsData[0] || {}).filter(
@@ -55,7 +55,7 @@ const PositionsTable = ({
       console.error("Error fetching positions:", error);
       setError(
         error.message ||
-          "Failed to fetch positions. Please authenticate and try again."
+        "Failed to fetch positions. Please authenticate and try again."
       );
     } finally {
       setLoading(false);
@@ -97,7 +97,7 @@ const PositionsTable = ({
             const updatedPositions = prevPositions.filter(
               (position) => position.id !== positionToExit.id
             );
-            updatePositionCount(updatedPositions.length);
+            setCount(updatedPositions.length);
             return updatedPositions;
           });
           alert("Position exited successfully");
