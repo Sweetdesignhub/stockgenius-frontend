@@ -7,45 +7,8 @@ import NotAvailable from "../../components/common/NotAvailable";
 import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
 import moment from "moment";
+import { isAfterMarketClose, isBeforeMarketOpen, isWithinTradingHours } from "../../utils/helper";
 
-const startHour = 9;
-const endHour = 18;
-
-const isWithinTradingHours = () => {
-  const now = new Date();
-  // const istOffset = 5.5 * 60 * 60 * 1000; // IST is GMT+5:30
-  const istTime = new Date(now.getTime());
-
-  const hours = istTime.getHours();
-  const minutes = istTime.getMinutes();
-
-  return (
-    (hours > startHour || (hours === startHour && minutes >= 30)) &&
-    (hours < endHour || (hours === endHour && minutes <= 30))
-  );
-};
-
-const isAfterMarketClose = () => {
-  const now = new Date();
-  // const istOffset = 5.5 * 60 * 60 * 1000; // IST is GMT+5:30
-  const istTime = new Date(now.getTime());
-
-  const hours = istTime.getHours();
-  const minutes = istTime.getMinutes();
-
-  return hours > endHour || (hours === endHour && minutes > 30);
-};
-
-const isBeforeMarketOpen = () => {
-  const now = new Date();
-  // const istOffset = 5.5 * 60 * 60 * 1000; // IST is GMT+5:30
-  const istTime = new Date(now.getTime());
-
-  const hours = istTime.getHours();
-  const minutes = istTime.getMinutes();
-
-  return hours < startHour || (hours === startHour && minutes < 30);
-};
 
 const getBotStatus = (isActive) => {
   if (isAfterMarketClose()) {
@@ -79,7 +42,7 @@ function AITradingBots() {
   const [botDataList, setBotDataList] = useState([]);
   const [botStates, setBotStates] = useState({});
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(true);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
@@ -200,30 +163,6 @@ function AITradingBots() {
     }
   };
 
-  // const handleToggle = (botId) => {
-  //   if (isAfterMarketClose()) {
-  //     alert(
-  //       "You can't activate the bot after market closes."
-  //     );
-  //     return;
-  //   }
-
-  //   setBotStates((prevStates) => {
-  //     const currentState = prevStates[botId];
-  //     const newIsActive =
-  //       isWithinTradingHours() || isBeforeMarketOpen()
-  //         ? !currentState.isActive
-  //         : false;
-  //     return {
-  //       ...prevStates,
-  //       [botId]: {
-  //         isActive: newIsActive,
-  //         status: getBotStatus(newIsActive),
-  //       },
-  //     };
-  //   });
-  // };
-
  const handleToggle = (botId) => {
     if (isAfterMarketClose()) {
       setTitle("Action Not Allowed");
@@ -232,10 +171,6 @@ function AITradingBots() {
       setConfirmationOpen(true);
       return;
     }
-
-    // setTitle("Confirm Action");
-    // setMessage(`Are you sure you want to ${botStates[botId].isActive ? "deactivate" : "activate"} the bot?`);
-    // setConfirmationAction(() => () => {
     setBotStates((prevStates) => {
       const currentState = prevStates[botId];
       const newIsActive =
@@ -250,9 +185,6 @@ function AITradingBots() {
         },
       };
     });
-    //   setConfirmationOpen(false);
-    //   });
-    //   setConfirmationOpen(true);
   };
 
    const updateBotWorkingTime = useCallback((botId, seconds) => {

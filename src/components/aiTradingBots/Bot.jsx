@@ -7,6 +7,7 @@ import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { useSelector } from "react-redux";
 import api from "../../config";
+import { isWithinTradingHours } from "../../utils/helper";
 
 // New component for Trade Ratio Bar
 const TradeRatioBar = ({ ratio }) => {
@@ -53,11 +54,14 @@ function Bot({
     orders = { orderBook: [] },
     loading,
   } = useData();
-  // const [isModalOpen, setModalOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const [apiBotData, setApiBotData] = useState([]);
+  const [activeBots, setActiveBots] = useState([]);
   const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
+  // console.log(apiBotData?.dynamicData[0]?.status);
+  
 
   const [workingTime, setWorkingTime] = useState(0);
 
@@ -67,34 +71,32 @@ function Bot({
   // Format the createdAt date to match the same format as today
   const botCreatedDate = moment(botData.createdAt).format("YYYY-MM-DD");
 
+  const isCreatedToday = botCreatedDate === today;
+
   const createdAt = moment(apiBotData.createdAt).format("YYYY-MM-DD");
 
-  // const holdingsTotalPL = holdings.overall.total_pl.toFixed(2) || 0;
   const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
   const positionTotalPL = positions?.overall?.pl_total?.toFixed(2) || "0.00";
   const availableFunds =
     funds?.fund_limit?.[9]?.equityAmount?.toFixed(2) || "0.00";
 
-  // const positionTotalPL = positions.overall.pl_total.toFixed(2) || 0;
-  // const availableFunds = funds.fund_limit[9].equityAmount.toFixed(2) || 0;
-
   // Compute profitGainedValue
-  let profitGainedValue;
-  if (apiBotData.productType === "INTRADAY") {
-    profitGainedValue =
-      createdAt === today
+  const calculateProfitGainedValue = () => {
+    if (apiBotData.productType === "INTRADAY") {
+      return createdAt === today
         ? positionTotalPL
-        : apiBotData.dynamicData[0].profitGained;
-  } else if (apiBotData.productType === "CNC") {
-    profitGainedValue =
-      createdAt === today
+        : apiBotData.dynamicData[0]?.profitGained || 0;
+    }
+    if (apiBotData.productType === "CNC") {
+      return createdAt === today
         ? holdingsTotalPL
-        : apiBotData.dynamicData[0].profitGained;
-  } else {
-    profitGainedValue = 0;
-  }
+        : apiBotData.dynamicData[0]?.profitGained || 0;
+    }
+    return 0;
+  };
+  const profitGainedValue = calculateProfitGainedValue();
 
-  // Determine if the bot data needs to be fetched from API or can be used from context
+  // fetch bot api
   const fetchBotFromApi = useCallback(
     async (botId) => {
       try {
@@ -111,6 +113,7 @@ function Bot({
     [currentUser.id]
   );
 
+  //update work timing
   useEffect(() => {
     let interval;
     if (currentStatus === "Running" && isEnabled) {
@@ -133,18 +136,31 @@ function Bot({
     }
   }, [botData, botCreatedDate, today, fetchBotFromApi]);
 
-   const formatTime = (seconds) => {
+  const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     return `${hours}h ${minutes}m ${secs}s`;
   };
 
+  //update bot api
+  const updateBot = async (botId, updateData) => {
+    try {
+      await api.put(
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`,
+        updateData
+      );
+    } catch (error) {
+      console.error("Error updating bot :", error);
+    }
+  };
+
+  // automatic hit deactive api, after that data to be updated at 3:30pm
   useEffect(() => {
-    const getTimeUntil1025PM = () => {
+    const getTimeUntil4PM = () => {
       const now = new Date();
       const next4PM = new Date();
-      next4PM.setHours(16, 0, 0, 0);
+      next4PM.setHours(15, 30, 0, 0);
 
       if (now > next4PM) {
         next4PM.setDate(next4PM.getDate() + 1);
@@ -162,29 +178,28 @@ function Bot({
 
         await Promise.all(
           todaysBots.map(async (bot) => {
-            await api.put(
-              `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${bot._id}`,
-              {
-                tradeRatio: 50,
-                profitGained: profitGainedValue,
-                workingTime: 0,
-                totalBalance:
-                  createdAt === today
-                    ? availableFunds
-                    : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-                numberOfTrades:
-                  createdAt === today
-                    ? trades.tradeBook?.length || 0
-                    : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-                percentageGain: 0,
-                status: "Inactive",
-                reInvestment:
-                  createdAt === today
-                    ? orders.orderBook?.length || 0
-                    : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-                limits: 0,
-              }
-            );
+            await deactivateBot();
+
+            await updateBot(bot._id, {
+              tradeRatio: 50,
+              profitGained: profitGainedValue,
+              workingTime: formatTime(workingTime),
+              totalBalance:
+                createdAt === today
+                  ? availableFunds
+                  : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+              numberOfTrades:
+                createdAt === today
+                  ? trades.tradeBook?.length || 0
+                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+              percentageGain: 0,
+              status: currentStatus,
+              reInvestment:
+                createdAt === today
+                  ? orders.orderBook?.length || 0
+                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              limits: 0,
+            });
           })
         );
       } catch (error) {
@@ -192,32 +207,26 @@ function Bot({
       }
     };
 
-    const timeUntil1025PM = getTimeUntil1025PM();
+    const timeUntil4PM = getTimeUntil4PM();
     const timeoutId = setTimeout(() => {
       performUpdateRequest();
 
       const intervalId = setInterval(performUpdateRequest, 24 * 60 * 60 * 1000); // 24 hours
       return () => clearInterval(intervalId); // Cleanup interval
-    }, timeUntil1025PM);
+    }, timeUntil4PM);
 
     return () => clearTimeout(timeoutId); // Cleanup timeout
-  }, [botData, currentUser.id, today]);
-
-  if (loading) {
-    return (
-      <div>
-        <Loading />
-      </div>
-    );
-  }
-
-  if (
-    !apiBotData ||
-    !apiBotData.dynamicData ||
-    apiBotData.dynamicData.length === 0
-  ) {
-    return <div>Error: Bot data is missing or empty</div>;
-  }
+  }, [
+    botData,
+    currentUser.id,
+    today,
+    formatTime,
+    profitGainedValue,
+    availableFunds,
+    trades,
+    orders,
+    currentStatus,
+  ]);
 
   const data = [
     {
@@ -296,42 +305,223 @@ function Bot({
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-            ? "#00FF47"
-            : "#FFBF00",
+          ? "#00FF47"
+          : "#FFBF00",
     },
   ];
-
-  const isCreatedToday = botCreatedDate === today;
-
-  // const handleConfirmationClose = () => {
-  //   setModalOpen(false);
-  // };
-
-  // const handleToggle = () => {
-  //   if (!isCreatedToday) {
-  //     setModalOpen(true);
-  //     return;
-  //   }
-  //   onToggle();
-  // };
 
   const handleToggle = () => {
     if (!isCreatedToday) {
       setConfirmationModalOpen(true);
-    }
-     else {
+    } else {
       setYesNoModalOpen(true);
     }
   };
 
-  const handleConfirm = () => {
+  //  API endpoint based on the bot type
+  const getApiEndpoint = (action) => {
+    if (createdAt === today) {
+      const botType = apiBotData.productType;
+      if (botType === "INTRADAY" || botType === "CNC") {
+        return `/api/v1/users/${currentUser.id}/auto-trade-bot-${botType}/${action}/bots/${apiBotData._id}`;
+      }
+    }
+    throw new Error("Invalid bot type or bot not created today");
+  };
+
+  const activateBot = async () => {
+    try {
+      const endpoint = getApiEndpoint("activate");
+      const { profitPercentage, riskPercentage } = apiBotData;
+
+      // Update the bot status
+      await updateBot(apiBotData._id, {
+        tradeRatio: 50,
+        profitGained: profitGainedValue,
+        workingTime: formatTime(workingTime),
+        totalBalance:
+          createdAt === today
+            ? availableFunds
+            : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+        scheduled: today,
+        numberOfTrades:
+          createdAt === today
+            ? trades.tradeBook?.length || 0
+            : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+        percentageGain: 0,
+        status: "Running",
+        reInvestment:
+          createdAt === today
+            ? orders.orderBook?.length || 0
+            : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+        limits: 0,
+      });
+
+      // Hit the activation API
+      await api.post(endpoint, {
+        marginProfitPercentage: profitPercentage,
+        marginLossPercentage: riskPercentage,
+      });
+
+      setActiveBots((prevBots) => [
+        ...prevBots,
+        { id: botData._id, type: botData.productType },
+      ]);
+
+      console.log("bot activated");
+    } catch (error) {
+      console.error("Error activating bot:", error);
+    }
+  };
+
+  const deactivateBot = async () => {
+    try {
+      const endpoint = getApiEndpoint("deactivate");
+
+      // Hit the deactivation API
+      await api.patch(endpoint);
+
+      // Update the bot status
+      await updateBot(apiBotData._id, {
+        tradeRatio: 50,
+        profitGained: profitGainedValue,
+        workingTime: formatTime(workingTime),
+        totalBalance:
+          createdAt === today
+            ? availableFunds
+            : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+        numberOfTrades:
+          createdAt === today
+            ? trades.tradeBook?.length || 0
+            : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+        percentageGain: 0,
+        status: "Inactive",
+        reInvestment:
+          createdAt === today
+            ? orders.orderBook?.length || 0
+            : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+        limits: 0,
+      });
+
+      setActiveBots((prevBots) => [
+        ...prevBots,
+        { id: botData._id, type: botData.productType },
+      ]);
+
+      console.log("bot deactivated");
+    } catch (error) {
+      console.error("Error deactivating bot:", error);
+    }
+  };
+
+  // is status = active then automatic start bot at 9:30am
+  useEffect(() => {
+    const getTimeUntil930AM = () => {
+      const now = moment();
+      const targetTime = now
+        .clone()
+        .startOf("day")
+        .set({ hour: 9, minute: 30, second: 0 });
+      if (now.isAfter(targetTime)) {
+        targetTime.add(1, "day");
+      }
+      return targetTime.diff(now); // Time in milliseconds
+    };
+
+    const performActivationRequest = async () => {
+      try {
+        const todaysBots = [apiBotData].filter((bot) => {
+          console.log("bot", bot);
+
+          const botCreatedDate = moment(bot.createdAt).format("YYYY-MM-DD");
+          return botCreatedDate === today;
+        });
+
+        await Promise.all(
+          todaysBots.map(async (bot) => {
+            if (currentStatus === "Active") {
+              console.log("bot activated", bot);
+
+              await activateBot();
+            }
+          })
+        );
+      } catch (error) {
+        console.error("Error performing activation:", error);
+      }
+    };
+
+    const timeUntil930AM = getTimeUntil930AM();
+    const timeoutId = setTimeout(() => {
+      console.log("started");
+
+      performActivationRequest();
+      console.log("ended");
+
+      const intervalId = setInterval(
+        performActivationRequest,
+        24 * 60 * 60 * 1000
+      ); // 24 hours
+      return () => clearInterval(intervalId); // Cleanup interval
+    }, timeUntil930AM);
+
+    return () => clearTimeout(timeoutId); // Cleanup timeout
+  }, [apiBotData, currentStatus, today]);
+
+  const handleConfirm = async () => {
     setYesNoModalOpen(false);
+
+    const activeCNC = activeBots.some((bot) => bot.type === "CNC");
+    const activeIntraday = activeBots.some((bot) => bot.type === "Intraday");
+
+    // Check if current time is within trading hours
+    if (isWithinTradingHours()) {
+      if (!isEnabled) {
+        if (botData.productType === "CNC" && activeCNC) {
+          alert(
+            "Cannot activate CNC bot as there is already an active CNC bot."
+          );
+          return;
+        }
+        if (botData.productType === "Intraday" && activeIntraday) {
+          alert(
+            "Cannot activate Intraday bot as there is already an active Intraday bot."
+          );
+          return;
+        }
+
+        await activateBot();
+      } else {
+        await deactivateBot();
+      }
+    } else {
+      console.log(
+        "Bot can only be activated or deactivated during trading hours."
+      );
+    }
+
     onToggle();
   };
 
   const handleConfirmationClose = () => {
     setConfirmationModalOpen(false);
   };
+
+  if (loading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+
+  if (
+    !apiBotData ||
+    !apiBotData.dynamicData ||
+    apiBotData.dynamicData.length === 0
+  ) {
+    return <div>Error: Bot data is missing or empty</div>;
+  }
 
   return (
     <div
@@ -362,7 +552,7 @@ function Bot({
             </h3>
           </div>
           <h3 className="text-sm text-[#FFA8A8]">{botData.market}</h3>
-          <p className="text-[10px] mt-1 text-[#A6B2CD]">{botData.timestamp}</p>
+          {/* <p className="text-[10px] mt-1 text-[#A6B2CD]">{botData.timestamp}</p> */}
           <p className="text-sm mt-2 text-[#63ECFF]">
             Product Type: {botData.productType}
           </p>
@@ -405,19 +595,21 @@ function Bot({
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
-              ? "opacity-0"
-              : "opacity-100"
-              }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-0"
+                : "opacity-100"
+            }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
-              ? "opacity-100"
-              : "opacity-0"
-              }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-100"
+                : "opacity-0"
+            }`}
           >
             ON
           </span>
@@ -428,11 +620,13 @@ function Bot({
         </Switch>
       </div>
 
-        <YesNoConfirmationModal
+      <YesNoConfirmationModal
         isOpen={isYesNoModalOpen}
         onClose={() => setYesNoModalOpen(false)}
         title={isEnabled ? "Deactivate Bot" : "Activate Bot"}
-        message={`Are you sure you want to ${isEnabled ? "deactivate" : "activate"} <strong>${botData.name}?</strong>`}
+        message={`Are you sure you want to ${
+          isEnabled ? "deactivate" : "activate"
+        } <strong>${botData.name}?</strong>`}
         onConfirm={handleConfirm}
       />
 
