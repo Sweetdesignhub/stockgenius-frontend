@@ -19,22 +19,8 @@ export function DataProvider({ children }) {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
   
-    //   if (currentUser && fyersAccessToken) {
-    //     const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-    //     const response = await api.get(
-    //       `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
-    //       { headers }
-    //     );
-    //     const data = response.data[0];
-  
-    //     setProfile(data.profile);
-    //     setFunds(data.funds || {});
-    //     setHoldings(data.holdings || []);
-    //     setPositions(data.positions || {});
-    //     setTrades(data.trades || []);
-    //     setOrders(data.orders || []);
-    //   }
-    const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+      if (currentUser && fyersAccessToken) {
+        const headers = { Authorization: `Bearer ${fyersAccessToken}` };
         const response = await api.get(
           `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
           { headers }
@@ -47,6 +33,20 @@ export function DataProvider({ children }) {
         setPositions(data.positions || {});
         setTrades(data.trades || []);
         setOrders(data.orders || []);
+      }
+    // const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+    //     const response = await api.get(
+    //       `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
+    //       { headers }
+    //     );
+    //     const data = response.data[0];
+  
+    //     setProfile(data.profile);
+    //     setFunds(data.funds || {});
+    //     setHoldings(data.holdings || []);
+    //     setPositions(data.positions || {});
+    //     setTrades(data.trades || []);
+    //     setOrders(data.orders || []);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Optional: Notify the user of the error
