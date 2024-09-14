@@ -8,7 +8,7 @@ const SessionExpiredModal = ({ showModal, onSignOut }) => {
   return (
     <Dialog open={showModal} onClose={() => {}}>
       <div
-        className="fixed inset-0 bg-black bg-opacity-30"
+        className="fixed inset-0 bg-black bg-opacity-40 z-20"
         aria-hidden="true"
       />
       <div className="fixed z-30 inset-0 flex items-center justify-center p-4">
