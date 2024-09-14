@@ -3,11 +3,18 @@ import Cards from './Cards.jsx';
 import { useData } from '../../../contexts/FyersDataContext.jsx';
 
 function AccountInfo() {
-  const { profile, holdings, funds, positions, loading } = useData();
+  const {
+    profile={},
+    holdings = {},
+    funds = { fund_limit: [{}] },
+    positions = { overall: {} },
+    loading,
+  } = useData();
 
-  const holdingsTotalPL = holdings.overall.total_pl.toFixed(2);
-  const positionTotalPL = positions.overall.pl_total.toFixed(2);
-  const availableFunds = funds.fund_limit[9].equityAmount.toFixed(2);
+  const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
+  const positionTotalPL = positions?.overall?.pl_total?.toFixed(2) || "0.00";
+  const availableFunds =
+    funds?.fund_limit?.[9]?.equityAmount?.toFixed(2) || "0.00";
 
   if (loading) {
     return <p>Loading...</p>;
