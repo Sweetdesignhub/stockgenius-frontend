@@ -43,7 +43,7 @@ function AITradingBots() {
   const [botDataList, setBotDataList] = useState([]);
   const [botStates, setBotStates] = useState({});
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(true);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
@@ -179,7 +179,6 @@ function AITradingBots() {
     } else {
       console.log(fyersAccessToken);
       console.log("Successfully connected to broker");
-      setIsActivatingBot(true);
       setAutoTradeModalOpen(true);
     }
   };
@@ -237,7 +236,7 @@ function AITradingBots() {
       { title: "Today's Profit %", value: todayProfitPercentage },
       { title: "Last Week Profit %", value: weekProfitPercentage },
       { title: "Today's Bot Time", value: formatTime(totalTodaysBotTime) },
-      { title: "This Week's Bot Time", value: formatTime(totalCurrentWeekBotTime) },
+      { title: "Week's Bot Time", value: formatTime(totalCurrentWeekBotTime) },
       { title: "No. of AI Bots", value: botDataList.length.toString() },
       { title: "Re-investments", value: reInvestments.toString() },
       { title: "Total Investment", value: totalInvestment.toFixed(2) },
