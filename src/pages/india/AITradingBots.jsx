@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import BrokerModal from "../../components/brokers/BrokerModal";
 import AutoTradeModal from "../../components/brokers/AutoTradeModal";
@@ -6,9 +6,10 @@ import Bot from "../../components/aiTradingBots/Bot";
 import NotAvailable from "../../components/common/NotAvailable";
 import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
-import moment from "moment";
+import moment from "moment-timezone";
 import { isAfterMarketClose, isBeforeMarketOpen, isWithinTradingHours } from "../../utils/helper";
-
+import { useBotTime } from "../../contexts/BotTimeContext";
+import { useData } from "../../contexts/FyersDataContext";
 
 const getBotStatus = (isActive) => {
   if (isAfterMarketClose()) {
@@ -16,7 +17,7 @@ const getBotStatus = (isActive) => {
   } else if (isWithinTradingHours()) {
     return isActive ? "Running" : "Inactive";
   } else if (isBeforeMarketOpen()) {
-    return isActive ? "Active" : "Inactive";
+    return isActive ? "Schedule" : "Inactive";
   } else {
     return "Inactive";
   }
@@ -42,24 +43,19 @@ function AITradingBots() {
   const [botDataList, setBotDataList] = useState([]);
   const [botStates, setBotStates] = useState({});
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(true);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [confirmationAction, setConfirmationAction] = useState(null);
-  const [botWorkingTimes, setBotWorkingTimes] = useState({});
-  const [todaysBotTime, setTodaysBotTime] = useState(0);
-  const [lastWeekBotTime, setLastWeekBotTime] = useState(0);
-  const [lastReset, setLastReset] = useState({
-    daily: null,
-    weekly: null
-  });
-
-
-  
+  const { botTimes, formatTime } = useBotTime();
 
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
+
+  const {
+    funds = { fund_limit: [{}] },
+  } = useData();
 
   const fetchBots = useCallback(async () => {
     try {
@@ -67,7 +63,9 @@ function AITradingBots() {
       const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setBotDataList(sortedBots);
       setBotStates(sortedBots.reduce((acc, bot) => {
-        acc[bot._id] = { isActive: false, status: "Inactive" };
+        acc[bot._id] = {
+          isActive: bot.dynamicData[0]?.status === "Running" || bot.dynamicData[0]?.status === "Schedule"
+        };
         return acc;
       }, {}));
     } catch (error) {
@@ -101,42 +99,6 @@ function AITradingBots() {
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
-  useEffect(() => {
-    const now = moment();
-    const today = now.startOf('day');
-    const startOfWeek = now.startOf('isoWeek'); // Monday
-
-    // Check and reset daily
-    if (!lastReset.daily || !moment(lastReset.daily).isSame(today, 'day')) {
-      setTodaysBotTime(0);
-      setBotWorkingTimes({});
-      setLastReset(prev => ({ ...prev, daily: today.toDate() }));
-    }
-
-    // Check and reset weekly
-    if (!lastReset.weekly || !moment(lastReset.weekly).isSame(startOfWeek, 'isoWeek')) {
-      setLastWeekBotTime(0);
-      setLastReset(prev => ({ ...prev, weekly: startOfWeek.toDate() }));
-    }
-
-    // Save to localStorage
-    localStorage.setItem('botTimes', JSON.stringify({
-      todaysBotTime,
-      lastWeekBotTime,
-      lastReset
-    }));
-  }, [todaysBotTime, lastWeekBotTime, lastReset]);
-
-  useEffect(() => {
-    // Load from localStorage on component mount
-    const savedTimes = JSON.parse(localStorage.getItem('botTimes'));
-    if (savedTimes) {
-      setTodaysBotTime(savedTimes.todaysBotTime);
-      setLastWeekBotTime(savedTimes.lastWeekBotTime);
-      setLastReset(savedTimes.lastReset);
-    }
-  }, []);
-
   const createBot = async (botData) => {
     try {
       const response = await api.post(
@@ -163,7 +125,7 @@ function AITradingBots() {
     }
   };
 
- const handleToggle = (botId) => {
+  const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
       setTitle("Action Not Allowed");
       setMessage("You can't activate the bot after market closes.");
@@ -171,76 +133,44 @@ function AITradingBots() {
       setConfirmationOpen(true);
       return;
     }
-    setBotStates((prevStates) => {
-      const currentState = prevStates[botId];
-      const newIsActive =
-        isWithinTradingHours() || isBeforeMarketOpen()
-          ? !currentState.isActive
-          : false;
-      return {
+
+    try {
+      const bot = botDataList.find(b => b._id === botId);
+      const currentStatus = bot.dynamicData[0]?.status;
+      let newStatus;
+
+      if (currentStatus === "Running" || currentStatus === "Schedule") {
+        newStatus = "Inactive";
+      } else {
+        if (isWithinTradingHours()) {
+          newStatus = "Running";
+        } else if (isBeforeMarketOpen()) {
+          newStatus = "Schedule";
+        } else {
+          newStatus = "Inactive";
+        }
+      }
+
+      await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
+        status: newStatus
+      });
+
+      setBotStates(prevStates => ({
         ...prevStates,
         [botId]: {
-          isActive: newIsActive,
-          status: getBotStatus(newIsActive),
-        },
-      };
-    });
+          isActive: newStatus === "Running" || newStatus === "Schedule",
+          status: newStatus
+        }
+      }));
+
+      fetchBots(); // Refetch bots to get updated data
+    } catch (error) {
+      console.error("Error toggling bot status:", error);
+      setTitle("Error");
+      setMessage("Failed to update bot status. Please try again.");
+      setConfirmationOpen(true);
+    }
   };
-
-   const updateBotWorkingTime = useCallback((botId, seconds) => {
-    setBotWorkingTimes(prev => {
-      const updatedTimes = {
-        ...prev,
-        [botId]: (prev[botId] || 0) + seconds
-      };
-
-      // Update today's bot time
-      const newTodaysBotTime = Object.values(updatedTimes).reduce((sum, time) => sum + time, 0);
-      setTodaysBotTime(newTodaysBotTime);
-
-      // Update this week's bot time
-      setLastWeekBotTime(prevWeekTime => prevWeekTime + seconds);
-
-      return updatedTimes;
-    });
-  }, []);
-
-  useEffect(() => {
-    const now = moment();
-    const today = now.startOf('day');
-    const startOfWeek = now.startOf('isoWeek'); // Monday
-
-    // Check and reset daily
-    if (!lastReset.daily || !moment(lastReset.daily).isSame(today, 'day')) {
-      setTodaysBotTime(0);
-      setBotWorkingTimes({});
-      setLastReset(prev => ({ ...prev, daily: today.toDate() }));
-    }
-
-    // Check and reset weekly
-    if (!lastReset.weekly || !moment(lastReset.weekly).isSame(startOfWeek, 'isoWeek')) {
-      setLastWeekBotTime(0);
-      setLastReset(prev => ({ ...prev, weekly: startOfWeek.toDate() }));
-    }
-
-    // Save to localStorage
-    localStorage.setItem('botTimes', JSON.stringify({
-      todaysBotTime,
-      lastWeekBotTime,
-      lastReset
-    }));
-  }, [todaysBotTime, lastWeekBotTime, lastReset]);
-
-  useEffect(() => {
-    // Load from localStorage on component mount
-    const savedTimes = JSON.parse(localStorage.getItem('botTimes'));
-    if (savedTimes) {
-      setTodaysBotTime(savedTimes.todaysBotTime);
-      setLastWeekBotTime(savedTimes.lastWeekBotTime);
-      setLastReset(savedTimes.lastReset);
-    }
-  }, []);
-
 
   const handleScheduleTrade = () => {
     if (!fyersAccessToken) {
@@ -249,6 +179,7 @@ function AITradingBots() {
     } else {
       console.log(fyersAccessToken);
       console.log("Successfully connected to broker");
+      setIsActivatingBot(true);
       setAutoTradeModalOpen(true);
     }
   };
@@ -257,22 +188,69 @@ function AITradingBots() {
     setConfirmationOpen(false);
     setAutoTradeModalOpen(false);
   };
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}h ${minutes}m`;
-  };
 
-  const cardData = [
-    { title: "Today's Profit %", value: "12%" },
-    { title: "Last Week Profit %", value: "23.12%" },
-    { title: "Today's Bot Time", value: formatTime(todaysBotTime) },
-    { title: "Last Week Bot Time", value: formatTime(lastWeekBotTime) },
-    { title: "No. of AI Bots", value: botDataList.length },
-    { title: "Re-investments", value: "42" },
-    { title: "Total Investment", value: "42350.38" },
-    { title: "Total Profit", value: "98675.91" },
-  ];
+  const calculateCardData = useMemo(() => {
+    const today = moment().startOf('day');
+    const startOfWeek = moment().startOf('isoWeek');
+
+    let todayProfit = 0;
+    let weekProfit = 0;
+    let totalInvestment = 0;
+    let totalProfit = 0;
+    let reInvestments = 0;
+    let totalTodaysBotTime = 0;
+    let totalCurrentWeekBotTime = 0;
+
+    // Get the total balance and limit at start of day
+    const balance = funds?.fund_limit?.find(item => item.id === 10)?.equityAmount || 0;
+    const limitAtStartOfDay = funds?.fund_limit?.find(item => item.id === 9)?.equityAmount || 0;
+
+    // Calculate the investment amount
+    const investmentAmount = limitAtStartOfDay - balance;
+
+    botDataList.forEach(bot => {
+      const botCreatedAt = moment(bot.createdAt);
+      const profitGained = parseFloat(bot.dynamicData[0]?.profitGained || 0);
+
+      if (botCreatedAt.isSame(today, 'day')) {
+        todayProfit += profitGained;
+      }
+
+      if (botCreatedAt.isSameOrAfter(startOfWeek)) {
+        weekProfit += profitGained;
+      }
+
+      totalProfit += profitGained;
+      reInvestments += parseInt(bot.dynamicData[0]?.reInvestment || 0);
+
+      // Sum up the bot times from the context
+      const botTime = botTimes[bot._id] || { todaysBotTime: 0, currentWeekTime: 0 };
+      totalTodaysBotTime += botTime.todaysBotTime;
+      totalCurrentWeekBotTime += botTime.currentWeekTime;
+    });
+
+    totalInvestment = investmentAmount;
+
+    const calculatePercentage = (profit, investment) => {
+      if (investment === 0) return "0.00%";
+      const percentage = (profit / investment) * 100;
+      return isNaN(percentage) ? "0.00%" : `${percentage.toFixed(2)}%`;
+    };
+
+    const todayProfitPercentage = calculatePercentage(todayProfit, totalInvestment);
+    const weekProfitPercentage = calculatePercentage(weekProfit, totalInvestment);
+
+    return [
+      { title: "Today's Profit %", value: todayProfitPercentage },
+      { title: "Last Week Profit %", value: weekProfitPercentage },
+      { title: "Today's Bot Time", value: formatTime(totalTodaysBotTime) },
+      { title: "This Week's Bot Time", value: formatTime(totalCurrentWeekBotTime) },
+      { title: "No. of AI Bots", value: botDataList.length.toString() },
+      { title: "Re-investments", value: reInvestments.toString() },
+      { title: "Total Investment", value: totalInvestment.toFixed(2) },
+      { title: "Total Profit", value: totalProfit.toFixed(2) },
+    ];
+  }, [botDataList, botTimes, formatTime]);
 
   return (
     <div className="-z-10">
@@ -307,7 +285,7 @@ function AITradingBots() {
 
           <div className="p-4">
             <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
-              {cardData.map((card, index) => (
+              {calculateCardData.map((card, index) => (
                 <Cards key={index} title={card.title} value={card.value} />
               ))}
             </div>
@@ -322,8 +300,8 @@ function AITradingBots() {
                     botData={bot}
                     isEnabled={botStates[bot._id].isActive}
                     onToggle={() => handleToggle(bot._id)}
-                    currentStatus={botStates[bot._id].status}
-                    onUpdateWorkingTime={updateBotWorkingTime}
+                  //                    currentStatus={botStates[bot._id].status}
+                  //                  onUpdateWorkingTime={updateBotWorkingTime}
                   />
                 ))
               ) : (

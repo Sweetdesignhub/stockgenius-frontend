@@ -8,6 +8,7 @@ import ConfirmationModal from "../common/ConfirmationModal";
 import { useSelector } from "react-redux";
 import api from "../../config";
 import { isWithinTradingHours } from "../../utils/helper";
+import { useBotTime } from "../../contexts/BotTimeContext";
 
 // New component for Trade Ratio Bar
 const TradeRatioBar = ({ ratio }) => {
@@ -43,8 +44,8 @@ function Bot({
   botData,
   isEnabled,
   onToggle,
-  currentStatus,
-  onUpdateWorkingTime,
+  //  currentStatus,
+  //  onUpdateWorkingTime,
 }) {
   const {
     holdings = {},
@@ -61,9 +62,12 @@ function Bot({
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   // console.log(apiBotData?.dynamicData[0]?.status);
-  
+  const currentStatus = apiBotData.dynamicData?.[0]?.status || "Inactive";
 
-  const [workingTime, setWorkingTime] = useState(0);
+  const { botTimes, updateBotTime, formatTime } = useBotTime();
+  // Use botTimes from context
+  const botTime = botTimes[botData._id] || { workingTime: 0, todaysBotTime: 0, currentWeekTime: 0 };
+  const { workingTime, todaysBotTime, currentWeekTime } = botTime;
 
   // Get today's date in YYYY-MM-DD format
   const today = moment().format("YYYY-MM-DD");
@@ -113,18 +117,6 @@ function Bot({
     [currentUser.id]
   );
 
-  //update work timing
-  useEffect(() => {
-    let interval;
-    if (currentStatus === "Running" && isEnabled) {
-      interval = setInterval(() => {
-        setWorkingTime((prevTime) => prevTime + 1);
-        onUpdateWorkingTime(botData.name, 1); // Update by 1 second
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [currentStatus, isEnabled, botData.name, onUpdateWorkingTime]);
-
   useEffect(() => {
     if (botCreatedDate === today) {
       // Use context data if bot was created today
@@ -136,13 +128,6 @@ function Bot({
     }
   }, [botData, botCreatedDate, today, fetchBotFromApi]);
 
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours}h ${minutes}m ${secs}s`;
-  };
-
   //update bot api
   const updateBot = async (botId, updateData) => {
     try {
@@ -150,6 +135,9 @@ function Bot({
         `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`,
         updateData
       );
+
+      // Update localStorage after successful API update
+      localStorage.setItem(`bot_${botId}_workingTime`, workingTime.toString());
     } catch (error) {
       console.error("Error updating bot :", error);
     }
@@ -184,6 +172,8 @@ function Bot({
               tradeRatio: 50,
               profitGained: profitGainedValue,
               workingTime: formatTime(workingTime),
+              todaysBotTime: formatTime(todaysBotTime),
+              currentWeekTime: formatTime(currentWeekTime),
               totalBalance:
                 createdAt === today
                   ? availableFunds
@@ -226,7 +216,14 @@ function Bot({
     trades,
     orders,
     currentStatus,
+    todaysBotTime,
+    currentWeekTime,
   ]);
+
+  useEffect(() => {
+    // Update bot time in context when status changes
+    updateBotTime(botData._id, currentStatus);
+  }, [currentStatus, botData._id, updateBotTime]);
 
   const data = [
     {
@@ -274,11 +271,10 @@ function Bot({
     },
     {
       title: "Percentage Gain",
-      value: `${
-        apiBotData.dynamicData?.[0]?.percentageGain ||
+      value: `${apiBotData.dynamicData?.[0]?.percentageGain ||
         botData.dynamicData[0]?.percentageGain ||
         "0"
-      }%`,
+        }%`,
       valueColor: "white",
     },
     {
@@ -291,11 +287,10 @@ function Bot({
     },
     {
       title: "Limits",
-      value: `$${
-        apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
+      value: `${apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
         botData.dynamicData[0]?.limits?.toLocaleString() ||
         "0"
-      }`,
+        }`,
       valueColor: "white",
     },
     {
@@ -305,8 +300,8 @@ function Bot({
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-          ? "#00FF47"
-          : "#FFBF00",
+            ? "#00FF47"
+            : "#FFBF00",
     },
   ];
 
@@ -439,7 +434,7 @@ function Bot({
 
         await Promise.all(
           todaysBots.map(async (bot) => {
-            if (currentStatus === "Active") {
+            if (currentStatus === "Schedule") {
               console.log("bot activated", bot);
 
               await activateBot();
@@ -479,13 +474,13 @@ function Bot({
       if (!isEnabled) {
         if (botData.productType === "CNC" && activeCNC) {
           alert(
-            "Cannot activate CNC bot as there is already an active CNC bot."
+            "The CNC bot cannot be activated because another CNC bot is already scheduled."
           );
           return;
         }
         if (botData.productType === "Intraday" && activeIntraday) {
           alert(
-            "Cannot activate Intraday bot as there is already an active Intraday bot."
+            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled.."
           );
           return;
         }
@@ -595,21 +590,19 @@ function Bot({
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-0"
-                : "opacity-100"
-            }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-0"
+              : "opacity-100"
+              }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-100"
-                : "opacity-0"
-            }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-100"
+              : "opacity-0"
+              }`}
           >
             ON
           </span>
@@ -624,9 +617,8 @@ function Bot({
         isOpen={isYesNoModalOpen}
         onClose={() => setYesNoModalOpen(false)}
         title={isEnabled ? "Deactivate Bot" : "Activate Bot"}
-        message={`Are you sure you want to ${
-          isEnabled ? "deactivate" : "activate"
-        } <strong>${botData.name}?</strong>`}
+        message={`Are you sure you want to ${isEnabled ? "deactivate" : "activate"
+          } <strong>${botData.name}?</strong>`}
         onConfirm={handleConfirm}
       />
 

@@ -12,13 +12,13 @@ export function DataProvider({ children }) {
   const [trades, setTrades] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const { currentUser } = useSelector((state) => state.user);
 
   const fetchData = async () => {
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
-  
+
       if (currentUser && fyersAccessToken) {
         const headers = { Authorization: `Bearer ${fyersAccessToken}` };
         const response = await api.get(
@@ -26,7 +26,7 @@ export function DataProvider({ children }) {
           { headers }
         );
         const data = response.data[0];
-  
+
         setProfile(data.profile);
         setFunds(data.funds || {});
         setHoldings(data.holdings || []);
@@ -34,25 +34,25 @@ export function DataProvider({ children }) {
         setTrades(data.trades || []);
         setOrders(data.orders || []);
       }
-    // const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-    //     const response = await api.get(
-    //       `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
-    //       { headers }
-    //     );
-    //     const data = response.data[0];
-  
-    //     setProfile(data.profile);
-    //     setFunds(data.funds || {});
-    //     setHoldings(data.holdings || []);
-    //     setPositions(data.positions || {});
-    //     setTrades(data.trades || []);
-    //     setOrders(data.orders || []);
+      // const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+      //     const response = await api.get(
+      //       `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
+      //       { headers }
+      //     );
+      //     const data = response.data[0];
+
+      //     setProfile(data.profile);
+      //     setFunds(data.funds || {});
+      //     setHoldings(data.holdings || []);
+      //     setPositions(data.positions || {});
+      //     setTrades(data.trades || []);
+      //     setOrders(data.orders || []);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Optional: Notify the user of the error
     }
   };
-  
+
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -73,7 +73,7 @@ export function DataProvider({ children }) {
 
   return (
     <FyersDataContext.Provider
-      value={{ profile, holdings, funds, positions, trades , orders, loading }}
+      value={{ profile, holdings, funds, positions, trades, orders, loading }}
     >
       {children}
     </FyersDataContext.Provider>

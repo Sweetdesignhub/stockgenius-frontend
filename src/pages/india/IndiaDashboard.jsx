@@ -167,14 +167,14 @@ const IndiaDashboard = () => {
               actionButtonColor="border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
             />
           </div>
-          <div className="flex items-center justify-center p-4 mt-3">
+          {/* <div className="flex items-center justify-center p-4 mt-3">
             <button
               onClick={confirmAutoTrade}
               className="bg-[#3A6FF8] text-white px-4 py-2 rounded-xl"
             >
               Activate Auto-Trades
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
       <Modal
@@ -188,10 +188,10 @@ const IndiaDashboard = () => {
         handleInputChange={handleInputChange}
       />
       <BrokerModal isOpen={brokerModalOpen} onClose={closeBrokerModal} />
-      <AutoTradeModal
+      {/* <AutoTradeModal
         isOpen={autoTradeModalOpen}
         onClose={closeAutoTradeModal}
-      />
+      /> */}
     </div>
   );
 };
