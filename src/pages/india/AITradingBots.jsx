@@ -179,7 +179,6 @@ function AITradingBots() {
     } else {
       console.log(fyersAccessToken);
       console.log("Successfully connected to broker");
-      setIsActivatingBot(true);
       setAutoTradeModalOpen(true);
     }
   };
