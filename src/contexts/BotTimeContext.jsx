@@ -13,21 +13,30 @@ export function BotTimeProvider({ children }) {
     const syncBotTimes = useCallback(async () => {
         if (currentUser?.id) {
             try {
-                const response = await api.get(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots`);
-                const allBots = response.data;
+                const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
+                console.log('API Response:', response);
+
+                const { bots } = response.data;
+                console.log('Bots data:', bots);
+
+                if (!Array.isArray(bots)) {
+                    console.error('Bots data is not an array:', bots);
+                    return;
+                }
+
 
                 setBotTimes((prevTimes) => {
                     const updatedTimes = {};
                     const storedTimes = JSON.parse(localStorage.getItem('botTimes') || '{}');
 
-                    allBots.forEach(bot => {
+                    bots.forEach(bot => {
                         updatedTimes[bot._id] = {
                             ...storedTimes[bot._id],
                             workingTime: storedTimes[bot._id]?.workingTime || 0,
                             todaysBotTime: storedTimes[bot._id]?.todaysBotTime || 0,
                             currentWeekTime: storedTimes[bot._id]?.currentWeekTime || 0,
                             lastUpdated: storedTimes[bot._id]?.lastUpdated || moment().startOf('isoWeek').format(),
-                            status: bot.status
+                            status: bot.dynamicData[0].status
                         };
                     });
 

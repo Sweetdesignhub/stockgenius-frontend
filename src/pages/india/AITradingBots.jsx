@@ -201,16 +201,10 @@ function AITradingBots() {
     let totalTodaysBotTime = 0;
     let totalCurrentWeekBotTime = 0;
 
-    // Get the total balance and limit at start of day
-    const balance = funds?.fund_limit?.find(item => item.id === 10)?.equityAmount || 0;
-    const limitAtStartOfDay = funds?.fund_limit?.find(item => item.id === 9)?.equityAmount || 0;
-
-    // Calculate the investment amount
-    const investmentAmount = limitAtStartOfDay - balance;
-
     botDataList.forEach(bot => {
       const botCreatedAt = moment(bot.createdAt);
-      const profitGained = parseFloat(bot.dynamicData[0]?.profitGained || 0);
+      const profitGained = funds?.fund_limit?.find(item => item.id === 4)?.equityAmount || 0;
+      const investmentAmount = funds?.fund_limit?.find(item => item.id === 2)?.equityAmount || 0;
 
       if (botCreatedAt.isSame(today, 'day')) {
         todayProfit += profitGained;
@@ -220,6 +214,7 @@ function AITradingBots() {
         weekProfit += profitGained;
       }
 
+      totalInvestment += investmentAmount;
       totalProfit += profitGained;
       reInvestments += parseInt(bot.dynamicData[0]?.reInvestment || 0);
 
@@ -228,8 +223,6 @@ function AITradingBots() {
       totalTodaysBotTime += botTime.todaysBotTime;
       totalCurrentWeekBotTime += botTime.currentWeekTime;
     });
-
-    totalInvestment = investmentAmount;
 
     const calculatePercentage = (profit, investment) => {
       if (investment === 0) return "0.00%";
