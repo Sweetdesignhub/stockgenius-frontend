@@ -1,4 +1,6 @@
-const startHour = 9;
+import moment from "moment-timezone";
+
+const startHour =9;
 const startMin = 30;
 
 
@@ -11,14 +13,20 @@ const getCurrentISTTime = () => {
 };
 
 export const isWithinTradingHours = () => {
-  const istTime = getCurrentISTTime();
-  const hours = istTime.getHours();
-  const minutes = istTime.getMinutes();
+  const now = moment().tz("Asia/Kolkata");
+    const day = now.day();
+    const hour = now.hour();
+    const minute = now.minute();
 
-  return (
-    (hours > startHour || (hours === startHour && minutes >= startMin)) &&
-    (hours < endHour || (hours === endHour && minutes <= endMin))
-  );
+    // Check if it's a weekday (Monday to Friday)
+    if (day >= 1 && day <= 5) {
+        // Check if it's between 9:30 AM and 3:30 PM IST
+        if ((hour > 9 || (hour === 9 && minute >= 30)) && (hour < 15 || (hour === 15 && minute <= 30))) {
+            return true;
+        }
+    }
+
+    return false;
 };
 
 export const isAfterMarketClose = () => {

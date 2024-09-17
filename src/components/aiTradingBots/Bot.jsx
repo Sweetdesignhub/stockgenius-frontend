@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
-import moment from "moment";
+import moment from "moment-timezone";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../common/Loading";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
@@ -44,8 +44,6 @@ function Bot({
   botData,
   isEnabled,
   onToggle,
-  //  currentStatus,
-  //  onUpdateWorkingTime,
 }) {
   const {
     holdings = {},
@@ -56,28 +54,36 @@ function Bot({
     loading,
   } = useData();
   const { currentUser } = useSelector((state) => state.user);
+  const fyersAccessToken = useSelector((state) => state.fyers);
   const [apiBotData, setApiBotData] = useState([]);
   const [activeBots, setActiveBots] = useState([]);
   const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
-  // console.log(apiBotData?.dynamicData[0]?.status);
-  const currentStatus = apiBotData.dynamicData?.[0]?.status || "Inactive";
+  const currentStatus = apiBotData.dynamicData?.[0]?.status || "Schedule";
 
   const { botTimes, updateBotTime, formatTime } = useBotTime();
   // Use botTimes from context
-  const botTime = botTimes[botData._id] || { workingTime: 0, todaysBotTime: 0, currentWeekTime: 0 };
+  const botTime = botTimes[botData._id] || {
+    workingTime: 0,
+    todaysBotTime: 0,
+    currentWeekTime: 0,
+  };
   const { workingTime, todaysBotTime, currentWeekTime } = botTime;
 
   // Get today's date in YYYY-MM-DD format
-  const today = moment().format("YYYY-MM-DD");
+  const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
 
   // Format the createdAt date to match the same format as today
-  const botCreatedDate = moment(botData.createdAt).format("YYYY-MM-DD");
+  const botCreatedDate = moment(botData.createdAt)
+    .tz("Asia/Kolkata")
+    .format("YYYY-MM-DD");
 
   const isCreatedToday = botCreatedDate === today;
 
-  const createdAt = moment(apiBotData.createdAt).format("YYYY-MM-DD");
+  const createdAt = moment(apiBotData.createdAt)
+    .tz("Asia/Kolkata")
+    .format("YYYY-MM-DD");
 
   const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
   const positionTotalPL = positions?.overall?.pl_total?.toFixed(2) || "0.00";
@@ -138,87 +144,11 @@ function Bot({
 
       // Update localStorage after successful API update
       localStorage.setItem(`bot_${botId}_workingTime`, workingTime.toString());
+      fetchBotFromApi(botId);
     } catch (error) {
       console.error("Error updating bot :", error);
     }
   };
-
-  // automatic hit deactive api, after that data to be updated at 3:30pm
-  useEffect(() => {
-    const getTimeUntil4PM = () => {
-      const now = new Date();
-      const next4PM = new Date();
-      next4PM.setHours(15, 30, 0, 0);
-
-      if (now > next4PM) {
-        next4PM.setDate(next4PM.getDate() + 1);
-      }
-
-      return next4PM - now; // Time in milliseconds
-    };
-
-    const performUpdateRequest = async () => {
-      try {
-        const todaysBots = [apiBotData].filter((bot) => {
-          const botCreatedDate = moment(bot.createdAt).format("YYYY-MM-DD");
-          return botCreatedDate === today;
-        });
-
-        await Promise.all(
-          todaysBots.map(async (bot) => {
-            await deactivateBot();
-
-            await updateBot(bot._id, {
-              tradeRatio: 50,
-              profitGained: profitGainedValue,
-              workingTime: formatTime(workingTime),
-              todaysBotTime: formatTime(todaysBotTime),
-              currentWeekTime: formatTime(currentWeekTime),
-              totalBalance:
-                createdAt === today
-                  ? availableFunds
-                  : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-              numberOfTrades:
-                createdAt === today
-                  ? trades.tradeBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-              percentageGain: 0,
-              status: currentStatus,
-              reInvestment:
-                createdAt === today
-                  ? orders.orderBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-              limits: 0,
-            });
-          })
-        );
-      } catch (error) {
-        console.error("Error performing update:", error);
-      }
-    };
-
-    const timeUntil4PM = getTimeUntil4PM();
-    const timeoutId = setTimeout(() => {
-      performUpdateRequest();
-
-      const intervalId = setInterval(performUpdateRequest, 24 * 60 * 60 * 1000); // 24 hours
-      return () => clearInterval(intervalId); // Cleanup interval
-    }, timeUntil4PM);
-
-    return () => clearTimeout(timeoutId); // Cleanup timeout
-  }, [
-    botData,
-    currentUser.id,
-    today,
-    formatTime,
-    profitGainedValue,
-    availableFunds,
-    trades,
-    orders,
-    currentStatus,
-    todaysBotTime,
-    currentWeekTime,
-  ]);
 
   useEffect(() => {
     // Update bot time in context when status changes
@@ -256,7 +186,7 @@ function Bot({
     },
     {
       title: "Scheduled",
-      value: moment(apiBotData.createdAt || botData.createdAt).format(
+      value: moment(apiBotData.createdAt || botData.createdAt).tz("Asia/Kolkata").format(
         "D MMM, h:mm a"
       ),
       valueColor: "white",
@@ -271,10 +201,11 @@ function Bot({
     },
     {
       title: "Percentage Gain",
-      value: `${apiBotData.dynamicData?.[0]?.percentageGain ||
+      value: `${
+        apiBotData.dynamicData?.[0]?.percentageGain ||
         botData.dynamicData[0]?.percentageGain ||
         "0"
-        }%`,
+      }%`,
       valueColor: "white",
     },
     {
@@ -287,10 +218,11 @@ function Bot({
     },
     {
       title: "Limits",
-      value: `${apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
+      value: `${
+        apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
         botData.dynamicData[0]?.limits?.toLocaleString() ||
         "0"
-        }`,
+      }`,
       valueColor: "white",
     },
     {
@@ -300,8 +232,8 @@ function Bot({
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-            ? "#00FF47"
-            : "#FFBF00",
+          ? "#00FF47"
+          : "#FFBF00",
     },
   ];
 
@@ -398,10 +330,10 @@ function Bot({
         limits: 0,
       });
 
-      setActiveBots((prevBots) => [
-        ...prevBots,
-        { id: botData._id, type: botData.productType },
-      ]);
+      // Remove the bot from the activeBots state
+      setActiveBots((prevBots) =>
+        prevBots.filter((bot) => bot.id !== apiBotData._id)
+      );
 
       console.log("bot deactivated");
     } catch (error) {
@@ -409,10 +341,10 @@ function Bot({
     }
   };
 
-  // is status = active then automatic start bot at 9:30am
+  // is status = schedule then automatic start bot at 9:30am
   useEffect(() => {
     const getTimeUntil930AM = () => {
-      const now = moment();
+      const now = moment().tz("Asia/Kolkata");
       const targetTime = now
         .clone()
         .startOf("day")
@@ -428,7 +360,9 @@ function Bot({
         const todaysBots = [apiBotData].filter((bot) => {
           console.log("bot", bot);
 
-          const botCreatedDate = moment(bot.createdAt).format("YYYY-MM-DD");
+          const botCreatedDate = moment(bot.createdAt)
+            .tz("Asia/Kolkata")
+            .format("YYYY-MM-DD");
           return botCreatedDate === today;
         });
 
@@ -463,6 +397,62 @@ function Bot({
     return () => clearTimeout(timeoutId); // Cleanup timeout
   }, [apiBotData, currentStatus, today]);
 
+  // automatic hit deactive api, after that data to be updated at 3:30pm
+  useEffect(() => {
+    const getTimeUntil4PM = () => {
+      const now = new Date().tz("Asia/Kolkata");
+      const next4PM = new Date().tz("Asia/Kolkata");
+      next4PM.setHours(15, 30, 0, 0);
+
+      if (now > next4PM) {
+        next4PM.setDate(next4PM.getDate() + 1);
+      }
+
+      return next4PM - now; // Time in milliseconds
+    };
+
+    const performUpdateRequest = async () => {
+      try {
+        const todaysBots = [apiBotData].filter((bot) => {
+          const botCreatedDate = moment(bot.createdAt)
+            .tz("Asia/Kolkata")
+            .format("YYYY-MM-DD");
+          return botCreatedDate === today;
+        });
+
+        await Promise.all(
+          todaysBots.map(async (bot) => {
+            await deactivateBot();
+          })
+        );
+      } catch (error) {
+        console.error("Error performing update:", error);
+      }
+    };
+
+    const timeUntil4PM = getTimeUntil4PM();
+    const timeoutId = setTimeout(() => {
+      performUpdateRequest();
+
+      const intervalId = setInterval(performUpdateRequest, 24 * 60 * 60 * 1000); // 24 hours
+      return () => clearInterval(intervalId); // Cleanup interval
+    }, timeUntil4PM);
+
+    return () => clearTimeout(timeoutId); // Cleanup timeout
+  }, [
+    botData,
+    currentUser.id,
+    today,
+    formatTime,
+    profitGainedValue,
+    availableFunds,
+    trades,
+    orders,
+    currentStatus,
+    todaysBotTime,
+    currentWeekTime,
+  ]);
+
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
 
@@ -480,12 +470,56 @@ function Bot({
         }
         if (botData.productType === "Intraday" && activeIntraday) {
           alert(
-            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled.."
+            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
           );
           return;
         }
 
-        await activateBot();
+        if (fyersAccessToken) {
+          console.log("updatind staus");
+          const userTime = new Date().tz("Asia/Kolkata");
+
+          const today = new Date().toDateString().tz("Asia/Kolkata");
+
+          // Set cutoff times
+          const cutoffStart = new Date().tz("Asia/Kolkata");
+          cutoffStart.setHours(0, 0, 0, 0); // Start of the schedule window (12:00 PM)
+          const cutoffEnd = new Date();
+          cutoffEnd.setHours(9, 30, 0, 0).tz("Asia/Kolkata"); // End of the schedule window (9:30 PM)
+
+          // Check if the user time falls within the schedule window
+          if (userTime >= cutoffStart && userTime <= cutoffEnd) {
+            // If user arrives between 12:00 am and 9:30 am, schedule the bot
+            await updateBot(apiBotData._id, {
+              tradeRatio: 50,
+              profitGained: profitGainedValue,
+              workingTime: formatTime(new Date()),
+              totalBalance:
+                createdAt === today
+                  ? availableFunds
+                  : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+              scheduled: today,
+              numberOfTrades:
+                createdAt === today
+                  ? trades.tradeBook?.length || 0
+                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+              percentageGain: 0,
+              status: "Scheduled",
+              reInvestment:
+                createdAt === today
+                  ? orders.orderBook?.length || 0
+                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              limits: 0,
+            });
+
+            console.log("Bot scheduled");
+          } else {
+            await activateBot();
+          }
+        } else {
+          alert("Connect your broker before activating the bot");
+          return;
+        }
       } else {
         await deactivateBot();
       }
@@ -590,19 +624,21 @@ function Bot({
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
-              ? "opacity-0"
-              : "opacity-100"
-              }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-0"
+                : "opacity-100"
+            }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
-              ? "opacity-100"
-              : "opacity-0"
-              }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-100"
+                : "opacity-0"
+            }`}
           >
             ON
           </span>
@@ -617,8 +653,9 @@ function Bot({
         isOpen={isYesNoModalOpen}
         onClose={() => setYesNoModalOpen(false)}
         title={isEnabled ? "Deactivate Bot" : "Activate Bot"}
-        message={`Are you sure you want to ${isEnabled ? "deactivate" : "activate"
-          } <strong>${botData.name}?</strong>`}
+        message={`Are you sure you want to ${
+          isEnabled ? "deactivate" : "activate"
+        } <strong>${botData.name}?</strong>`}
         onConfirm={handleConfirm}
       />
 

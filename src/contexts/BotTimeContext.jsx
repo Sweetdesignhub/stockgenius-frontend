@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useSelector } from 'react-redux';
 import api from '../config';
 import { isWithinTradingHours } from '../utils/helper';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const BotTimeContext = createContext();
 
@@ -13,21 +13,28 @@ export function BotTimeProvider({ children }) {
     const syncBotTimes = useCallback(async () => {
         if (currentUser?.id) {
             try {
-                const response = await api.get(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots`);
-                const allBots = response.data;
+                const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
+
+                const { bots } = response.data;
+
+                if (!Array.isArray(bots)) {
+                    console.error('Bots data is not an array:', bots);
+                    return;
+                }
+
 
                 setBotTimes((prevTimes) => {
                     const updatedTimes = {};
                     const storedTimes = JSON.parse(localStorage.getItem('botTimes') || '{}');
 
-                    allBots.forEach(bot => {
+                    bots.forEach(bot => {
                         updatedTimes[bot._id] = {
                             ...storedTimes[bot._id],
                             workingTime: storedTimes[bot._id]?.workingTime || 0,
                             todaysBotTime: storedTimes[bot._id]?.todaysBotTime || 0,
                             currentWeekTime: storedTimes[bot._id]?.currentWeekTime || 0,
-                            lastUpdated: storedTimes[bot._id]?.lastUpdated || moment().startOf('isoWeek').format(),
-                            status: bot.status
+                            lastUpdated: storedTimes[bot._id]?.lastUpdated || moment().tz("Asia/Kolkata").startOf('isoWeek').format(),
+                            status: bot.dynamicData[0].status
                         };
                     });
 
@@ -47,7 +54,7 @@ export function BotTimeProvider({ children }) {
         setBotTimes(storedTimes);
 
         syncBotTimes();
-        const syncInterval = setInterval(syncBotTimes, 60 * 1000);
+        const syncInterval = setInterval(syncBotTimes, 5 * 60 * 1000); // 5 minutes
 
         return () => clearInterval(syncInterval);
     }, [syncBotTimes]);
@@ -56,12 +63,12 @@ export function BotTimeProvider({ children }) {
         const updateBotTimes = () => {
             setBotTimes((prevTimes) => {
                 const updatedTimes = { ...prevTimes };
-                const now = moment();
+                const now = moment().tz("Asia/Kolkata");
                 const startOfCurrentWeek = now.clone().startOf('isoWeek');
 
                 Object.keys(updatedTimes).forEach((botId) => {
                     const bot = updatedTimes[botId];
-                    const lastUpdated = moment(bot.lastUpdated);
+                    const lastUpdated = moment.tz(bot.lastUpdated, "Asia/Kolkata");
 
                     // Check if we've crossed into a new week
                     if (now.isAfter(lastUpdated, 'isoWeek')) {
@@ -99,7 +106,7 @@ export function BotTimeProvider({ children }) {
                     workingTime: 0,
                     todaysBotTime: 0,
                     currentWeekTime: 0,
-                    lastUpdated: moment().startOf('isoWeek').format(),
+                    lastUpdated: moment().tz("Asia/Kolkata").startOf('isoWeek').format(),
                     status
                 };
             } else {
