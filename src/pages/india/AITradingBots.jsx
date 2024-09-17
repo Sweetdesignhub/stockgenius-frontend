@@ -60,7 +60,7 @@ function AITradingBots() {
   const fetchBots = useCallback(async () => {
     try {
       const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
-      const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt).tz("Asia/Kolkata") - new Date(a.createdAt).tz("Asia/Kolkata"));
+      const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setBotDataList(sortedBots);
       setBotStates(sortedBots.reduce((acc, bot) => {
         acc[bot._id] = {

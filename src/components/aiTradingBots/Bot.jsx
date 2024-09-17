@@ -400,8 +400,8 @@ function Bot({
   // automatic hit deactive api, after that data to be updated at 3:30pm
   useEffect(() => {
     const getTimeUntil4PM = () => {
-      const now = new Date().tz("Asia/Kolkata");
-      const next4PM = new Date().tz("Asia/Kolkata");
+      const now = moment.tz("Asia/Kolkata");;
+      const next4PM = new Date();
       next4PM.setHours(15, 30, 0, 0);
 
       if (now > next4PM) {
@@ -477,12 +477,12 @@ function Bot({
 
         if (fyersAccessToken) {
           console.log("updatind staus");
-          const userTime = new Date().tz("Asia/Kolkata");
+          const userTime = new Date();
 
-          const today = new Date().toDateString().tz("Asia/Kolkata");
+          const today = new Date().toDateString();
 
           // Set cutoff times
-          const cutoffStart = new Date().tz("Asia/Kolkata");
+          const cutoffStart = new Date();
           cutoffStart.setHours(0, 0, 0, 0); // Start of the schedule window (12:00 PM)
           const cutoffEnd = new Date();
           cutoffEnd.setHours(9, 30, 0, 0).tz("Asia/Kolkata"); // End of the schedule window (9:30 PM)
