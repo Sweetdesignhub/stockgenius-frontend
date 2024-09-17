@@ -193,11 +193,10 @@ function Bot({ botData, isEnabled, onToggle }) {
     },
     {
       title: "Percentage Gain",
-      value: `${
-        apiBotData.dynamicData?.[0]?.percentageGain ||
+      value: `${apiBotData.dynamicData?.[0]?.percentageGain ||
         botData.dynamicData[0]?.percentageGain ||
         "0"
-      }%`,
+        }%`,
       valueColor: "white",
     },
     {
@@ -210,11 +209,10 @@ function Bot({ botData, isEnabled, onToggle }) {
     },
     {
       title: "Limits",
-      value: `${
-        apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
+      value: `${apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
         botData.dynamicData[0]?.limits?.toLocaleString() ||
         "0"
-      }`,
+        }`,
       valueColor: "white",
     },
     {
@@ -224,8 +222,8 @@ function Bot({ botData, isEnabled, onToggle }) {
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-          ? "#00FF47"
-          : "#FFBF00",
+            ? "#00FF47"
+            : "#FFBF00",
     },
   ];
 
@@ -339,14 +337,14 @@ function Bot({ botData, isEnabled, onToggle }) {
     const getTimeUntil930AM = () => {
       const now = moment().tz('Asia/Kolkata'); // Use timezone if needed
       const targetTime = now.clone().startOf('day').set({ hour: 9, minute: 30, second: 0 });
-  
+
       if (now.isAfter(targetTime)) {
         targetTime.add(1, 'day');
       }
-  
+
       return targetTime.diff(now); // Time in milliseconds
     };
-  
+
     // Function to perform activation request
     const performActivationRequest = async () => {
       try {
@@ -355,7 +353,7 @@ function Bot({ botData, isEnabled, onToggle }) {
           const botCreatedDate = moment.tz(bot.createdAt, 'Asia/Kolkata').format('YYYY-MM-DD');
           return botCreatedDate === today;
         });
-  
+
         // Activating bots if status is "Schedule"
         await Promise.all(
           todaysBots.map(async (bot) => {
@@ -368,48 +366,48 @@ function Bot({ botData, isEnabled, onToggle }) {
         console.error('Error performing activation:', error);
       }
     };
-  
+
     // Calculate time until 9:30 AM
     const timeUntil930AM = getTimeUntil930AM();
-  
+
     // Set up timeout to perform activation request
     const timeoutId = setTimeout(() => {
       performActivationRequest();
-  
+
       // Set up interval to repeat activation request every 24 hours
       const intervalId = setInterval(performActivationRequest, 24 * 60 * 60 * 1000); // 24 hours
-  
+
       // Cleanup interval
       return () => clearInterval(intervalId);
     }, timeUntil930AM);
-  
+
     // Cleanup timeout
     return () => clearTimeout(timeoutId);
   }, [apiBotData, currentStatus, today]);
 
   // automatic hit deactive api, after that data to be updated at 3:30pm 
 
-useEffect(() => {
+  useEffect(() => {
     const getTimeUntil4PM = () => {
       const now = moment().tz('Asia/Kolkata');
       const next4PM = moment().tz('Asia/Kolkata').set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
-  
+
       // If the current time is past 4 PM, move to the next day
       if (now.isAfter(next4PM)) {
         next4PM.add(1, 'day');
       }
-  
+
       // Calculate the time difference in milliseconds
       return next4PM.diff(now);
     };
-  
+
     const performUpdateRequest = async () => {
       try {
         const todaysBots = [apiBotData].filter((bot) => {
           const botCreatedDate = moment(bot.createdAt).tz('Asia/Kolkata').format('YYYY-MM-DD');
           return botCreatedDate === today;
         });
-  
+
         await Promise.all(
           todaysBots.map(async (bot) => {
             await deactivateBot();
@@ -419,17 +417,17 @@ useEffect(() => {
         console.error('Error performing update:', error);
       }
     };
-  
+
     const timeUntil4PM = getTimeUntil4PM();
-    
+
     const timeoutId = setTimeout(() => {
       performUpdateRequest();
-  
+
       // Set up an interval to perform the update request every 24 hours
       const intervalId = setInterval(performUpdateRequest, 24 * 60 * 60 * 1000); // 24 hours
       return () => clearInterval(intervalId); // Cleanup interval
     }, timeUntil4PM);
-  
+
     return () => clearTimeout(timeoutId); // Cleanup timeout
   }, [
     botData,
@@ -444,7 +442,144 @@ useEffect(() => {
     todaysBotTime,
     currentWeekTime,
   ]);
-  
+
+
+  // const handleConfirm = async () => {
+  //   setYesNoModalOpen(false);
+
+  //   const activeCNC = activeBots.some((bot) => bot.type === "CNC");
+  //   const activeIntraday = activeBots.some((bot) => bot.type === "Intraday");
+
+  //   // Check if current time is within trading hours
+  //   if (isWithinTradingHours()) {
+  //     if (!isEnabled) {
+  //       if (botData.productType === "CNC" && activeCNC) {
+  //         alert(
+  //           "The CNC bot cannot be activated because another CNC bot is already scheduled."
+  //         );
+  //         return;
+  //       }
+  //       if (botData.productType === "Intraday" && activeIntraday) {
+  //         alert(
+  //           "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
+  //         );
+  //         return;
+  //       }
+
+  //       // if (fyersAccessToken) {
+  //       //   console.log("updatind staus");
+  //       //   const userTime = new Date().toLocaleString("en-Us", {
+  //       //     timeZone: "Asia/Kolkata",
+  //       //   });
+
+  //       //   const today = new Date().toDateString("en-Us", {
+  //       //     timeZone: "Asia/Kolkata",
+  //       //   });
+
+  //       //   // Set cutoff times
+  //       //   const cutoffStart = new Date().toLocaleString("en-Us", {
+  //       //     timeZone: "Asia/Kolkata",
+  //       //   });
+  //       //   cutoffStart.setHours(0, 0, 0, 0); // Start of the schedule window (12:00 PM)
+  //       //   const cutoffEnd = new Date().toLocaleString("en-Us", {
+  //       //     timeZone: "Asia/Kolkata",
+  //       //   });
+  //       //   cutoffEnd.setHours(9, 30, 0, 0); // End of the schedule window (9:30 PM)
+
+  //       //   // Check if the user time falls within the schedule window
+  //       //   if (userTime >= cutoffStart && userTime <= cutoffEnd) {
+  //       //     // If user arrives between 12:00 am and 9:30 am, schedule the bot
+  //       //     await updateBot(apiBotData._id, {
+  //       //       tradeRatio: 50,
+  //       //       profitGained: profitGainedValue,
+  //       //       workingTime: formatTime(
+  //       //         new Date().toLocaleString("en-Us", { timeZone: "Asia/Kolkata" })
+  //       //       ),
+  //       //       totalBalance:
+  //       //         createdAt === today
+  //       //           ? availableFunds
+  //       //           : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+  //       //       scheduled: today,
+  //       //       numberOfTrades:
+  //       //         createdAt === today
+  //       //           ? trades.tradeBook?.length || 0
+  //       //           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+  //       //       percentageGain: 0,
+  //       //       status: "Schedule",
+  //       //       reInvestment:
+  //       //         createdAt === today
+  //       //           ? orders.orderBook?.length || 0
+  //       //           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+  //       //       limits: 0,
+  //       //     });
+
+  //       //     console.log("Bot scheduled");
+  //       //   } else {
+  //       //     await activateBot();
+  //       //   }
+  //       // } else {
+  //       //   alert("Connect your broker before activating the bot");
+  //       //   return;
+  //       // }
+
+  //       console.log("updating status");
+
+  //       const userTime = moment().tz('Asia/Kolkata');
+
+  //       const today = moment().tz('Asia/Kolkata');
+
+  //       // Set cutoff times
+  //       const cutoffStart = moment().tz('Asia/Kolkata');
+  //       cutoffStart.setHours(0, 0, 0, 0); // Start of the schedule window (12:00 AM)
+
+  //       const cutoffEnd = moment().tz('Asia/Kolkata');
+  //       cutoffEnd.setHours(18, 37, 0, 0); // End of the schedule window (9:30 AM)
+
+  //       // Output times for verification
+  //       console.log({ userTime, today, cutoffStart, cutoffEnd });
+
+
+  //       // Check if the user time falls within the schedule window
+  //       if (userTime >= cutoffStart && userTime <= cutoffEnd) {
+  //         // If user arrives between 12:00 am and 9:30 am, schedule the bot
+  //         await updateBot(apiBotData._id, {
+  //           tradeRatio: 50,
+  //           profitGained: profitGainedValue,
+  //           workingTime: formatTime(moment().tz('Asia/Kolkata')),
+  //           totalBalance:
+  //             createdAt === today
+  //               ? availableFunds
+  //               : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+  //           scheduled: today,
+  //           numberOfTrades:
+  //             createdAt === today
+  //               ? trades.tradeBook?.length || 0
+  //               : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+  //           percentageGain: 0,
+  //           status: "Schedule",
+  //           reInvestment:
+  //             createdAt === today
+  //               ? orders.orderBook?.length || 0
+  //               : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+  //           limits: 0,
+  //         });
+
+  //         console.log("Bot scheduled");
+  //       } else {
+  //         await activateBot();
+  //       }
+  //     } else {
+  //       await deactivateBot();
+  //     }
+  //   } else {
+  //     console.log(
+  //       "Bot can only be activated or deactivated during trading hours."
+  //     );
+  //   }
+
+  //   onToggle();
+  // };
+
 
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
@@ -456,15 +591,11 @@ useEffect(() => {
 
       if (!isEnabled) {
         if (botData.productType === "CNC" && activeCNC) {
-          alert(
-            "The CNC bot cannot be activated because another CNC bot is already scheduled."
-          );
+          alert("The CNC bot cannot be activated because another CNC bot is already scheduled.");
           return;
         }
         if (botData.productType === "Intraday" && activeIntraday) {
-          alert(
-            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
-          );
+          alert("The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled.");
           return;
         }
 
@@ -489,11 +620,21 @@ useEffect(() => {
               profitGained: profitGainedValue,
               workingTime: formatTime(userTime.toDate()), // Convert moment object back to Date if needed
               totalBalance: createdAt === today ? availableFunds : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+              workingTime: formatTime(now.diff(now.clone().startOf('day'), 'seconds')),
+              totalBalance: createdAt === today
+                ? availableFunds
+                : apiBotData.dynamicData?.[0]?.totalBalance || "0",
               scheduled: today,
+              numberOfTrades: createdAt === today
+                ? trades.tradeBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
               numberOfTrades: createdAt === today ? trades.tradeBook?.length || 0 : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
               percentageGain: 0,
               status: "Schedule",
               reInvestment: createdAt === today ? orders.orderBook?.length || 0 : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              reInvestment: createdAt === today
+                ? orders.orderBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.reInvestment || 0,
               limits: 0,
             });
   
@@ -637,21 +778,19 @@ useEffect(() => {
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-0"
-                : "opacity-100"
-            }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-0"
+              : "opacity-100"
+              }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-100"
-                : "opacity-0"
-            }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
+              ? "opacity-100"
+              : "opacity-0"
+              }`}
           >
             ON
           </span>
@@ -666,9 +805,8 @@ useEffect(() => {
         isOpen={isYesNoModalOpen}
         onClose={() => setYesNoModalOpen(false)}
         title={isEnabled ? "Deactivate Bot" : "Activate Bot"}
-        message={`Are you sure you want to ${
-          isEnabled ? "deactivate" : "activate"
-        } <strong>${botData.name}?</strong>`}
+        message={`Are you sure you want to ${isEnabled ? "deactivate" : "activate"
+          } <strong>${botData.name}?</strong>`}
         onConfirm={handleConfirm}
       />
 

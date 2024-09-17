@@ -159,7 +159,7 @@ function AITradingBots() {
       // await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
       //   status: newStatus
       // });
-      
+
 
       setBotStates(prevStates => ({
         ...prevStates,
@@ -193,7 +193,7 @@ function AITradingBots() {
     setConfirmationOpen(false);
     setAutoTradeModalOpen(false);
   };
-  
+
 
   const calculateCardData = useMemo(() => {
     const today = moment().tz("Asia/Kolkata").startOf('day');

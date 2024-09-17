@@ -71,13 +71,13 @@ export function BotTimeProvider({ children }) {
                     const lastUpdated = moment.tz(bot.lastUpdated, "Asia/Kolkata");
 
                     // Check if we've crossed into a new week
-                    if (now.isAfter(lastUpdated, 'isoWeek')) {
+                    if (now.isAfter(moment(lastUpdated).tz('Asia/Kolkata'), 'isoWeek')) {
                         bot.currentWeekTime = 0;
                         bot.lastUpdated = startOfCurrentWeek.format();
                     }
 
                     // Check if we've crossed into a new day
-                    if (now.isAfter(lastUpdated, 'day')) {
+                    if (now.isAfter(moment(lastUpdated).tz('Asia/Kolkata'), 'day')) {
                         bot.todaysBotTime = 0;
                     }
 
