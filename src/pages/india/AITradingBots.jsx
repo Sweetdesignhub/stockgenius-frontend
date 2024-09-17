@@ -60,7 +60,12 @@ function AITradingBots() {
   const fetchBots = useCallback(async () => {
     try {
       const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
-      const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      // const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const sortedBots = response.data.bots.sort((a, b) => {
+        const dateA = new Date(a.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+        const dateB = new Date(b.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+        return new Date(dateB) - new Date(dateA);
+      });
       setBotDataList(sortedBots);
       setBotStates(sortedBots.reduce((acc, bot) => {
         acc[bot._id] = {
@@ -188,6 +193,7 @@ function AITradingBots() {
     setConfirmationOpen(false);
     setAutoTradeModalOpen(false);
   };
+  
 
   const calculateCardData = useMemo(() => {
     const today = moment().tz("Asia/Kolkata").startOf('day');

@@ -119,8 +119,8 @@ import axios from 'axios';
 export const BACKEND_URL =
   // process.env.NODE_ENV === 'development'? "http://localhost:8080":
   //  "https://stockgenius-backend.onrender.com";
-  'https://api.stockgenius.ai';
-// 'http://localhost:8080';
+  // 'https://api.stockgenius.ai';
+'http://localhost:8080';
 
 // Create an Axios instance
 const api = axios.create({

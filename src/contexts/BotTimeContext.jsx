@@ -42,7 +42,7 @@ export function BotTimeProvider({ children }) {
                     return updatedTimes;
                 });
 
-                console.log('Bot times synced with database');
+                // console.log('Bot times synced with database');
             } catch (error) {
                 console.error('Error syncing bot times:', error);
             }

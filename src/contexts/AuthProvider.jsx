@@ -14,10 +14,10 @@ const AuthProvider = ({ children }) => {
   const [showLogoutWarning, setShowLogoutWarning] = useState(false);
 
   useEffect(() => {
-    console.log("Available cookies:", Cookies.get());
+    // console.log("Available cookies:", Cookies.get());
 
     const token = Cookies.get("access_token");
-    console.log("Retrieved token:", token);
+    // console.log("Retrieved token:", token);
 
     if (token) {
       try {
@@ -46,15 +46,15 @@ const AuthProvider = ({ children }) => {
             };
           }
         } else {
-          console.error("Invalid token format");
+          // console.error("Invalid token format");
           handleLogout();
         }
       } catch (error) {
-        console.error("Token decoding error", error);
+        // console.error("Token decoding error", error);
         handleLogout();
       }
     } else {
-      console.warn("No token found, user might be logged out");
+      // console.warn("No token found, user might be logged out");
     }
   }, [navigate]);
 
@@ -66,7 +66,7 @@ const AuthProvider = ({ children }) => {
         navigate("/sign-in");
       })
       .catch((err) => {
-        console.error("Logout error", err);
+        // console.error("Logout error", err);
       });
   };
 
