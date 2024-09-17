@@ -35,7 +35,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  console.log(currentUser);
+  // console.log(currentUser);
 
   const dispatch = useDispatch();
 
@@ -219,7 +219,7 @@ export default function Header() {
       paddingBottom: 0,
     }),
   };
-  console.log(currentUser);
+  // console.log(currentUser);
 
   return (
     <header>

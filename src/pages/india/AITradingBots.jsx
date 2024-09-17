@@ -60,7 +60,12 @@ function AITradingBots() {
   const fetchBots = useCallback(async () => {
     try {
       const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
-      const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      // const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const sortedBots = response.data.bots.sort((a, b) => {
+        const dateA = new Date(a.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+        const dateB = new Date(b.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+        return new Date(dateB) - new Date(dateA);
+      });
       setBotDataList(sortedBots);
       setBotStates(sortedBots.reduce((acc, bot) => {
         acc[bot._id] = {
@@ -151,9 +156,10 @@ function AITradingBots() {
         }
       }
 
-      await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
-        status: newStatus
-      });
+      // await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
+      //   status: newStatus
+      // });
+      
 
       setBotStates(prevStates => ({
         ...prevStates,
@@ -187,10 +193,11 @@ function AITradingBots() {
     setConfirmationOpen(false);
     setAutoTradeModalOpen(false);
   };
+  
 
   const calculateCardData = useMemo(() => {
-    const today = moment().startOf('day');
-    const startOfWeek = moment().startOf('isoWeek');
+    const today = moment().tz("Asia/Kolkata").startOf('day');
+    const startOfWeek = moment().tz("Asia/Kolkata").startOf('isoWeek');
 
     let todayProfit = 0;
     let weekProfit = 0;
@@ -267,7 +274,7 @@ function AITradingBots() {
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto">
               <button
-                className="text-gray-800 text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8] bg-blue-700 dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
+                className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
                 onClick={handleScheduleTrade}
               >
                 <span>Schedule Bot</span>

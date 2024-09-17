@@ -4,7 +4,7 @@ const startHour = 9;
 const startMin = 30;
 
 
-const endHour = 16;
+const endHour = 15;
 const endMin = 30;
 
 const getCurrentISTTime = () => {
@@ -41,17 +41,12 @@ export const isWithinTradingHours = () => {
 };
 
 export const isAfterMarketClose = () => {
-  const istTime = getCurrentISTTime();
-  const hours = istTime.getHours();
-  const minutes = istTime.getMinutes();
-
-  return hours > endHour || (hours === endHour && minutes > endMin);
+  const now = moment().tz("Asia/Kolkata");
+  return now.isAfter(now.clone().set({ hour: endHour, minute: endMin }));
 };
 
 export const isBeforeMarketOpen = () => {
-  const istTime = getCurrentISTTime();
-  const hours = istTime.getHours();
-  const minutes = istTime.getMinutes();
-
-  return hours < startHour || (hours === startHour && minutes < startMin);
+  const now = moment().tz("Asia/Kolkata");
+  return now.isBefore(now.clone().set({ hour: startHour, minute: startMin }));
 };
+
