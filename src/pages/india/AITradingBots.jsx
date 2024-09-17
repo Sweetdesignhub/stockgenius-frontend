@@ -43,7 +43,7 @@ function AITradingBots() {
   const [botDataList, setBotDataList] = useState([]);
   const [botStates, setBotStates] = useState({});
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(true);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");

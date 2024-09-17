@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
-import moment from "moment";
+import moment from "moment-timezone";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../common/Loading";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
@@ -148,7 +148,7 @@ function Bot({
     const getTimeUntil4PM = () => {
       const now = new Date();
       const next4PM = new Date();
-      next4PM.setHours(15, 30, 0, 0);
+      next4PM.setHours(15, 52, 0, 0);
 
       if (now > next4PM) {
         next4PM.setDate(next4PM.getDate() + 1);
@@ -412,11 +412,11 @@ function Bot({
   // is status = active then automatic start bot at 9:30am
   useEffect(() => {
     const getTimeUntil930AM = () => {
-      const now = moment();
+      const now = moment().tz("Asia/Kolkata");
       const targetTime = now
         .clone()
         .startOf("day")
-        .set({ hour: 9, minute: 30, second: 0 });
+        .set({ hour: 15, minute: 50, second: 0 });
       if (now.isAfter(targetTime)) {
         targetTime.add(1, "day");
       }
@@ -428,8 +428,8 @@ function Bot({
         const todaysBots = [apiBotData].filter((bot) => {
           console.log("bot", bot);
 
-          const botCreatedDate = moment(bot.createdAt).format("YYYY-MM-DD");
-          return botCreatedDate === today;
+          const botCreatedDate = moment(bot.createdAt).tz("Asia/Kolkata").format("YYYY-MM-DD");
+          return botCreatedDate === moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
         });
 
         await Promise.all(
@@ -480,7 +480,7 @@ function Bot({
         }
         if (botData.productType === "Intraday" && activeIntraday) {
           alert(
-            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled.."
+            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
           );
           return;
         }
