@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import api from "../../config";
 import { isWithinTradingHours } from "../../utils/helper";
 import { useBotTime } from "../../contexts/BotTimeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // New component for Trade Ratio Bar
 const TradeRatioBar = ({ ratio }) => {
@@ -690,6 +691,27 @@ function Bot({ botData, isEnabled, onToggle }) {
     setConfirmationModalOpen(false);
   };
 
+  const { theme } = useTheme();
+
+  const darkThemeStyle = {
+    boxShadow:
+      "0px 9.67px 29.02px 0px #497BFFB2 inset, 0px 9.67px 38.7px 0px #3F4AAF80",
+    borderImageSource:
+      "linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%), " +
+      "linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), " +
+      "linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)",
+    background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
+  };
+
+  const lightThemeStyle = {
+    background: 
+      "linear-gradient(180deg, rgba(150, 150, 150, 0.8) 0%, rgba(120, 120, 120, 1) 100%), " + 
+      "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
+  };
+  
+  
+  
+
   if (loading) {
     return (
       <div>
@@ -708,16 +730,7 @@ function Bot({ botData, isEnabled, onToggle }) {
 
   return (
     <div
-      style={{
-        boxShadow:
-          "0px 9.67px 29.02px 0px #497BFFB2 inset, 0px 9.67px 38.7px 0px #3F4AAF80",
-        borderImageSource:
-          "linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%), " +
-          "linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), " +
-          "linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)",
-        background:
-          "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-      }}
+    style={theme === 'dark' ? darkThemeStyle : lightThemeStyle}
       className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
     >
       <div className="flex flex-col items-center lg:items-start lg:w-1/4 w-full">
