@@ -604,8 +604,8 @@ function Bot({ botData, isEnabled, onToggle }) {
         const today = now.format("YYYY-MM-DD");
 
         // Set cutoff times
-        const cutoffStart = now.clone().startOf('day');
-        const cutoffEnd = now.clone().startOf('day').set({ hour: 9, minute: 30 });
+        const cutoffStart = now.clone().startOf('day');  //// Start of the schedule window (12:00 AM)
+        const cutoffEnd = now.clone().startOf('day').set({ hour: 9, minute: 30 }); //// End of the schedule window (9:30 AM)
 
         // Output times for verification
         console.log({
