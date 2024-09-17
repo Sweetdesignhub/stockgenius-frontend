@@ -73,7 +73,17 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
         productType: formData.productType,
       };
 
-      onCreateBot(botData);
+      try {
+        await onCreateBot(botData);
+        onClose();
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+          setMessage(error.response.data.message);
+        } else {
+          setMessage("An error occurred while creating the bot. Please try again.");
+        }
+        setConfirmationOpen(true);
+      }
     } else {
       setMessage("Please set bot access to Yes to start the auto trade bot.");
       setConfirmationOpen(true);
