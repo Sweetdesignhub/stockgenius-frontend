@@ -580,6 +580,7 @@ function Bot({ botData, isEnabled, onToggle }) {
   //   onToggle();
   // };
 
+
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
 
@@ -598,48 +599,53 @@ function Bot({ botData, isEnabled, onToggle }) {
           return;
         }
 
-        console.log("updating status");
+        if (fyersAccessToken) {
+          console.log("updating status");
 
-        const now = moment().tz("Asia/Kolkata");
-        const today = now.format("YYYY-MM-DD");
+          const now = moment().tz("Asia/Kolkata");
+          const today = now.format("YYYY-MM-DD");
 
-        // Set cutoff times
-        const cutoffStart = now.clone().startOf('day');  //// Start of the schedule window (12:00 AM)
-        const cutoffEnd = now.clone().startOf('day').set({ hour: 9, minute: 30 }); //// End of the schedule window (9:30 AM)
+          // Set cutoff times
+          const cutoffStart = now.clone().startOf('day');  //// Start of the schedule window (12:00 AM)
+          const cutoffEnd = now.clone().startOf('day').set({ hour: 9, minute: 30 }); //// End of the schedule window (9:30 AM)
 
-        // Output times for verification
-        console.log({
-          userTime: now.format(),
-          today,
-          cutoffStart: cutoffStart.format(),
-          cutoffEnd: cutoffEnd.format()
-        });
-
-        // Check if the user time falls within the schedule window
-        if (now.isBetween(cutoffStart, cutoffEnd)) {
-          // If user arrives between 12:00 am and 9:30 am, schedule the bot
-          await updateBot(apiBotData._id, {
-            tradeRatio: 50,
-            profitGained: profitGainedValue,
-            workingTime: formatTime(now.diff(now.clone().startOf('day'), 'seconds')),
-            totalBalance: createdAt === today
-              ? availableFunds
-              : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-            scheduled: today,
-            numberOfTrades: createdAt === today
-              ? trades.tradeBook?.length || 0
-              : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-            percentageGain: 0,
-            status: "Schedule",
-            reInvestment: createdAt === today
-              ? orders.orderBook?.length || 0
-              : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-            limits: 0,
+          // Output times for verification
+          console.log({
+            userTime: now.format(),
+            today,
+            cutoffStart: cutoffStart.format(),
+            cutoffEnd: cutoffEnd.format()
           });
 
-          console.log("Bot scheduled");
+          // Check if the user time falls within the schedule window
+          if (now.isBetween(cutoffStart, cutoffEnd)) {
+            // If user arrives between 12:00 am and 9:30 am, schedule the bot
+            await updateBot(apiBotData._id, {
+              tradeRatio: 50,
+              profitGained: profitGainedValue,
+              workingTime: formatTime(now.diff(now.clone().startOf('day'), 'seconds')),
+              totalBalance: createdAt === today
+                ? availableFunds
+                : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+              scheduled: today,
+              numberOfTrades: createdAt === today
+                ? trades.tradeBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+              percentageGain: 0,
+              status: "Schedule",
+              reInvestment: createdAt === today
+                ? orders.orderBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              limits: 0,
+            });
+
+            console.log("Bot scheduled");
+          } else {
+            await activateBot();
+          }
         } else {
-          await activateBot();
+          alert("Connect your broker before activating the bot");
+          return;
         }
       } else {
         await deactivateBot();
