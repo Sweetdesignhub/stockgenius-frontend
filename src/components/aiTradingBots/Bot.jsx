@@ -474,7 +474,7 @@ function Bot({ botData, isEnabled, onToggle }) {
   
           // Set cutoff times using moment
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-          const cutoffEnd = now.clone().set({ hour: 23, minute: 35, second: 0, millisecond: 0 }); // 9:30 AM IST
+          const cutoffEnd = now.clone().set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
   
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
