@@ -1,11 +1,11 @@
 import moment from "moment-timezone";
 
-const startHour = 9;
-const startMin = 30;
+const startHour = 23;
+const startMin = 35;
 
 
-const endHour = 15;
-const endMin = 30;
+const endHour = 23;
+const endMin = 45;
 
 const getCurrentISTTime = () => {
   const now = new Date();
