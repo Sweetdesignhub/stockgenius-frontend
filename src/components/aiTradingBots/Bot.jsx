@@ -337,7 +337,7 @@ function Bot({ botData, isEnabled, onToggle }) {
     // Function to calculate time until the next 9:30 AM
     const getTimeUntil930AM = () => {
       const now = moment().tz('Asia/Kolkata'); // Use timezone if needed
-      const targetTime = now.clone().startOf('day').set({ hour: 9, minute: 30, second: 0 });
+      const targetTime = now.clone().startOf('day').set({ hour: 10, minute: 55, second: 0 });
 
       if (now.isAfter(targetTime)) {
         targetTime.add(1, 'day');
@@ -391,7 +391,7 @@ function Bot({ botData, isEnabled, onToggle }) {
   useEffect(() => {
     const getTimeUntil4PM = () => {
       const now = moment().tz('Asia/Kolkata');
-      const next4PM = moment().tz('Asia/Kolkata').set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
+      const next4PM = moment().tz('Asia/Kolkata').set({ hour: 11, minute: 0, second: 0, millisecond: 0 });
 
       // If the current time is past 4 PM, move to the next day
       if (now.isAfter(next4PM)) {
@@ -611,7 +611,7 @@ function Bot({ botData, isEnabled, onToggle }) {
   
           // Set cutoff times using moment
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-          const cutoffEnd = now.clone().set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
+          const cutoffEnd = now.clone().set({ hour:10, minute: 55, second: 0, millisecond: 0 }); // 9:30 AM IST
   
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
