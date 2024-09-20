@@ -7,7 +7,11 @@ import NotAvailable from "../../components/common/NotAvailable";
 import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
 import moment from "moment-timezone";
-import { isAfterMarketClose, isBeforeMarketOpen, isWithinTradingHours } from "../../utils/helper";
+import {
+  isAfterMarketClose,
+  isBeforeMarketOpen,
+  isWithinTradingHours,
+} from "../../utils/helper";
 import { useBotTime } from "../../contexts/BotTimeContext";
 import { useData } from "../../contexts/FyersDataContext";
 
@@ -53,31 +57,31 @@ function AITradingBots() {
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
 
-  const {
-    funds = { fund_limit: [{}] },
-  } = useData();
+  const { funds = { fund_limit: [{}] } } = useData();
 
   const fetchBots = useCallback(async () => {
     try {
-      const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
-      const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      // const sortedBots = response.data.bots.sort((a, b) => {
-      //   const dateA = new Date(a.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-      //   const dateB = new Date(b.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-      //   return new Date(dateB) - new Date(dateA);
-      // });
+      const response = await api.get(
+        `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`
+      );
+      const sortedBots = response.data.bots.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
       setBotDataList(sortedBots);
-      setBotStates(sortedBots.reduce((acc, bot) => {
-        acc[bot._id] = {
-          isActive: bot.dynamicData[0]?.status === "Running" || bot.dynamicData[0]?.status === "Schedule"
-        };
-        return acc;
-      }, {}));
+      setBotStates(
+        sortedBots.reduce((acc, bot) => {
+          acc[bot._id] = {
+            isActive:
+              bot.dynamicData[0]?.status === "Running" ||
+              bot.dynamicData[0]?.status === "Schedule",
+          };
+          return acc;
+        }, {})
+      );
     } catch (error) {
       console.error("Error fetching bots:", error);
     }
   }, [currentUser.id]);
-
 
   useEffect(() => {
     fetchBots();
@@ -111,9 +115,11 @@ function AITradingBots() {
         botData
       );
       if (response.status === 201) {
-        fetchBots();
+        await fetchBots();
         setTitle("Congratulations");
-        setMessage(`${botData.name} has been successfully created. To activate it, you need to switch it ON.`);
+        setMessage(
+          `${botData.name} has been successfully created. To activate it, you need to switch it ON.`
+        );
         setConfirmationOpen(true);
       } else {
         console.error("Unexpected response format:", response.data);
@@ -124,11 +130,57 @@ function AITradingBots() {
       console.error("Unexpected error:", error.response?.data || error.message);
       setMessage(
         error.response?.data?.message ||
-        "An unexpected error occurred. Please try again."
+          "An unexpected error occurred. Please try again."
       );
       setConfirmationOpen(true);
     }
   };
+
+  const updateBotDetails = async (botId, updateData) => {
+    try {
+      const response = await api.put(
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`,
+        updateData
+      );
+      if (response.status === 200) {
+        await fetchBots();
+        setTitle("Congratulations");
+        setMessage(
+          `${updateData.name} has been successfully updated. To activate it, you need to switch it ON.`
+        );
+        setConfirmationOpen(true);
+      } else {
+        console.error("Update failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating bot:", error.response.data.message);
+      setTitle("Bot Update Error");
+      setMessage(error.response.data.message);
+      setConfirmationOpen(true);
+    }
+  };
+
+  const deleteBot = async (botId,botName) => {
+    try {
+      const response = await api.delete(
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`
+      );
+      if (response.status === 200) {
+        await fetchBots();
+        setTitle("Bot Deleted");
+        setMessage(`${botName} has been successfully deleted.`);
+        setConfirmationOpen(true);
+      } else {
+        console.error("Deletion failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting bot:", error.response.data.message);
+      setTitle("Error");
+      setMessage(error.response.data.message);
+      setConfirmationOpen(true);
+    }
+  };
+  
 
   const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
@@ -140,7 +192,7 @@ function AITradingBots() {
     }
 
     try {
-      const bot = botDataList.find(b => b._id === botId);
+      const bot = botDataList.find((b) => b._id === botId);
       const currentStatus = bot.dynamicData[0]?.status;
       let newStatus;
 
@@ -160,13 +212,12 @@ function AITradingBots() {
       //   status: newStatus
       // });
 
-
-      setBotStates(prevStates => ({
+      setBotStates((prevStates) => ({
         ...prevStates,
         [botId]: {
           isActive: newStatus === "Running" || newStatus === "Schedule",
-          status: newStatus
-        }
+          status: newStatus,
+        },
       }));
 
       fetchBots(); // Refetch bots to get updated data
@@ -194,10 +245,9 @@ function AITradingBots() {
     setAutoTradeModalOpen(false);
   };
 
-
   const calculateCardData = useMemo(() => {
-    const today = moment().tz("Asia/Kolkata").startOf('day');
-    const startOfWeek = moment().tz("Asia/Kolkata").startOf('isoWeek');
+    const today = moment().tz("Asia/Kolkata").startOf("day");
+    const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
 
     let todayProfit = 0;
     let weekProfit = 0;
@@ -207,12 +257,14 @@ function AITradingBots() {
     let totalTodaysBotTime = 0;
     let totalCurrentWeekBotTime = 0;
 
-    botDataList.forEach(bot => {
+    botDataList.forEach((bot) => {
       const botCreatedAt = moment(bot.createdAt);
-      const profitGained = funds?.fund_limit?.find(item => item.id === 4)?.equityAmount || 0;
-      const investmentAmount = funds?.fund_limit?.find(item => item.id === 2)?.equityAmount || 0;
+      const profitGained =
+        funds?.fund_limit?.find((item) => item.id === 4)?.equityAmount || 0;
+      const investmentAmount =
+        funds?.fund_limit?.find((item) => item.id === 2)?.equityAmount || 0;
 
-      if (botCreatedAt.isSame(today, 'day')) {
+      if (botCreatedAt.isSame(today, "day")) {
         todayProfit += profitGained;
       }
 
@@ -225,7 +277,10 @@ function AITradingBots() {
       reInvestments += parseInt(bot.dynamicData[0]?.reInvestment || 0);
 
       // Sum up the bot times from the context
-      const botTime = botTimes[bot._id] || { todaysBotTime: 0, currentWeekTime: 0 };
+      const botTime = botTimes[bot._id] || {
+        todaysBotTime: 0,
+        currentWeekTime: 0,
+      };
       totalTodaysBotTime += botTime.todaysBotTime;
       totalCurrentWeekBotTime += botTime.currentWeekTime;
     });
@@ -236,8 +291,14 @@ function AITradingBots() {
       return isNaN(percentage) ? "0.00%" : `${percentage.toFixed(2)}%`;
     };
 
-    const todayProfitPercentage = calculatePercentage(todayProfit, totalInvestment);
-    const weekProfitPercentage = calculatePercentage(weekProfit, totalInvestment);
+    const todayProfitPercentage = calculatePercentage(
+      todayProfit,
+      totalInvestment
+    );
+    const weekProfitPercentage = calculatePercentage(
+      weekProfit,
+      totalInvestment
+    );
 
     return [
       { title: "Today's Profit %", value: todayProfitPercentage },
@@ -299,8 +360,10 @@ function AITradingBots() {
                     botData={bot}
                     isEnabled={botStates[bot._id].isActive}
                     onToggle={() => handleToggle(bot._id)}
-                  //                    currentStatus={botStates[bot._id].status}
-                  //                  onUpdateWorkingTime={updateBotWorkingTime}
+                    updateBotDetails={updateBotDetails}
+                    deleteBot={deleteBot}
+                    //                    currentStatus={botStates[bot._id].status}
+                    //                  onUpdateWorkingTime={updateBotWorkingTime}
                   />
                 ))
               ) : (

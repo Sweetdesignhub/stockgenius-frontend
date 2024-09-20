@@ -17,6 +17,7 @@ export function DataProvider({ children }) {
 
   const fetchData = async () => {
     try {
+      //instead of fetching from localstorage fetch from db
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
 
       if (currentUser && fyersAccessToken) {
