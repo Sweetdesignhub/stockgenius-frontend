@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 
 const StockDetails = () => {
   const [ordersCount, setOrdersCount] = useState(0);
-  const [tradesCount, setTradesCount] = useState(0);
   const [positionsCount, setPositionsCount] = useState(0);
   const [holdingsCount, setHoldingsCount] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
@@ -20,34 +19,7 @@ const StockDetails = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const filterRef = useRef(null);
   const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
-
   const { currentUser } = useSelector((state) => state.user);
-
-  const fetchCounts = useCallback(async () => {
-    try {
-      const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-
-      const [ordersResponse, positionsResponse, holdingsResponse] = await Promise.all([
-        api.get(`/api/v1/fyers/ordersByUserId/${currentUser?.id}`, { headers }),
-        api.get(`/api/v1/fyers/positionsByUserId/${currentUser?.id}`, { headers }),
-        api.get(`/api/v1/fyers/holdingsByUserId/${currentUser?.id}`, { headers })
-      ]);
-
-      setOrdersCount(ordersResponse.data.orders?.length || 0);
-      setPositionsCount(positionsResponse.data.positions?.length || 0);
-      setHoldingsCount(holdingsResponse.data.holdings?.length || 0);
-
-    } catch (error) {
-      console.error("Error fetching counts:", error);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    fetchCounts();
-    const interval = setInterval(fetchCounts, 5000);
-    return () => clearInterval(interval);
-  }, [fetchCounts]);
 
   const categories = [
     {
@@ -65,7 +37,6 @@ const StockDetails = () => {
     {
       name: "Trades",
       component: TradesTable,
-      setCount: setTradesCount,
       key: "trades",
     },
     {
@@ -76,6 +47,31 @@ const StockDetails = () => {
     },
     { name: "Funds", component: FundsTable, key: "funds" },
   ];
+
+  const fetchAllCounts = async () => {
+    try {
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+
+      const [ordersResponse, positionsResponse, holdingsResponse] = await Promise.all([
+        api.get(`/api/v1/fyers/ordersByUserId/${currentUser.id}`, { headers }),
+        api.get(`/api/v1/fyers/positionsByUserId/${currentUser.id}`, { headers }),
+        api.get(`/api/v1/fyers/holdingsByUserId/${currentUser.id}`, { headers }),
+      ]);
+
+      setOrdersCount(ordersResponse.data.orderBook.length);
+      setPositionsCount(positionsResponse.data.netPositions.length);
+      setHoldingsCount(holdingsResponse.data.holdings.length);
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllCounts();
+    const interval = setInterval(fetchAllCounts, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

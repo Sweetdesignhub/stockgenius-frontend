@@ -4,7 +4,7 @@ import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
 import { useSelector } from "react-redux";
 
-const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
+const TradesTable = ({ selectedColumns, setColumnNames }) => {
   const [trades, setTrades] = useState([]);
   // console.log("trades", trades);
 
@@ -31,7 +31,6 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
         // setTrades(response.data.tradeBook);
         const tradesData = response.data.tradeBook;
         setTrades(tradesData);
-        setCount(tradesData.length);
 
         const excludedColumns = [];
         const allColumnNames = Object.keys(tradesData[0] || {}).filter(
