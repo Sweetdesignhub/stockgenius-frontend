@@ -160,7 +160,7 @@ function AITradingBots() {
     }
   };
 
-  const deleteBot = async (botId,botName) => {
+  const deleteBot = async (botId, botName) => {
     try {
       const response = await api.delete(
         `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`
@@ -180,7 +180,6 @@ function AITradingBots() {
       setConfirmationOpen(true);
     }
   };
-  
 
   const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
@@ -246,8 +245,11 @@ function AITradingBots() {
   };
 
   const calculateCardData = useMemo(() => {
-    const today = moment().tz("Asia/Kolkata").startOf("day");
-    const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
+    // const today = moment().tz("Asia/Kolkata").startOf("day");
+    // const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
+
+    const today = moment().tz("America/Chicago").startOf("day"); // Using Central Time
+    const startOfWeek = moment().tz("America/Chicago").startOf("isoWeek"); // Using Central Time
 
     let todayProfit = 0;
     let weekProfit = 0;

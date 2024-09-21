@@ -1,10 +1,15 @@
 import moment from "moment-timezone";
 
-const startHour = 9;
-const startMin = 30;
+// const startHour = 9;
+// const startMin = 30;
 
-const endHour = 15;
-const endMin = 30;
+// const endHour = 15;
+// const endMin = 30;
+const startHour = 4; // 9:30 AM IST converted to 4:00 AM UTC
+const startMin = 0;  // 0 minutes
+
+const endHour = 10;  // 3:30 PM IST converted to 10:00 AM UTC
+const endMin = 0;    // 0 minutes
 
 const getCurrentISTTime = () => {
   const now = new Date();
@@ -23,7 +28,8 @@ const getCurrentISTTime = () => {
 // };
 
 export const isWithinTradingHours = () => {
-  const now = moment().tz("Asia/Kolkata");
+  // const now = moment().tz("Asia/Kolkata");
+  const now = moment().tz("America/Chicago"); 
   const day = now.day();
   const hour = now.hour();
   const minute = now.minute();
@@ -43,11 +49,13 @@ export const isWithinTradingHours = () => {
 };
 
 export const isAfterMarketClose = () => {
-  const now = moment().tz("Asia/Kolkata");
+  // const now = moment().tz("Asia/Kolkata");
+  const now = moment().tz("America/Chicago"); // Using Central Time
   return now.isAfter(now.clone().set({ hour: endHour, minute: endMin }));
 };
 
 export const isBeforeMarketOpen = () => {
-  const now = moment().tz("Asia/Kolkata");
+  // const now = moment().tz("Asia/Kolkata");
+  const now = moment().tz("America/Chicago"); // Using Central Time
   return now.isBefore(now.clone().set({ hour: startHour, minute: startMin }));
 };

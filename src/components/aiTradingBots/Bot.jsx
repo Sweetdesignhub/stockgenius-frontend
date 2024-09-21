@@ -78,18 +78,33 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
   };
   const { workingTime, todaysBotTime, currentWeekTime } = botTime;
 
-  // Get today's date in YYYY-MM-DD format
-  const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
+  // // Get today's date in YYYY-MM-DD format
+  // const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
 
-  // Format the createdAt date to match the same format as today
+  // // Format the createdAt date to match the same format as today
+  // const botCreatedDate = moment(botData.createdAt)
+  //   .tz("Asia/Kolkata")
+  //   .format("YYYY-MM-DD");
+
+  // const isCreatedToday = botCreatedDate === today;
+
+  // const createdAt = moment(apiBotData.createdAt)
+  //   .tz("Asia/Kolkata")
+  //   .format("YYYY-MM-DD");
+
+  // Get today's date in YYYY-MM-DD format in Central Time (CT)
+  const today = moment().tz("America/Chicago").format("YYYY-MM-DD");
+
+  // Format the createdAt date to Central Time (CT) and match the format as today
   const botCreatedDate = moment(botData.createdAt)
-    .tz("Asia/Kolkata")
+    .tz("America/Chicago")
     .format("YYYY-MM-DD");
 
   const isCreatedToday = botCreatedDate === today;
 
+  // Format apiBotData createdAt date to Central Time (CT)
   const createdAt = moment(apiBotData.createdAt)
-    .tz("Asia/Kolkata")
+    .tz("America/Chicago")
     .format("YYYY-MM-DD");
 
   const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
@@ -197,13 +212,21 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
           : apiBotData.dynamicData?.[0]?.totalBalance || "0",
       valueColor: "white",
     },
+    // {
+    //   title: "Scheduled",
+    //   value: moment(apiBotData.createdAt || botData.createdAt)
+    //     .tz("Asia/Kolkata")
+    //     .format("D MMM, h:mm a"),
+    //   valueColor: "white",
+    // },
     {
       title: "Scheduled",
       value: moment(apiBotData.createdAt || botData.createdAt)
-        .tz("Asia/Kolkata")
-        .format("D MMM, h:mm a"),
+        .tz("America/Chicago")
+        .format("D MMM, h:mm a") +" UTC",
       valueColor: "white",
     },
+
     {
       title: "Number of Trades",
       value:
@@ -487,23 +510,32 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
       if (!isEnabled) {
         if (botData.productType === "CNC" && activeCNC) {
-          setTitle("Activation error")
-          setMessage("The CNC bot cannot be activated because another CNC bot is already scheduled.")
-          setConfirmationModalOpen(true)
+          setTitle("Activation error");
+          setMessage(
+            "The CNC bot cannot be activated because another CNC bot is already scheduled."
+          );
+          setConfirmationModalOpen(true);
           return;
         }
         if (botData.productType === "Intraday" && activeIntraday) {
-          setTitle("Activation error")
-          setMessage("The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled.")
-          setConfirmationModalOpen(true)
+          setTitle("Activation error");
+          setMessage(
+            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
+          );
+          setConfirmationModalOpen(true);
           return;
         }
 
         if (fyersAccessToken) {
           console.log("Updating status");
 
-          // Get the current time in "Asia/Kolkata" time zone using moment-timezone
-          const now = moment.tz("Asia/Kolkata");
+          //  current time in "Asia/Kolkata" time zone using moment-timezone
+          // const now = moment.tz("Asia/Kolkata");
+          // const userTime = now.clone();
+          // const today = userTime.format("YYYY-MM-DD");
+
+          //  current time in "America/Chicago" time zone using moment-timezone
+          const now = moment.tz("America/Chicago");
           const userTime = now.clone();
           const today = userTime.format("YYYY-MM-DD");
 
@@ -511,7 +543,8 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
           const cutoffEnd = now
             .clone()
-            .set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
+            // .set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
+            .set({ hour: 22, minute: 0, second: 0, millisecond: 0 }); // 9:30 AM IST
 
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
@@ -558,9 +591,9 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
             await activateBot();
           }
         } else {
-          setTitle("Activation error")
-          setMessage("Connect your broker before activating the bot")
-          setConfirmationModalOpen(true)
+          setTitle("Activation error");
+          setMessage("Connect your broker before activating the bot");
+          setConfirmationModalOpen(true);
           return;
         }
 
