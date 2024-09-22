@@ -1,7 +1,7 @@
 import moment from "moment-timezone";
 
 const startHour = 9;
-const startMin = 30;
+const startMin = 15;
 
 const endHour = 15;
 const endMin = 30;

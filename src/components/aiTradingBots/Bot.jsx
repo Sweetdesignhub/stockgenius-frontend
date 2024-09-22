@@ -511,11 +511,11 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
           const cutoffEnd = now
             .clone()
-            .set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
+            .set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:15 AM IST
 
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
-            // If user arrives between 12:00 AM and 9:30 AM, schedule the bot
+            // If user arrives between 12:00 AM and 9:15 AM, schedule the bot
             await updateBot(apiBotData._id, {
               tradeRatio: 50,
               profitGained: profitGainedValue,
