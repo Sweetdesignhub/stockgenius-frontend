@@ -93,18 +93,18 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
   //   .format("YYYY-MM-DD");
 
   // Get today's date in YYYY-MM-DD format in Central Time (CT)
-  const today = moment().tz("America/Chicago").format("YYYY-MM-DD");
+  const today = moment().utc().format("YYYY-MM-DD");
 
   // Format the createdAt date to Central Time (CT) and match the format as today
   const botCreatedDate = moment(botData.createdAt)
-    .tz("America/Chicago")
+    .utc()
     .format("YYYY-MM-DD");
 
   const isCreatedToday = botCreatedDate === today;
 
   // Format apiBotData createdAt date to Central Time (CT)
   const createdAt = moment(apiBotData.createdAt)
-    .tz("America/Chicago")
+    .utc()
     .format("YYYY-MM-DD");
 
   const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
@@ -222,8 +222,8 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
     {
       title: "Scheduled",
       value: moment(apiBotData.createdAt || botData.createdAt)
-        .tz("America/Chicago")
-        .format("D MMM, h:mm a") +" UTC",
+        // .utc()
+        .format("D MMM, h:mm a"),
       valueColor: "white",
     },
 
@@ -526,119 +526,140 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
           return;
         }
 
-        if (fyersAccessToken) {
-          console.log("Updating status");
+        // if (fyersAccessToken) {
+        //   console.log("Updating status");
 
-          //  current time in "Asia/Kolkata" time zone using moment-timezone
-          // const now = moment.tz("Asia/Kolkata");
-          // const userTime = now.clone();
-          // const today = userTime.format("YYYY-MM-DD");
+        //   //  current time in "Asia/Kolkata" time zone using moment-timezone
+        //   // const now = moment.tz("Asia/Kolkata");
+        //   // const userTime = now.clone();
+        //   // const today = userTime.format("YYYY-MM-DD");
 
-          //  current time in "America/Chicago" time zone using moment-timezone
-          const now = moment.tz("America/Chicago");
-          const userTime = now.clone();
-          const today = userTime.format("YYYY-MM-DD");
+        //   //  current time in "America/Chicago" time zone using moment-timezone
+        //   const now = moment.utc();
+        //   const userTime = now.clone();
+        //   const today = userTime.format("YYYY-MM-DD");
 
-          // Set cutoff times using moment
-          const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-          const cutoffEnd = now
-            .clone()
-            // .set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
-            .set({ hour: 22, minute: 0, second: 0, millisecond: 0 }); // 9:30 AM IST
+        //   // Set cutoff times using moment
+        //   const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
+        //   const cutoffEnd = now
+        //     .clone()
+        //     // .set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:15 AM IST
+        //     .set({ hour: 3, minute: 45, second: 0, millisecond: 0 }); // 9:15 AM IST
 
-          // Check if the user time falls within the schedule window
-          if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
-            // If user arrives between 12:00 AM and 9:30 AM, schedule the bot
-            await updateBot(apiBotData._id, {
-              tradeRatio: 50,
-              profitGained: profitGainedValue,
-              workingTime: formatTime(userTime.toDate()), // Convert moment object back to Date if needed
-              totalBalance:
-                createdAt === today
-                  ? availableFunds
-                  : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-              workingTime: formatTime(
-                now.diff(now.clone().startOf("day"), "seconds")
-              ),
-              totalBalance:
-                createdAt === today
-                  ? availableFunds
-                  : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-              scheduled: today,
-              numberOfTrades:
-                createdAt === today
-                  ? trades.tradeBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-              numberOfTrades:
-                createdAt === today
-                  ? trades.tradeBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-              percentageGain: 0,
-              status: "Schedule",
-              reInvestment:
-                createdAt === today
-                  ? orders.orderBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-              reInvestment:
-                createdAt === today
-                  ? orders.orderBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-              limits: 0,
-            });
+        //   // Check if the user time falls within the schedule window
+        //   if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
+        //     // If user arrives between 12:00 AM and 9:15 AM, schedule the bot
+        //     await updateBot(apiBotData._id, {
+        //       tradeRatio: 50,
+        //       profitGained: profitGainedValue,
+        //       workingTime: formatTime(userTime.toDate()), // Convert moment object back to Date if needed
+        //       totalBalance:
+        //         createdAt === today
+        //           ? availableFunds
+        //           : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+        //       workingTime: formatTime(
+        //         now.diff(now.clone().startOf("day"), "seconds")
+        //       ),
+        //       totalBalance:
+        //         createdAt === today
+        //           ? availableFunds
+        //           : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+        //       scheduled: today,
+        //       numberOfTrades:
+        //         createdAt === today
+        //           ? trades.tradeBook?.length || 0
+        //           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+        //       numberOfTrades:
+        //         createdAt === today
+        //           ? trades.tradeBook?.length || 0
+        //           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+        //       percentageGain: 0,
+        //       status: "Schedule",
+        //       reInvestment:
+        //         createdAt === today
+        //           ? orders.orderBook?.length || 0
+        //           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+        //       reInvestment:
+        //         createdAt === today
+        //           ? orders.orderBook?.length || 0
+        //           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+        //       limits: 0,
+        //     });
 
-            console.log("Bot scheduled");
-          } else if (isWithinTradingHours()) {
-            await activateBot();
-          }
-        } else {
-          setTitle("Activation error");
-          setMessage("Connect your broker before activating the bot");
-          setConfirmationModalOpen(true);
-          return;
-        }
+        //     console.log("Bot scheduled");
+        //   } else if (isWithinTradingHours()) {
+        //     await activateBot();
+        //   }
+        // } else {
+        //   setTitle("Activation error");
+        //   setMessage("Connect your broker before activating the bot");
+        //   setConfirmationModalOpen(true);
+        //   return;
+        // }
 
-        // console.log("Updating status");
+        console.log("Updating status");
 
-        // // Get the current time in "Asia/Kolkata" time zone using moment-timezone
+        //  current time in "Asia/Kolkata" time zone using moment-timezone
         // const now = moment.tz("Asia/Kolkata");
         // const userTime = now.clone();
         // const today = userTime.format("YYYY-MM-DD");
 
-        // // Set cutoff times using moment
-        // const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-        // const cutoffEnd = now
-        //   .clone()
-        //   .set({ hour: 9, minute: 38, second: 0, millisecond: 0 }); // 9:30 AM IST
+        //  current time in "America/Chicago" time zone using moment-timezone
+        const now = moment.utc();
+        const userTime = now.clone();
+        const today = userTime.format("YYYY-MM-DD");
 
-        // // Check if the user time falls within the schedule window
-        // if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
-        //   // If user arrives between 12:00 AM and 9:30 AM, schedule the bot
-        //   await updateBot(apiBotData._id, {
-        //     tradeRatio: 50,
-        //     profitGained: profitGainedValue,
-        //     workingTime: formatTime(userTime.toDate()), // Convert moment object back to Date if needed
-        //     totalBalance:
-        //       createdAt === today
-        //         ? availableFunds
-        //         : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-        //     scheduled: today,
-        //     numberOfTrades:
-        //       createdAt === today
-        //         ? trades.tradeBook?.length || 0
-        //         : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-        //     percentageGain: 0,
-        //     status: "Schedule",
-        //     reInvestment:
-        //       createdAt === today
-        //         ? orders.orderBook?.length || 0
-        //         : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-        //     limits: 0,
-        //   });
+        // Set cutoff times using moment
+        const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
+        const cutoffEnd = now
+          .clone()
+          // .set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:15 AM IST
+          .set({ hour: 3, minute: 45, second: 0, millisecond: 0 }); // 9:15 AM IST
 
-        //   console.log("Bot scheduled");
-        // } else if (isWithinTradingHours()) {
-        //   await activateBot();
-        // }
+        // Check if the user time falls within the schedule window
+        if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
+          // If user arrives between 12:00 AM and 9:15 AM, schedule the bot
+          await updateBot(apiBotData._id, {
+            tradeRatio: 50,
+            profitGained: profitGainedValue,
+            workingTime: formatTime(userTime.toDate()), // Convert moment object back to Date if needed
+            totalBalance:
+              createdAt === today
+                ? availableFunds
+                : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+            workingTime: formatTime(
+              now.diff(now.clone().startOf("day"), "seconds")
+            ),
+            totalBalance:
+              createdAt === today
+                ? availableFunds
+                : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+            scheduled: today,
+            numberOfTrades:
+              createdAt === today
+                ? trades.tradeBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+            numberOfTrades:
+              createdAt === today
+                ? trades.tradeBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+            percentageGain: 0,
+            status: "Schedule",
+            reInvestment:
+              createdAt === today
+                ? orders.orderBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+            reInvestment:
+              createdAt === today
+                ? orders.orderBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+            limits: 0,
+          });
+
+          console.log("Bot scheduled");
+        } else if (isWithinTradingHours()) {
+          await activateBot();
+        }
       } else {
         await deactivateBot();
       }

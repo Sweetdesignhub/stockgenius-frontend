@@ -248,8 +248,8 @@ function AITradingBots() {
     // const today = moment().tz("Asia/Kolkata").startOf("day");
     // const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
 
-    const today = moment().tz("America/Chicago").startOf("day"); // Using Central Time
-    const startOfWeek = moment().tz("America/Chicago").startOf("isoWeek"); // Using Central Time
+    const today = moment().utc().startOf("day"); // Using Central Time
+    const startOfWeek = moment().utc().startOf("isoWeek"); // Using Central Time
 
     let todayProfit = 0;
     let weekProfit = 0;

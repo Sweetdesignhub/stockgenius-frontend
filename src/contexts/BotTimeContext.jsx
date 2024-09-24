@@ -55,7 +55,7 @@ export function BotTimeProvider({ children }) {
               currentWeekTime: storedTimes[bot._id]?.currentWeekTime || 0,
               lastUpdated:
                 storedTimes[bot._id]?.lastUpdated ||
-                moment().tz("America/Chicago").startOf("isoWeek").format(),
+                moment().utc().startOf("isoWeek").format(),
               status: bot.dynamicData[0].status,
             };
           });
@@ -89,7 +89,7 @@ export function BotTimeProvider({ children }) {
         // const startOfCurrentWeek = now.clone().startOf('isoWeek');
 
         const updatedTimes = { ...prevTimes };
-        const now = moment().tz("America/Chicago"); // Using Central Time Zone (CST/CDT)
+        const now = moment().utc(); // Using Central Time Zone (CST/CDT)
         const startOfCurrentWeek = now.clone().startOf("isoWeek"); // Start of the week in Central Time
 
         Object.keys(updatedTimes).forEach((botId) => {
@@ -109,14 +109,14 @@ export function BotTimeProvider({ children }) {
 
           // Check if we've crossed into a new week
           if (
-            now.isAfter(moment(lastUpdated).tz("America/Chicago"), "isoWeek")
+            now.isAfter(moment(lastUpdated).utc(), "isoWeek")
           ) {
             bot.currentWeekTime = 0;
             bot.lastUpdated = startOfCurrentWeek.format();
           }
 
           // Check if we've crossed into a new day
-          if (now.isAfter(moment(lastUpdated).tz("America/Chicago"), "day")) {
+          if (now.isAfter(moment(lastUpdated).utc(), "day")) {
             bot.todaysBotTime = 0;
           }
 
@@ -155,7 +155,7 @@ export function BotTimeProvider({ children }) {
           todaysBotTime: 0,
           currentWeekTime: 0,
           lastUpdated: moment()
-            .tz("America/Chicago")
+            .utc()
             .startOf("isoWeek")
             .format(), // Using Central Time
           status,
