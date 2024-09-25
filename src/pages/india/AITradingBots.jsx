@@ -12,7 +12,7 @@ import {
   isBeforeMarketOpen,
   isWithinTradingHours,
 } from "../../utils/helper";
-import { useBotTime } from "../../contexts/BotTimeContext";
+// import { useBotTime } from "../../contexts/BotTimeContext";
 import { useData } from "../../contexts/FyersDataContext";
 
 const getBotStatus = (isActive) => {
@@ -52,7 +52,12 @@ function AITradingBots() {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [confirmationAction, setConfirmationAction] = useState(null);
-  const { botTimes, formatTime } = useBotTime();
+  // const { botTimes, formatTime } = useBotTime();
+
+  const [allBotsTime, setAllBotsTime] = useState({
+    totalTodaysBotTime: 0,
+    totalCurrentWeekTime: 0
+  });
 
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
@@ -130,7 +135,7 @@ function AITradingBots() {
       console.error("Unexpected error:", error.response?.data || error.message);
       setMessage(
         error.response?.data?.message ||
-          "An unexpected error occurred. Please try again."
+        "An unexpected error occurred. Please try again."
       );
       setConfirmationOpen(true);
     }
@@ -160,7 +165,7 @@ function AITradingBots() {
     }
   };
 
-  const deleteBot = async (botId,botName) => {
+  const deleteBot = async (botId, botName) => {
     try {
       const response = await api.delete(
         `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`
@@ -180,7 +185,7 @@ function AITradingBots() {
       setConfirmationOpen(true);
     }
   };
-  
+
 
   const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
@@ -245,6 +250,42 @@ function AITradingBots() {
     setAutoTradeModalOpen(false);
   };
 
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8080');
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      ws.send(JSON.stringify({ type: 'subscribeAllBotsTime', userId: currentUser.id }));
+    };
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'allBotsTime') {
+        setAllBotsTime({
+          totalTodaysBotTime: parseInt(data.totalTodaysBotTime),
+          totalCurrentWeekTime: parseInt(data.totalCurrentWeekTime)
+        });
+      }
+    };
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+    return () => {
+      ws.close();
+    };
+  }, [currentUser.id]);
+
+  const formatTime = useCallback((seconds) => {
+    if (isNaN(seconds) || seconds < 0) {
+      return '0h 0m 0s';
+    }
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
+  }, []);
+
   const calculateCardData = useMemo(() => {
     const today = moment().tz("Asia/Kolkata").startOf("day");
     const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
@@ -254,13 +295,12 @@ function AITradingBots() {
     let totalInvestment = 0;
     let totalProfit = 0;
     let reInvestments = 0;
-    let totalTodaysBotTime = 0;
-    let totalCurrentWeekBotTime = 0;
+    // let totalTodaysBotTime = 0;
+    // let totalCurrentWeekBotTime = 0;
 
     botDataList.forEach((bot) => {
       const botCreatedAt = moment(bot.createdAt);
-      const profitGained =
-        funds?.fund_limit?.find((item) => item.id === 4)?.equityAmount || 0;
+      const profitGained = bot.dynamicData[0]?.profitGained || 0;
       const investmentAmount =
         funds?.fund_limit?.find((item) => item.id === 2)?.equityAmount || 0;
 
@@ -274,15 +314,15 @@ function AITradingBots() {
 
       totalInvestment += investmentAmount;
       totalProfit += profitGained;
-      reInvestments += parseInt(bot.dynamicData[0]?.reInvestment || 0);
+      reInvestments += parseInt(bot.dynamicData?.[0]?.reInvestment || 0);
 
-      // Sum up the bot times from the context
-      const botTime = botTimes[bot._id] || {
-        todaysBotTime: 0,
-        currentWeekTime: 0,
-      };
-      totalTodaysBotTime += botTime.todaysBotTime;
-      totalCurrentWeekBotTime += botTime.currentWeekTime;
+      // // Sum up the bot times from the context
+      // const botTime = botTimes[bot._id] || {
+      //   todaysBotTime: 0,
+      //   currentWeekTime: 0,
+      // };
+      // totalTodaysBotTime += botTime.todaysBotTime;
+      // totalCurrentWeekBotTime += botTime.currentWeekTime;
     });
 
     const calculatePercentage = (profit, investment) => {
@@ -303,14 +343,14 @@ function AITradingBots() {
     return [
       { title: "Today's Profit %", value: todayProfitPercentage },
       { title: "Last Week Profit %", value: weekProfitPercentage },
-      { title: "Today's Bot Time", value: formatTime(totalTodaysBotTime) },
-      { title: "Week's Bot Time", value: formatTime(totalCurrentWeekBotTime) },
+      { title: "Today's Bot Time", value: formatTime(allBotsTime.totalTodaysBotTime) },
+      { title: "Week's Bot Time", value: formatTime(allBotsTime.totalCurrentWeekTime) },
       { title: "No. of AI Bots", value: botDataList.length.toString() },
       { title: "Re-investments", value: reInvestments.toString() },
       { title: "Total Investment", value: totalInvestment.toFixed(2) },
       { title: "Total Profit", value: totalProfit.toFixed(2) },
     ];
-  }, [botDataList, botTimes, formatTime]);
+  }, [botDataList, allBotsTime, formatTime, funds]);
 
   return (
     <div className="-z-10">
@@ -362,8 +402,8 @@ function AITradingBots() {
                     onToggle={() => handleToggle(bot._id)}
                     updateBotDetails={updateBotDetails}
                     deleteBot={deleteBot}
-                    //                    currentStatus={botStates[bot._id].status}
-                    //                  onUpdateWorkingTime={updateBotWorkingTime}
+                  //                    currentStatus={botStates[bot._id].status}
+                  //                  onUpdateWorkingTime={updateBotWorkingTime}
                   />
                 ))
               ) : (
