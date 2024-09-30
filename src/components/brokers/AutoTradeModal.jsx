@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmationModal from "../common/ConfirmationModal";
 
-const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
+const AutoTradeModal = ({
+  isOpen,
+  onClose,
+  onCreateBot,
+  onUpdateBot,
+  botData,
+}) => {
   const [formData, setFormData] = useState({
     botName: "",
     marginProfitPercentage: "",
@@ -13,6 +19,28 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
   const [errors, setErrors] = useState({});
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Pre-fill form fields if botData is provided (for editing)
+  useEffect(() => {
+    if (botData) {
+      setFormData({
+        botName: botData.name || "",
+        marginProfitPercentage: botData.profitPercentage || "",
+        marginLossPercentage: botData.riskPercentage || "",
+        botAccess: botData.botAccess || "Yes",
+        productType: botData.productType || "",
+      });
+    } else {
+      // Clear the form when no botData is provided (for creating)
+      setFormData({
+        botName: "",
+        marginProfitPercentage: "",
+        marginLossPercentage: "",
+        botAccess: "Yes",
+        productType: "",
+      });
+    }
+  }, [botData]);
 
   if (!isOpen) return null;
 
@@ -62,11 +90,11 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
     }));
   };
 
-  const handleCreateBot = async () => {
+  const handleSubmit = async () => {
     if (!validateInput()) return;
 
     if (formData.botAccess === "Yes") {
-      const botData = {
+      const botPayload = {
         name: formData.botName,
         profitPercentage: parseFloat(formData.marginProfitPercentage),
         riskPercentage: parseFloat(formData.marginLossPercentage),
@@ -74,13 +102,33 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
       };
 
       try {
-        await onCreateBot(botData);
+        if (botData) {
+          // If botData exists, update the bot
+          await onUpdateBot(botData._id, botPayload); //  bot ID for updating
+        } else {
+          // Otherwise, create a new bot
+          await onCreateBot(botPayload);
+        }
+
+        // Clear the form fields after successful submission
+        setFormData({
+          botName: "",
+          marginProfitPercentage: "",
+          marginLossPercentage: "",
+          botAccess: "Yes",
+          productType: "",
+        });
+
         onClose();
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.message) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
           setMessage(error.response.data.message);
         } else {
-          setMessage("An error occurred while creating the bot. Please try again.");
+          setMessage("An error occurred. Please try again.");
         }
         setConfirmationOpen(true);
       }
@@ -113,7 +161,7 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
             </button>
             <div>
               <h2 className="text-xl text-white font-poppins font-semibold">
-                Create Bot
+                {botData ? "Update" : "Create"} Bot
               </h2>
               <p className="text-sm text-gray-300">NSE | EQ | INTRADAY</p>
             </div>
@@ -224,10 +272,10 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
                 Cancel
               </button>
               <button
-                onClick={handleCreateBot}
+                onClick={handleSubmit}
                 className="rounded-lg py-2 px-4 text-sm text-white bg-[#235CEF]"
               >
-                Create
+                {botData ? "Update" : "Create"}
               </button>
             </div>
           </div>
@@ -248,9 +296,6 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot }) => {
 };
 
 export default AutoTradeModal;
-
-
-
 
 // const Card = ({ imageSrc, value, description, valueColor }) => {
 //   return (
