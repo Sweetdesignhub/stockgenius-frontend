@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config';
 import { signInSuccess } from '../../redux/user/userSlice';
@@ -17,6 +17,7 @@ const VerificationForm = ({
   const { register, handleSubmit, watch, reset } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const selectedRegion = useSelector((state) => state.region);
 
   const handleVerification = async (otp) => {
     const endpoint = `/api/v1/auth/verify-${verificationType}`;
@@ -72,7 +73,9 @@ const VerificationForm = ({
 
   const handleConfirm = () => {
     setIsModalOpen(false);
-    navigate('/sign-in');
+    //    navigate('/sign-in');
+    // Redirect to the dashboard or home page instead of the sign-in page
+    navigate(`/${selectedRegion}/dashboard`);
   };
 
   return (
