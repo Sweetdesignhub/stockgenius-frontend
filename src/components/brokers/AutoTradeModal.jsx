@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ConfirmationModal from "../common/ConfirmationModal";
 
-const AutoTradeModal = ({ isOpen, onClose, onCreateBot, onUpdateBot, botData}) => {
+const AutoTradeModal = ({
+  isOpen,
+  onClose,
+  onCreateBot,
+  onUpdateBot,
+  botData,
+}) => {
   const [formData, setFormData] = useState({
     botName: "",
     marginProfitPercentage: "",
@@ -9,33 +15,32 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot, onUpdateBot, botData}) =
     botAccess: "Yes",
     productType: "",
   });
-  
 
   const [errors, setErrors] = useState({});
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
 
-    // Pre-fill form fields if botData is provided (for editing)
-    useEffect(() => {
-      if (botData) {
-        setFormData({
-          botName: botData.name || "",
-          marginProfitPercentage: botData.profitPercentage || "",
-          marginLossPercentage: botData.riskPercentage || "",
-          botAccess: botData.botAccess || "Yes",
-          productType: botData.productType || "",
-        });
-      } else {
-        // Clear the form when no botData is provided (for creating)
-        setFormData({
-          botName: "",
-          marginProfitPercentage: "",
-          marginLossPercentage: "",
-          botAccess: "Yes",
-          productType: "",
-        });
-      }
-    }, [botData]);
+  // Pre-fill form fields if botData is provided (for editing)
+  useEffect(() => {
+    if (botData) {
+      setFormData({
+        botName: botData.name || "",
+        marginProfitPercentage: botData.profitPercentage || "",
+        marginLossPercentage: botData.riskPercentage || "",
+        botAccess: botData.botAccess || "Yes",
+        productType: botData.productType || "",
+      });
+    } else {
+      // Clear the form when no botData is provided (for creating)
+      setFormData({
+        botName: "",
+        marginProfitPercentage: "",
+        marginLossPercentage: "",
+        botAccess: "Yes",
+        productType: "",
+      });
+    }
+  }, [botData]);
 
   if (!isOpen) return null;
 
@@ -104,9 +109,23 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot, onUpdateBot, botData}) =
           // Otherwise, create a new bot
           await onCreateBot(botPayload);
         }
+
+        // Clear the form fields after successful submission
+        setFormData({
+          botName: "",
+          marginProfitPercentage: "",
+          marginLossPercentage: "",
+          botAccess: "Yes",
+          productType: "",
+        });
+
         onClose();
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.message) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
           setMessage(error.response.data.message);
         } else {
           setMessage("An error occurred. Please try again.");
@@ -142,7 +161,7 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot, onUpdateBot, botData}) =
             </button>
             <div>
               <h2 className="text-xl text-white font-poppins font-semibold">
-              {botData ? "Update" : "Create"} Bot
+                {botData ? "Update" : "Create"} Bot
               </h2>
               <p className="text-sm text-gray-300">NSE | EQ | INTRADAY</p>
             </div>
@@ -277,9 +296,6 @@ const AutoTradeModal = ({ isOpen, onClose, onCreateBot, onUpdateBot, botData}) =
 };
 
 export default AutoTradeModal;
-
-
-
 
 // const Card = ({ imageSrc, value, description, valueColor }) => {
 //   return (

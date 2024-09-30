@@ -22,7 +22,6 @@
     "axios": "^1.7.2",
     "country-state-city": "^3.2.1",
     "firebase": "^10.12.2",
-    "flowbite": "^2.4.1",
     "formik": "^2.4.6",
     "fs": "^0.0.1-security",
     "js-cookie": "^3.0.5",

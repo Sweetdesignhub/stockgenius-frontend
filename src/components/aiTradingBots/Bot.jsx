@@ -21,15 +21,15 @@ const TradeRatioBar = ({ ratio }) => {
 
   return (
     <div className="w-full max-w-[6rem] min-w-[4rem]">
-      <div className="flex justify-between mb-1">
-        <span className="text-[#00FF47] font-semibold text-xs">
+      <div className="flex justify-between mb-[2px]">
+        <span className="text-[#00FF47] font-semibold text-[9px]">
           {greenPercentage}%
         </span>
-        <span className="text-[#FF0000] font-semibold text-xs">
+        <span className="text-[#FF0000] font-semibold text-[9px]">
           {redPercentage}%
         </span>
       </div>
-      <div className="w-full h-1.5 flex rounded-full overflow-hidden">
+      <div className="w-full h-1 flex rounded-full overflow-hidden">
         <div
           style={{ width: `${greenPercentage}%` }}
           className="h-full bg-[#00FF47]"
@@ -533,15 +533,19 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
       if (!isEnabled) {
         if (botData.productType === "CNC" && activeCNC) {
-          setTitle("Activation error")
-          setMessage("The CNC bot cannot be activated because another CNC bot is already scheduled.")
-          setConfirmationModalOpen(true)
+          setTitle("Activation error");
+          setMessage(
+            "The CNC bot cannot be activated because another CNC bot is already scheduled."
+          );
+          setConfirmationModalOpen(true);
           return;
         }
         if (botData.productType === "Intraday" && activeIntraday) {
-          setTitle("Activation error")
-          setMessage("The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled.")
-          setConfirmationModalOpen(true)
+          setTitle("Activation error");
+          setMessage(
+            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
+          );
+          setConfirmationModalOpen(true);
           return;
         }
 
@@ -604,9 +608,9 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
             await activateBot();
           }
         } else {
-          setTitle("Activation error")
-          setMessage("Connect your broker before activating the bot")
-          setConfirmationModalOpen(true)
+          setTitle("Activation error");
+          setMessage("Connect your broker before activating the bot");
+          setConfirmationModalOpen(true);
           return;
         }
 
@@ -621,7 +625,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
         // const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
         // const cutoffEnd = now
         //   .clone()
-        //   .set({ hour: 9, minute: 38, second: 0, millisecond: 0 }); // 9:30 AM IST
+        //   .set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
 
         // // Check if the user time falls within the schedule window
         // if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
@@ -774,7 +778,9 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
             key={index}
             className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-1/5 mb-4"
           >
-            <h1 className="text-[#A6B2CDB2] text-xs mb-1">{item.title}</h1>
+            <h1 className="dark:text-[#A6B2CDB2] text-[black] text-xs mb-1">
+              {item.title}
+            </h1>
             {item.title === "Trade Ratio" ? (
               <TradeRatioBar ratio={item.value} />
             ) : (
