@@ -35,9 +35,13 @@ function IndiaPortfolio() {
     setBrokerModalOpen(false);
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <div>
+  //     {fyersAccessToken &&
+  //       <Loading />
+  //     }
+  //   </div>;
+  // }
 
   return (
     <div className="-z-10">

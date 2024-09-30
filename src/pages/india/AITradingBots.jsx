@@ -398,30 +398,26 @@ function AITradingBots() {
           </div>
 
           <div className="p-4 overflow-scroll max-h-[60vh]">
-            {isLoading ? (
-              <Loading />
-            ) : (
-              <div className="flex flex-col gap-10">
-                {botDataList.length > 0 ? (
-                  botDataList.map((bot) => (
-                    <Bot
-                      key={bot._id}
-                      botData={bot}
-                      isEnabled={botStates[bot._id].isActive}
-                      onToggle={() => handleToggle(bot._id)}
-                      updateBotDetails={updateBotDetails}
-                      deleteBot={deleteBot}
-                  //                    currentStatus={botStates[bot._id].status}
-                  //                  onUpdateWorkingTime={updateBotWorkingTime}
-                    />
-                  ))
-                ) : (
-                  <div>
-                    <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="flex flex-col gap-10">
+              {botDataList.length > 0 ? (
+                botDataList.map((bot) => (
+                  <Bot
+                    key={bot._id}
+                    botData={bot}
+                    isEnabled={botStates[bot._id].isActive}
+                    onToggle={() => handleToggle(bot._id)}
+                    updateBotDetails={updateBotDetails}
+                    deleteBot={deleteBot}
+                    //                    currentStatus={botStates[bot._id].status}
+                    //                  onUpdateWorkingTime={updateBotWorkingTime}
+                  />
+                ))
+              ) : (
+                <div>
+                  <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

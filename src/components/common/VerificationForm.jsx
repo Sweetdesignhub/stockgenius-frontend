@@ -3,23 +3,22 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config';
-import { signInSuccess } from '../../redux/user/userSlice';
+import { signInSuccess, signOut } from '../../redux/user/userSlice';
 import ConfirmationModal from './ConfirmationModal';
 
 const VerificationForm = ({
   onValidSubmit,
-  onError,
   step,
   label,
   verificationType,
   userData,
-  setIsLoading,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, reset } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selectedRegion = useSelector((state) => state.region);
+
 
   const handleVerification = async (otp) => {
     const endpoint = `/api/v1/auth/verify-${verificationType}`;
@@ -29,8 +28,6 @@ const VerificationForm = ({
         userData[verificationType === 'email' ? 'email' : 'phoneNumber'],
     };
     reset();
-    setIsLoading(true);
-
     try {
       const response = await api.post(endpoint, postData);
       console.log(
@@ -38,7 +35,6 @@ const VerificationForm = ({
         response.data
       );
       console.log(step);
-      setIsLoading(false);
 
       if (step < 3) {
         onValidSubmit(step + 1);
@@ -58,13 +54,6 @@ const VerificationForm = ({
       reset();
     } catch (error) {
       console.error(`${verificationType} Verification Error:`, error);
-      setIsLoading(false);
-      onError(
-        error.response?.data?.message ||
-        error.response?.data?.error?.[0]?.message ||
-        error.message ||
-        'An unexpected error occurred'
-      );
     }
   };
 
@@ -83,11 +72,11 @@ const VerificationForm = ({
     if (targetInput) targetInput.focus();
   };
 
+  
   const handleConfirm = () => {
     setIsModalOpen(false);
-    //    navigate('/sign-in');
-    // Redirect to the dashboard or home page instead of the sign-in page
-    navigate(`/${selectedRegion}/dashboard`);
+    dispatch(signOut());
+    navigate('/sign-in');
   };
 
   return (

@@ -598,7 +598,10 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
             await activateBot();
           }
         } else {
-          alert("Connect your broker before activating the bot");
+          // alert("Connect your broker before activating the bot");
+          setTitle("Activation Error")
+          setMessage("Connect your broker before activating the bot");
+          setConfirmationModalOpen(true);
           return;
         }
 
@@ -732,7 +735,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
   return (
     <div
       style={theme === 'dark' ? darkThemeStyle : lightThemeStyle}
-      style={theme === "dark" ? darkThemeStyle : lightThemeStyle}
       className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
     >
       <div className="flex flex-col items-center lg:items-start lg:w-1/4 w-full">

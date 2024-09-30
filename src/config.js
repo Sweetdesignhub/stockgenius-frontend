@@ -45,7 +45,7 @@
 //     localStorage.removeItem('accessToken');
 //     localStorage.removeItem('refreshToken');
 //     document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
+    
 //     // Prevent redirection for the sign-in page
 //     if (window.location.pathname !== '/sign-in') {
 //       window.location.href = '/sign-in';
@@ -166,7 +166,7 @@ const clearSessionAndRedirect = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
+    
     // Dispatch event to show session expired modal
     const event = new Event('sessionExpired');
     window.dispatchEvent(event);
