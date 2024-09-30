@@ -1,15 +1,26 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AccountInfo from "../../components/brokers/fyers/AccountInfo";
 import Header from "../../components/brokers/fyers/Header";
 import StockDetails from "../../components/brokers/fyers/portfolio/StockDetails";
 import BrokerModal from "../../components/brokers/BrokerModal";
 import { useSelector } from "react-redux";
+import Loading from "../../components/common/Loading";
 
 function IndiaPortfolio() {
   const fyersAccessToken = useSelector((state) => state.fyers);
   // console.log('porfolio access token : ', fyersAccessToken);
   const [brokerModalOpen, setBrokerModalOpen] = useState(!fyersAccessToken);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [accountInfoReady, setAccountInfoReady] = useState(false);
+  const [stockDetailsReady, setStockDetailsReady] = useState(false);
+
+  useEffect(() => {
+    if (accountInfoReady && stockDetailsReady) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+  }, [accountInfoReady, stockDetailsReady]);
 
   const handleBroker = () => {
     if (!fyersAccessToken) {
@@ -23,6 +34,10 @@ function IndiaPortfolio() {
   const closeBrokerModal = () => {
     setBrokerModalOpen(false);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="-z-10">
@@ -45,8 +60,8 @@ function IndiaPortfolio() {
             {fyersAccessToken ? (
               <div>
                 <Header />
-                <AccountInfo />
-                <StockDetails />
+                <AccountInfo setReady={setAccountInfoReady} />
+                <StockDetails setReady={setStockDetailsReady} />
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center">

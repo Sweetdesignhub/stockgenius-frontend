@@ -18,6 +18,7 @@ const CompleteProfile = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [userData, setUserData] = useState({});
   const [step, setStep] = useState(1);
+  const [error, setError] = useState(null); // New state for error handling
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -54,6 +55,7 @@ const CompleteProfile = () => {
   const onSubmit = async (data) => {
     const fdata = { email, ...data };
     try {
+      setError(null); // Clear any existing errors
       const response = await api.patch(
         `/api/v1/auth/update-google-auth/${userId}`,
         fdata
@@ -63,6 +65,12 @@ const CompleteProfile = () => {
       setStep(3);
     } catch (error) {
       console.error('Signup Error:', error);
+      onError(
+        error.response?.data?.message ||
+        error.response?.data?.error?.[0]?.message ||
+        error.message ||
+        'An unexpected error occurred'
+      );
     }
   };
   if (step === 1) {
@@ -116,6 +124,12 @@ const CompleteProfile = () => {
         >
           Submit
         </button>
+
+        {error && (
+          <p className='text-red-500 text-center mt-5'>
+            {error}
+          </p>
+        )}
       </form>
     );
   } else if (step === 3) {

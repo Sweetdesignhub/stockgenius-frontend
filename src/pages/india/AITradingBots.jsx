@@ -10,6 +10,7 @@ import moment from "moment-timezone";
 import { isAfterMarketClose, isBeforeMarketOpen, isWithinTradingHours } from "../../utils/helper";
 import { useBotTime } from "../../contexts/BotTimeContext";
 import { useData } from "../../contexts/FyersDataContext";
+import Loading from "../../components/common/Loading";
 
 const getBotStatus = (isActive) => {
   if (isAfterMarketClose()) {
@@ -48,6 +49,7 @@ function AITradingBots() {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [confirmationAction, setConfirmationAction] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { botTimes, formatTime } = useBotTime();
 
   const fyersAccessToken = useSelector((state) => state.fyers);
@@ -58,6 +60,7 @@ function AITradingBots() {
   } = useData();
 
   const fetchBots = useCallback(async () => {
+    setIsLoading(true);
     try {
       const response = await api.get(`/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`);
       const sortedBots = response.data.bots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -75,6 +78,8 @@ function AITradingBots() {
       }, {}));
     } catch (error) {
       console.error("Error fetching bots:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [currentUser.id]);
 
@@ -209,7 +214,7 @@ function AITradingBots() {
 
     botDataList.forEach(bot => {
       const botCreatedAt = moment(bot.createdAt);
-      const profitGained = funds?.fund_limit?.find(item => item.id === 4)?.equityAmount || 0;
+      const profitGained = bot.dynamicData[0]?.profitGained || 0;
       const investmentAmount = funds?.fund_limit?.find(item => item.id === 2)?.equityAmount || 0;
 
       if (botCreatedAt.isSame(today, 'day')) {
@@ -222,7 +227,7 @@ function AITradingBots() {
 
       totalInvestment += investmentAmount;
       totalProfit += profitGained;
-      reInvestments += parseInt(bot.dynamicData[0]?.reInvestment || 0);
+      reInvestments += parseInt(bot.dynamicData?.[0]?.reInvestment || 0);
 
       // Sum up the bot times from the context
       const botTime = botTimes[bot._id] || { todaysBotTime: 0, currentWeekTime: 0 };
@@ -291,24 +296,28 @@ function AITradingBots() {
           </div>
 
           <div className="p-4 overflow-scroll max-h-[60vh]">
-            <div className="flex flex-col gap-10">
-              {botDataList.length > 0 ? (
-                botDataList.map((bot) => (
-                  <Bot
-                    key={bot._id}
-                    botData={bot}
-                    isEnabled={botStates[bot._id].isActive}
-                    onToggle={() => handleToggle(bot._id)}
-                  //                    currentStatus={botStates[bot._id].status}
-                  //                  onUpdateWorkingTime={updateBotWorkingTime}
-                  />
-                ))
-              ) : (
-                <div>
-                  <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
-                </div>
-              )}
-            </div>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <div className="flex flex-col gap-10">
+                {botDataList.length > 0 ? (
+                  botDataList.map((bot) => (
+                    <Bot
+                      key={bot._id}
+                      botData={bot}
+                      isEnabled={botStates[bot._id].isActive}
+                      onToggle={() => handleToggle(bot._id)}
+                    //                    currentStatus={botStates[bot._id].status}
+                    //                  onUpdateWorkingTime={updateBotWorkingTime}
+                    />
+                  ))
+                ) : (
+                  <div>
+                    <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

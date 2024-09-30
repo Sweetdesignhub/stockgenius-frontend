@@ -6,11 +6,14 @@ import { signInSuccess, signInFailure } from '../redux/user/userSlice';
 import api from '../config';
 import ConfirmationModal from './common/ConfirmationModal';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import Loading from './common/Loading';
 
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const selectedRegion = useSelector((state) => state.region);
 
   const handleGoogleSignIn = async (tokenResponse) => {
@@ -19,6 +22,8 @@ export default function OAuth() {
       return;
     }
     console.log(tokenResponse);
+
+    setIsLoading(true);
 
     try {
       const res = await api.post('/api/v1/auth/google-auth', {
@@ -38,8 +43,21 @@ export default function OAuth() {
         navigate(`/${selectedRegion}/dashboard`);
       }
     } catch (error) {
-      dispatch(signInFailure(error.message));
-      console.error('Could not login with Google:', error);
+      let errorMessage = 'An error occurred during sign-in. Please try again.';
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = 'No response received from server. Please check your internet connection.';
+      }
+
+      dispatch(signInFailure(errorMessage));
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,13 +68,22 @@ export default function OAuth() {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-        <GoogleLogin
-          onSuccess={handleGoogleSignIn}
-          onError={() => console.log('Login Failed')}
-          style={{ width: '100%', maxWidth: '620px' }}
-        />
-      </div>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSignIn}
+            onError={() => {
+              const errorMessage = 'Google sign-in failed. Please try again.';
+              dispatch(signInFailure(errorMessage));
+              toast.error(errorMessage);
+            }}
+            style={{ width: '100%', maxWidth: '620px' }}
+            disabled={isLoading}
+          />
+        </div>
+      )}
       <ConfirmationModal
         isOpen={isModalOpen}
         title='Region Not Selected'
