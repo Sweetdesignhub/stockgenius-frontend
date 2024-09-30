@@ -8,13 +8,15 @@ import ConfirmationModal from './ConfirmationModal';
 
 const VerificationForm = ({
   onValidSubmit,
+  onError,
   step,
   label,
   verificationType,
   userData,
+  setIsLoading,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { register, handleSubmit, watch, reset } = useForm();
+  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selectedRegion = useSelector((state) => state.region);
@@ -27,6 +29,8 @@ const VerificationForm = ({
         userData[verificationType === 'email' ? 'email' : 'phoneNumber'],
     };
     reset();
+    setIsLoading(true);
+
     try {
       const response = await api.post(endpoint, postData);
       console.log(
@@ -34,6 +38,7 @@ const VerificationForm = ({
         response.data
       );
       console.log(step);
+      setIsLoading(false);
 
       if (step < 3) {
         onValidSubmit(step + 1);
@@ -53,6 +58,13 @@ const VerificationForm = ({
       reset();
     } catch (error) {
       console.error(`${verificationType} Verification Error:`, error);
+      setIsLoading(false);
+      onError(
+        error.response?.data?.message ||
+        error.response?.data?.error?.[0]?.message ||
+        error.message ||
+        'An unexpected error occurred'
+      );
     }
   };
 

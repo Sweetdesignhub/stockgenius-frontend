@@ -10,7 +10,7 @@ import 'react-phone-number-input/style.css';
 import api from '../../config';
 import { Link } from 'react-router-dom';
 
-const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
+const SignUpForm = ({ onValidSubmit, onError, userData, setUserData, setIsLoading }) => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(
@@ -59,15 +59,24 @@ const SignUpForm = ({ onValidSubmit, userData, setUserData }) => {
   const onSubmit = (data) => {
     setUserData(data);
     console.log(data);
+    setIsLoading(true);
 
     api
       .post('/api/v1/auth/signup', data)
       .then((response) => {
         console.log('Signup Successful:', response.data);
+        setIsLoading(false);
         onValidSubmit(2);
       })
       .catch((error) => {
         console.error('Signup Error:', error);
+        setIsLoading(false);
+        onError(
+          error.response?.data?.message ||
+          error.response?.data?.error?.[0]?.message ||
+          error.message ||
+          'An unexpected error occurred'
+        );
       });
   };
 

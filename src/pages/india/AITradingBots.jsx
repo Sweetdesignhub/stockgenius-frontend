@@ -14,6 +14,7 @@ import {
 } from "../../utils/helper";
 // import { useBotTime } from "../../contexts/BotTimeContext";
 import { useData } from "../../contexts/FyersDataContext";
+import Loading from "../../components/common/Loading";
 
 const getBotStatus = (isActive) => {
   if (isAfterMarketClose()) {
@@ -52,6 +53,7 @@ function AITradingBots() {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [confirmationAction, setConfirmationAction] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   // const { botTimes, formatTime } = useBotTime();
 
   const [allBotsTime, setAllBotsTime] = useState({
@@ -65,6 +67,7 @@ function AITradingBots() {
   const { funds = { fund_limit: [{}] } } = useData();
 
   const fetchBots = useCallback(async () => {
+    setIsLoading(true);
     try {
       const response = await api.get(
         `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`
@@ -85,6 +88,8 @@ function AITradingBots() {
       );
     } catch (error) {
       console.error("Error fetching bots:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [currentUser.id]);
 
@@ -300,7 +305,8 @@ function AITradingBots() {
 
     botDataList.forEach((bot) => {
       const botCreatedAt = moment(bot.createdAt);
-      const profitGained = bot.dynamicData[0]?.profitGained || 0;
+      const profitGained =
+        funds?.fund_limit?.find((item) => item.id === 4)?.equityAmount || 0;
       const investmentAmount =
         funds?.fund_limit?.find((item) => item.id === 2)?.equityAmount || 0;
 
@@ -392,26 +398,30 @@ function AITradingBots() {
           </div>
 
           <div className="p-4 overflow-scroll max-h-[60vh]">
-            <div className="flex flex-col gap-10">
-              {botDataList.length > 0 ? (
-                botDataList.map((bot) => (
-                  <Bot
-                    key={bot._id}
-                    botData={bot}
-                    isEnabled={botStates[bot._id].isActive}
-                    onToggle={() => handleToggle(bot._id)}
-                    updateBotDetails={updateBotDetails}
-                    deleteBot={deleteBot}
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <div className="flex flex-col gap-10">
+                {botDataList.length > 0 ? (
+                  botDataList.map((bot) => (
+                    <Bot
+                      key={bot._id}
+                      botData={bot}
+                      isEnabled={botStates[bot._id].isActive}
+                      onToggle={() => handleToggle(bot._id)}
+                      updateBotDetails={updateBotDetails}
+                      deleteBot={deleteBot}
                   //                    currentStatus={botStates[bot._id].status}
                   //                  onUpdateWorkingTime={updateBotWorkingTime}
-                  />
-                ))
-              ) : (
-                <div>
-                  <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
-                </div>
-              )}
-            </div>
+                    />
+                  ))
+                ) : (
+                  <div>
+                    <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

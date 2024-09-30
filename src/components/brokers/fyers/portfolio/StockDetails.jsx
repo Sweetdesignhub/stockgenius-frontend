@@ -9,7 +9,7 @@ import { RiMenuLine } from "react-icons/ri";
 import api from "../../../../config.js";
 import { useSelector } from "react-redux";
 
-const StockDetails = () => {
+const StockDetails = ({ setReady }) => {
   const [ordersCount, setOrdersCount] = useState(0);
   const [positionsCount, setPositionsCount] = useState(0);
   const [holdingsCount, setHoldingsCount] = useState(0);
@@ -85,6 +85,14 @@ const StockDetails = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchAllCounts();
+      setReady(true);
+    };
+    fetchData();
   }, []);
 
   const toggleFilter = () => {

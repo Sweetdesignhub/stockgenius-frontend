@@ -266,7 +266,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
       value: `${apiBotData.dynamicData?.[0]?.percentageGain ||
         botData.dynamicData[0]?.percentageGain ||
         "0"
-        }%`,
+          }%`,
       valueColor: "white",
     },
     {
@@ -559,13 +559,11 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
           // Set cutoff times using moment
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-          const cutoffEnd = now
-            .clone()
-            .set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:15 AM IST
+          const cutoffEnd = now.clone().set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
 
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
-            // If user arrives between 12:00 AM and 9:15 AM, schedule the bot
+            // If user arrives between 12:00 AM and 9:30 AM, schedule the bot
             await updateBot(apiBotData._id, {
               tradeRatio: 50,
               profitGained: profitGainedValue,
@@ -582,24 +580,16 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
                   ? availableFunds
                   : apiBotData.dynamicData?.[0]?.totalBalance || "0",
               scheduled: today,
-              numberOfTrades:
-                createdAt === today
-                  ? trades.tradeBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-              numberOfTrades:
-                createdAt === today
-                  ? trades.tradeBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+              numberOfTrades: createdAt === today
+                ? trades.tradeBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+              numberOfTrades: createdAt === today ? trades.tradeBook?.length || 0 : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
               percentageGain: 0,
               status: "Schedule",
-              reInvestment:
-                createdAt === today
-                  ? orders.orderBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-              reInvestment:
-                createdAt === today
-                  ? orders.orderBook?.length || 0
-                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              reInvestment: createdAt === today ? orders.orderBook?.length || 0 : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              reInvestment: createdAt === today
+                ? orders.orderBook?.length || 0
+                : apiBotData.dynamicData?.[0]?.reInvestment || 0,
               limits: 0,
             });
 
@@ -608,9 +598,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
             await activateBot();
           }
         } else {
-          setTitle("Activation error");
-          setMessage("Connect your broker before activating the bot");
-          setConfirmationModalOpen(true);
+          alert("Connect your broker before activating the bot");
           return;
         }
 
@@ -691,6 +679,9 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
       "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
   };
 
+
+
+
   // Handle Edit function - triggered when a bot is edited
   const handleEditBot = async (botId) => {
     // console.log(`Edit bot with ID: ${botId}`);
@@ -740,6 +731,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
   return (
     <div
+      style={theme === 'dark' ? darkThemeStyle : lightThemeStyle}
       style={theme === "dark" ? darkThemeStyle : lightThemeStyle}
       className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
     >
