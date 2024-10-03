@@ -176,9 +176,11 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
   useEffect(() => {
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = process.env.NODE_ENV === 'development'
-      ? 'ws://localhost:8080'
-      : `${wsProtocol}//api.stockgenius.ai`
+    // const wsUrl = process.env.NODE_ENV === 'development'
+    //   ? 'ws://localhost:8080'
+    //   : `${wsProtocol}//api.stockgenius.ai`
+
+    const wsUrl = `${wsProtocol}//api.stockgenius.ai`
 
     const ws = new WebSocket(wsUrl);
 
