@@ -180,7 +180,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
     //   ? 'ws://localhost:8080'
     //   : `${wsProtocol}//api.stockgenius.ai`
 
-    const wsUrl = `${wsProtocol}//api.stockgenius.ai`
+    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
 
