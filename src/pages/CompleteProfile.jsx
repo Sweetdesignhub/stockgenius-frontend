@@ -9,6 +9,8 @@ import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../components/common/InputField';
 import api from '../config';
+import Loading from '../components/common/Loading';
+
 const CompleteProfile = () => {
   const location = useLocation();
   const { userId, email } = location.state || { userId: null, email: null };
@@ -18,6 +20,7 @@ const CompleteProfile = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [userData, setUserData] = useState({});
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -52,6 +55,7 @@ const CompleteProfile = () => {
   };
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     const fdata = { email, ...data };
     try {
       const response = await api.patch(
@@ -63,8 +67,13 @@ const CompleteProfile = () => {
       setStep(3);
     } catch (error) {
       console.error('Signup Error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+  if (isLoading) {
+    return <Loading />;
+  }
   if (step === 1) {
     return (
       <form

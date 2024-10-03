@@ -45,7 +45,7 @@
 //     localStorage.removeItem('accessToken');
 //     localStorage.removeItem('refreshToken');
 //     document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    
+
 //     // Prevent redirection for the sign-in page
 //     if (window.location.pathname !== '/sign-in') {
 //       window.location.href = '/sign-in';
@@ -117,10 +117,10 @@ import axios from 'axios';
 
 // Define backend URL based on environment
 export const BACKEND_URL =
-  // process.env.NODE_ENV === 'development'? "http://localhost:8080":
-  //  "https://stockgenius-backend.onrender.com";
-  'https://api.stockgenius.ai';
-// 'http://localhost:8080';
+  process.env.NODE_ENV === 'development' ? "http://localhost:8080" :
+    //  "https://stockgenius-backend.onrender.com";
+    'https://api.stockgenius.ai';
+//  'http://localhost:8080';
 
 // Create an Axios instance
 const api = axios.create({
@@ -166,7 +166,7 @@ const clearSessionAndRedirect = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    
+
     // Dispatch event to show session expired modal
     const event = new Event('sessionExpired');
     window.dispatchEvent(event);

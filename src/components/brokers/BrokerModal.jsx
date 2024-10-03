@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Dropdown from '../common/Dropdown';
 import api from '../../config';
@@ -13,6 +13,8 @@ const BrokerModal = ({ isOpen, onClose }) => {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const fetchIntervalRef = useRef(null);
+  const userId = currentUser.id;
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -54,124 +56,137 @@ const BrokerModal = ({ isOpen, onClose }) => {
     }
   };
 
+
+
   // const startFetchingData = () => {
+  //   let fetchInterval; // Declare fetchInterval in the outer scope
+
   //   const fetchData = async () => {
   //     try {
-  //       const token = localStorage.getItem('fyers_access_token');
+  //       const token = localStorage.getItem("fyers_access_token");
 
   //       if (!token) {
-  //         console.warn("Access token is missing, stopping data fetching.");
+  //         console.warn('Access token is missing, stopping data fetching.');
   //         clearInterval(fetchInterval); // Stop fetching if token is missing
   //         return; // Exit if token is not available
   //       }
 
-  //       await api.post(`/api/v1/fyers/fetchProfileAndSave/${currentUser._id}`, {
+  //       await api.post(`/api/v1/fyers/fetchProfileAndSave/${currentUser.id}`, {
   //         accessToken: token,
   //       });
-  //       await api.post(`/api/v1/fyers/fetchFundsAndSave/${currentUser._id}`, {
+  //       await api.post(`/api/v1/fyers/fetchFundsAndSave/${currentUser.id}`, {
   //         accessToken: token,
   //       });
-  //       await api.post(`/api/v1/fyers/fetchOrdersAndSave/${currentUser._id}`, {
+  //       await api.post(`/api/v1/fyers/fetchOrdersAndSave/${currentUser.id}`, {
+  //         accessToken: token,
+  //       });
+  //       await api.post(`/api/v1/fyers/fetchHoldingsAndSave/${currentUser.id}`, {
   //         accessToken: token,
   //       });
   //       await api.post(
-  //         `/api/v1/fyers/fetchHoldingsAndSave/${currentUser._id}`,
+  //         `/api/v1/fyers/fetchPositionsAndSave/${currentUser.id}`,
   //         { accessToken: token }
   //       );
-  //       await api.post(
-  //         `/api/v1/fyers/fetchPositionsAndSave/${currentUser._id}`,
-  //         { accessToken: token }
-  //       );
-  //       await api.post(`/api/v1/fyers/fetchTradesAndSave/${currentUser._id}`, {
+  //       await api.post(`/api/v1/fyers/fetchTradesAndSave/${currentUser.id}`, {
   //         accessToken: token,
   //       });
   //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setError("Error fetching data from Fyers");
+  //       console.error('Error fetching data:', error);
+  //       setError('Error fetching data from Fyers');
   //     }
   //   };
 
-  //   // Start fetching data immediately and set interval
-  //   fetchData();
-  //   const fetchInterval = setInterval(fetchData, 3000);
+  //   // Get current time
+  //   const currentTime = new Date();
+  //   const currentHour = currentTime.getHours();
+  //   const currentMinutes = currentTime.getMinutes();
 
-  //   // Cleanup function to clear interval on unmount
-  //   return () => clearInterval(fetchInterval);
+  //   // Define start and end time for the trading hours
+  //   const startHour = 9;
+  //   const startMinutes = 15;
+  //   const endHour = 15;
+  //   const endMinutes = 30;
+
+  //   // Function to check if current time is within trading hours
+  //   const isTradingHours = () => {
+  //     if (
+  //       (currentHour > startHour ||
+  //         (currentHour === startHour && currentMinutes >= startMinutes)) &&
+  //       (currentHour < endHour ||
+  //         (currentHour === endHour && currentMinutes <= endMinutes))
+  //     ) {
+  //       return true;
+  //     }
+  //     return false;
+  //   };
+
+  //   // Check if current time is within trading hours
+  //   if (isTradingHours()) {
+  //     // Fetch data immediately and set interval to fetch every 3 seconds
+  //     fetchData();
+  //     fetchInterval = setInterval(fetchData, 6000); // Assign to fetchInterval
+
+  //     // Cleanup function to clear interval on unmount
+  //     return () => clearInterval(fetchInterval);
+  //   } else {
+  //     // Fetch data only once if outside trading hours
+  //     fetchData();
+  //   }
   // };
 
-  const startFetchingData = () => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("fyers_access_token");
+  const fetchData = async (token) => {
+    if (!token) {
+      console.warn('Access token is missing, stopping data fetching.');
+      clearInterval(fetchIntervalRef.current);
+      return;
+    }
 
-        if (!token) {
-          console.warn('Access token is missing, stopping data fetching.');
-          clearInterval(fetchInterval); // Stop fetching if token is missing
-          return; // Exit if token is not available
-        }
+    try {
+      await Promise.all([
+        api.post(`/api/v1/fyers/fetchProfileAndSave/${userId}`, { accessToken: token }),
+        api.post(`/api/v1/fyers/fetchFundsAndSave/${userId}`, { accessToken: token }),
+        api.post(`/api/v1/fyers/fetchOrdersAndSave/${userId}`, { accessToken: token }),
+        api.post(`/api/v1/fyers/fetchHoldingsAndSave/${userId}`, { accessToken: token }),
+        api.post(`/api/v1/fyers/fetchPositionsAndSave/${userId}`, { accessToken: token }),
+        api.post(`/api/v1/fyers/fetchTradesAndSave/${userId}`, { accessToken: token }),
+      ]);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setError('Error fetching data from Fyers');
+      // Optionally log the error to a logging service
+    }
+  };
 
-        await api.post(`/api/v1/fyers/fetchProfileAndSave/${currentUser.id}`, {
-          accessToken: token,
-        });
-        await api.post(`/api/v1/fyers/fetchFundsAndSave/${currentUser.id}`, {
-          accessToken: token,
-        });
-        await api.post(`/api/v1/fyers/fetchOrdersAndSave/${currentUser.id}`, {
-          accessToken: token,
-        });
-        await api.post(`/api/v1/fyers/fetchHoldingsAndSave/${currentUser.id}`, {
-          accessToken: token,
-        });
-        await api.post(
-          `/api/v1/fyers/fetchPositionsAndSave/${currentUser.id}`,
-          { accessToken: token }
-        );
-        await api.post(`/api/v1/fyers/fetchTradesAndSave/${currentUser.id}`, {
-          accessToken: token,
-        });
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data from Fyers');
-      }
-    };
-
-    // Get current time
+  const isTradingHours = () => {
     const currentTime = new Date();
     const currentHour = currentTime.getHours();
     const currentMinutes = currentTime.getMinutes();
-
-    // Define start and end time for the trading hours
     const startHour = 9;
     const startMinutes = 15;
     const endHour = 15;
     const endMinutes = 30;
 
-    // Function to check if current time is within trading hours
-    const isTradingHours = () => {
-      if (
-        (currentHour > startHour ||
-          (currentHour === startHour && currentMinutes >= startMinutes)) &&
-        (currentHour < endHour ||
-          (currentHour === endHour && currentMinutes <= endMinutes))
-      ) {
-        return true;
-      }
-      return false;
-    };
+    return (
+      (currentHour > startHour || (currentHour === startHour && currentMinutes >= startMinutes)) &&
+      (currentHour < endHour || (currentHour === endHour && currentMinutes <= endMinutes))
+    );
+  };
 
-    // Check if current time is within trading hours
+  const startFetchingData = () => {
+    const token = localStorage.getItem("fyers_access_token");
     if (isTradingHours()) {
-      // Fetch data immediately and set interval to fetch every 3 seconds
-      fetchData();
-      const fetchInterval = setInterval(fetchData, 3000);
-
-      // Cleanup function to clear interval on unmount
-      return () => clearInterval(fetchInterval);
+      fetchData(token);
+      fetchIntervalRef.current = setInterval(() => fetchData(token), 8000);
     } else {
-      // Fetch data only once if outside trading hours
-      fetchData();
+      fetchData(token);
     }
   };
+
+  useEffect(() => {
+    startFetchingData();
+    return () => clearInterval(fetchIntervalRef.current);
+  }, [userId]);
+
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);

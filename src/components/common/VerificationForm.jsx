@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../config';
 import { signInSuccess, signOut } from '../../redux/user/userSlice';
 import ConfirmationModal from './ConfirmationModal';
+import Loading from './Loading';
 
 const VerificationForm = ({
   onValidSubmit,
@@ -18,9 +19,10 @@ const VerificationForm = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selectedRegion = useSelector((state) => state.region);
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleVerification = async (otp) => {
+    setIsLoading(true);
     const endpoint = `/api/v1/auth/verify-${verificationType}`;
     const postData = {
       otp,
@@ -54,6 +56,8 @@ const VerificationForm = ({
       reset();
     } catch (error) {
       console.error(`${verificationType} Verification Error:`, error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,7 +76,7 @@ const VerificationForm = ({
     if (targetInput) targetInput.focus();
   };
 
-  
+
   const handleConfirm = () => {
     setIsModalOpen(false);
     dispatch(signOut());
@@ -81,30 +85,34 @@ const VerificationForm = ({
 
   return (
     <div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col gap-4 items-center'
-      >
-        <p className='text-center mb-4'>{label}</p>
-        <div className='flex gap-3'>
-          {Array.from({ length: 6 }, (_, index) => (
-            <input
-              key={index}
-              type='text'
-              {...register(`digit${index + 1}`)}
-              maxLength={1}
-              className='w-10 h-10 text-black text-center form-control'
-              onKeyUp={(e) => handleKeyUp(e, index)}
-            />
-          ))}
-        </div>
-        <button
-          type='submit'
-          className='mt-4 bg-[#1A2C5C] text-white p-2 rounded-lg hover:opacity-95'
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className='flex flex-col gap-4 items-center'
         >
-          Verify
-        </button>
-      </form>
+          <p className='text-center mb-4'>{label}</p>
+          <div className='flex gap-3'>
+            {Array.from({ length: 6 }, (_, index) => (
+              <input
+                key={index}
+                type='text'
+                {...register(`digit${index + 1}`)}
+                maxLength={1}
+                className='w-10 h-10 text-black text-center form-control'
+                onKeyUp={(e) => handleKeyUp(e, index)}
+              />
+            ))}
+          </div>
+          <button
+            type='submit'
+            className='mt-4 bg-[#1A2C5C] text-white p-2 rounded-lg hover:opacity-95'
+          >
+            Verify
+          </button>
+        </form>
+      )}
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}

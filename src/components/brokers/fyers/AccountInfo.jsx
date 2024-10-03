@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Cards from './Cards.jsx';
 import { useData } from '../../../contexts/FyersDataContext.jsx';
 
-function AccountInfo({ setReady }) {
+function AccountInfo() {
   const {
     profile = {},
     holdings = {},
@@ -15,12 +15,6 @@ function AccountInfo({ setReady }) {
   const positionTotalPL = positions?.overall?.pl_total?.toFixed(2) || "0.00";
   const availableFunds =
     funds?.fund_limit?.[9]?.equityAmount?.toFixed(2) || "0.00";
-
-  useEffect(() => {
-    if (!loading) {
-      setReady(true);
-    }
-  }, [loading, setReady]);
 
   if (loading) {
     return <p>Loading...</p>;

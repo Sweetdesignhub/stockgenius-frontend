@@ -5,29 +5,28 @@ import StockDetails from "../../components/brokers/fyers/portfolio/StockDetails"
 import BrokerModal from "../../components/brokers/BrokerModal";
 import { useSelector } from "react-redux";
 import Loading from "../../components/common/Loading";
+import { useData } from "../../contexts/FyersDataContext";
 
 function IndiaPortfolio() {
   const fyersAccessToken = useSelector((state) => state.fyers);
   // console.log('porfolio access token : ', fyersAccessToken);
   const [brokerModalOpen, setBrokerModalOpen] = useState(!fyersAccessToken);
-  const [loading, setLoading] = useState(true);
-  const [accountInfoReady, setAccountInfoReady] = useState(false);
-  const [stockDetailsReady, setStockDetailsReady] = useState(false);
+  const { profile, holdings, funds, positions, trades, orders, loading } = useData();
+  const [isContentReady, setIsContentReady] = useState(false);
 
   useEffect(() => {
-    if (accountInfoReady && stockDetailsReady) {
-      setLoading(false);
+    if (!loading && profile && holdings && funds && positions && trades && orders) {
+      setIsContentReady(true);
     } else {
-      setLoading(true);
+      setIsContentReady(false);
     }
-  }, [accountInfoReady, stockDetailsReady]);
+  }, [loading, profile, holdings, funds, positions, trades, orders,]);
 
   const handleBroker = () => {
     if (!fyersAccessToken) {
-      setLoading(true);
       setBrokerModalOpen(true);
       console.log("First connect to your broker to start auto trade feature.");
-      setLoading(false); // Set to true when actual connection logic is implemented
+      //      setLoading(false); // Set to true when actual connection logic is implemented
     }
   };
 
@@ -35,13 +34,34 @@ function IndiaPortfolio() {
     setBrokerModalOpen(false);
   };
 
-  // if (loading) {
-  //   return <div>
-  //     {fyersAccessToken &&
-  //       <Loading />
-  //     }
-  //   </div>;
-  // }
+  const renderContent = () => {
+    if (!fyersAccessToken) {
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <button
+            onClick={handleBroker}
+            className="auth px-4 py-1 mb-4"
+          >
+            Connect your Broker
+          </button>
+        </div>
+      );
+    }
+
+    if (!isContentReady) {
+      return <Loading />;
+    }
+
+    return (
+      <>
+        <Header />
+        <AccountInfo />
+        <StockDetails />
+      </>
+    );
+  };
+
+
 
   return (
     <div className="-z-10">
@@ -61,23 +81,7 @@ function IndiaPortfolio() {
 
         <div className="bg-white min-h-[85vh] news-table rounded-2xl">
           <div className="py-5 px-5 flex flex-col rounded-2xl">
-            {fyersAccessToken ? (
-              <div>
-                <Header />
-                <AccountInfo setReady={setAccountInfoReady} />
-                <StockDetails setReady={setStockDetailsReady} />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center">
-                <button
-                  onClick={handleBroker}
-                  className="auth px-4 py-1 mb-4"
-                  disabled={loading}
-                >
-                  {loading ? "Connecting..." : "Connect your Broker"}
-                </button>
-              </div>
-            )}
+            {renderContent()}
           </div>
         </div>
 

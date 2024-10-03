@@ -256,7 +256,12 @@ function AITradingBots() {
   };
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080');
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = process.env.NODE_ENV === 'development'
+      ? 'ws://localhost:8080'
+      : `${wsProtocol}//api.stockgenius.ai`;
+
+    const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
       console.log('WebSocket connected');
       ws.send(JSON.stringify({ type: 'subscribeAllBotsTime', userId: currentUser.id }));
@@ -408,8 +413,8 @@ function AITradingBots() {
                     onToggle={() => handleToggle(bot._id)}
                     updateBotDetails={updateBotDetails}
                     deleteBot={deleteBot}
-                    //                    currentStatus={botStates[bot._id].status}
-                    //                  onUpdateWorkingTime={updateBotWorkingTime}
+                  //                    currentStatus={botStates[bot._id].status}
+                  //                  onUpdateWorkingTime={updateBotWorkingTime}
                   />
                 ))
               ) : (

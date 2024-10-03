@@ -175,7 +175,12 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
   // }, [currentStatus, botData._id, updateBotTime]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080');
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = process.env.NODE_ENV === 'development'
+      ? 'ws://localhost:8080'
+      : `${wsProtocol}//api.stockgenius.ai`
+
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       console.log('WebSocket connected');
@@ -266,7 +271,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
       value: `${apiBotData.dynamicData?.[0]?.percentageGain ||
         botData.dynamicData[0]?.percentageGain ||
         "0"
-          }%`,
+        }%`,
       valueColor: "white",
     },
     {
@@ -559,7 +564,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
           // Set cutoff times using moment
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-          const cutoffEnd = now.clone().set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
+          const cutoffEnd = now.clone().set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:30 AM IST
 
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
