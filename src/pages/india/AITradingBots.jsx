@@ -55,6 +55,8 @@ function AITradingBots() {
   const [confirmationAction, setConfirmationAction] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   // const { botTimes, formatTime } = useBotTime();
+  const [isInitialLoading, setIsInitialLoading] = useState(true); // New state for initial loading
+  const [togglingBotId, setTogglingBotId] = useState(null);
 
   const [allBotsTime, setAllBotsTime] = useState({
     totalTodaysBotTime: 0,
@@ -67,7 +69,9 @@ function AITradingBots() {
   const { funds = { fund_limit: [{}] } } = useData();
 
   const fetchBots = useCallback(async () => {
-    setIsLoading(true);
+    if (!currentUser.id) return;
+
+    setIsInitialLoading(true); // Only set loading on initial fetch
     try {
       const response = await api.get(
         `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`
@@ -89,7 +93,7 @@ function AITradingBots() {
     } catch (error) {
       console.error("Error fetching bots:", error);
     } finally {
-      setIsLoading(false);
+      setIsInitialLoading(false);
     }
   }, [currentUser.id]);
 
@@ -201,6 +205,8 @@ function AITradingBots() {
       return;
     }
 
+    setTogglingBotId(botId);
+
     try {
       const bot = botDataList.find((b) => b._id === botId);
       const currentStatus = bot.dynamicData[0]?.status;
@@ -230,12 +236,14 @@ function AITradingBots() {
         },
       }));
 
-      fetchBots(); // Refetch bots to get updated data
+      await fetchBots(); // Refetch bots to get updated data
     } catch (error) {
       console.error("Error toggling bot status:", error);
       setTitle("Error");
       setMessage("Failed to update bot status. Please try again.");
       setConfirmationOpen(true);
+    } finally {
+      setTogglingBotId(null);
     }
   };
 
@@ -264,8 +272,11 @@ function AITradingBots() {
 
     const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
-      console.log('WebSocket connected');
-      ws.send(JSON.stringify({ type: 'subscribeAllBotsTime', userId: currentUser.id }));
+      console.log('WebSocket connected for all bots time');
+      ws.send(JSON.stringify({
+        type: 'subscribeAllBotsTime',
+        userId: currentUser.id
+      }));
     };
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -277,10 +288,10 @@ function AITradingBots() {
       }
     };
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error('WebSocket error for all bots time:', error);
     };
     ws.onclose = () => {
-      console.log('WebSocket disconnected');
+      console.log('WebSocket disconnected for all bots time');
     };
     return () => {
       ws.close();
@@ -405,7 +416,11 @@ function AITradingBots() {
 
           <div className="p-4 overflow-scroll max-h-[60vh]">
             <div className="flex flex-col gap-10">
-              {botDataList.length > 0 ? (
+              {isInitialLoading ? ( // Only show loading on initial fetch
+                <div className="w-full flex justify-center items-center min-h-[200px]">
+                  <Loading />
+                </div>
+              ) : botDataList.length > 0 ? (
                 botDataList.map((bot) => (
                   <Bot
                     key={bot._id}
@@ -414,8 +429,7 @@ function AITradingBots() {
                     onToggle={() => handleToggle(bot._id)}
                     updateBotDetails={updateBotDetails}
                     deleteBot={deleteBot}
-                  //                    currentStatus={botStates[bot._id].status}
-                  //                  onUpdateWorkingTime={updateBotWorkingTime}
+                    loading={togglingBotId === bot._id} // Pass loading state to individual bot
                   />
                 ))
               ) : (

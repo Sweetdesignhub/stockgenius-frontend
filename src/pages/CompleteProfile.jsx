@@ -21,6 +21,7 @@ const CompleteProfile = () => {
   const [userData, setUserData] = useState({});
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -56,6 +57,7 @@ const CompleteProfile = () => {
 
   const onSubmit = async (data) => {
     setIsLoading(true);
+    setError(null); // Clear previous errors
     const fdata = { email, ...data };
     try {
       const response = await api.patch(
@@ -67,6 +69,7 @@ const CompleteProfile = () => {
       setStep(3);
     } catch (error) {
       console.error('Signup Error:', error);
+      setError(error.response?.data?.message || 'An error occurred during signup');
     } finally {
       setIsLoading(false);
     }
@@ -129,14 +132,19 @@ const CompleteProfile = () => {
     );
   } else if (step === 3) {
     return (
-      <VerificationForm
-        onValidSubmit={handleValidSubmit}
-        step={3}
-        userData={userData}
-        setUserData={setUserData}
-        label='Enter Phone Verification Code'
-        verificationType='phone'
-      />
+      <>
+        <VerificationForm
+          onValidSubmit={handleValidSubmit}
+          onError={(errorMessage) => setError(errorMessage)}
+          step={3}
+          userData={userData}
+          setUserData={setUserData}
+          label='Enter Phone Verification Code'
+          verificationType='phone'
+          setIsLoading={setIsLoading}
+        />
+        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+      </>
     );
   }
 };

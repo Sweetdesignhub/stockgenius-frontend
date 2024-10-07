@@ -83,6 +83,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
     todaysBotTime: 0,
     currentWeekTime: 0,
   });
+  const [isHistoricalBot, setIsHistoricalBot] = useState(false);
 
   // Get today's date in YYYY-MM-DD format
   const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
@@ -175,43 +176,64 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
   // }, [currentStatus, botData._id, updateBotTime]);
 
   useEffect(() => {
+    const today = moment().tz("Asia/Kolkata").startOf("day");
+    const botCreatedDate = moment(botData.createdAt)
+      .tz("Asia/Kolkata")
+      .startOf("day");
+    const isCreatedToday = botCreatedDate.isSame(today);
+
+    if (!isCreatedToday) {
+      setIsHistoricalBot(true);
+      // Set initial historical values
+      setBotTime({
+        workingTime: parseInt(botData.dynamicData[0]?.workingTime || 0),
+        todaysBotTime: 0, // Historical bots don't have today's time
+        currentWeekTime: parseInt(botData.dynamicData[0]?.currentWeekTime || 0),
+      });
+      return; // Don't set up WebSocket for historical bots
+    }
+
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     // const wsUrl = process.env.NODE_ENV === 'development'
     //   ? 'ws://localhost:8080'
-    //   : `${wsProtocol}//api.stockgenius.ai`
+    //   : `${wsProtocol}//api.stockgenius.ai`;
 
-    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
+         const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log('WebSocket connected');
+      console.log('WebSocket connected for bot:', botData._id);
       ws.send(JSON.stringify({ type: 'subscribeBotTime', botId: botData._id }));
     };
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'botTime') {
+        if (data.isHistorical) {
+          setIsHistoricalBot(true);
+          ws.close();
+        }
         setBotTime({
-          workingTime: data.workingTime,
-          todaysBotTime: data.todaysBotTime,
-          currentWeekTime: data.currentWeekTime,
+          workingTime: parseInt(data.workingTime || 0),
+          todaysBotTime: parseInt(data.todaysBotTime || 0),
+          currentWeekTime: parseInt(data.currentWeekTime || 0),
         });
       }
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error('WebSocket error for bot:', botData._id, error);
     };
 
     ws.onclose = () => {
-      console.log('WebSocket disconnected');
+      console.log('WebSocket disconnected for bot:', botData._id);
     };
 
     return () => {
       ws.close();
     };
-  }, [botData._id]);
+  }, [botData._id, botData.createdAt]);
 
   const formatTime = useCallback((seconds) => {
     if (isNaN(seconds) || seconds < 0) {
@@ -723,20 +745,12 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
     // setBots(bots.filter((bot) => bot.botId !== botId)); // For demonstration purposes, it removes the bot from state.
   };
 
-  if (loading) {
+  if (loading || !apiBotData || !apiBotData.dynamicData || apiBotData.dynamicData.length === 0) {
     return (
-      <div>
+      <div className="w-full flex justify-center items-center">
         <Loading />
       </div>
     );
-  }
-
-  if (
-    !apiBotData ||
-    !apiBotData.dynamicData ||
-    apiBotData.dynamicData.length === 0
-  ) {
-    return <div>Error: Bot data is missing or empty</div>;
   }
 
   return (

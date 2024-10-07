@@ -142,6 +142,9 @@ function SignIn() {
   const [showOTP, setShowOTP] = useState(false);
   const [isPhoneNumber, setIsPhoneNumber] = useState(false);
   const [selectedCountryCode, setSelectedCountryCode] = useState('+91'); // Default to IN
+  // New states for OTP resend functionality
+  const [canResendOTP, setCanResendOTP] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
 
   // State to manage the selected country
   // const [selectedCountry, setSelectedCountry] = useState("");
@@ -164,6 +167,18 @@ function SignIn() {
     };
   }, [dispatch]);
 
+  // New useEffect for handling the resend timer
+  useEffect(() => {
+    let timer;
+    if (otpSent && resendTimer > 0 && !canResendOTP) {
+      timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+    } else if (otpSent && resendTimer === 0 && !canResendOTP) {
+      setCanResendOTP(true);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer, canResendOTP, otpSent]);
+
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData(prevData => ({ ...prevData, [id]: value }));
@@ -180,6 +195,32 @@ function SignIn() {
   //   console.log(e.target.value);
   //   setSelectedCountry(e.target.value);
   // };
+
+  // New function to handle OTP resend
+
+  const handleResendOTP = async () => {
+    try {
+      setLoad(true);
+      let submissionData = { ...formData };
+      if (isPhoneNumber) {
+        submissionData.identifier = `${selectedCountryCode}${formData.identifier}`;
+      }
+
+      const response = await api.post('/api/v1/auth/login', {
+        ...submissionData,
+        useOTP: true
+      });
+
+      // Reset the timer and disable resend button
+      setResendTimer(60);
+      setCanResendOTP(false);
+
+    } catch (error) {
+      dispatch(signInFailure(error.response?.data?.message || error.message || 'Failed to resend OTP'));
+    } finally {
+      setLoad(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -219,6 +260,9 @@ function SignIn() {
 
         if (useOTP) {
           setOtpSent(true);
+          // Initialize the resend timer when OTP is first sent
+          setResendTimer(60);
+          setCanResendOTP(false);
         } else if (data.success === false) {
           dispatch(signInFailure(data.message));
           return;
@@ -358,6 +402,21 @@ function SignIn() {
                 )}
               </button>
             </div>
+            {/* New resend OTP section */}
+            {canResendOTP ? (
+              <button
+                type='button'
+                onClick={handleResendOTP}
+                className='mt-2 text-blue-500 hover:text-blue-600 text-sm font-medium'
+                disabled={load}
+              >
+                Resend OTP
+              </button>
+            ) : (
+              <p className='mt-2 text-sm text-gray-500'>
+                Resend OTP in <span className="text-[#FFFFFF] font-medium">{resendTimer}</span> seconds
+              </p>
+            )}
           </div>
         )}
 
