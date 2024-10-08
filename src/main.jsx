@@ -27,6 +27,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import AuthProvider from "./contexts/AuthProvider";
 import { store, persistor } from "./redux/store";
 import { DataProvider } from "./contexts/FyersDataContext";
+import { ZerodhaDataProvider } from "./contexts/ZerodhaDataContext";
 // import { BotTimeProvider } from "./contexts/BotTimeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -36,13 +37,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <BrowserRouter>
           <AuthProvider>
             <DataProvider>
-              {/* <BotTimeProvider> */}
-              <GoogleOAuthProvider
-                clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-              >
-                <App />
-              </GoogleOAuthProvider>
-              {/* </BotTimeProvider> */}
+              <ZerodhaDataProvider>
+                {/* <BotTimeProvider> */}
+                <GoogleOAuthProvider
+                  clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+                >
+                  <App />
+                </GoogleOAuthProvider>
+                {/* </BotTimeProvider> */}
+              </ZerodhaDataProvider>
             </DataProvider>
           </AuthProvider>
         </BrowserRouter>

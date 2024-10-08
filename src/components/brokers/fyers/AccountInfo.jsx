@@ -1,6 +1,6 @@
 import React from 'react';
-import Cards from './Cards.jsx';
 import { useData } from '../../../contexts/FyersDataContext.jsx';
+import Cards from '../Cards.jsx';
 
 function AccountInfo() {
   const {
