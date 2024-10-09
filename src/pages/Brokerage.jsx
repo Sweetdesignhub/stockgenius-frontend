@@ -1,68 +1,74 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import api from "../config";
 import BrokerDetails from "../components/brokers/BrokerDetails";
-import { useNavigate } from "react-router-dom";
+import { useZerodhaData } from "../contexts/ZerodhaDataContext";
+import { useData } from "../contexts/FyersDataContext";
+import Loading from "../components/common/Loading";
 
 const Brokerage = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const { profile: fyersProfile = {} } = useData(); 
+  const { profile: zerodhaProfile = {} } = useZerodhaData(); 
   const [brokerDetails, setBrokerDetails] = useState(null);
-
-  console.log(brokerDetails);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (currentUser) {
-      loadBrokerDetails(currentUser.id);
+      loadBrokerDetails();
     }
-  }, [currentUser]);
+  }, [currentUser, fyersProfile, zerodhaProfile]);
 
-  const loadBrokerDetails = async () => {
+  const loadBrokerDetails = () => {
+    setLoading(true);
+    setError("");
+
     try {
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      if (currentUser && fyersAccessToken) {
-        const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-        const response = await api.get(
-          `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
-          { headers }
-        );
-        const data = response.data[0];
-        setBrokerDetails(data.profile);
+      const zerodhaAccessToken = localStorage.getItem("zerodha_access_token");
+
+      if (fyersAccessToken) {
+        setBrokerDetails(fyersProfile); // Use Fyers profile from the context
+      } else if (zerodhaAccessToken) {
+        setBrokerDetails(zerodhaProfile); // Use Zerodha profile from the context
+      } else {
+        setError("No broker details found.");
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    } catch (err) {
+      console.error("Error fetching broker details:", err);
+      setError("Failed to load broker details. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // const handleUpdate = async (id, formData) => {
-  //   try {
-  //     await api.put(`/api/v1/fyers/updateFyersCredentials/${id}`, formData);
-  //     loadBrokerDetails(currentUser.id);
-  //     window.alert('Successfully updated credentials!');
-  //   } catch (error) {
-  //     console.error('Error updating broker credentials:', error);
-  //   }
-  // };
-
-  const handleDelete = async (id) => {
-    console.log("hanlde delete");
+  const handleBrokerDelete = async (id) => {
+    console.log("Broker delete initiated:", id);
   };
 
-  const handleConnect = async () => {
-    console.log("clicked handle click");
+  const handleBrokerConnect = async () => {
+    console.log("Broker connect initiated.");
   };
 
   return (
     <div className="p-6">
-      {!brokerDetails ? (
+      {loading ? (
+        <div className="text-center">
+          <Loading />
+        </div>
+      ) : error ? (
+        <div className="text-center text-red-500">
+          <p>{error}</p>
+        </div>
+      ) : !brokerDetails ? (
         <div className="text-center">
           <p>No brokers connected. Connect your broker.</p>
         </div>
       ) : (
         <BrokerDetails
           credentials={brokerDetails}
-          // onUpdate={handleUpdate}
-          // onDelete={handleDelete}
-          // onConnect={handleConnect}
+          onDelete={handleBrokerDelete}
+          onConnect={handleBrokerConnect}
         />
       )}
     </div>

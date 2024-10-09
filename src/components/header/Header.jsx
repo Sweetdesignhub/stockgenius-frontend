@@ -23,6 +23,7 @@ import Select from 'react-select';
 import Flag from 'react-world-flags';
 import { setMarket } from '../../redux/region/marketSlice';
 import { clearFyersAccessToken } from '../../redux/brokers/fyersSlice';
+import { clearZerodhaAccessToken } from '../../redux/brokers/zerodhaSlice';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -121,6 +122,7 @@ export default function Header() {
       await api.post('/api/v1/auth/sign-out');
       dispatch(clearRegion());
       dispatch(clearFyersAccessToken());
+      dispatch(clearZerodhaAccessToken());
       dispatch(signOut());
     } catch (error) {
       console.error(error);

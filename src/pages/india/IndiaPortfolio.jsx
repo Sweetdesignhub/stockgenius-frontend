@@ -6,12 +6,27 @@ import BrokerModal from "../../components/brokers/BrokerModal";
 import { useSelector } from "react-redux";
 import Loading from "../../components/common/Loading";
 import { useData } from "../../contexts/FyersDataContext";
+import ZerodhaAccountInfo from "../../components/brokers/zerodha/ZerodhaAccountInfo";
+import ZerodhaStockDetails from "../../components/brokers/zerodha/portfolio/ZerodhaStockDetails";
+import { useZerodhaData } from "../../contexts/ZerodhaDataContext";
 
 function IndiaPortfolio() {
   const fyersAccessToken = useSelector((state) => state.fyers);
-  // console.log('porfolio access token : ', fyersAccessToken);
-  const [brokerModalOpen, setBrokerModalOpen] = useState(!fyersAccessToken);
-  const { profile, holdings, funds, positions, trades, orders, loading } = useData();
+  const zerodhaAccessToken = useSelector((state) => state.zerodha); // Corrected selector for Zerodha
+
+  // If no access token, show broker modal to prompt user to connect a broker
+  const [brokerModalOpen, setBrokerModalOpen] = useState(!fyersAccessToken && !zerodhaAccessToken);
+
+  // Choose broker data based on the available access token
+  const isFyersActive = Boolean(fyersAccessToken);
+  const isZerodhaActive = Boolean(zerodhaAccessToken && !fyersAccessToken); // Zerodha will only activate if Fyers is not available
+
+  // Data fetching for either Fyers or Zerodha based on the active broker
+  const fyersData = isFyersActive ? useData() : {};
+  const zerodhaData = isZerodhaActive ? useZerodhaData() : {};
+
+  const { profile, holdings, funds, positions, trades, orders, loading } = isFyersActive ? fyersData : zerodhaData;
+
   const [isContentReady, setIsContentReady] = useState(false);
 
   useEffect(() => {
@@ -20,13 +35,12 @@ function IndiaPortfolio() {
     } else {
       setIsContentReady(false);
     }
-  }, [loading, profile, holdings, funds, positions, trades, orders,]);
+  }, [loading, profile, holdings, funds, positions, trades, orders]);
 
   const handleBroker = () => {
-    if (!fyersAccessToken) {
+    if (!fyersAccessToken && !zerodhaAccessToken) {
       setBrokerModalOpen(true);
       console.log("First connect to your broker to start auto trade feature.");
-      //      setLoading(false); // Set to true when actual connection logic is implemented
     }
   };
 
@@ -35,13 +49,10 @@ function IndiaPortfolio() {
   };
 
   const renderContent = () => {
-    if (!fyersAccessToken) {
+    if (!fyersAccessToken && !zerodhaAccessToken) {
       return (
         <div className="flex flex-col items-center justify-center">
-          <button
-            onClick={handleBroker}
-            className="auth px-4 py-1 mb-4"
-          >
+          <button onClick={handleBroker} className="auth px-4 py-1 mb-4">
             Connect your Broker
           </button>
         </div>
@@ -54,14 +65,22 @@ function IndiaPortfolio() {
 
     return (
       <>
-        <Header />
-        <AccountInfo />
-        <StockDetails />
+        {isFyersActive ? (
+          <div>
+            <Header />
+            <AccountInfo />
+            <StockDetails />
+          </div>
+        ) : (
+          <div>
+            <Header />
+            <ZerodhaAccountInfo />
+            <ZerodhaStockDetails />
+          </div>
+        )}
       </>
     );
   };
-
-
 
   return (
     <div className="-z-10">

@@ -80,8 +80,13 @@ export function ZerodhaDataProvider({ children }) {
                     { headers }
                 );
 
+                console.log(response.data[0].holdings);
+                
+
                 if (response.data && response.data.length > 0) {
                     const data = response.data[0];
+                    // console.log(data);
+                    
 
                     setProfile(data.profile || null);
                     // Transform funds data to match Fyers structure
