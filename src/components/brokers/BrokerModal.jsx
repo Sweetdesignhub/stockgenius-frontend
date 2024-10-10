@@ -160,6 +160,39 @@ const BrokerModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleFyersAuth = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(
+        `/api/v1/fyers/generateAuthCodeUrl/${currentUser.id}`
+      );
+      const { authCodeURL } = response.data;
+      window.location.href = authCodeURL;
+    } catch (error) {
+      console.error('Failed to retrieve Fyers auth URL:', error);
+      setError('Failed to retrieve Fyers auth URL');
+      setLoading(false);
+    }
+  };
+
+  const handleZerodhaAuth = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(
+        `/api/v1/zerodha/generateAuthCodeUrl/${currentUser.id}`
+      );
+      const { authCodeURL } = response.data;
+      window.location.href = authCodeURL;
+    } catch (error) {
+      console.error('Failed to retrieve Zerodha auth URL:', error);
+      setError('Failed to retrieve Zerodha auth URL');
+      setLoading(false);
+    }
+  };
+
+
+  
+
   const handleAuthenticate = () => {
     if (selectedOption === "Fyers") {
       handleFyersAuth();
@@ -184,12 +217,12 @@ const BrokerModal = ({ isOpen, onClose }) => {
           <div className="flex justify-center items-center">
             {selectedOption === "Fyers" && (
               <div className="mr-3">
-                <img loading="lazy" src="Fyers_Logo_URL" alt="Fyers" />
+                <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F591d0894639c46fd9029293cbe823d89" alt="Fyers" />
               </div>
             )}
             {selectedOption === "Zerodha" && (
               <div className="mr-3">
-                <img loading="lazy" src="Zerodha_Logo_URL" alt="Zerodha" />
+                <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd314830a17a84ee5956be4ca2cee3c5a" alt="Zerodha" />
               </div>
             )}
           </div>
