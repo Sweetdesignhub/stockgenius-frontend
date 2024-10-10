@@ -60,7 +60,7 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (fundsData.length > 0) {
-      const excludedColumns = ["message", "pan", "holdingType"];
+      const excludedColumns = [];
       const allColumnNames = Object.keys(fundsData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );

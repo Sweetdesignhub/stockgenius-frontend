@@ -63,7 +63,7 @@ const OrdersTable = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (ordersData.length > 0) {
-      const excludedColumns = ["message", "pan"];
+      const excludedColumns = [];
       const allColumnNames = Object.keys(ordersData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );

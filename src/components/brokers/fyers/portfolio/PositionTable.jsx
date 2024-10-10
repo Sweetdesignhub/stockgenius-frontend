@@ -72,7 +72,7 @@ const PositionsTable = ({
 
   useEffect(() => {
     if (positionsData.length > 0) {
-      const excludedColumns = ["message", "pan"];
+      const excludedColumns = [];
       const allColumnNames = Object.keys(positionsData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );

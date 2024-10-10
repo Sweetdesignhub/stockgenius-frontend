@@ -63,7 +63,7 @@ const TradesTable = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (tradesData.length > 0) {
-      const excludedColumns = ["message", "pan"];
+      const excludedColumns = [];
       const allColumnNames = Object.keys(tradesData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
