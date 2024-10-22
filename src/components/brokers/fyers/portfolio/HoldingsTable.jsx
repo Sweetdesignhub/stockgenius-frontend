@@ -65,7 +65,7 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (holdingsData.length > 0) {
-      const excludedColumns = ["message", "pan"];
+      const excludedColumns = [];
       const allColumnNames = Object.keys(holdingsData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
