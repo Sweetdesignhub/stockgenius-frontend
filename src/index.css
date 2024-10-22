@@ -113,6 +113,14 @@ body {
   background: #ffffff;
 }
 
+.bg-gradient {
+  background: linear-gradient(180deg, #CCD7FF 25%, #FFFFFF 100%);
+}
+
+.bg-white {
+  background: #ffffff;
+}
+
 .table-main {
   background: #ccd7ff40;
   border: 0.75px solid #ffffff1a;

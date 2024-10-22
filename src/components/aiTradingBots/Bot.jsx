@@ -43,7 +43,7 @@ const TradeRatioBar = ({ ratio }) => {
   );
 };
 
-function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
+function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color }) {
   const {
     holdings = {},
     funds = { fund_limit: [{}] },
@@ -68,6 +68,20 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
   const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
 
   const currentStatus = apiBotData.dynamicData?.[0]?.status || "Schedule";
+
+  const { theme } = useTheme();
+  const valueColor = theme === "dark" ? "white" : "black";
+
+  // Function to convert hex to RGB
+  const hexToRGB = (hex) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `${r},${g},${b}`;
+  };
+
+  // Generate a unique ID for the filter
+  const filterId = `color-filter-${botData._id}`;
 
   // const { botTimes, updateBotTime, formatTime } = useBotTime();
   // // Use botTimes from context
@@ -255,7 +269,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
     {
       title: "Profit Gained",
       value: profitGainedValue,
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Working Time",
@@ -265,7 +279,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
       //   botData.dynamicData[0]?.workingTime ||
       //   "0"
       // } hours`,
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Total Balance",
@@ -273,22 +287,22 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
         createdAt === today
           ? availableFunds
           : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Scheduled",
       value: moment(apiBotData.createdAt || botData.createdAt)
         .tz("Asia/Kolkata")
         .format("D MMM, h:mm a"),
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Number of Trades",
       value:
         createdAt === today
-          ? trades.tradeBook?.length || 0
+          ? trades?.tradeBook?.filter(trade => trade.productType === botData.productType)?.length || 0
           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Percentage Gain",
@@ -296,15 +310,15 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
         botData.dynamicData[0]?.percentageGain ||
         "0"
         }%`,
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Reinvestment",
       value:
         createdAt === today
-          ? orders.orderBook?.length || 0
+          ? orders?.orderBook?.filter(order => order.productType === botData.productType)?.length || 0
           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Limits",
@@ -312,7 +326,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
         botData.dynamicData[0]?.limits?.toLocaleString() ||
         "0"
         }`,
-      valueColor: "white",
+      valueColor,
     },
     {
       title: "Status",
@@ -692,8 +706,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
     setConfirmationModalOpen(false);
   };
 
-  const { theme } = useTheme();
-
   const darkThemeStyle = {
     boxShadow:
       "0px 9.67px 29.02px 0px #497BFFB2 inset, 0px 9.67px 38.7px 0px #3F4AAF80",
@@ -705,14 +717,11 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
       "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
   };
 
-  const lightThemeStyle = {
-    background:
-      "linear-gradient(180deg, rgba(150, 150, 150, 0.8) 0%, rgba(120, 120, 120, 1) 100%), " +
-      "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
-  };
-
-
-
+  // const lightThemeStyle = {
+  //   background:
+  //     "linear-gradient(180deg, rgba(150, 150, 150, 0.8) 0%, rgba(120, 120, 120, 1) 100%), " +
+  //     "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
+  // };
 
   // Handle Edit function - triggered when a bot is edited
   const handleEditBot = async (botId) => {
@@ -755,26 +764,39 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot }) {
 
   return (
     <div
-      style={theme === 'dark' ? darkThemeStyle : lightThemeStyle}
+      style={theme === 'dark' ? darkThemeStyle : { backgroundColor: '#FFFFFF' }}
       className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
     >
+
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <filter id={filterId}>
+          <feFlood floodColor={color} result="flood" />
+          <feComposite in="SourceGraphic" in2="flood" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
+        </filter>
+      </svg>
+
       <div className="flex flex-col items-center lg:items-start lg:w-1/4 w-full">
         <div className="flex items-center">
-          <h1 className="mr-2">{botData.name}</h1>
-          <img src={botData.image} alt={`${botData.name} logo`} className="" />
+          <h1 className="mr-4 font-bold" style={{ color: color }}>{botData.name}</h1>
+          <img
+            src={botData.image}
+            alt={`${botData.name} logo`}
+            className=""
+            style={{ filter: `url(#${filterId})`, width: '20px', height: '20px' }} // Apply SVG filter and set dimensions
+          />
         </div>
         <div className="py-6 text-center lg:text-left">
           <div className="flex justify-center lg:justify-start">
-            <h3 className="font-semibold text-md mr-2 text-[#63ECFF]">
+            <h3 className="font-semibold text-md mr-2 text-[#16C8FA]">
               Profit % : <span>{botData.profitPercentage}</span>
             </h3>
-            <h3 className="font-semibold text-md text-[#FBFF4E]">
+            <h3 className="font-semibold text-md text-[#FFC218]">
               Risk % : <span>{botData.riskPercentage}</span>
             </h3>
           </div>
-          <h3 className="text-sm text-[#FFA8A8]">{botData.market}</h3>
+          <h3 className="text-sm text-[#FF1010]">{botData.market}</h3>
           {/* <p className="text-[10px] mt-1 text-[#A6B2CD]">{botData.timestamp}</p> */}
-          <p className="text-sm mt-2 text-[#63ECFF]">
+          <p className="text-sm mt-2 text-[#FF9800]">
             Product Type: {botData.productType}
           </p>
         </div>

@@ -15,6 +15,13 @@ import {
 // import { useBotTime } from "../../contexts/BotTimeContext";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../../components/common/Loading";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useLocation } from 'react-router-dom';
+
+// Define an array of colors for the bots
+const botColors = [
+  "#F62024", "#F6208F", "#208FF6", "#20F6F6", "#8FF620", "#F6F620", "#F68F20", "#20F68F"
+];
 
 const getBotStatus = (isActive) => {
   if (isAfterMarketClose()) {
@@ -29,17 +36,27 @@ const getBotStatus = (isActive) => {
 };
 
 function Cards({ title, value }) {
-  return (
-    <div
-      className="border-[0.1px] rounded-xl py-4 px-1 flex flex-col justify-center"
-      style={{
+
+  const { theme } = useTheme();
+
+  const backgroundStyle =
+    theme === "dark"
+      ? {
         backgroundImage:
           "linear-gradient(180deg, rgba(46, 51, 90, 0.1) 0%, rgba(28, 27, 51, 0.02) 100%), " +
           "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
-      }}
+      }
+      : {
+        backgroundColor: "white",
+      };
+
+  return (
+    <div
+      className="border-[0.1px] rounded-xl py-4 px-1 flex flex-col justify-center"
+      style={backgroundStyle}
     >
       <h1 className="text-sm text-end">{title}</h1>
-      <h1 className="font-bold text-lg text-end text-[#15DE73]">{value}</h1>
+      <h1 className="font-bold text-lg text-end text-[#37DD1C]">{value}</h1>
     </div>
   );
 }
@@ -58,6 +75,10 @@ function AITradingBots() {
   const [isInitialLoading, setIsInitialLoading] = useState(true); // New state for initial loading
   const [togglingBotId, setTogglingBotId] = useState(null);
 
+  const [botColorMap, setBotColorMap] = useState({});
+  const location = useLocation();
+  const isAITradingPage = location.pathname === '/india/AI-Trading-Bots';
+
   const [allBotsTime, setAllBotsTime] = useState({
     totalTodaysBotTime: 0,
     totalCurrentWeekTime: 0
@@ -66,7 +87,7 @@ function AITradingBots() {
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
 
-  const { funds = { fund_limit: [{}] } } = useData();
+  const { holdings = {}, positions = { overall: {} }, orders = { orderBook: [] } } = useData();
 
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;
@@ -90,6 +111,14 @@ function AITradingBots() {
           return acc;
         }, {})
       );
+
+      // Assign colors to bots
+      const colorMap = {};
+      sortedBots.forEach((bot, index) => {
+        colorMap[bot._id] = botColors[index % botColors.length];
+      });
+      setBotColorMap(colorMap);
+
     } catch (error) {
       console.error("Error fetching bots:", error);
     } finally {
@@ -312,68 +341,97 @@ function AITradingBots() {
     const today = moment().tz("Asia/Kolkata").startOf("day");
     const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
 
-    let todayProfit = 0;
-    let weekProfit = 0;
-    let totalInvestment = 0;
-    let totalProfit = 0;
-    let reInvestments = 0;
-    // let totalTodaysBotTime = 0;
-    // let totalCurrentWeekBotTime = 0;
+    // Initialize accumulators
+    let todayTotalInvestment = 0;
+    let todayTotalProfit = 0;
+    let weekTotalInvestment = 0;
+    let weekTotalProfit = 0;
+    let todayReInvestments = 0;
 
     botDataList.forEach((bot) => {
-      const botCreatedAt = moment(bot.createdAt);
-      const profitGained =
-        funds?.fund_limit?.find((item) => item.id === 4)?.equityAmount || 0;
-      const investmentAmount =
-        funds?.fund_limit?.find((item) => item.id === 2)?.equityAmount || 0;
+      const botCreatedAt = moment(bot.createdAt).tz("Asia/Kolkata");
 
+      // Get the bot's profit and investment amounts
+      let profitAmount = 0;
+      let investmentAmount = 0;
+      let reInvestmentCount = 0;
+
+      if (bot.productType === "INTRADAY") {
+        // For intraday bots, use positions data
+        profitAmount = positions?.overall?.pl_total || 0;
+        investmentAmount = positions?.overall?.buyVal || 0;
+        reInvestmentCount = orders?.orderBook?.filter(order =>
+          moment(order.orderDateTime).isSame(today, "day") &&
+          order.productType === "INTRADAY"
+        ).length || 0;
+      } else if (bot.productType === "CNC") {
+        // For CNC bots, use holdings data
+        profitAmount = holdings?.overall?.total_pl || 0;
+        investmentAmount = holdings?.overall?.total_investment || 0;
+        reInvestmentCount = orders?.orderBook?.filter(order =>
+          moment(order.orderDateTime).isSame(today, "day") &&
+          order.productType === "CNC"
+        ).length || 0;
+      }
+
+      // Calculate metrics for today's bots
       if (botCreatedAt.isSame(today, "day")) {
-        todayProfit += profitGained;
+        todayTotalInvestment += investmentAmount;
+        todayTotalProfit += profitAmount;
+        todayReInvestments += reInvestmentCount;
       }
 
+      // Calculate metrics for this week's bots
       if (botCreatedAt.isSameOrAfter(startOfWeek)) {
-        weekProfit += profitGained;
+        weekTotalInvestment += investmentAmount;
+        weekTotalProfit += profitAmount;
       }
-
-      totalInvestment += investmentAmount;
-      totalProfit += profitGained;
-      reInvestments += parseInt(bot.dynamicData?.[0]?.reInvestment || 0);
-
-      // // Sum up the bot times from the context
-      // const botTime = botTimes[bot._id] || {
-      //   todaysBotTime: 0,
-      //   currentWeekTime: 0,
-      // };
-      // totalTodaysBotTime += botTime.todaysBotTime;
-      // totalCurrentWeekBotTime += botTime.currentWeekTime;
     });
 
+    // Calculate percentages
     const calculatePercentage = (profit, investment) => {
-      if (investment === 0) return "0.00%";
-      const percentage = (profit / investment) * 100;
-      return isNaN(percentage) ? "0.00%" : `${percentage.toFixed(2)}%`;
+      if (investment === 0) return 0;
+      return (profit / investment) * 100;
     };
 
-    const todayProfitPercentage = calculatePercentage(
-      todayProfit,
-      totalInvestment
-    );
-    const weekProfitPercentage = calculatePercentage(
-      weekProfit,
-      totalInvestment
-    );
+    const todayProfitPercentage = calculatePercentage(todayTotalProfit, todayTotalInvestment);
+    const weekProfitPercentage = calculatePercentage(weekTotalProfit, weekTotalInvestment);
 
     return [
-      { title: "Today's Profit %", value: todayProfitPercentage },
-      { title: "Last Week Profit %", value: weekProfitPercentage },
-      { title: "Today's Bot Time", value: formatTime(allBotsTime.totalTodaysBotTime) },
-      { title: "Week's Bot Time", value: formatTime(allBotsTime.totalCurrentWeekTime) },
-      { title: "No. of AI Bots", value: botDataList.length.toString() },
-      { title: "Re-investments", value: reInvestments.toString() },
-      { title: "Total Investment", value: totalInvestment.toFixed(2) },
-      { title: "Total Profit", value: totalProfit.toFixed(2) },
+      {
+        title: "Today's Profit %",
+        value: `${todayProfitPercentage.toFixed(2)}%`
+      },
+      {
+        title: "Last Week Profit %",
+        value: `${weekProfitPercentage.toFixed(2)}%`
+      },
+      {
+        title: "Today's Bot Time",
+        value: formatTime(allBotsTime.totalTodaysBotTime)
+      },
+      {
+        title: "Week's Bot Time",
+        value: formatTime(allBotsTime.totalCurrentWeekTime)
+      },
+      {
+        title: "No. of AI Bots",
+        value: botDataList.length.toString()
+      },
+      {
+        title: "Re-investments",
+        value: todayReInvestments.toString()
+      },
+      {
+        title: "Total Investment",
+        value: todayTotalInvestment.toFixed(2)
+      },
+      {
+        title: "Total Profit",
+        value: todayTotalProfit.toFixed(2)
+      }
     ];
-  }, [botDataList, allBotsTime, formatTime, funds]);
+  }, [botDataList, allBotsTime, formatTime, holdings, positions, orders]);
 
   return (
     <div className="-z-10">
@@ -391,7 +449,10 @@ function AITradingBots() {
           alt="Bear"
         />
 
-        <div className="bg-white lg:min-h-[85vh] news-table rounded-2xl">
+        <div
+          className={`lg:min-h-[85vh] news-table rounded-2xl ${isAITradingPage ? 'bg-gradient' : 'bg-white'
+            }`}
+        >
           <div className="flex flex-col lg:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
               AI Trading Bots
@@ -430,6 +491,7 @@ function AITradingBots() {
                     updateBotDetails={updateBotDetails}
                     deleteBot={deleteBot}
                     loading={togglingBotId === bot._id} // Pass loading state to individual bot
+                    color={botColorMap[bot._id]}
                   />
                 ))
               ) : (
