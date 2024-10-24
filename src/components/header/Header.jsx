@@ -15,6 +15,7 @@ import { MdDashboard } from 'react-icons/md';
 import { FaNewspaper, FaAngleDown } from 'react-icons/fa';
 import { BsRobot } from 'react-icons/bs';
 import { FaBagShopping } from 'react-icons/fa6';
+import { FaListAlt } from "react-icons/fa";
 import ToggleButton from '../common/ToggleButton';
 import { signOut } from '../../redux/user/userSlice';
 import api from '../../config';
@@ -76,6 +77,7 @@ export default function Header() {
       },
       { name: 'Portfolio', to: `/india/portfolio`, icon: FaBagShopping },
       { name: 'AI Trading Bots', to: `/india/AI-Trading-Bots`, icon: BsRobot },
+      { name: 'IPOs', to: `/india/initial-public-offers`, icon: FaListAlt  },
     ];
   } else if (region === 'usa') {
     navigation = [
@@ -283,7 +285,7 @@ export default function Header() {
           </button>
         </div>
         {currentUser ? (
-          <div className='hidden lg:flex lg:gap-x-12'>
+          <div className='hidden lg:flex lg:gap-x-8'>
             {navigation.map((item) => (
               <NavLink
                 key={item.name}

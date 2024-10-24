@@ -94,6 +94,7 @@ import { clearRegion } from './redux/region/regionSlice.js';
 import { clearFyersAccessToken } from './redux/brokers/fyersSlice.js';
 import { signOut } from './redux/user/userSlice.js';
 import SessionExpiredModal from './components/common/SessionExpiredModal';
+import InitialPublicOffers from './pages/india/InitialPublicOffers.jsx';
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -145,6 +146,7 @@ function MainApp() {
             <Route path="/india/profile" element={<Profile />} />
             <Route path="/india/brokerage" element={<Brokerage />} />
             <Route path="/india/AI-Trading-Bots" element={<AITradingBots />} />
+            <Route path="/india/initial-public-offers" element={<InitialPublicOffers/>} />
 
             {/* USA routes */}
             <Route path="/usa/dashboard" element={<UsaDashboard />} />
