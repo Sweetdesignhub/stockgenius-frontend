@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { IoMdInformationCircle } from "react-icons/io";
@@ -7,575 +7,106 @@ import IPOCard from "../../components/initialPublicOffers/IpoCard";
 import SuggestionCard from "../../components/initialPublicOffers/SuggestionCard";
 import { useTheme } from "../../contexts/ThemeContext";
 import IPODetail from "../../components/initialPublicOffers/IpoDetail";
+import api from "../../config";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-// const ipoData = [
-//   {
-//     id: 1,
-//     logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F51a081f5a1884d2689b7be1b7d492fcd",
-//     name: "HYUNDAI",
-//     company: "Hyundai Motor India",
-//     ipoDate: "10th-14th Oct 2024",
-//     listingDate: "17th Oct 2024",
-//     type: "SME",
-//     sentimentScore: "0.07",
-//     decisionRate: "85",
-//     priceRange: "₹110 - ₹116",
-//     minQuantity: "1200",
-//     typeBackground: {
-//       background:
-//         "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-//       borderImageSource:
-//         "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-//       boxShadow:
-//         "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-//     },
-//   },
-//   {
-//     id: 2,
-//     logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F12a2ccc7725642c296132cfab6933acb",
-//     name: "BMW",
-//     company: "Bavarian Motor Works",
-//     ipoDate: "30th Sep -14th Oct 2024",
-//     listingDate: "17th Oct 2024",
-//     type: "DEBT",
-//     sentimentScore: "0.07",
-//     decisionRate: "85",
-//     priceRange: "₹110 - ₹116",
-//     minQuantity: "1200",
-//     typeBackground: {
-//       background:
-//         "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #882776 132.95%)",
-//       borderImageSource: `linear-gradient(180deg, rgba(136, 39, 118, 0.4) 17.19%, rgba(251, 98, 241, 0.77) 100%)`,
-//       boxShadow: `inset 0px 8.97px 26.92px 0px #FF49F3B2, 0px 8.97px 35.9px 0px #AF3FA080`,
-//     },
-//   },
-//   {
-//     id: 3,
-//     logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F845d206e55f14eea9cf74739a2b7c702",
-//     name: "MCD",
-//     company: "McDonald’s Corp",
-//     ipoDate: "29th Sep -1Oth Oct 2024",
-//     listingDate: "16th Oct 2024",
-//     type: "SME",
-//     sentimentScore: "0.07",
-//     decisionRate: "85",
-//     priceRange: "₹110 - ₹116",
-//     minQuantity: "1200",
-//     typeBackground: {
-//       background:
-//         "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-//       borderImageSource:
-//         "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-//       boxShadow:
-//         "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-//     },
-//   },
-//   {
-//     id: 4,
-//     logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9aaa5d2c8a6b413398661bb7192e8400",
-//     name: "GPRO",
-//     company: "GoPro Inc.",
-//     ipoDate: "28th Sep -12th Oct 2024",
-//     listingDate: "15th Oct 2024",
-//     type: "EQUITY",
-//     sentimentScore: "0.07",
-//     decisionRate: "85",
-//     priceRange: "₹110 - ₹116",
-//     minQuantity: "1200",
-//     typeBackground: {
-//       background:
-//         "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #0B5C0C 132.95%)",
-//       border: "0.9px solid transparent", // Set border style with transparent color
-//       borderImageSource: `
-//           linear-gradient(180deg, rgba(11, 92, 12, 0.4) 17.19%, rgba(98, 251, 108, 0.77) 100%),
-//           linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
-//           linear-gradient(180deg, rgba(11, 92, 12, 0) -4.69%, rgba(189, 254, 191, 0.3) 100%)
-//         `,
-//       borderImageSlice: "1", // Add this for the border image to display correctly
-//       boxShadow: `
-//           0px 8.97px 26.92px 0px #49FF4FB2 inset,
-//           0px 8.97px 35.9px 0px #0B5C0C80
-//         `,
-//       backdropFilter: "blur(17.94871711730957px)", // Add this for backdrop blur effect
-//     },
-//   },
-//   {
-//     id: 5,
-//     logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9c90cf2594b64dae9fa151f41e7db713",
-//     name: "PEP",
-//     company: "PepsiCo Inc",
-//     ipoDate: "26th Sep -10th Oct 2024",
-//     listingDate: "14th Oct 2024",
-//     type: "EQUITY",
-//     sentimentScore: "0.07",
-//     decisionRate: "85",
-//     priceRange: "₹110 - ₹116",
-//     minQuantity: "1200",
-//     typeBackground: {
-//       background:
-//         "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #0B5C0C 132.95%)",
-//       border: "0.9px solid transparent", // Set border style with transparent color
-//       borderImageSource: `
-//           linear-gradient(180deg, rgba(11, 92, 12, 0.4) 17.19%, rgba(98, 251, 108, 0.77) 100%),
-//           linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
-//           linear-gradient(180deg, rgba(11, 92, 12, 0) -4.69%, rgba(189, 254, 191, 0.3) 100%)
-//         `,
-//       borderImageSlice: "1", // Add this for the border image to display correctly
-//       boxShadow: `
-//           0px 8.97px 26.92px 0px #49FF4FB2 inset,
-//           0px 8.97px 35.9px 0px #0B5C0C80
-//         `,
-//       backdropFilter: "blur(17.94871711730957px)", // Add this for backdrop blur effect
-//     },
-//   },
-// ];
-
-// const ipoDetailData = [
-//   {
-//     companyName: "HYUNDAI MOTOR INDIA",
-//     companyDescription:
-//       "Hyundai Motor India, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-//     keyObjectives: [
-//       {
-//         title: "Expand Electric Vehicle (EV) Lineup",
-//         description: "Increasing production and launching new EV models.",
-//       },
-//       {
-//         title: "Boost Manufacturing Efficiency",
-//         description: "Investing in AI-driven production technology.",
-//       },
-//       {
-//         title: "Sustainability Focus",
-//         description:
-//           "Reducing carbon emissions and expanding green energy use.",
-//       },
-//     ],
-//     schedule: [
-//       { label: "Opening Date", date: "17th Oct 2024" },
-//       { label: "Closing Date", date: "21th Oct 2024" },
-//       { label: "Basis of Allotment", date: "22th Oct 2024" },
-//       { label: "Initiation of Refunds", date: "23th Oct 2024" },
-//       { label: "Credit Shares", date: "23th Oct 2024" },
-//       { label: "Listing Dates", date: "24th Oct 2024" },
-//     ],
-//     advantages: [
-//       {
-//         title: "Strong Market Presence",
-//         description:
-//           "Second-largest car maker in India with a loyal customer base.",
-//       },
-//       {
-//         title: "Growing EV Portfolio",
-//         description:
-//           "Hyundai is focused on electric and hybrid vehicles, in line with market trends.",
-//       },
-//       {
-//         title: "Cutting-Edge Technology",
-//         description:
-//           "Incorporating AI and autonomous driving features in vehicles.",
-//       },
-//     ],
-//     disadvantages: [
-//       {
-//         title: "Dependence on ICE Vehicles",
-//         description:
-//           "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand.",
-//       },
-//       {
-//         title: "Global Supply Chain Issues",
-//         description: "Susceptible to semiconductor shortages and rising costs.",
-//       },
-//     ],
-//   },
-//   {
-//     companyName: "McDonald’s Corp",
-//     companyDescription:
-//       "McDonald’s Corp, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-//     keyObjectives: [
-//       {
-//         title: "Expand Electric Vehicle (EV) Lineup",
-//         description: "Increasing production and launching new EV models.",
-//       },
-//       {
-//         title: "Boost Manufacturing Efficiency",
-//         description: "Investing in AI-driven production technology.",
-//       },
-//       {
-//         title: "Sustainability Focus",
-//         description:
-//           "Reducing carbon emissions and expanding green energy use.",
-//       },
-//     ],
-//     schedule: [
-//       { label: "Opening Date", date: "17th Oct 2024" },
-//       { label: "Closing Date", date: "21th Oct 2024" },
-//       { label: "Basis of Allotment", date: "22th Oct 2024" },
-//       { label: "Initiation of Refunds", date: "23th Oct 2024" },
-//       { label: "Credit Shares", date: "23th Oct 2024" },
-//       { label: "Listing Dates", date: "24th Oct 2024" },
-//     ],
-//     advantages: [
-//       {
-//         title: "Strong Market Presence",
-//         description:
-//           "Second-largest car maker in India with a loyal customer base.",
-//       },
-//       {
-//         title: "Growing EV Portfolio",
-//         description:
-//           "Hyundai is focused on electric and hybrid vehicles, in line with market trends.",
-//       },
-//       {
-//         title: "Cutting-Edge Technology",
-//         description:
-//           "Incorporating AI and autonomous driving features in vehicles.",
-//       },
-//     ],
-//     disadvantages: [
-//       {
-//         title: "Dependence on ICE Vehicles",
-//         description:
-//           "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand.",
-//       },
-//       {
-//         title: "Global Supply Chain Issues",
-//         description: "Susceptible to semiconductor shortages and rising costs.",
-//       },
-//     ],
-//   },
-// ];
-
-
-const ipoData = [
-  {
-    id: 1,
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F51a081f5a1884d2689b7be1b7d492fcd",
-    name: "HYUNDAI",
-    company: "Hyundai Motor India",
-    ipoDate: "10th-14th Oct 2024",
-    listingDate: "17th Oct 2024",
-    type: "SME",
-    sentimentScore: "0.07",
-    decisionRate: "85",
-    priceRange: "₹110 - ₹116",
-    minQuantity: "1200",
-    typeBackground: {
-      background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-      borderImageSource: "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-      boxShadow: "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-    },
-    details: {
-      companyDescription:
-        "Hyundai Motor India, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-      keyObjectives: [
-        { title: "Expand Electric Vehicle (EV) Lineup", description: "Increasing production and launching new EV models." },
-        { title: "Boost Manufacturing Efficiency", description: "Investing in AI-driven production technology." },
-        { title: "Sustainability Focus", description: "Reducing carbon emissions and expanding green energy use." },
-      ],
-      schedule: [
-        { label: "Opening Date", date: "17th Oct 2024" },
-        { label: "Closing Date", date: "21st Oct 2024" },
-        { label: "Basis of Allotment", date: "22nd Oct 2024" },
-        { label: "Initiation of Refunds", date: "23rd Oct 2024" },
-        { label: "Credit Shares", date: "23rd Oct 2024" },
-        { label: "Listing Dates", date: "24th Oct 2024" },
-      ],
-      advantages: [
-        { title: "Strong Market Presence", description: "Second-largest car maker in India with a loyal customer base." },
-        { title: "Growing EV Portfolio", description: "Hyundai is focused on electric and hybrid vehicles, in line with market trends." },
-        { title: "Cutting-Edge Technology", description: "Incorporating AI and autonomous driving features in vehicles." },
-      ],
-      disadvantages: [
-        { title: "Dependence on ICE Vehicles", description: "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand." },
-        { title: "Global Supply Chain Issues", description: "Susceptible to semiconductor shortages and rising costs." },
-      ],
-    },
-  },
-  {
-    id: 2,
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F845d206e55f14eea9cf74739a2b7c702",
-    name: "MCD",
-    company: "McDonald’s Corp",
-    ipoDate: "29th Sep -10th Oct 2024",
-    listingDate: "16th Oct 2024",
-    type: "SME",
-    sentimentScore: "0.07",
-    decisionRate: "85",
-    priceRange: "₹110 - ₹116",
-    minQuantity: "1200",
-    typeBackground: {
-      background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-      borderImageSource: "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-      boxShadow: "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-    },
-    details: {
-      companyName: "McDonald’s Corp",
-      companyDescription:
-        "McDonald’s Corp, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-      keyObjectives: [
-        { title: "Expand Electric Vehicle (EV) Lineup", description: "Increasing production and launching new EV models." },
-        { title: "Boost Manufacturing Efficiency", description: "Investing in AI-driven production technology." },
-        { title: "Sustainability Focus", description: "Reducing carbon emissions and expanding green energy use." },
-      ],
-      schedule: [
-        { label: "Opening Date", date: "17th Oct 2024" },
-        { label: "Closing Date", date: "21st Oct 2024" },
-        { label: "Basis of Allotment", date: "22nd Oct 2024" },
-        { label: "Initiation of Refunds", date: "23rd Oct 2024" },
-        { label: "Credit Shares", date: "23rd Oct 2024" },
-        { label: "Listing Dates", date: "24th Oct 2024" },
-      ],
-      advantages: [
-        { title: "Strong Market Presence", description: "Second-largest car maker in India with a loyal customer base." },
-        { title: "Growing EV Portfolio", description: "Hyundai is focused on electric and hybrid vehicles, in line with market trends." },
-        { title: "Cutting-Edge Technology", description: "Incorporating AI and autonomous driving features in vehicles." },
-      ],
-      disadvantages: [
-        { title: "Dependence on ICE Vehicles", description: "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand." },
-        { title: "Global Supply Chain Issues", description: "Susceptible to semiconductor shortages and rising costs." },
-      ],
-    },
-  },
-  {
-    id: 1,
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F51a081f5a1884d2689b7be1b7d492fcd",
-    name: "HYUNDAI",
-    company: "Hyundai Motor India",
-    ipoDate: "10th-14th Oct 2024",
-    listingDate: "17th Oct 2024",
-    type: "SME",
-    sentimentScore: "0.07",
-    decisionRate: "85",
-    priceRange: "₹110 - ₹116",
-    minQuantity: "1200",
-    typeBackground: {
-      background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-      borderImageSource: "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-      boxShadow: "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-    },
-    details: {
-      companyDescription:
-        "Hyundai Motor India, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-      keyObjectives: [
-        { title: "Expand Electric Vehicle (EV) Lineup", description: "Increasing production and launching new EV models." },
-        { title: "Boost Manufacturing Efficiency", description: "Investing in AI-driven production technology." },
-        { title: "Sustainability Focus", description: "Reducing carbon emissions and expanding green energy use." },
-      ],
-      schedule: [
-        { label: "Opening Date", date: "17th Oct 2024" },
-        { label: "Closing Date", date: "21st Oct 2024" },
-        { label: "Basis of Allotment", date: "22nd Oct 2024" },
-        { label: "Initiation of Refunds", date: "23rd Oct 2024" },
-        { label: "Credit Shares", date: "23rd Oct 2024" },
-        { label: "Listing Dates", date: "24th Oct 2024" },
-      ],
-      advantages: [
-        { title: "Strong Market Presence", description: "Second-largest car maker in India with a loyal customer base." },
-        { title: "Growing EV Portfolio", description: "Hyundai is focused on electric and hybrid vehicles, in line with market trends." },
-        { title: "Cutting-Edge Technology", description: "Incorporating AI and autonomous driving features in vehicles." },
-      ],
-      disadvantages: [
-        { title: "Dependence on ICE Vehicles", description: "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand." },
-        { title: "Global Supply Chain Issues", description: "Susceptible to semiconductor shortages and rising costs." },
-      ],
-    },
-  },
-  {
-    id: 2,
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F845d206e55f14eea9cf74739a2b7c702",
-    name: "MCD",
-    company: "McDonald’s Corp",
-    ipoDate: "29th Sep -10th Oct 2024",
-    listingDate: "16th Oct 2024",
-    type: "SME",
-    sentimentScore: "0.07",
-    decisionRate: "85",
-    priceRange: "₹110 - ₹116",
-    minQuantity: "1200",
-    typeBackground: {
-      background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-      borderImageSource: "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-      boxShadow: "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-    },
-    details: {
-      companyName: "McDonald’s Corp",
-      companyDescription:
-        "McDonald’s Corp, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-      keyObjectives: [
-        { title: "Expand Electric Vehicle (EV) Lineup", description: "Increasing production and launching new EV models." },
-        { title: "Boost Manufacturing Efficiency", description: "Investing in AI-driven production technology." },
-        { title: "Sustainability Focus", description: "Reducing carbon emissions and expanding green energy use." },
-      ],
-      schedule: [
-        { label: "Opening Date", date: "17th Oct 2024" },
-        { label: "Closing Date", date: "21st Oct 2024" },
-        { label: "Basis of Allotment", date: "22nd Oct 2024" },
-        { label: "Initiation of Refunds", date: "23rd Oct 2024" },
-        { label: "Credit Shares", date: "23rd Oct 2024" },
-        { label: "Listing Dates", date: "24th Oct 2024" },
-      ],
-      advantages: [
-        { title: "Strong Market Presence", description: "Second-largest car maker in India with a loyal customer base." },
-        { title: "Growing EV Portfolio", description: "Hyundai is focused on electric and hybrid vehicles, in line with market trends." },
-        { title: "Cutting-Edge Technology", description: "Incorporating AI and autonomous driving features in vehicles." },
-      ],
-      disadvantages: [
-        { title: "Dependence on ICE Vehicles", description: "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand." },
-        { title: "Global Supply Chain Issues", description: "Susceptible to semiconductor shortages and rising costs." },
-      ],
-    },
-  },
-  {
-    id: 1,
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F51a081f5a1884d2689b7be1b7d492fcd",
-    name: "HYUNDAI",
-    company: "Hyundai Motor India",
-    ipoDate: "10th-14th Oct 2024",
-    listingDate: "17th Oct 2024",
-    type: "SME",
-    sentimentScore: "0.07",
-    decisionRate: "85",
-    priceRange: "₹110 - ₹116",
-    minQuantity: "1200",
-    typeBackground: {
-      background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-      borderImageSource: "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-      boxShadow: "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-    },
-    details: {
-      companyDescription:
-        "Hyundai Motor India, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-      keyObjectives: [
-        { title: "Expand Electric Vehicle (EV) Lineup", description: "Increasing production and launching new EV models." },
-        { title: "Boost Manufacturing Efficiency", description: "Investing in AI-driven production technology." },
-        { title: "Sustainability Focus", description: "Reducing carbon emissions and expanding green energy use." },
-      ],
-      schedule: [
-        { label: "Opening Date", date: "17th Oct 2024" },
-        { label: "Closing Date", date: "21st Oct 2024" },
-        { label: "Basis of Allotment", date: "22nd Oct 2024" },
-        { label: "Initiation of Refunds", date: "23rd Oct 2024" },
-        { label: "Credit Shares", date: "23rd Oct 2024" },
-        { label: "Listing Dates", date: "24th Oct 2024" },
-      ],
-      advantages: [
-        { title: "Strong Market Presence", description: "Second-largest car maker in India with a loyal customer base." },
-        { title: "Growing EV Portfolio", description: "Hyundai is focused on electric and hybrid vehicles, in line with market trends." },
-        { title: "Cutting-Edge Technology", description: "Incorporating AI and autonomous driving features in vehicles." },
-      ],
-      disadvantages: [
-        { title: "Dependence on ICE Vehicles", description: "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand." },
-        { title: "Global Supply Chain Issues", description: "Susceptible to semiconductor shortages and rising costs." },
-      ],
-    },
-  },
-  {
-    id: 2,
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F845d206e55f14eea9cf74739a2b7c702",
-    name: "MCD",
-    company: "McDonald’s Corp",
-    ipoDate: "29th Sep -10th Oct 2024",
-    listingDate: "16th Oct 2024",
-    type: "SME",
-    sentimentScore: "0.07",
-    decisionRate: "85",
-    priceRange: "₹110 - ₹116",
-    minQuantity: "1200",
-    typeBackground: {
-      background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #886627 132.95%)",
-      borderImageSource: "linear-gradient(180deg, rgba(136, 102, 39, 0.4) 17.19%, rgba(251, 203, 98, 0.77) 100%)",
-      boxShadow: "inset 0px 8.97px 26.92px 0px #FFB949B2, 0px 8.97px 35.9px 0px #AF733F80",
-    },
-    details: {
-      companyName: "McDonald’s Corp",
-      companyDescription:
-        "McDonald’s Corp, established in 1996, is a leading automobile manufacturer in India, known for its innovation and customer-centric approach. It produces a wide range of vehicles, including electric and hybrid models, serving both domestic and global markets.",
-      keyObjectives: [
-        { title: "Expand Electric Vehicle (EV) Lineup", description: "Increasing production and launching new EV models." },
-        { title: "Boost Manufacturing Efficiency", description: "Investing in AI-driven production technology." },
-        { title: "Sustainability Focus", description: "Reducing carbon emissions and expanding green energy use." },
-      ],
-      schedule: [
-        { label: "Opening Date", date: "17th Oct 2024" },
-        { label: "Closing Date", date: "21st Oct 2024" },
-        { label: "Basis of Allotment", date: "22nd Oct 2024" },
-        { label: "Initiation of Refunds", date: "23rd Oct 2024" },
-        { label: "Credit Shares", date: "23rd Oct 2024" },
-        { label: "Listing Dates", date: "24th Oct 2024" },
-      ],
-      advantages: [
-        { title: "Strong Market Presence", description: "Second-largest car maker in India with a loyal customer base." },
-        { title: "Growing EV Portfolio", description: "Hyundai is focused on electric and hybrid vehicles, in line with market trends." },
-        { title: "Cutting-Edge Technology", description: "Incorporating AI and autonomous driving features in vehicles." },
-      ],
-      disadvantages: [
-        { title: "Dependence on ICE Vehicles", description: "A large portion of revenue still comes from traditional engine vehicles, which may face declining demand." },
-        { title: "Global Supply Chain Issues", description: "Susceptible to semiconductor shortages and rising costs." },
-      ],
-    },
-  },
-];
-
-const suggestionCardsData = [
-  {
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ffef284907f2a4bf0a335868cf2007ce9",
-    category: "Sports",
-    subCategory: "CRICKET",
-    change: "+0.25%",
-    title: "BMW SPORTS",
-    image:
-      "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F441bdc029fa94bc2a826244254476776",
-  },
-  {
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1578ccafd07348dba3c9ba7c7a592cf2",
-    category: "Health Category",
-    subCategory: "MEDICINE",
-    change: "+0.41%%",
-    title: "CIPLA LTD",
-    image:
-      "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F441bdc029fa94bc2a826244254476776",
-  },
-  {
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F0a5eb213cb9b485c875a89e828ecc9d8",
-    category: "Automobile",
-    subCategory: "ELECTRIC VEHICLE",
-    change: "+10.72%",
-    title: "Tesla",
-    image:
-      "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F441bdc029fa94bc2a826244254476776",
-  },
-  {
-    logo: "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ffef284907f2a4bf0a335868cf2007ce9",
-    category: "Automobile",
-    subCategory: "CARS",
-    change: "+1.1%",
-    title: "Tesla",
-    image:
-      "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F441bdc029fa94bc2a826244254476776",
-  },
-];
 
 function InitialPublicOffers() {
   const [selectedOption, setSelectedOption] = useState("All");
-  const [selectedIPO, setSelectedIPO] = useState(
-    ipoData[0]?.company || ""
-  );
-//   console.log(selectedIPO);
-
+  const [ipoData, setIpoData] = useState([]);
+  const [suggestionCardsData, setSuggestionCardsData] = useState([]);
+  const [selectedIPO, setSelectedIPO] = useState(ipoData[0]?.company || "");
   const [selectedCategory, setSelectedCategory] = useState("Ongoing");
   const { theme } = useTheme();
+
+  const { currentUser } = useSelector((state) => state.user);
+  // console.log(currentUser);
 
   const options = ["All", "SME", "DEBT", "EQUITY"];
   const categories = ["Ongoing", "Upcoming", "Past"];
 
+  // Fetch IPO data from API
+  useEffect(() => {
+    const fetchIPOData = async () => {
+      try {
+        const response = await api.get(`/api/v1/IPOs/get-all-ipos`);
+        console.log("Fetched IPO Data:", response.data.data);
+
+        if (response.data.data && Array.isArray(response.data.data)) {
+          setIpoData(response.data.data);
+          // Set the default selected IPO to the first IPO's company name
+          if (response.data.data.length > 0) {
+            setSelectedIPO(response.data.data[0].company);
+          }
+        } else {
+          console.error("IPO data is not an array or is undefined.");
+        }
+      } catch (error) {
+        console.error("Error fetching IPO data:", error);
+      }
+    };
+    fetchIPOData();
+  }, []);
+
+  useEffect(() => {
+    const fetchIPOSuggestionCardData = async () => {
+      try {
+        const response = await api.get(`/api/v1/IPOs/get-all-suggestion-cards`);
+        console.log("Fetched suggestion card Data:", response);
+
+        if (response.data?.data && Array.isArray(response.data.data)) {
+          setSuggestionCardsData(response.data.data);
+        } else {
+          console.error(
+            "Suggestion card data is not an array or is undefined."
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching suggestion card data:", error);
+      }
+    };
+
+    fetchIPOSuggestionCardData();
+  }, []);
+
   // Filter the IPO data based on the selected option
   const filteredIpoData = ipoData.filter(
-    (ipo) => selectedOption === "All" || ipo.type === selectedOption
+    (ipo) =>
+      (selectedOption === "All" || ipo.exchangeType === selectedOption) &&
+      (selectedCategory === "Ongoing" ? ipo.category === "ONGOING" :
+        selectedCategory === "Upcoming" ? ipo.category === "UPCOMING" :
+        selectedCategory === "Past" ? ipo.category === "PAST" : true)
   );
 
   const handleSelect = (company) => {
     setSelectedIPO(company);
-    // console.log("Selected company:", company);
+  };
+
+  // Format the IPO dates
+  const formatIpoDate = (startDate, endDate) => {
+    const options = { day: 'numeric', month: 'short' };
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const startDay = start.toLocaleDateString('en-US', options);
+    const endDay = end.toLocaleDateString('en-US', options);
+
+    // Check if both dates fall in the same month and return formatted string
+    if (start.getMonth() === end.getMonth()) {
+      return `${startDay}-${endDay}`;
+    }
+
+    return `${startDay} - ${endDay}`;
+  };
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
@@ -592,50 +123,59 @@ function InitialPublicOffers() {
         src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F4fb1f7b4c9434cd8ab2b4f76469e60ab"
         alt="bear"
       />
-  
+
       <div className="bg-white min-h-[85vh] news-table rounded-2xl">
         <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-start lg:gap-4">
-          
           {/* Left Side (100% for mobile, 45% for desktop) */}
           <div className="w-full lg:w-[45%]">
             <div className="flex justify-between items-center border-b border-[#FFFFFF1A] pb-4">
               <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4">
                 Initial Public Offers (IPOs)
               </h1>
-  
-              {/* Dropdown Menu */}
-              <Menu as="div" className="relative inline-block text-left">
-                <div>
-                  <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    {selectedOption}
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="-mr-1 h-5 w-5 text-gray-400"
-                    />
-                  </MenuButton>
-                </div>
-  
-                <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
-                  <div className="py-1">
-                    {options.map((option) => (
-                      <MenuItem
-                        key={option}
-                        onClick={() => setSelectedOption(option)}
-                      >
-                        <div
-                          className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
-                            selectedOption === option ? "bg-gray-100" : ""
-                          }`}
-                        >
-                          {option}
-                        </div>
-                      </MenuItem>
-                    ))}
+
+              <div className="flex ">
+                {currentUser.isAdmin && currentUser.role === "admin" && (
+                  <Link to={"/india/admin-create-ipos"} className="mr-3">
+                    <button className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                      Create Ipos [Admin]
+                    </button>
+                  </Link>
+                )}
+
+                {/* Dropdown Menu */}
+                <Menu as="div" className="relative inline-block text-left">
+                  <div>
+                    <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                      {selectedOption}
+                      <ChevronDownIcon
+                        aria-hidden="true"
+                        className="-mr-1 h-5 w-5 text-gray-400"
+                      />
+                    </MenuButton>
                   </div>
-                </MenuItems>
-              </Menu>
+
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
+                    <div className="py-1">
+                      {options.map((option) => (
+                        <MenuItem
+                          key={option}
+                          onClick={() => setSelectedOption(option)}
+                        >
+                          <div
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
+                              selectedOption === option ? "bg-gray-100" : ""
+                            }`}
+                          >
+                            {option}
+                          </div>
+                        </MenuItem>
+                      ))}
+                    </div>
+                  </MenuItems>
+                </Menu>
+              </div>
             </div>
-  
+
             {/* Ongoing, Upcoming, Past Selection */}
             <div className="flex justify-between items-center pt-4">
               <div className="flex justify-center items-center">
@@ -658,57 +198,72 @@ function InitialPublicOffers() {
                   </div>
                 ))}
               </div>
-  
+
               {/* Information Icon */}
               <div>
                 <IoMdInformationCircle className="text-gray-500" size={30} />
               </div>
             </div>
-  
+
             {/* Render filtered IPO Cards */}
             <div className="pt-4 mt-2 overflow-y-scroll overflow-x-hidden min-h-[70vh] max-h-[70vh] rounded-lg">
-              {filteredIpoData.map((ipo) => (
-                <IPOCard
-                  key={ipo.name}
-                  logo={ipo.logo}
-                  name={ipo.name}
-                  company={ipo.company}
-                  ipoDate={ipo.ipoDate}
-                  listingDate={ipo.listingDate}
-                  type={ipo.type}
-                  sentimentScore={ipo.sentimentScore}
-                  decisionRate={ipo.decisionRate}
-                  priceRange={ipo.priceRange}
-                  minQuantity={ipo.minQuantity}
-                  typeBackground={ipo.typeBackground}
-                  onSelect={handleSelect}
-                />
-              ))}
+              {filteredIpoData.length > 0 ? (
+                filteredIpoData.map((ipo) => (
+                  <IPOCard
+                    key={ipo.name}
+                    logo={ipo.logo}
+                    name={ipo.name}
+                    company={ipo.company}
+                    ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)} 
+                    listingDate={formatDate(ipo.listingDate)}
+                    type={ipo.exchangeType}
+                    sentimentScore={ipo.sentimentScore || '0.00'}
+                    decisionRate={ipo.decisionRate}
+                    priceRange={`${ipo.priceStartRange}-${ipo.priceEndRange}`}
+                    minQuantity={ipo.minQuantity}
+                    onSelect={handleSelect}
+                  />
+                ))
+              ) : (
+                <div className="text-center p-4 text-gray-500">
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F774045b915a94da8b083607e7ede6341"
+                    alt="no ipos availabe"
+                  />
+                </div>
+              )}
             </div>
           </div>
-  
+
           {/* Right Side (100% for mobile, 55% for desktop) */}
-          <div className="w-full lg:w-[55%] p-2 flex flex-col h-full mt-6 lg:mt-0">
-            <div className="h-[10%]">
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-                {suggestionCardsData.map((card, index) => (
-                  <SuggestionCard
-                    key={index}
-                    logo={card.logo}
-                    category={card.category}
-                    subCategory={card.subCategory}
-                    change={card.change}
-                    title={card.title}
-                    image={card.image}
-                  />
-                ))}
-              </div>
+          <div className="w-full lg:w-[55%] p-1 flex flex-col h-full mt-6 lg:mt-0">
+          <div className="h-[10%] overflow-x-auto flex space-x-2 py-1">
+              {suggestionCardsData.length > 0 ? (
+                suggestionCardsData.map((card, index) => (
+                  <div className="flex-shrink-0" key={index}>
+                    <SuggestionCard
+                      logo={card.logo}
+                      category={card.category}
+                      subCategory={card.subCategory}
+                      change={card.change}
+                      title={card.title}
+                      image={card.graph}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="text-center w-96 p-4 text-gray-500">
+                  No suggestion available.
+                </div>
+              )}
             </div>
-  
+
             <div className="h-[90%] mt-4">
               {selectedIPO && (
                 <IPODetail
                   theme={theme}
+                  formatDate={formatDate}
                   ipoData={
                     ipoData.length > 0
                       ? ipoData.find(
@@ -726,7 +281,6 @@ function InitialPublicOffers() {
       </div>
     </div>
   );
-  
 }
 
 export default InitialPublicOffers;
