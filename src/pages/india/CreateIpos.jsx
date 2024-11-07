@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Input from "../../components/common/Input";
 import RecommendationIPOs from "../../components/initialPublicOffers/RecommendationIPOs";
 import IPOsAdminPanel from "../../components/initialPublicOffers/IPOsAdminPanel";
 import IPOUpdatedList from "../../components/initialPublicOffers/IPOUpdatedList";
@@ -173,7 +171,7 @@ function CreateIpos() {
     e.preventDefault(); // Prevent default form submission
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/v1/IPOs/create-ipo/${currentUser.id}`,
         formData
       );
