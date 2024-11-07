@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Input from "../common/Input";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import api from "../../config";
 
 function RecommendationIPOs() {
   const { currentUser } = useSelector((state) => state.user);
@@ -42,7 +42,7 @@ function RecommendationIPOs() {
     setLoading(true); 
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/v1/IPOs/create-suggestion-card/${currentUser.id}`,
         formData
       );
