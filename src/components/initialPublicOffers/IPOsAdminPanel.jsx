@@ -10,7 +10,7 @@ const IPOsAdminPanel = ({
   handleBack,
   handleSubmit,
 }) => {
-  console.log(formData);
+  // console.log(formData);
   
   const initialKeyObjective = { title: "", description: "" };
   // console.log(initialKeyObjective);
@@ -19,7 +19,7 @@ const IPOsAdminPanel = ({
   const initialDisadvantage = { title: "", description: "" };
 
   const [keyObjectives, setKeyObjectives] = useState([initialKeyObjective]);
-  console.log(keyObjectives);
+  // console.log(keyObjectives);
   
   const [advantages, setAdvantages] = useState([initialAdvantage]);
   const [disadvantages, setDisadvantages] = useState([initialDisadvantage]);

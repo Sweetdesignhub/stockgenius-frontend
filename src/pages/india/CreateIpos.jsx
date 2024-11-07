@@ -9,11 +9,12 @@ import api from "../../config";
 function CreateIpos() {
   const { currentUser } = useSelector((state) => state.user);
   const [ipoData, setIpoData] = useState([]);
+  const [ipoRecommendedData, setIpoRecommendedData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [columns, setColumns] = useState([]);
   const [formData, setFormData] = useState({
-    userId:currentUser.id,
+    userId: currentUser.id,
     logo: "",
     name: "",
     category: "",
@@ -36,14 +37,12 @@ function CreateIpos() {
     disadvantages: [{ title: "", description: "" }],
   });
 
-  console.log(formData);
-  
+  // console.log(formData);
 
   const [activeTab, setActiveTab] = useState("first");
   const { theme } = useTheme();
-  
+
   // console.log(currentUser);
-  
 
   const darkThemeStyle = {
     boxShadow:
@@ -131,7 +130,7 @@ function CreateIpos() {
     "companyDescription",
     "keyObjectives",
     "advantages",
-    "disadvantages"
+    "disadvantages",
   ];
 
   const filterColumns = (data) => {
@@ -156,8 +155,24 @@ function CreateIpos() {
     }
   };
 
+  const fetchRecommendedData = async () => {
+    try {
+      const response = await api.get(`/api/v1/IPOs/get-all-suggestion-cards`);
+      // console.log(response);
+
+      const data = response.data.data || [];
+      setIpoRecommendedData(data);
+    } catch (error) {
+      console.error("Error fetching IPO data:", error);
+      setError("Failed to fetch IPO data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchRecommendedData();
   }, []);
 
   // Navigate between tabs
@@ -176,7 +191,7 @@ function CreateIpos() {
         formData
       );
 
-      console.log("Form submitted successfully:", response.data);
+      // console.log("Form submitted successfully:", response.data);
       // Optionally reset formData after successful submission
       setFormData({
         logo: "",
@@ -201,7 +216,7 @@ function CreateIpos() {
         disadvantages: [{ title: "", description: "" }],
       });
 
-      fetchData()
+      fetchData();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -243,9 +258,19 @@ function CreateIpos() {
 
         <div
           style={containerStyle}
-          className="h-[60%] min-h-80 max-h-80 rounded-lg p-2 overflow-auto"
+          className="h-[60%] min-h-80 max-h-80 rounded-lg p-2"
         >
-          <IPOUpdatedList setIpoData={setIpoData} fetchData={fetchData} ipoData={ipoData} loading={loading} error={error} columns={columns}/>
+          <IPOUpdatedList
+            setIpoRecommendedData={setIpoRecommendedData}
+            fetchRecommendedData={fetchRecommendedData}
+            ipoRecommendedData={ipoRecommendedData}
+            setIpoData={setIpoData}
+            fetchData={fetchData}
+            ipoData={ipoData}
+            loading={loading}
+            error={error}
+            columns={columns}
+          />
         </div>
       </div>
     </div>
