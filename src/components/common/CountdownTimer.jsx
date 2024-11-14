@@ -1,3 +1,15 @@
+/**
+ * File: CountdownTimer
+ * Description: This component is a simple countdown timer that calculates the time remaining until a specific target date and displays it. The component is designed to update the remaining time every second. It takes no external inputs but is hardcoded to count down to a target date (in this case, July 30, 2024). It calculates the difference between the current date and the target date and displays the time left in days, hours, minutes, and seconds. If the target date has passed, it shows a "Time's up!" message. The timer updates in real-time and is reset every second using the `setTimeout` function.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import { useEffect, useState } from "react";
 
 const CountdownTimer = () => {

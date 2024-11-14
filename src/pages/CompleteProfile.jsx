@@ -9,6 +9,8 @@ import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../components/common/InputField';
 import api from '../config';
+import Loading from '../components/common/Loading';
+
 const CompleteProfile = () => {
   const location = useLocation();
   const { userId, email } = location.state || { userId: null, email: null };
@@ -18,6 +20,8 @@ const CompleteProfile = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [userData, setUserData] = useState({});
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -52,6 +56,8 @@ const CompleteProfile = () => {
   };
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
+    setError(null); // Clear previous errors
     const fdata = { email, ...data };
     try {
       const response = await api.patch(
@@ -63,8 +69,14 @@ const CompleteProfile = () => {
       setStep(3);
     } catch (error) {
       console.error('Signup Error:', error);
+      setError(error.response?.data?.message || 'An error occurred during signup');
+    } finally {
+      setIsLoading(false);
     }
   };
+  if (isLoading) {
+    return <Loading />;
+  }
   if (step === 1) {
     return (
       <form
@@ -120,14 +132,19 @@ const CompleteProfile = () => {
     );
   } else if (step === 3) {
     return (
-      <VerificationForm
-        onValidSubmit={handleValidSubmit}
-        step={3}
-        userData={userData}
-        setUserData={setUserData}
-        label='Enter Phone Verification Code'
-        verificationType='phone'
-      />
+      <>
+        <VerificationForm
+          onValidSubmit={handleValidSubmit}
+          onError={(errorMessage) => setError(errorMessage)}
+          step={3}
+          userData={userData}
+          setUserData={setUserData}
+          label='Enter Phone Verification Code'
+          verificationType='phone'
+          setIsLoading={setIsLoading}
+        />
+        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+      </>
     );
   }
 };

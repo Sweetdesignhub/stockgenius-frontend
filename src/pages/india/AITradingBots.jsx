@@ -1,394 +1,470 @@
-import React, { useEffect, useState, useCallback } from "react";
+/**
+ * File: AITradingBots
+ * Description: This file contains the implementation of the AI Trading Bots page, where users can manage their trading bots,
+ * toggle their states, and schedule auto-trades. It includes the functionality to create, update, and delete bots,
+ * as well as track the status of each bot. The bots' states are managed based on the current market conditions
+ * (e.g., market open/close, trading hours). It also provides integration with WebSockets to track the total
+ * trading time of all bots and shows real-time data.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import BrokerModal from "../../components/brokers/BrokerModal";
 import AutoTradeModal from "../../components/brokers/AutoTradeModal";
-import Modal from "../../components/common/Modal";
 import Bot from "../../components/aiTradingBots/Bot";
 import NotAvailable from "../../components/common/NotAvailable";
+import api from "../../config";
+import ConfirmationModal from "../../components/common/ConfirmationModal";
+import moment from "moment-timezone";
+import {
+  isAfterMarketClose,
+  isBeforeMarketOpen,
+  isWithinTradingHours,
+} from "../../utils/helper";
+import { useData } from "../../contexts/FyersDataContext";
+import Loading from "../../components/common/Loading";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useLocation } from "react-router-dom";
+
+// Define an array of colors for the bots
+const botColors = [
+  "#F62024",
+  "#F6208F",
+  "#208FF6",
+  "#20F6F6",
+  "#8FF620",
+  "#F6F620",
+  "#F68F20",
+  "#20F68F",
+];
+
+const getBotStatus = (isActive) => {
+  if (isAfterMarketClose()) {
+    return "Inactive";
+  } else if (isWithinTradingHours()) {
+    return isActive ? "Running" : "Inactive";
+  } else if (isBeforeMarketOpen()) {
+    return isActive ? "Schedule" : "Inactive";
+  } else {
+    return "Inactive";
+  }
+};
 
 function Cards({ title, value }) {
+  const { theme } = useTheme();
+
+  const backgroundStyle =
+    theme === "dark"
+      ? {
+          backgroundImage:
+            "linear-gradient(180deg, rgba(46, 51, 90, 0.1) 0%, rgba(28, 27, 51, 0.02) 100%), " +
+            "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
+        }
+      : {
+          backgroundColor: "white",
+        };
+
   return (
     <div
       className="border-[0.1px] rounded-xl py-4 px-1 flex flex-col justify-center"
-      style={{
-        backgroundImage:
-          "linear-gradient(180deg, rgba(46, 51, 90, 0.1) 0%, rgba(28, 27, 51, 0.02) 100%), " +
-          "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
-      }}
+      style={backgroundStyle}
     >
       <h1 className="text-sm text-end">{title}</h1>
-      <h1 className="font-bold text-lg text-end text-[#15DE73]">{value}</h1>
+      <h1 className="font-bold text-lg text-end text-[#37DD1C]">{value}</h1>
     </div>
   );
 }
 
 function AITradingBots() {
-  const botDataList = [
-    {
-      name: "Bot 1",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fec1600c1a6ac4434aaa71d89b447fec8",
-      profitPercentage: "12%",
-      riskPercentage: "2%",
-      market: "NSE NIFTY 100",
-      timestamp: "21 Apr-2024 04:51",
-      extraImage:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fab3b7e83271a4c3eb160f4e52b6158b4",
-      dynamicData: [
-        { title: "Trade Ratio", value: "80%" },
-        { title: "Profit Gained", value: "560743" },
-        { title: "Working Time", value: "0hr 0min" },
-        { title: "Total Balance", value: "1347600.56" },
-        { title: "Scheduled", value: "24 Apr 05:23 pm" },
-        { title: "Number of trades", value: "373" },
-        { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "Active", valueColor: "#00FF47" },
-        { title: "Re-Investment", value: "29" },
-        { title: "Limits", value: "2000" },
-      ],
-    },
-    {
-      name: "Bot 2",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fec1600c1a6ac4434aaa71d89b447fec8",
-      profitPercentage: "12%",
-      riskPercentage: "2%",
-      market: "NSE NIFTY 100",
-      timestamp: "21 Apr-2024 04:51",
-      extraImage:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fab3b7e83271a4c3eb160f4e52b6158b4",
-      dynamicData: [
-        { title: "Trade Ratio", value: "50%" },
-        { title: "Profit Gained", value: "560743" },
-        { title: "Working Time", value: "0hr 0min" },
-        { title: "Total Balance", value: "1347600.56" },
-        { title: "Scheduled", value: "24 Apr 05:23 pm" },
-        { title: "Number of trades", value: "373" },
-        { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "inactive", valueColor: "#FF4D4D" },
-        { title: "Re-Investment", value: "29" },
-        { title: "Limits", value: "2000" },
-      ],
-    },
-    {
-      name: "Bot 3",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fec1600c1a6ac4434aaa71d89b447fec8",
-      profitPercentage: "12%",
-      riskPercentage: "2%",
-      market: "NSE NIFTY 100",
-      timestamp: "21 Apr-2024 04:51",
-      extraImage:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fab3b7e83271a4c3eb160f4e52b6158b4",
-      dynamicData: [
-        { title: "Trade Ratio", value: "50%" },
-        { title: "Profit Gained", value: "560743" },
-        { title: "Working Time", value: "0hr 0min" },
-        { title: "Total Balance", value: "1347600.56" },
-        { title: "Scheduled", value: "24 Apr 05:23 pm" },
-        { title: "Number of trades", value: "373" },
-        { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "inactive", valueColor: "#FF4D4D" },
-        { title: "Re-Investment", value: "29" },
-        { title: "Limits", value: "2000" },
-      ],
-    },
-    {
-      name: "Bot 4",
-      image:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fec1600c1a6ac4434aaa71d89b447fec8",
-      profitPercentage: "12%",
-      riskPercentage: "2%",
-      market: "NSE NIFTY 100",
-      timestamp: "21 Apr-2024 04:51",
-      extraImage:
-        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fab3b7e83271a4c3eb160f4e52b6158b4",
-      dynamicData: [
-        { title: "Trade Ratio", value: "50%" },
-        { title: "Profit Gained", value: "560743" },
-        { title: "Working Time", value: "0hr 0min" },
-        { title: "Total Balance", value: "1347600.56" },
-        { title: "Scheduled", value: "24 Apr 05:23 pm" },
-        { title: "Number of trades", value: "373" },
-        { title: "Percentage gain", value: "23.65%" },
-        { title: "Status", value: "inactive", valueColor: "#FF4D4D" },
-        { title: "Re-Investment", value: "29" },
-        { title: "Limits", value: "2000" },
-      ],
-    },
-  ];
-
-  const [botWorkingTimes, setBotWorkingTimes] = useState({});
-  const [botStartTimes, setBotStartTimes] = useState({});
-  const [todayBotTime, setTodayBotTime] = useState(0);
-  const [lastWeekBotTime, setLastWeekBotTime] = useState(0);
-  const [dailyBotTimes, setDailyBotTimes] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [actionType, setActionType] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const [botDataList, setBotDataList] = useState([]);
+  const [botStates, setBotStates] = useState({});
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(true);
+  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [title, setTitle] = useState("");
+  const [confirmationAction, setConfirmationAction] = useState(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [togglingBotId, setTogglingBotId] = useState(null);
+
+  const [botColorMap, setBotColorMap] = useState({});
+  const location = useLocation();
+  const isAITradingPage = location.pathname === "/india/AI-Trading-Bots";
+
+  const [allBotsTime, setAllBotsTime] = useState({
+    totalTodaysBotTime: 0,
+    totalCurrentWeekTime: 0,
+  });
+
   const fyersAccessToken = useSelector((state) => state.fyers);
+  const { currentUser } = useSelector((state) => state.user);
 
-  const formatTime = (seconds) => {
-    if (isNaN(seconds)) return "0hr 0min 0sec";
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${hours}hr ${minutes}min ${secs}sec`;
-  };
+  const {
+    holdings = {},
+    positions = { overall: {} },
+    orders = { orderBook: [] },
+  } = useData();
 
-  const isWithinTradingHours = () => {
-    const now = new Date();
-    // const istOffset = 5.5 * 60 * 60 * 1000; // IST is GMT+5:30
-    const istTime = new Date(now.getTime());
+  const fetchBots = useCallback(async () => {
+    if (!currentUser.id) return;
 
-    const hours = istTime.getHours();
-    const minutes = istTime.getMinutes();
+    setIsInitialLoading(true); // Only set loading on initial fetch
+    try {
+      const response = await api.get(
+        `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`
+      );
+      const sortedBots = response.data.bots.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setBotDataList(sortedBots);
+      setBotStates(
+        sortedBots.reduce((acc, bot) => {
+          acc[bot._id] = {
+            isActive:
+              bot.dynamicData[0]?.status === "Running" ||
+              bot.dynamicData[0]?.status === "Schedule",
+          };
+          return acc;
+        }, {})
+      );
 
-    return (
-      (hours > 9 || (hours === 9 && minutes >= 30)) &&
-      (hours < 15 || (hours === 30 && minutes <= 30))
-    );
-  };
+      // Assign colors to bots
+      const colorMap = {};
+      sortedBots.forEach((bot, index) => {
+        colorMap[bot._id] = botColors[index % botColors.length];
+      });
+      setBotColorMap(colorMap);
+    } catch (error) {
+      console.error("Error fetching bots:", error);
+    } finally {
+      setIsInitialLoading(false);
+    }
+  }, [currentUser.id]);
 
-  const isAfterMarketClose = () => {
-    const now = new Date();
-    // const istOffset = 5.5 * 60 * 60 * 1000; // IST is GMT+5:30
-    const istTime = new Date(now.getTime());
+  useEffect(() => {
+    fetchBots();
+  }, [currentUser.id]);
 
-    const hours = istTime.getHours();
-    const minutes = istTime.getMinutes();
+  useEffect(() => {
+    const updateBotStates = () => {
+      setBotStates((prevStates) => {
+        const newStates = {};
+        for (const botId of Object.keys(prevStates)) {
+          const { isActive } = prevStates[botId];
+          newStates[botId] = {
+            isActive,
+            status: getBotStatus(isActive),
+          };
+        }
+        return newStates;
+      });
+    };
 
-    return hours > 15 || (hours === 30 && minutes > 30);
-  };
+    updateBotStates(); // Initial call
+    const interval = setInterval(updateBotStates, 60000); // Update every minute
 
-  const isBeforeMarketOpen = () => {
-    const now = new Date();
-    // const istOffset = 5.5 * 60 * 60 * 1000; // IST is GMT+5:30
-    const istTime = new Date(now.getTime());
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
-    const hours = istTime.getHours();
-    const minutes = istTime.getMinutes();
-
-    return hours < 9 || (hours === 9 && minutes < 30);
-  };
-
-  const getBotStatus = (isActive) => {
-    if (isAfterMarketClose()) {
-      return "inactive";
-    } else if (isWithinTradingHours()) {
-      return isActive ? "Running" : "inactive";
-    } else if (isBeforeMarketOpen()) {
-      return isActive ? "Active" : "inactive";
-    } else {
-      return "inactive";
+  const createBot = async (botData) => {
+    try {
+      const response = await api.post(
+        `api/v1/ai-trading-bots/createBot/${currentUser.id}`,
+        botData
+      );
+      if (response.status === 201) {
+        await fetchBots();
+        setTitle("Congratulations");
+        setMessage(
+          `${botData.name} has been successfully created. To activate it, you need to switch it ON.`
+        );
+        setConfirmationOpen(true);
+      } else {
+        console.error("Unexpected response format:", response.data);
+        alert("An unexpected response format was received.");
+      }
+    } catch (error) {
+      setTitle("Error");
+      console.error("Unexpected error:", error.response?.data || error.message);
+      setMessage(
+        error.response?.data?.message ||
+          "An unexpected error occurred. Please try again."
+      );
+      setConfirmationOpen(true);
     }
   };
 
-  const [botStates, setBotStates] = useState(() => {
-    const initialStates = botDataList.reduce((acc, bot) => {
-      acc[bot.name] = { isActive: false, status: "inactive"||"stopped" };
-      return acc;
-    }, {});
-    return initialStates;
-  });
-
-  const updateBotTime = useCallback(() => {
-    const now = new Date();
-    setBotWorkingTimes((prevTimes) => {
-      const newTimes = { ...prevTimes };
-      Object.keys(botStartTimes).forEach((botName) => {
-        if (botStates[botName].status === "Running") {
-          newTimes[botName] = (newTimes[botName] || 0) + 1; // Increment by 1 second
-        }
-      });
-      return newTimes;
-    });
-  }, [botStartTimes, botStates]);
-
-  useEffect(() => {
-    const interval = setInterval(updateBotTime, 1000); // Update every second
-    return () => clearInterval(interval);
-  }, [updateBotTime]);
-
-  useEffect(() => {
-    const now = new Date();
-    const midnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1
-    );
-    const timeToMidnight = midnight - now;
-
-    const midnightTimeout = setTimeout(() => {
-      const totalDailyTime = Object.values(botWorkingTimes).reduce(
-        (sum, time) => sum + time,
-        0
+  const updateBotDetails = async (botId, updateData) => {
+    try {
+      const response = await api.put(
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`,
+        updateData
       );
-      setDailyBotTimes((prev) => {
-        const newDailyTimes = [...prev, totalDailyTime];
-        if (newDailyTimes.length > 7) newDailyTimes.shift(); // Keep only last 7 days
-        return newDailyTimes;
-      });
-      setBotWorkingTimes({});
-      setBotStartTimes({});
-      setTodayBotTime(0);
-    }, timeToMidnight);
+      if (response.status === 200) {
+        await fetchBots();
+        setTitle("Congratulations");
+        setMessage(
+          `${updateData.name} has been successfully updated. To activate it, you need to switch it ON.`
+        );
+        setConfirmationOpen(true);
+      } else {
+        console.error("Update failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating bot:", error.response.data.message);
+      setTitle("Bot Update Error");
+      setMessage(error.response.data.message);
+      setConfirmationOpen(true);
+    }
+  };
 
-    return () => clearTimeout(midnightTimeout);
-  }, [botWorkingTimes]);
+  const deleteBot = async (botId, botName) => {
+    try {
+      const response = await api.delete(
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`
+      );
+      if (response.status === 200) {
+        await fetchBots();
+        setTitle("Bot Deleted");
+        setMessage(`${botName} has been successfully deleted.`);
+        setConfirmationOpen(true);
+      } else {
+        console.error("Deletion failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting bot:", error.response.data.message);
+      setTitle("Error");
+      setMessage(error.response.data.message);
+      setConfirmationOpen(true);
+    }
+  };
 
-  useEffect(() => {
-    const totalTime = Object.values(botWorkingTimes).reduce(
-      (sum, time) => sum + time,
-      0
-    );
-    setTodayBotTime(totalTime);
-
-    const lastWeekTotal =
-      dailyBotTimes.reduce((sum, time) => sum + time, 0) + totalTime;
-    setLastWeekBotTime(lastWeekTotal);
-  }, [botWorkingTimes, dailyBotTimes]);
-
-  const handleToggle = (botName) => {
+  const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
-      alert(
-        "You can't activate the bot after market closes, but you can schedule the bot tomorrow"
-      );
+      setTitle("Action Not Allowed");
+      setMessage("You can't activate the bot after market closes.");
+      setConfirmationAction(() => () => setConfirmationOpen(false));
+      setConfirmationOpen(true);
       return;
     }
 
-    setBotStates((prevStates) => {
-      const currentState = prevStates[botName];
-      const newIsActive =
-        isWithinTradingHours() || isBeforeMarketOpen()
-          ? !currentState.isActive
-          : false;
+    setTogglingBotId(botId);
 
-      if (newIsActive) {
-        setBotStartTimes((prev) => ({ ...prev, [botName]: new Date() }));
+    try {
+      const bot = botDataList.find((b) => b._id === botId);
+      const currentStatus = bot.dynamicData[0]?.status;
+      let newStatus;
+
+      if (currentStatus === "Running" || currentStatus === "Schedule") {
+        newStatus = "Inactive";
       } else {
-        setBotStartTimes((prev) => {
-          const newStartTimes = { ...prev };
-          delete newStartTimes[botName];
-          return newStartTimes;
-        });
+        if (isWithinTradingHours()) {
+          newStatus = "Running";
+        } else if (isBeforeMarketOpen()) {
+          newStatus = "Schedule";
+        } else {
+          newStatus = "Inactive";
+        }
       }
 
-      return {
+      // await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
+      //   status: newStatus
+      // });
+
+      setBotStates((prevStates) => ({
         ...prevStates,
-        [botName]: {
-          isActive: newIsActive,
-          status: getBotStatus(newIsActive),
+        [botId]: {
+          isActive: newStatus === "Running" || newStatus === "Schedule",
+          status: newStatus,
         },
-      };
-    });
+      }));
+
+      await fetchBots(); // Refetch bots to get updated data
+    } catch (error) {
+      console.error("Error toggling bot status:", error);
+      setTitle("Error");
+      setMessage("Failed to update bot status. Please try again.");
+      setConfirmationOpen(true);
+    } finally {
+      setTogglingBotId(null);
+    }
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setSelectedRow(null);
-    setActionType(null);
-  };
-
-  const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value, 10));
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setSelectedRow((prevRow) => ({
-      ...prevRow,
-      [name]: value,
-    }));
-  };
-
-  const handleConfirm = () => {
-    console.log(
-      `${actionType} action confirmed for bot:`,
-      selectedRow,
-      "Quantity:",
-      quantity
-    );
-    setModalOpen(false);
-  };
-
-  const handleBotAction = (bot, action) => {
-    setSelectedRow(bot);
-    setActionType(action);
-    setQuantity(1);
-    setModalOpen(true);
-  };
-
-  const closeBrokerModal = () => {
-    setBrokerModalOpen(false);
-  };
-
-  const closeAutoTradeModal = () => {
-    setAutoTradeModalOpen(false);
-  };
-
-  const [activatedBots, setActivatedBots] = useState([]);
-  const [isAutoTradeActivated, setIsAutoTradeActivated] = useState(false);
-  const [availableBots, setAvailableBots] = useState([...botDataList]);
-  const [isActivatingBot, setIsActivatingBot] = useState(false);
-
-  const handleAutoTrade = () => {
+  const handleScheduleTrade = () => {
     if (!fyersAccessToken) {
       setBrokerModalOpen(true);
       console.log("First connect to your broker to start auto trade feature.");
     } else {
       console.log(fyersAccessToken);
       console.log("Successfully connected to broker");
-      setIsActivatingBot(true);
       setAutoTradeModalOpen(true);
     }
   };
 
-  const activateBot = (botConfig) => {
-    if (availableBots.length > 0) {
-      const botToActivate = {
-        ...availableBots[0],
-        profitPercentage: botConfig.marginProfitPercentage,
-        riskPercentage: botConfig.marginLossPercentage,
-        productType: botConfig.productType,
-      };
-      setActivatedBots([...activatedBots, botToActivate]);
-      setAvailableBots(availableBots.slice(1));
-    }
+  const handleConfirmationClose = () => {
+    setConfirmationOpen(false);
+    setAutoTradeModalOpen(false);
   };
 
-  const handleAutoTradeActivation = (isActivated, botConfig) => {
-    if (!isAutoTradeActivated) {
-      setIsAutoTradeActivated(true);
-    }
-    if (isActivated && availableBots.length > 0) {
-      activateBot(botConfig);
-    }
-    setIsActivatingBot(false);
-  };
+  useEffect(() => {
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    // const wsUrl = process.env.NODE_ENV === 'development'
+    //   ? 'ws://localhost:8080'
+    //   : `${wsProtocol}//api.stockgenius.ai`;
+    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
-  const handleActivateAnotherBot = () => {
-    if (availableBots.length > 0) {
-      setIsActivatingBot(true);
-      setAutoTradeModalOpen(true);
-    } else {
-      alert("No more bots available for activation.");
-    }
-  };
+    const ws = new WebSocket(wsUrl);
+    ws.onopen = () => {
+      console.log("WebSocket connected for all bots time");
+      ws.send(
+        JSON.stringify({
+          type: "subscribeAllBotsTime",
+          userId: currentUser.id,
+        })
+      );
+    };
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "allBotsTime") {
+        setAllBotsTime({
+          totalTodaysBotTime: parseInt(data.totalTodaysBotTime),
+          totalCurrentWeekTime: parseInt(data.totalCurrentWeekTime),
+        });
+      }
+    };
+    ws.onerror = (error) => {
+      console.error("WebSocket error for all bots time:", error);
+    };
+    ws.onclose = () => {
+      console.log("WebSocket disconnected for all bots time");
+    };
+    return () => {
+      ws.close();
+    };
+  }, [currentUser.id]);
 
-  const cardData = [
-    { title: "Today's Profit %", value: "12%" },
-    { title: "Last Week Profit %", value: "23.12%" },
-    { title: "Today's Bot Time", value: todayBotTime },
-    { title: "Last Week Bot Time", value: lastWeekBotTime },
-    { title: "No. of AI Bots", value: botDataList.length },
-    { title: "Re-investments", value: "42" },
-    { title: "Total Investment", value: "42350.38" },
-    { title: "Total Profit", value: "98675.91" },
-  ];
+  const formatTime = useCallback((seconds) => {
+    if (isNaN(seconds) || seconds < 0) {
+      return "0h 0m 0s";
+    }
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
+  }, []);
+
+  const calculateCardData = useMemo(() => {
+    const today = moment().tz("Asia/Kolkata").startOf("day");
+    const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
+
+    // Initialize accumulators
+    let todayTotalInvestment = 0;
+    let todayTotalProfit = 0;
+    let weekTotalInvestment = 0;
+    let weekTotalProfit = 0;
+    let todayReInvestments = 0;
+
+    botDataList.forEach((bot) => {
+      const botCreatedAt = moment(bot.createdAt).tz("Asia/Kolkata");
+
+      // Get the bot's profit and investment amounts
+      let profitAmount = 0;
+      let investmentAmount = 0;
+      let reInvestmentCount = 0;
+
+      if (bot.productType === "INTRADAY") {
+        // For intraday bots, use positions data
+        profitAmount = positions?.overall?.pl_total || 0;
+        investmentAmount = positions?.overall?.buyVal || 0;
+        reInvestmentCount =
+          orders?.orderBook?.filter(
+            (order) =>
+              moment(order.orderDateTime).isSame(today, "day") &&
+              order.productType === "INTRADAY"
+          ).length || 0;
+      } else if (bot.productType === "CNC") {
+        // For CNC bots, use holdings data
+        profitAmount = holdings?.overall?.total_pl || 0;
+        investmentAmount = holdings?.overall?.total_investment || 0;
+        reInvestmentCount =
+          orders?.orderBook?.filter(
+            (order) =>
+              moment(order.orderDateTime).isSame(today, "day") &&
+              order.productType === "CNC"
+          ).length || 0;
+      }
+
+      // Calculate metrics for today's bots
+      if (botCreatedAt.isSame(today, "day")) {
+        todayTotalInvestment += investmentAmount;
+        todayTotalProfit += profitAmount;
+        todayReInvestments += reInvestmentCount;
+      }
+
+      // Calculate metrics for this week's bots
+      if (botCreatedAt.isSameOrAfter(startOfWeek)) {
+        weekTotalInvestment += investmentAmount;
+        weekTotalProfit += profitAmount;
+      }
+    });
+
+    // Calculate percentages
+    const calculatePercentage = (profit, investment) => {
+      if (investment === 0) return 0;
+      return (profit / investment) * 100;
+    };
+
+    const todayProfitPercentage = calculatePercentage(
+      todayTotalProfit,
+      todayTotalInvestment
+    );
+    const weekProfitPercentage = calculatePercentage(
+      weekTotalProfit,
+      weekTotalInvestment
+    );
+
+    return [
+      {
+        title: "Today's Profit %",
+        value: `${todayProfitPercentage.toFixed(2)}%`,
+      },
+      {
+        title: "Last Week Profit %",
+        value: `${weekProfitPercentage.toFixed(2)}%`,
+      },
+      {
+        title: "Today's Bot Time",
+        value: formatTime(allBotsTime.totalTodaysBotTime),
+      },
+      {
+        title: "Week's Bot Time",
+        value: formatTime(allBotsTime.totalCurrentWeekTime),
+      },
+      {
+        title: "No. of AI Bots",
+        value: botDataList.length.toString(),
+      },
+      {
+        title: "Re-investments",
+        value: todayReInvestments.toString(),
+      },
+      {
+        title: "Total Investment",
+        value: todayTotalInvestment.toFixed(2),
+      },
+      {
+        title: "Total Profit",
+        value: todayTotalProfit.toFixed(2),
+      },
+    ];
+  }, [botDataList, allBotsTime, formatTime, holdings, positions, orders]);
 
   return (
     <div className="-z-10">
@@ -406,114 +482,81 @@ function AITradingBots() {
           alt="Bear"
         />
 
-        <div className="bg-white lg:min-h-[85vh] news-table rounded-2xl">
+        <div
+          className={`lg:min-h-[85vh] news-table rounded-2xl ${
+            isAITradingPage ? "bg-gradient" : "bg-white"
+          }`}
+        >
           <div className="flex flex-col lg:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
               AI Trading Bots
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto">
-              {/* <button className="bg-white text-sm py-2 font-semibold px-4 rounded-xl text-[#3A6FF8] mb-3 sm:mb-0 sm:mr-3 w-full sm:w-auto">
-                Activate Bots
-              </button> */}
-              {!isAutoTradeActivated ? (
-                <button
-                  className="text-gray-800 text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8] dark:bg-blue-700 w-full sm:w-auto flex flex-col items-center dark:text-white"
-                  onClick={handleAutoTrade}
-                >
-                  <span>Activate Auto Trade Bot</span>
-                </button>
-              ) : (
-                <button
-                  className="text-gray-800 text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8] dark:bg-blue-700 w-full sm:w-auto flex flex-col items-center dark:text-white"
-                  onClick={handleActivateAnotherBot}
-                >
-                  <span>Activate Auto Trade Bot</span>
-                </button>
-              )}
+              <button
+                className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
+                onClick={handleScheduleTrade}
+              >
+                <span>Schedule Bot</span>
+              </button>
             </div>
           </div>
 
-          {isAutoTradeActivated ? (
-            <>
-              <div className="p-4">
-                <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
-                  {cardData.map((card, index) => (
-                    <Cards
-                      key={index}
-                      title={card.title}
-                      value={
-                        card.title.includes("Bot Time")
-                          ? formatTime(card.value)
-                          : card.value
-                      }
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-4 overflow-scroll max-h-[60vh]">
-                <div className="flex flex-col gap-10">
-                  {activatedBots.map((bot) => (
-                    <Bot
-                      key={bot.name}
-                      botData={{
-                        ...bot,
-                        dynamicData: bot.dynamicData.map((item) =>
-                          item.title === "Working Time"
-                            ? {
-                                ...item,
-                                value: formatTime(
-                                  botWorkingTimes[bot.name] || 0
-                                ),
-                              }
-                            : item.title === "Status"
-                            ? {
-                                ...item,
-                                value:
-                                  botStates[bot.name]?.status || "inactive",
-                                valueColor:
-                                  botStates[bot.name]?.status === "Running"
-                                    ? "#00FF47"
-                                    : "#FF4D4D",
-                              }
-                            : item
-                        ),
-                      }}
-                      isEnabled={botStates[bot.name]?.isActive || false}
-                      onToggle={() => handleToggle(bot.name)}
-                      currentStatus={botStates[bot.name]?.status || "inactive"}
-                      onAction={(action) => handleBotAction(bot, action)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="py-40">
-              <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+          <div className="p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
+              {calculateCardData.map((card, index) => (
+                <Cards key={index} title={card.title} value={card.value} />
+              ))}
             </div>
-          )}
+          </div>
+
+          <div className="p-4 overflow-scroll max-h-[60vh]">
+            <div className="flex flex-col gap-10">
+              {isInitialLoading ? ( // Only show loading on initial fetch
+                <div className="w-full flex justify-center items-center min-h-[200px]">
+                  <Loading />
+                </div>
+              ) : botDataList.length > 0 ? (
+                botDataList.map((bot) => (
+                  <Bot
+                    key={bot._id}
+                    botData={bot}
+                    isEnabled={botStates[bot._id].isActive}
+                    onToggle={() => handleToggle(bot._id)}
+                    updateBotDetails={updateBotDetails}
+                    deleteBot={deleteBot}
+                    loading={togglingBotId === bot._id} // Pass loading state to individual bot
+                    color={botColorMap[bot._id]}
+                  />
+                ))
+              ) : (
+                <div>
+                  <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <Modal
-        isOpen={modalOpen}
-        closeModal={closeModal}
-        rowData={selectedRow}
-        actionType={actionType}
-        quantity={quantity}
-        handleQuantityChange={handleQuantityChange}
-        handleConfirm={handleConfirm}
-        handleInputChange={handleInputChange}
+      <BrokerModal
+        isOpen={brokerModalOpen}
+        onClose={() => setBrokerModalOpen(false)}
       />
-      <BrokerModal isOpen={brokerModalOpen} onClose={closeBrokerModal} />
       <AutoTradeModal
         isOpen={autoTradeModalOpen}
         onClose={() => {
           setAutoTradeModalOpen(false);
-          setIsActivatingBot(false);
         }}
-        onActivate={handleAutoTradeActivation}
+        onCreateBot={createBot}
       />
+      {message && (
+        <ConfirmationModal
+          isOpen={confirmationOpen}
+          onClose={handleConfirmationClose}
+          title={title}
+          message={message}
+          onConfirm={handleConfirmationClose}
+        />
+      )}
     </div>
   );
 }

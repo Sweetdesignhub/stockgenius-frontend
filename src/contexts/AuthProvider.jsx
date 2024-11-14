@@ -1,3 +1,15 @@
+/**
+ * File: AuthProvider
+ * Description: This component is a context provider that manages authentication state and session expiration in a React application. It utilizes cookies to store the authentication token (access_token), monitors the token's expiration, and triggers actions such as showing a logout warning and logging the user out when the session expires.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import { useEffect, useState, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -14,10 +26,10 @@ const AuthProvider = ({ children }) => {
   const [showLogoutWarning, setShowLogoutWarning] = useState(false);
 
   useEffect(() => {
-    console.log("Available cookies:", Cookies.get());
+    // console.log("Available cookies:", Cookies.get());
 
     const token = Cookies.get("access_token");
-    console.log("Retrieved token:", token);
+    // console.log("Retrieved token:", token);
 
     if (token) {
       try {
@@ -46,15 +58,15 @@ const AuthProvider = ({ children }) => {
             };
           }
         } else {
-          console.error("Invalid token format");
+          // console.error("Invalid token format");
           handleLogout();
         }
       } catch (error) {
-        console.error("Token decoding error", error);
+        // console.error("Token decoding error", error);
         handleLogout();
       }
     } else {
-      console.warn("No token found, user might be logged out");
+      // console.warn("No token found, user might be logged out");
     }
   }, [navigate]);
 
@@ -66,7 +78,7 @@ const AuthProvider = ({ children }) => {
         navigate("/sign-in");
       })
       .catch((err) => {
-        console.error("Logout error", err);
+        // console.error("Logout error", err);
       });
   };
 

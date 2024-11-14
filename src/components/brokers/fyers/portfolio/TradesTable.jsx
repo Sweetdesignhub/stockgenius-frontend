@@ -1,62 +1,78 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
-import api from "../../../../config.js";
+//import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
-import { useSelector } from "react-redux";
+//import { useSelector } from "react-redux";
+import { useData } from "../../../../contexts/FyersDataContext.jsx";
 
-const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
-  const [trades, setTrades] = useState([]);
+const TradesTable = ({ selectedColumns, setColumnNames }) => {
+  //  const [trades, setTrades] = useState([]);
   // console.log("trades", trades);
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { currentUser } = useSelector((state) => state.user);
+  // const { currentUser } = useSelector((state) => state.user);
 
-  const getTradesData = async () => {
-    try {
-      const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      if (!fyersAccessToken) {
-        throw new Error(
-          "No authorization token found. Please authenticate and try again."
-        );
-      }
+  // const getTradesData = async () => {
+  //   try {
+  //     const fyersAccessToken = localStorage.getItem("fyers_access_token");
+  //     if (!fyersAccessToken) {
+  //       throw new Error(
+  //         "No authorization token found. Please authenticate and try again."
+  //       );
+  //     }
 
-      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get(
-        `/api/v1/fyers/tradesByUserId/${currentUser.id}`,
-        { headers }
-      );
+  //     const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+  //     const response = await api.get(
+  //       `/api/v1/fyers/tradesByUserId/${currentUser.id}`,
+  //       { headers }
+  //     );
 
-      if (response.statusText === "OK") {
-        // setTrades(response.data.tradeBook);
-        const tradesData = response.data.tradeBook;
-        setTrades(tradesData);
-        setCount(tradesData.length);
+  //     if (response.statusText === "OK") {
+  //       // setTrades(response.data.tradeBook);
+  //       const tradesData = response.data.tradeBook;
+  //       setTrades(tradesData);
 
-        const excludedColumns = [];
-        const allColumnNames = Object.keys(tradesData[0] || {}).filter(
-          (columnName) => !excludedColumns.includes(columnName)
-        );
-        setColumnNames(allColumnNames);
-      } else {
-        throw new Error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching trades:", error);
-      setError(
-        error.message ||
-          "Failed to fetch trades. Please authenticate and try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //       const excludedColumns = [];
+  //       const allColumnNames = Object.keys(tradesData[0] || {}).filter(
+  //         (columnName) => !excludedColumns.includes(columnName)
+  //       );
+  //       setColumnNames(allColumnNames);
+  //     } else {
+  //       throw new Error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching trades:", error);
+  //     setError(
+  //       error.message ||
+  //       "Failed to fetch trades. Please authenticate and try again."
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getTradesData(); // Initial call when component mounts
+  //   const interval = setInterval(getTradesData, 5000);
+  //   return () => clearInterval(interval); // Cleanup interval on component unmount
+  // }, []);
+
+  const { trades = { tradeBook: [] }, loading } = useData();
+  const tradesData = trades.tradeBook || [];
 
   useEffect(() => {
-    getTradesData(); // Initial call when component mounts
-    const interval = setInterval(getTradesData, 5000);
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []);
+    if (tradesData.length > 0) {
+      const excludedColumns = [];
+      const allColumnNames = Object.keys(tradesData[0] || {}).filter(
+        (columnName) => !excludedColumns.includes(columnName)
+      );
+
+      setColumnNames(allColumnNames);
+    } else {
+      setColumnNames([]);
+    }
+  }, [tradesData, setColumnNames]);
 
   if (loading) {
     return (
@@ -70,7 +86,7 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
     return <div className="text-center p-4 text-red-500">{error}</div>;
   }
 
-  if (!trades || trades.length === 0) {
+  if (!tradesData || tradesData.length === 0) {
     // return <div className="text-center p-4">There are no trades</div>;
     return (
       <NotAvailable
@@ -100,7 +116,7 @@ const TradesTable = ({ setCount, selectedColumns, setColumnNames }) => {
           </tr>
         </thead>
         <tbody>
-          {trades.map((trade, index) => (
+          {tradesData.map((trade, index) => (
             <tr key={index} className="text-center">
               {selectedColumns.map((columnName) => (
                 <td

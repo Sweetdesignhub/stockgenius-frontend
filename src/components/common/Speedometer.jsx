@@ -1,3 +1,17 @@
+/**
+ * File: Speedometer
+ * Description: A speedometer gauge component that visualizes a normalized value between -1 and 1 as a gauge chart, using `react-gauge-chart`. This component adapts text color based on the current theme and ensures a valid numeric input by setting non-numeric values to zero. The gauge features three color levels (green, orange, red) and displays a needle representing the mapped value.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
+
+
 import React from 'react';
 import GaugeChart from 'react-gauge-chart';
 import { useTheme } from '../../contexts/ThemeContext';

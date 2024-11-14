@@ -1,3 +1,15 @@
+/**
+ * File: IndiaDashboard
+ * Description: This component handles the display of top gainers and top losers, including order placing functionality for both "Buy" and "Sell" actions based on the selected broker (Fyers or Zerodha).
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React, { useEffect, useState } from "react";
 import fetchFile from "../../utils/india/fetchFile";
 import parseExcel from "../../utils/india/parseExcel";
@@ -7,7 +19,7 @@ import Table from "../../components/dashboard/Table";
 import { useSelector } from "react-redux";
 import Modal from "../../components/common/Modal";
 import BrokerModal from "../../components/brokers/BrokerModal";
-import AutoTradeModal from "../../components/brokers/AutoTradeModal";
+import api from "../../config.js";
 
 const bucketName = "automationdatabucket";
 const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
@@ -18,18 +30,20 @@ const IndiaDashboard = () => {
   const [error, setError] = useState(null);
   const [gainersData, setGainersData] = useState([]);
   const [losersData, setLosersData] = useState([]);
-  const fyersAccessToken = useSelector((state) => state.fyers);
-  // console.log('india access token : ', fyersAccessToken);
-
-  // console.log("google clinet : ", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-  
-
   const [selectedRow, setSelectedRow] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [productType, setProductType] = useState("CNC");
   const [modalOpen, setModalOpen] = useState(false);
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
-  const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
+
+  const { currentUser } = useSelector((state) => state.user);
+  const fyersAccessToken =
+    useSelector((state) => state.fyers) ||
+    localStorage.getItem("fyers_access_token");
+  const zerodhaAccessToken =
+    useSelector((state) => state.zerodha) ||
+    localStorage.getItem("zerodha_access_token");
 
   const fetchData = async () => {
     try {
@@ -50,7 +64,7 @@ const IndiaDashboard = () => {
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 600000); // 10 minutes
+    const intervalId = setInterval(fetchData, 600000); 
     return () => clearInterval(intervalId);
   }, []);
 
@@ -58,14 +72,25 @@ const IndiaDashboard = () => {
     setSelectedRow(row);
     setActionType("buy");
     setQuantity(1); // Reset quantity
-    setModalOpen(true);
+
+    if (fyersAccessToken || zerodhaAccessToken) {
+      setModalOpen(true);
+    } else {
+      setBrokerModalOpen(true);
+    }
+
+    // setModalOpen(true);
   };
 
   const handleSell = (row) => {
     setSelectedRow(row);
     setActionType("sell");
     setQuantity(1); // Reset quantity
-    setModalOpen(true);
+    if (fyersAccessToken || zerodhaAccessToken) {
+      setModalOpen(true);
+    } else {
+      setBrokerModalOpen(true);
+    }
   };
 
   const closeModal = () => {
@@ -78,12 +103,12 @@ const IndiaDashboard = () => {
     setBrokerModalOpen(false);
   };
 
-  const closeAutoTradeModal = () => {
-    setAutoTradeModalOpen(false);
-  };
-
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value, 10));
+  };
+
+  const handleProductTypeChange = (e) => {
+    setProductType(e.target.value);
   };
 
   const handleInputChange = (event) => {
@@ -94,26 +119,93 @@ const IndiaDashboard = () => {
     }));
   };
 
-  const handleConfirm = () => {
+  const handlePlaceOrder = async () => {
     console.log(
       `${actionType} button confirmed for row:`,
-      selectedRow,
+      selectedRow.Ticker,
       "Quantity:",
       quantity
     );
-    setModalOpen(false);
-  };
 
-  const confirmAutoTrade = () => {
-    if (!fyersAccessToken) {
-      setBrokerModalOpen(true);
-      console.log("First connect to your broker to start auto trade feature.");
+    let apiUrl = "";
+    let requestBody = {};
+
+    // Build request based on selected broker
+    if (fyersAccessToken) {
+      apiUrl = `/api/v1/fyers/placeOrder/${currentUser.id}`;
+      requestBody = {
+        accessToken: fyersAccessToken,
+        order: {
+          symbol: `NSE:${selectedRow.Ticker}-EQ`,
+          qty: quantity,
+          type: 2,
+          side: actionType === "buy" ? 1 : -1,
+          productType: productType || "CNC",
+          limitPrice: 0,
+          stopPrice: 0,
+          disclosedQty: 0,
+          validity: "DAY",
+          offlineOrder: false,
+          stopLoss: 0,
+          takeProfit: 0,
+          orderTag: "stockgenius1",
+        },
+      };
+    } else if (zerodhaAccessToken) {
+      apiUrl = `/api/v1/zerodha/placeOrder/${currentUser.id}`;
+      requestBody = {
+        order: {
+          exchange: selectedRow.exchange || "NSE",
+          tradingsymbol: selectedRow.Ticker,
+          transaction_type: actionType.toUpperCase(),
+          quantity: quantity,
+          product: productType === "INTRADAY" ? "MIS" : "CNC",
+          order_type: selectedRow.orderType || "MARKET",
+          price: 0,
+          trigger_price: 0,
+          validity: "DAY",
+          tag: "STOCKGENIUS ORDER1",
+        },
+      };
+    } else {
+      alert("No access token found for the selected broker.");
+      return;
     }
 
-    if (fyersAccessToken) {
-      console.log(fyersAccessToken);
-      console.log("successfully conected to broker");
-      setAutoTradeModalOpen(true);
+    try {
+      // Send the POST request using axios
+      const response = await api.post(apiUrl, requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(response);
+
+      // Show success message
+      if (response.data && response.status === 200) {
+        alert(
+          `Order placed successfully for ${selectedRow.Ticker} with quantity ${quantity}`
+        );
+        setModalOpen(false); // Close modal if open
+      } else {
+        throw new Error("Failed to place order, please check the input.");
+      }
+    } catch (error) {
+      // Handle the error response
+      let errorMessage = "An error occurred";
+
+      // Extract the specific error message from the response
+      if (error.response?.data?.error?.message) {
+        errorMessage = error.response.data.error.message; // Get the specific message
+      } else if (error.message) {
+        // Handle network errors or other thrown errors
+        errorMessage = error.message;
+      }
+
+      alert(`Order failed: ${errorMessage}`);
+      console.error("Error placing order:", errorMessage);
+      setModalOpen(false);
     }
   };
 
@@ -167,14 +259,6 @@ const IndiaDashboard = () => {
               actionButtonColor="border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
             />
           </div>
-          <div className="flex items-center justify-center p-4 mt-3">
-            <button
-              onClick={confirmAutoTrade}
-              className="bg-[#3A6FF8] text-white px-4 py-2 rounded-xl"
-            >
-              Activate Auto-Trades
-            </button>
-          </div>
         </div>
       </div>
       <Modal
@@ -184,14 +268,11 @@ const IndiaDashboard = () => {
         actionType={actionType}
         quantity={quantity}
         handleQuantityChange={handleQuantityChange}
-        handleConfirm={handleConfirm}
+        placeOrder={handlePlaceOrder}
         handleInputChange={handleInputChange}
+        handleProductTypeChange={handleProductTypeChange}
       />
       <BrokerModal isOpen={brokerModalOpen} onClose={closeBrokerModal} />
-      <AutoTradeModal
-        isOpen={autoTradeModalOpen}
-        onClose={closeAutoTradeModal}
-      />
     </div>
   );
 };

@@ -1,5 +1,18 @@
+/**
+ * File: InputField
+ * Description: This `InputField` component renders different types of input fields such as text, password, and dropdown, with label, validation, and error handling. It also allows toggling the visibility of password inputs. It is designed to handle various form input scenarios and can be customized using different props.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name] 
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
+
+
 import React, { useState } from "react";
-import { Country, State } from "country-state-city";
 import { Eye, EyeOff } from 'lucide-react'; 
 
 const InputField = ({

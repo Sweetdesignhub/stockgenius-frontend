@@ -1,344 +1,145 @@
-// import React, { useState } from "react";
-// import { useSelector } from "react-redux";
-// import ConfirmationModal from "../common/ConfirmationModal";
-// import api from "../../config";
-
-// const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
-//   const [marginProfitPercentage, setMarginProfitPercentage] = useState("");
-//   const [marginLossPercentage, setMarginLossPercentage] = useState("");
-//   const [botAccess, setBotAccess] = useState("Yes");
-//   const [productType, setProductType] = useState(""); 
-//   const [profitError, setProfitError] = useState("");
-//   const [lossError, setLossError] = useState("");
-//   const [confirmationOpen, setConfirmationOpen] = useState(false);
-//   const [confirmationMessage, setConfirmationMessage] = useState("");
-
-//   console.log(productType);
-  
-
-//   const { currentUser } = useSelector((state) => state.user);
-//   const fyersAccessToken = useSelector((state) => state.fyers);
-//   // console.log(currentUser);
-//   if (!isOpen) return null;
-
-//   const activateAutoTradeBot = async () => {
-//     try {
-//       // const response = await api.post(
-//       //   `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
-//       //   {
-//       //     marginProfitPercentage,
-//       //     marginLossPercentage,
-//       //   }
-//       // );
-//       const endpoint =
-//         productType === "INTRADAY"
-//           ? `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`
-//           : `/api/v1/users/auto-trade-bot-CNC/activate/${currentUser.id}`;
-
-//       const response = await api.post(endpoint, {
-//         marginProfitPercentage,
-//         marginLossPercentage,
-//       });
-//       if (response.status === 200) {
-//         setConfirmationMessage(
-//           isActivatingBot
-//             ? "Bot activated successfully!"
-//             : "Auto Trade Bot activated successfully!"
-//         );
-//         onActivate(true, {
-//           marginProfitPercentage,
-//           marginLossPercentage,
-//         });
-//       } else {
-//         setConfirmationMessage("Failed to activate the bot. Please try again.");
-//       }
-//     } catch (error) {
-//       setConfirmationMessage("An error occurred. Please try again.");
-//     }
-//     setConfirmationOpen(true);
-//   };
-
-//   const handleActivate = () => {
-//     let valid = true;
-
-//     if (!marginProfitPercentage) {
-//       setProfitError("Please enter profit percentage.");
-//       valid = false;
-//     } else if (
-//       isNaN(marginProfitPercentage) ||
-//       marginProfitPercentage < 5 ||
-//       marginProfitPercentage > 50
-//     ) {
-//       setProfitError("Profit percentage must be a number between 5 and 50.");
-//       valid = false;
-//     } else {
-//       setProfitError("");
-//     }
-
-//     if (!marginLossPercentage) {
-//       setLossError("Please enter loss percentage.");
-//       valid = false;
-//     } else if (
-//       isNaN(marginLossPercentage) ||
-//       marginLossPercentage < 0.1 ||
-//       marginLossPercentage > 50
-//     ) {
-//       setLossError("Loss percentage must be a number between 0.1 and 50.");
-//       valid = false;
-//     } else {
-//       setLossError("");
-//     }
-
-//     if (valid) {
-//       if (botAccess === "Yes") {
-//         activateAutoTradeBot();
-//       } else {
-//         setConfirmationMessage(
-//           "Please set bot access to Yes to start the auto trade bot."
-//         );
-//         setConfirmationOpen(true);
-//       }
-//     }
-//   };
-
-//   const handleConfirmationClose = () => {
-//     setConfirmationOpen(false);
-//     if (confirmationMessage === "Congratulations! Your bot is activated.") {
-//       onClose();
-//     }
-//     onClose();
-//   };
-
-//   return (
-//     <>
-//       <div
-//         className="fixed inset-0 z-10 flex items-center justify-center bg-gray-800 bg-opacity-50"
-//         role="dialog"
-//         aria-modal="true"
-//       >
-//         <div className="w-full max-w-lg mx-4 md:mx-auto shadow-lg relative bg-white rounded-lg">
-//           <div className="auto-popup px-5 py-3 rounded-tl-lg rounded-tr-lg relative bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg">
-//             <button
-//               onClick={onClose}
-//               className="absolute top-3 right-3 cursor-pointer text-3xl text-gray-300 hover:text-gray-400"
-//               aria-label="Close modal"
-//             >
-//               &times;
-//             </button>
-//             <div>
-//               <h2 className="text-xl text-white font-poppins font-semibold">
-//                 {isActivatingBot ? "Activate Bot" : "Activate Auto Trade Bot"}
-//               </h2>
-//               <p className="text-sm text-gray-300">NSE | EQ | INTRADAY</p>
-//             </div>
-//             <div className="flex flex-col gap-3 py-3">
-//               <div className="flex flex-row gap-3 items-center justify-between">
-//                 <div className="flex flex-col w-1/2">
-//                   <label htmlFor="profit-percentage" className="text-white">
-//                     Profit Percentage
-//                   </label>
-//                   <input
-//                     type="text"
-//                     id="profit-percentage"
-//                     value={marginProfitPercentage}
-//                     onChange={(e) => setMarginProfitPercentage(e.target.value)}
-//                     className="rounded-lg py-2 px-4 mt-1 text-black"
-//                   />
-//                   {profitError && (
-//                     <p className="text-red-500 text-sm mt-1">{profitError}</p>
-//                   )}
-//                 </div>
-//                 <div className="flex flex-col w-1/2">
-//                   <label htmlFor="loss-percentage" className="text-white">
-//                     Loss Percentage
-//                   </label>
-//                   <input
-//                     type="text"
-//                     id="loss-percentage"
-//                     value={marginLossPercentage}
-//                     onChange={(e) => setMarginLossPercentage(e.target.value)}
-//                     className="rounded-lg py-2 px-4 mt-1 text-black"
-//                   />
-//                   {lossError && (
-//                     <p className="text-red-500 text-sm mt-1">{lossError}</p>
-//                   )}
-//                 </div>
-//               </div>
-
-//               {/* New Product Type field */}
-//               <div className="flex flex-col gap-3 py-3">
-//                 <label htmlFor="product-type" className="text-white">
-//                   Product Type
-//                 </label>
-//                 <select
-//                   id="product-type"
-//                   value={productType}
-//                   onChange={(e) => setProductType(e.target.value)}
-//                   className="rounded-lg py-2 px-4 mt-1 text-black"
-//                 >
-//                   <option value="">Select Product Type</option>
-//                   <option value="INTRADAY">INTRADAY</option>
-//                   <option value="CNC">CNC</option>
-//                 </select>
-//               </div>
-
-//               <div className="flex flex-col gap-3 py-3">
-//                 <label htmlFor="bot-access" className="text-white">
-//                   Bot Access
-//                 </label>
-//                 <select
-//                   id="bot-access"
-//                   value={botAccess}
-//                   onChange={(e) => setBotAccess(e.target.value)}
-//                   className="rounded-lg py-2 px-4 mt-1 text-black"
-//                 >
-//                   <option value="Yes">Yes</option>
-//                   <option value="No">No</option>
-//                 </select>
-//                 <p className="text-white text-sm mt-1">
-//                   To activate the bot, it is necessary to select Yes.
-//                 </p>
-//               </div>
-//             </div>
-//             <div className="py-6 flex items-center justify-center">
-//               <button
-//                 onClick={onClose}
-//                 className="rounded-lg py-2 px-4 text-sm text-[#235CEF] bg-[white] mr-2"
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 onClick={handleActivate}
-//                 className="rounded-lg py-2 px-4 text-sm text-white bg-[#235CEF]"
-//               >
-//                 Activate
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       <ConfirmationModal
-//         isOpen={confirmationOpen}
-//         onClose={handleConfirmationClose}
-//         title="Bot Activation"
-//         message={confirmationMessage}
-//         onConfirm={handleConfirmationClose}
-//       />
-//     </>
-//   );
-// };
-
-// export default AutoTradeModal;
-
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import ConfirmationModal from "../common/ConfirmationModal";
-import api from "../../config";
 
-const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
-  const [marginProfitPercentage, setMarginProfitPercentage] = useState("");
-  const [marginLossPercentage, setMarginLossPercentage] = useState("");
-  const [botAccess, setBotAccess] = useState("Yes");
-  const [productType, setProductType] = useState(""); 
-  const [profitError, setProfitError] = useState("");
-  const [lossError, setLossError] = useState("");
+const AutoTradeModal = ({
+  isOpen,
+  onClose,
+  onCreateBot,
+  onUpdateBot,
+  botData,
+}) => {
+  const [formData, setFormData] = useState({
+    botName: "",
+    marginProfitPercentage: "",
+    marginLossPercentage: "",
+    botAccess: "Yes",
+    productType: "",
+  });
+
+  const [errors, setErrors] = useState({});
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [message, setMessage] = useState("");
 
-  console.log(productType);
-  
+  // Pre-fill form fields if botData is provided (for editing)
+  useEffect(() => {
+    if (botData) {
+      setFormData({
+        botName: botData.name || "",
+        marginProfitPercentage: botData.profitPercentage || "",
+        marginLossPercentage: botData.riskPercentage || "",
+        botAccess: botData.botAccess || "Yes",
+        productType: botData.productType || "",
+      });
+    } else {
+      // Clear the form when no botData is provided (for creating)
+      setFormData({
+        botName: "",
+        marginProfitPercentage: "",
+        marginLossPercentage: "",
+        botAccess: "Yes",
+        productType: "",
+      });
+    }
+  }, [botData]);
 
-  const { currentUser } = useSelector((state) => state.user);
-  const fyersAccessToken = useSelector((state) => state.fyers);
-  // console.log(currentUser);
   if (!isOpen) return null;
 
-  const activateAutoTradeBot = async () => {
-    try {
-      // const response = await api.post(
-      //   `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`,
-      //   {
-      //     marginProfitPercentage,
-      //     marginLossPercentage,
-      //   }
-      // );
-      const endpoint =
-        productType === "INTRADAY"
-          ? `/api/v1/users/auto-trade-bot-INTRADAY/activate/${currentUser.id}`
-          : `/api/v1/users/auto-trade-bot-CNC/activate/${currentUser.id}`;
+  const validateInput = () => {
+    const newErrors = {};
 
-      const response = await api.post(endpoint, {
-        marginProfitPercentage,
-        marginLossPercentage,
-      });
-      if (response.status === 200) {
-        setConfirmationMessage(
-          isActivatingBot
-            ? "Bot activated successfully!"
-            : "Auto Trade Bot activated successfully!"
-        );
-        onActivate(true, {
-          marginProfitPercentage,
-          marginLossPercentage,
-        });
-      } else {
-        setConfirmationMessage("Failed to activate the bot. Please try again.");
-      }
-    } catch (error) {
-      setConfirmationMessage("An error occurred. Please try again.");
+    if (!formData.marginProfitPercentage) {
+      newErrors.marginProfitPercentage = "Profit percentage is required.";
+    } else if (
+      isNaN(formData.marginProfitPercentage) ||
+      formData.marginProfitPercentage < 0.1 ||
+      formData.marginProfitPercentage > 50
+    ) {
+      newErrors.marginProfitPercentage =
+        "Profit percentage must be a number between 0.1 and 50.";
     }
-    setConfirmationOpen(true);
+
+    if (!formData.marginLossPercentage) {
+      newErrors.marginLossPercentage = "Loss percentage is required.";
+    } else if (
+      isNaN(formData.marginLossPercentage) ||
+      formData.marginLossPercentage < 0.1 ||
+      formData.marginLossPercentage > 50
+    ) {
+      newErrors.marginLossPercentage =
+        "Loss percentage must be a number between 0.1 and 50.";
+    }
+
+    if (!formData.botName) {
+      newErrors.botName = "Bot name is required.";
+    }
+
+    if (!formData.productType) {
+      newErrors.productType = "Product type is required.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleActivate = () => {
-    let valid = true;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-    if (!marginProfitPercentage) {
-      setProfitError("Please enter profit percentage.");
-      valid = false;
-    } else if (
-      isNaN(marginProfitPercentage) ||
-      marginProfitPercentage < 5 ||
-      marginProfitPercentage > 50
-    ) {
-      setProfitError("Profit percentage must be a number between 5 and 50.");
-      valid = false;
-    } else {
-      setProfitError("");
-    }
+  const handleSubmit = async () => {
+    if (!validateInput()) return;
 
-    if (!marginLossPercentage) {
-      setLossError("Please enter loss percentage.");
-      valid = false;
-    } else if (
-      isNaN(marginLossPercentage) ||
-      marginLossPercentage < 0.1 ||
-      marginLossPercentage > 50
-    ) {
-      setLossError("Loss percentage must be a number between 0.1 and 50.");
-      valid = false;
-    } else {
-      setLossError("");
-    }
+    if (formData.botAccess === "Yes") {
+      const botPayload = {
+        name: formData.botName,
+        profitPercentage: parseFloat(formData.marginProfitPercentage),
+        riskPercentage: parseFloat(formData.marginLossPercentage),
+        productType: formData.productType,
+      };
 
-    if (valid) {
-      if (botAccess === "Yes") {
-        activateAutoTradeBot();
-      } else {
-        setConfirmationMessage(
-          "Please set bot access to Yes to start the auto trade bot."
-        );
+      try {
+        if (botData) {
+          // If botData exists, update the bot
+          await onUpdateBot(botData._id, botPayload); //  bot ID for updating
+        } else {
+          // Otherwise, create a new bot
+          await onCreateBot(botPayload);
+        }
+
+        // Clear the form fields after successful submission
+        setFormData({
+          botName: "",
+          marginProfitPercentage: "",
+          marginLossPercentage: "",
+          botAccess: "Yes",
+          productType: "",
+        });
+
+        onClose();
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          setMessage(error.response.data.message);
+        } else {
+          setMessage("An error occurred. Please try again.");
+        }
         setConfirmationOpen(true);
       }
+    } else {
+      setMessage("Please set bot access to Yes to start the auto trade bot.");
+      setConfirmationOpen(true);
     }
   };
 
   const handleConfirmationClose = () => {
     setConfirmationOpen(false);
-    if (confirmationMessage === "Congratulations! Your bot is activated.") {
-      onClose();
-    }
     onClose();
   };
 
@@ -360,69 +161,99 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
             </button>
             <div>
               <h2 className="text-xl text-white font-poppins font-semibold">
-                {isActivatingBot ? "Activate Bot" : "Activate Auto Trade Bot"}
+                {botData ? "Update" : "Create"} Bot
               </h2>
               <p className="text-sm text-gray-300">NSE | EQ | INTRADAY</p>
             </div>
             <div className="flex flex-col gap-3 py-3">
+              <div className="flex flex-col gap-3 py-3">
+                <label htmlFor="botName" className="text-white">
+                  Bot Name
+                </label>
+                <input
+                  type="text"
+                  id="botName"
+                  name="botName"
+                  value={formData.botName}
+                  onChange={handleChange}
+                  className="rounded-lg py-2 px-4 mt-1 text-black"
+                  placeholder="Enter Bot Name"
+                />
+                {errors.botName && (
+                  <p className="text-red-500 text-sm mt-1">{errors.botName}</p>
+                )}
+              </div>
               <div className="flex flex-row gap-3 items-center justify-between">
                 <div className="flex flex-col w-1/2">
-                  <label htmlFor="profit-percentage" className="text-white">
+                  <label
+                    htmlFor="marginProfitPercentage"
+                    className="text-white"
+                  >
                     Profit Percentage
                   </label>
                   <input
                     type="text"
-                    id="profit-percentage"
-                    value={marginProfitPercentage}
-                    onChange={(e) => setMarginProfitPercentage(e.target.value)}
+                    id="marginProfitPercentage"
+                    name="marginProfitPercentage"
+                    value={formData.marginProfitPercentage}
+                    onChange={handleChange}
                     className="rounded-lg py-2 px-4 mt-1 text-black"
                   />
-                  {profitError && (
-                    <p className="text-red-500 text-sm mt-1">{profitError}</p>
+                  {errors.marginProfitPercentage && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.marginProfitPercentage}
+                    </p>
                   )}
                 </div>
                 <div className="flex flex-col w-1/2">
-                  <label htmlFor="loss-percentage" className="text-white">
+                  <label htmlFor="marginLossPercentage" className="text-white">
                     Loss Percentage
                   </label>
                   <input
                     type="text"
-                    id="loss-percentage"
-                    value={marginLossPercentage}
-                    onChange={(e) => setMarginLossPercentage(e.target.value)}
+                    id="marginLossPercentage"
+                    name="marginLossPercentage"
+                    value={formData.marginLossPercentage}
+                    onChange={handleChange}
                     className="rounded-lg py-2 px-4 mt-1 text-black"
                   />
-                  {lossError && (
-                    <p className="text-red-500 text-sm mt-1">{lossError}</p>
+                  {errors.marginLossPercentage && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.marginLossPercentage}
+                    </p>
                   )}
                 </div>
               </div>
-
-              {/* New Product Type field */}
               <div className="flex flex-col gap-3 py-3">
-                <label htmlFor="product-type" className="text-white">
+                <label htmlFor="productType" className="text-white">
                   Product Type
                 </label>
                 <select
-                  id="product-type"
-                  value={productType}
-                  onChange={(e) => setProductType(e.target.value)}
+                  id="productType"
+                  name="productType"
+                  value={formData.productType}
+                  onChange={handleChange}
                   className="rounded-lg py-2 px-4 mt-1 text-black"
                 >
                   <option value="">Select Product Type</option>
                   <option value="INTRADAY">INTRADAY</option>
                   <option value="CNC">CNC</option>
                 </select>
+                {errors.productType && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.productType}
+                  </p>
+                )}
               </div>
-
               <div className="flex flex-col gap-3 py-3">
-                <label htmlFor="bot-access" className="text-white">
+                <label htmlFor="botAccess" className="text-white">
                   Bot Access
                 </label>
                 <select
-                  id="bot-access"
-                  value={botAccess}
-                  onChange={(e) => setBotAccess(e.target.value)}
+                  id="botAccess"
+                  name="botAccess"
+                  value={formData.botAccess}
+                  onChange={handleChange}
                   className="rounded-lg py-2 px-4 mt-1 text-black"
                 >
                   <option value="Yes">Yes</option>
@@ -441,23 +272,25 @@ const AutoTradeModal = ({ isOpen, onClose, onActivate, isActivatingBot }) => {
                 Cancel
               </button>
               <button
-                onClick={handleActivate}
+                onClick={handleSubmit}
                 className="rounded-lg py-2 px-4 text-sm text-white bg-[#235CEF]"
               >
-                Activate
+                {botData ? "Update" : "Create"}
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <ConfirmationModal
-        isOpen={confirmationOpen}
-        onClose={handleConfirmationClose}
-        title="Bot Activation"
-        message={confirmationMessage}
-        onConfirm={handleConfirmationClose}
-      />
+      {message && (
+        <ConfirmationModal
+          isOpen={confirmationOpen}
+          onClose={handleConfirmationClose}
+          title="Error"
+          message={message}
+          onConfirm={handleConfirmationClose}
+        />
+      )}
     </>
   );
 };

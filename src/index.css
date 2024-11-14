@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
   background-image: url(https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9366f5b36c8d45ee957a34a655934e88);
   background-size: cover;
@@ -110,6 +111,14 @@ body {
 }
 
 .news-table {
+  background: #ffffff;
+}
+
+.bg-gradient {
+  background: linear-gradient(180deg, #CCD7FF 25%, #FFFFFF 100%);
+}
+
+.bg-white {
   background: #ffffff;
 }
 

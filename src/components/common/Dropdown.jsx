@@ -1,3 +1,15 @@
+/**
+ * File: Dropdown
+ * Description: This component is used to display a list of broker options (Fyers, Zerodha, and Motilal Oswal, ...) in a dropdown menu. The user can select one broker from the options, and the selected option is displayed in the dropdown button. The component also accepts a callback function (`handleOptionSelect`) to handle the selected option.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import {
   Menu,
   MenuButton,

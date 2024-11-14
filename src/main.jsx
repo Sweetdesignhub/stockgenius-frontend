@@ -16,28 +16,34 @@
 //     </PersistGate>
 //   </Provider>
 // );
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { ThemeProvider } from './contexts/ThemeContext';
-import AuthProvider from './contexts/AuthProvider';
-import { store, persistor } from './redux/store';
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import AuthProvider from "./contexts/AuthProvider";
+import { store, persistor } from "./redux/store";
+import { DataProvider } from "./contexts/FyersDataContext";
+// import { BotTimeProvider } from "./contexts/BotTimeContext";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <PersistGate persistor={persistor} loading={null}>
       <ThemeProvider>
         <BrowserRouter>
           <AuthProvider>
-            <GoogleOAuthProvider
-              clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-            >
-              <App />
-            </GoogleOAuthProvider>
+            <DataProvider>
+              {/* <BotTimeProvider> */}
+              <GoogleOAuthProvider
+                clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+              >
+                <App />
+              </GoogleOAuthProvider>
+              {/* </BotTimeProvider> */}
+            </DataProvider>
           </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>

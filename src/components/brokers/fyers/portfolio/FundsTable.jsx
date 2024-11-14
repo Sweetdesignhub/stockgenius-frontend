@@ -1,58 +1,74 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../../../common/Loading";
-import api from "../../../../config.js";
+//import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
-import { useSelector } from "react-redux";
+//import { useSelector } from "react-redux";
+import { useData } from "../../../../contexts/FyersDataContext.jsx";
 
 const FundsTable = ({ selectedColumns, setColumnNames }) => {
-  const [funds, setFunds] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [funds, setFunds] = useState([]);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { currentUser } = useSelector((state) => state.user);
+  //  const { currentUser } = useSelector((state) => state.user);
 
-  const getFundsData = async () => {
-    try {
-      const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      if (!fyersAccessToken) {
-        throw new Error(
-          "No authorization token found. Please authenticate and try again."
-        );
-      }
+  // const getFundsData = async () => {
+  //   try {
+  //     const fyersAccessToken = localStorage.getItem("fyers_access_token");
+  //     if (!fyersAccessToken) {
+  //       throw new Error(
+  //         "No authorization token found. Please authenticate and try again."
+  //       );
+  //     }
 
-      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get(
-        `/api/v1/fyers/fundsByUserId/${currentUser.id}`,
-        { headers }
-      );
-      // console.log(response.data.fund_limit);
+  //     const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+  //     const response = await api.get(
+  //       `/api/v1/fyers/fundsByUserId/${currentUser.id}`,
+  //       { headers }
+  //     );
+  //     // console.log(response.data.fund_limit);
 
-      if (response.statusText === "OK") {
-        setFunds(response.data.fund_limit);
+  //     if (response.statusText === "OK") {
+  //       setFunds(response.data.fund_limit);
 
-        const excludedColumns = [];
-        const allColumnNames = Object.keys(
-          response.data.fund_limit[0] || {}
-        ).filter((columnName) => !excludedColumns.includes(columnName));
-        setColumnNames(allColumnNames);
-      } else {
-        throw new Error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching funds:", error);
-      setError(
-        error.message ||
-          "Failed to fetch funds. Please authenticate and try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //       const excludedColumns = [];
+  //       const allColumnNames = Object.keys(
+  //         response.data.fund_limit[0] || {}
+  //       ).filter((columnName) => !excludedColumns.includes(columnName));
+  //       setColumnNames(allColumnNames);
+  //     } else {
+  //       throw new Error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching funds:", error);
+  //     setError(
+  //       error.message ||
+  //       "Failed to fetch funds. Please authenticate and try again."
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getFundsData();
+  //   const interval = setInterval(getFundsData, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  const { funds = { fund_limit: [{}] }, loading } = useData();
+  const fundsData = funds.fund_limit || [];
 
   useEffect(() => {
-    getFundsData();
-    const interval = setInterval(getFundsData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    if (fundsData.length > 0) {
+      const excludedColumns = [];
+      const allColumnNames = Object.keys(fundsData[0] || {}).filter(
+        (columnName) => !excludedColumns.includes(columnName)
+      );
+      setColumnNames(allColumnNames);
+    } else {
+      setColumnNames([]);
+    }
+  }, [fundsData, setColumnNames]);
 
   if (loading) {
     return (
@@ -66,7 +82,7 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
     return <div className="text-center p-4 text-red-500">{error}</div>;
   }
 
-  if (!funds || funds.length === 0) {
+  if (!fundsData || fundsData.length === 0) {
     // return <div className="text-center p-4">There are no funds</div>;
     return (
       <NotAvailable
@@ -98,14 +114,13 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
           </tr>
         </thead>
         <tbody>
-          {funds.map((fund, index) => (
+          {fundsData.map((fund, index) => (
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
-                    columnName === "title" ? "text-[#6FD4FF]" : ""
-                  }`}
+                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "title" ? "text-[#6FD4FF]" : ""
+                    }`}
                 >
                   {fund[columnName]}
                 </td>

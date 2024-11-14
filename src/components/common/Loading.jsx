@@ -1,3 +1,18 @@
+/**
+ * File: Loading
+ * Description: This component displays a loading spinner centered on the screen. It is used to indicate a loading state during asynchronous operations.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name] 
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
+
+
+
 import React from 'react';
 
 const Loading = () => (

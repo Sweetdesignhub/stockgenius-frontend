@@ -5,68 +5,82 @@ import NotAvailable from "../../../common/NotAvailable.jsx";
 import { useSelector } from "react-redux";
 import { X } from "lucide-react";
 import YesNoConfirmationModal from "../../../common/YesNoConfirmationModal.jsx";
+import { useData } from "../../../../contexts/FyersDataContext.jsx";
 
 const PositionsTable = ({
   selectedColumns,
   setColumnNames,
-  updatePositionCount,
 }) => {
-  const [positions, setPositions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [positions, setPositions] = useState([]);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [positionToExit, setPositionToExit] = useState(null);
+  const { positions = { netPositions: [] }, loading } = useData();
+  const positionsData = positions.netPositions || [];
 
-  const getPositionsData = async () => {
-    try {
-      const fyersAccessToken = localStorage.getItem("fyers_access_token");
-      if (!fyersAccessToken) {
-        throw new Error(
-          "No authorization token found. Please authenticate and try again."
-        );
-      }
+  // const getPositionsData = async () => {
+  //   try {
+  //     const fyersAccessToken = localStorage.getItem("fyers_access_token");
+  //     if (!fyersAccessToken) {
+  //       throw new Error(
+  //         "No authorization token found. Please authenticate and try again."
+  //       );
+  //     }
 
-      const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      const response = await api.get(
-        `/api/v1/fyers/positionsByUserId/${currentUser.id}`,
-        {
-          headers,
-        }
-      );
+  //     const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+  //     const response = await api.get(
+  //       `/api/v1/fyers/positionsByUserId/${currentUser.id}`,
+  //       {
+  //         headers,
+  //       }
+  //     );
 
-      let positionsData;
-      if (response.data && response.data.netPositions) {
-        // If using real API response
-        positionsData = response.data.netPositions;
-      } else {
-        throw new Error("Unexpected response format");
-      }
+  //     let positionsData;
+  //     if (response.data && response.data.netPositions) {
+  //       // If using real API response
+  //       positionsData = response.data.netPositions;
+  //     } else {
+  //       throw new Error("Unexpected response format");
+  //     }
 
-      setPositions(positionsData);
-      updatePositionCount(positionsData.length);
+  //     setPositions(positionsData);
+  //     setCount(positionsData.length);
 
-      const excludedColumns = ["message", "pan"];
+  //     const excludedColumns = ["message", "pan"];
+  //     const allColumnNames = Object.keys(positionsData[0] || {}).filter(
+  //       (columnName) => !excludedColumns.includes(columnName)
+  //     );
+  //     setColumnNames(allColumnNames);
+  //   } catch (error) {
+  //     console.error("Error fetching positions:", error);
+  //     setError(
+  //       error.message ||
+  //       "Failed to fetch positions. Please authenticate and try again."
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getPositionsData();
+  //   const interval = setInterval(getPositionsData, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  useEffect(() => {
+    if (positionsData.length > 0) {
+      const excludedColumns = [];
       const allColumnNames = Object.keys(positionsData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
       setColumnNames(allColumnNames);
-    } catch (error) {
-      console.error("Error fetching positions:", error);
-      setError(
-        error.message ||
-          "Failed to fetch positions. Please authenticate and try again."
-      );
-    } finally {
-      setLoading(false);
+    } else {
+      setColumnNames([]);
     }
-  };
-
-  useEffect(() => {
-    getPositionsData();
-    const interval = setInterval(getPositionsData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  }, [positionsData, setColumnNames]);
 
   const handleExitPosition = (event, position) => {
     event.stopPropagation();
@@ -93,13 +107,13 @@ const PositionsTable = ({
         );
 
         if (response.status === 200) {
-          setPositions((prevPositions) => {
-            const updatedPositions = prevPositions.filter(
-              (position) => position.id !== positionToExit.id
-            );
-            updatePositionCount(updatedPositions.length);
-            return updatedPositions;
-          });
+          // setPositions((prevPositions) => {
+          //   const updatedPositions = prevPositions.filter(
+          //     (position) => position.id !== positionToExit.id
+          //   );
+          //   setCount(updatedPositions.length);
+          //   return updatedPositions;
+          // });
           alert("Position exited successfully");
         } else {
           throw new Error("Failed to exit position");
@@ -126,7 +140,7 @@ const PositionsTable = ({
     return <div className="text-center p-4 text-red-500">{error}</div>;
   }
 
-  if (!positions || positions.length === 0) {
+  if (!positionsData || positionsData.length === 0) {
     // return <div className="text-center p-4">There are no positions</div>;
     return (
       <NotAvailable
@@ -154,14 +168,15 @@ const PositionsTable = ({
                 </tr>
               </thead>
               <tbody>
-                {positions.map((position, index) => (
-                  <tr key={position.id}>
+                {positionsData.map((position, index) => (
+                  <tr key={position.id || index}>
                     {selectedColumns.map((columnName) => (
                       <td
-                        key={`${columnName}-${position.id}`}
-                        className="px-4 py-4 whitespace-nowrap text-left font-semibold"
+                        key={`${columnName}-${position.id || index}`}
+                        className={`px-4 py-4 whitespace-nowrap text-left font-semibold ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                          }`}
                       >
-                        {position[columnName]}
+                        {position[columnName] || ""}
                       </td>
                     ))}
                   </tr>
@@ -177,8 +192,8 @@ const PositionsTable = ({
                 </tr>
               </thead>
               <tbody>
-                {positions.map((position, index) => (
-                  <tr key={position.id} className="h-1">
+                {positionsData.map((position, index) => (
+                  <tr key={position.id || index} className="h-1">
                     <td className="px-4 py-4">
                       <div className="flex justify-center py-0">
                         <button

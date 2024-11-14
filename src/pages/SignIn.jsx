@@ -118,13 +118,14 @@ import {
   signInStart,
   signInSuccess,
   signInFailure,
+  clearError,
 } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import OAuth from '../components/OAuth';
 import api from '../config';
 import { setRegion } from '../redux/region/regionSlice';
 import ConfirmationModal from '../components/common/ConfirmationModal';
-import { Eye, EyeOff } from 'lucide-react'; 
+import { Eye, EyeOff } from 'lucide-react';
 
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -138,6 +139,12 @@ function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false); // New state for password visibility
+  const [showOTP, setShowOTP] = useState(false);
+  const [isPhoneNumber, setIsPhoneNumber] = useState(false);
+  const [selectedCountryCode, setSelectedCountryCode] = useState('+91'); // Default to IN
+  // New states for OTP resend functionality
+  const [canResendOTP, setCanResendOTP] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
 
   // State to manage the selected country
   // const [selectedCountry, setSelectedCountry] = useState("");
@@ -153,14 +160,67 @@ function SignIn() {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(clearError());
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
+  // New useEffect for handling the resend timer
+  useEffect(() => {
+    let timer;
+    if (otpSent && resendTimer > 0 && !canResendOTP) {
+      timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+    } else if (otpSent && resendTimer === 0 && !canResendOTP) {
+      setCanResendOTP(true);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer, canResendOTP, otpSent]);
+
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [id]: value }));
+    if (id === 'identifier') {
+      setIsPhoneNumber(/^\d/.test(value));
+    }
+  };
+
+  const handleCountryCodeChange = (e) => {
+    setSelectedCountryCode(e.target.value);
   };
 
   // const handleCountryChange = (e) => {
   //   console.log(e.target.value);
   //   setSelectedCountry(e.target.value);
   // };
+
+  // New function to handle OTP resend
+
+  const handleResendOTP = async () => {
+    try {
+      setLoad(true);
+      let submissionData = { ...formData };
+      if (isPhoneNumber) {
+        submissionData.identifier = `${selectedCountryCode}${formData.identifier}`;
+      }
+
+      const response = await api.post('/api/v1/auth/login', {
+        ...submissionData,
+        useOTP: true
+      });
+
+      // Reset the timer and disable resend button
+      setResendTimer(60);
+      setCanResendOTP(false);
+
+    } catch (error) {
+      dispatch(signInFailure(error.response?.data?.message || error.message || 'Failed to resend OTP'));
+    } finally {
+      setLoad(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -173,10 +233,14 @@ function SignIn() {
     try {
       dispatch(signInStart());
       // console.log("Form Data:", formData);
+      let submissionData = { ...formData };
+      if (isPhoneNumber) {
+        submissionData.identifier = `${selectedCountryCode}${formData.identifier}`;
+      }
       if (otpSent) {
         // Verify OTP
         const response = await api.post('/api/v1/auth/verify-login-otp', {
-          ...formData,
+          ...submissionData,
           otp,
         });
         const data = await response.data.data;
@@ -189,13 +253,16 @@ function SignIn() {
       } else {
         // Initial login attempt
         const response = await api.post('/api/v1/auth/login', {
-          ...formData,
+          ...submissionData,
           useOTP,
         });
         const data = await response.data.data;
 
         if (useOTP) {
           setOtpSent(true);
+          // Initialize the resend timer when OTP is first sent
+          setResendTimer(60);
+          setCanResendOTP(false);
         } else if (data.success === false) {
           dispatch(signInFailure(data.message));
           return;
@@ -211,7 +278,8 @@ function SignIn() {
       // Store selected country in local storage
       // localStorage.setItem("country", country);
     } catch (error) {
-      dispatch(signInFailure(error));
+      console.log("Error:", error)
+      dispatch(signInFailure(error.response?.data?.message || error.message || 'An unexpected error occurred'));
       console.error('Sign-in Error:', error);
     }
   };
@@ -223,6 +291,18 @@ function SignIn() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const toggleOTPVisibility = () => {
+    setShowOTP(!showOTP);
+  };
+
+  // Sample country codes, you might want to expand this list
+  const countryCodes = [
+    { code: '+1', country: 'US' },
+    { code: '+44', country: 'UK' },
+    { code: '+91', country: 'IN' },
+    // Add more country codes as needed
+  ];
 
   return (
     <div className='max-w-xl px-20 py-10 mx-auto auth rounded-2xl'>
@@ -238,17 +318,33 @@ function SignIn() {
         </div>
 
         <div className='flex flex-col gap-2'>
-          <label htmlFor='email' className='dark:text-[#FFFFFFCC]'>
+          <label htmlFor='identifier' className='dark:text-[#FFFFFFCC]'>
             Email address / Phone Number
           </label>
-          <input
-            required
-            type='string'
-            placeholder='email@domain.com / +91XXXXXXXXXX'
-            id='identifier'
-            className='bg-slate-100 text-black p-3 rounded-sm'
-            onChange={handleChange}
-          />
+          <div className='flex'>
+            {isPhoneNumber && (
+              <select
+                value={selectedCountryCode}
+                onChange={handleCountryCodeChange}
+                className='bg-slate-100 text-black p-3 rounded-l-sm'
+              >
+                {countryCodes.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.code} ({country.country})
+                  </option>
+                ))}
+              </select>
+            )}
+            <input
+              required
+              type='text'
+              placeholder='email@domain.com / Phone Number'
+              id='identifier'
+              className={`bg-slate-100 text-black p-3 ${isPhoneNumber ? 'rounded-r-sm' : 'rounded-sm'
+                } flex-grow`}
+              onChange={handleChange}
+            />
+          </div>
         </div>
 
         {!useOTP && (
@@ -257,15 +353,15 @@ function SignIn() {
               Password
             </label>
             <div className='relative'>
-            <input
-              required
-              type={showPassword ? 'text' : 'password'}
-              placeholder='Password'
-              id='password'
-              className='bg-slate-100 text-black p-3 rounded-sm w-full'
-              onChange={handleChange}
-            />
-                          <button
+              <input
+                required
+                type={showPassword ? 'text' : 'password'}
+                placeholder='Password'
+                id='password'
+                className='bg-slate-100 text-black p-3 rounded-sm w-full'
+                onChange={handleChange}
+              />
+              <button
                 type='button'
                 className='absolute right-3 top-1/2 transform -translate-y-1/2'
                 onClick={togglePasswordVisibility}
@@ -285,14 +381,42 @@ function SignIn() {
             <label htmlFor='otp' className='dark:text-[#FFFFFFCC]'>
               Enter OTP
             </label>
-            <input
-              required
-              type='text'
-              placeholder='Enter OTP'
-              id='otp'
-              className='bg-slate-100 text-black p-3 rounded-sm'
-              onChange={(e) => setOTP(e.target.value)}
-            />
+            <div className='relative'>
+              <input
+                required
+                type={showOTP ? 'text' : 'password'}
+                placeholder='Enter OTP'
+                id='otp'
+                className='bg-slate-100 text-black p-3 rounded-sm w-full'
+                onChange={(e) => setOTP(e.target.value)}
+              />
+              <button
+                type='button'
+                className='absolute right-3 top-1/2 transform -translate-y-1/2'
+                onClick={toggleOTPVisibility}
+              >
+                {showOTP ? (
+                  <EyeOff className='h-5 w-5 text-gray-500' />
+                ) : (
+                  <Eye className='h-5 w-5 text-gray-500' />
+                )}
+              </button>
+            </div>
+            {/* New resend OTP section */}
+            {canResendOTP ? (
+              <button
+                type='button'
+                onClick={handleResendOTP}
+                className='mt-2 text-blue-500 hover:text-blue-600 text-sm font-medium'
+                disabled={load}
+              >
+                Resend OTP
+              </button>
+            ) : (
+              <p className='mt-2 text-sm text-gray-500'>
+                Resend OTP in <span className="text-[#FFFFFF] font-medium">{resendTimer}</span> seconds
+              </p>
+            )}
           </div>
         )}
 
@@ -330,11 +454,11 @@ function SignIn() {
           Forgot Password?
         </Link>
       </div>
-      <p className='text-red-500 text-center mt-5'>
-        {error
-          ? error.message || 'Something went wrong, please try again !!'
-          : ''}
-      </p>
+      {error && (
+        <p className='text-red-500 text-center mt-5'>
+          {error}
+        </p>
+      )}
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}

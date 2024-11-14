@@ -1,62 +1,21 @@
-// import  { useState } from "react";
-// import { useTheme } from "../../contexts/ThemeContext";
-
-// function ToggleButton() {
-//   const { theme, updateTheme } = useTheme(); // Access theme state and setter using useTheme hook
-//   const [dropdownVisible, setDropdownVisible] = useState(false);
-
-//   const options = [
-//     {
-//       icon: "sunny",
-//       text: "light",
-//     },
-//     {
-//       icon: "moon",
-//       text: "dark",
-//     },
-//   ];
-
-//   const handleClick = (selectedTheme) => {
-//     updateTheme(selectedTheme); // Update theme using the provided setter function
-//     setDropdownVisible(false);
-//   };
-
-//   return (
-//     <div className={`duration-100 dark:bg-[#3A6FF8] dark:text-gray-100 bg-gray-100 rounded-2xl relative ${theme === 'dark' ? 'dark' : ''}`}>
-//       <button
-//         className="w-8 h-8 leading-9 text-xl rounded-full m-1"
-//         onClick={() => setDropdownVisible(!dropdownVisible)}
-//       >
-//         <ion-icon name="sunny"></ion-icon>
-//       </button>
-
-//       {dropdownVisible && (
-//         <div className="absolute top-14 right-[-3rem] mt-1 bg-white dark:bg-slate-800 shadow-lg rounded-lg z-10">
-//           {options?.map((opt) => (
-//             <button
-//               key={opt.text}
-//               className={`flex capitalize justify-start items-center w-full  px-8 py-2 text-left text-[15px] rounded-lg ${
-//                 theme === opt.text ? "text-sky-600" : ""
-//               }`}
-//               onClick={() => handleClick(opt.text)}
-//             >
-//               <ion-icon name={opt.icon}></ion-icon> <p className="ml-4">{opt.text}</p>
-//             </button>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default ToggleButton;
+/**
+ * File: ToggleButton
+ * Description: A toggle switch component for changing between light and dark themes. It utilizes `@headlessui/react` for accessibility and integrates with a custom theme context to manage and persist theme state across the application. The toggle button reflects the current theme on load and animates the transition when toggled.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
 
 import { Switch } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 
 export default function ToggleButton() {
-  const { theme, updateTheme } = useTheme(); // Access theme state and setter using useTheme hook
+  const { theme, updateTheme } = useTheme();
   const [enabled, setEnabled] = useState(theme === "dark");
 
   useEffect(() => {

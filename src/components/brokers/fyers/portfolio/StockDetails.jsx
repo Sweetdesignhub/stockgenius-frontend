@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import HoldingsTable from "./HoldingsTable";
 import FundsTable from "./FundsTable";
@@ -6,49 +6,89 @@ import OrdersTable from "./OrdersTable";
 import TradesTable from "./TradesTable";
 import PositionsTable from "./PositionTable";
 import { RiMenuLine } from "react-icons/ri";
+// import api from "../../../../config.js";
+// import { useSelector } from "react-redux";
+import { useData } from "../../../../contexts/FyersDataContext";
 
 const StockDetails = () => {
-  const [ordersCount, setOrdersCount] = useState(0);
-  const [tradesCount, setTradesCount] = useState(0);
-  const [positionsCount, setPositionsCount] = useState(0);
-  const [holdingsCount, setHoldingsCount] = useState(0);
+  // const [ordersCount, setOrdersCount] = useState(0);
+  // const [positionsCount, setPositionsCount] = useState(0);
+  // const [holdingsCount, setHoldingsCount] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
   const [columnNames, setColumnNames] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState({});
   const [currentTab, setCurrentTab] = useState(0);
   const filterRef = useRef(null);
+  //  const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
+  //  const { currentUser } = useSelector((state) => state.user);
 
-  const updatePositionCount = useCallback((count) => {
-    setPositionsCount(count);
-  }, []);
+  const {
+    holdings = { holdings: [] },
+    positions = { netPositions: [] },
+    orders = { orderBook: [] },
+    loading
+  } = useData();
 
-  const categories = [
+  const categories = useMemo(() => [
     {
-      name: `Orders (${ordersCount})`,
+      name: `Orders (${orders.orderBook?.length || 0})`,
       component: OrdersTable,
-      setCount: setOrdersCount,
       key: "orders",
     },
     {
-      name: `All Positions (${positionsCount})`,
+      name: `All Positions (${positions.netPositions?.length || 0})`,
       component: PositionsTable,
-      updatePositionCount: updatePositionCount,
       key: "positions",
     },
     {
       name: "Trades",
       component: TradesTable,
-      setCount: setTradesCount,
       key: "trades",
     },
     {
-      name: `Holdings (${holdingsCount})`,
+      name: `Holdings (${holdings.holdings?.length || 0})`,
       component: HoldingsTable,
-      setCount: setHoldingsCount,
       key: "holdings",
     },
-    { name: "Funds", component: FundsTable, key: "funds" },
-  ];
+    {
+      name: "Funds",
+      component: FundsTable,
+      key: "funds"
+    },
+  ], [holdings.holdings?.length, positions.netPositions?.length, orders.orderBook?.length]);
+
+  // const fetchAllCounts = async () => {
+  //   try {
+  //     const fyersAccessToken = localStorage.getItem("fyers_access_token");
+  //     const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+
+  //     const [ordersResponse, positionsResponse, holdingsResponse] = await Promise.all([
+  //       api.get(`/api/v1/fyers/ordersByUserId/${currentUser.id}`, { headers }),
+  //       api.get(`/api/v1/fyers/positionsByUserId/${currentUser.id}`, { headers }),
+  //       api.get(`/api/v1/fyers/holdingsByUserId/${currentUser.id}`, { headers }),
+  //     ]);
+
+  //     setOrdersCount(ordersResponse.data.orderBook.length);
+  //     setPositionsCount(positionsResponse.data.netPositions.length);
+  //     setHoldingsCount(holdingsResponse.data.holdings.length);
+  //   } catch (error) {
+  //     console.error("Error fetching counts:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchAllCounts();
+  //   const interval = setInterval(fetchAllCounts, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!loading) {
+  //     setOrdersCount(orders.orderBook?.length || 0);
+  //     setPositionsCount(positions.netPositions?.length || 0);
+  //     setHoldingsCount(holdings.holdings?.length || 0);
+  //   }
+  // }, [orders, positions, holdings, loading]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -68,7 +108,7 @@ const StockDetails = () => {
     setShowFilter(!showFilter);
   };
 
-  const handleColumnToggle = (columnName) => {
+  const handleColumnToggle = useCallback((columnName) => {
     const currentTabKey = categories[currentTab].key;
     setSelectedColumns((prev) => ({
       ...prev,
@@ -77,41 +117,41 @@ const StockDetails = () => {
         [columnName]: !prev[currentTabKey][columnName],
       },
     }));
-  };
+  }, [categories, currentTab]);
 
-  const setTabColumnNames = useCallback(
-    (names) => {
-      const currentTabKey = categories[currentTab].key;
-      setColumnNames(names);
-      setSelectedColumns((prev) => {
-        const existingSelections = prev[currentTabKey] || {};
-        const newSelections = names.reduce((acc, name) => {
-          acc[name] =
-            name in existingSelections ? existingSelections[name] : true;
-          return acc;
-        }, {});
-        return { ...prev, [currentTabKey]: newSelections };
-      });
-    },
-    [currentTab, categories]
-  );
+  const setTabColumnNames = useCallback((names) => {
+    const currentTabKey = categories[currentTab].key;
+    setColumnNames(names);
 
-  const getSelectedColumns = () => {
+    setSelectedColumns((prev) => {
+      const existingSelections = prev[currentTabKey] || {};
+      const newSelections = names.reduce((acc, name) => {
+        acc[name] = name in existingSelections ? existingSelections[name] : true;
+        return acc;
+      }, {});
+      return { ...prev, [currentTabKey]: newSelections };
+    });
+  }, [currentTab, categories]);
+
+  const getSelectedColumns = useCallback(() => {
     const currentTabKey = categories[currentTab].key;
     const currentSelections = selectedColumns[currentTabKey] || {};
     const selected = Object.keys(currentSelections).filter(
       (col) => currentSelections[col]
     );
 
-    // Move "symbol" to the beginning if it exists
-    const symbolIndex = selected.indexOf("symbol");
-    if (symbolIndex > -1) {
-      selected.splice(symbolIndex, 1);
-      selected.unshift("symbol");
+    if (selected.includes('symbol')) {
+      return ['symbol', ...selected.filter(col => col !== 'symbol')];
     }
 
     return selected;
-  };
+  }, [categories, currentTab, selectedColumns]);
+
+  // const handleTabChange = (index) => {
+  //   if (isInitialDataLoaded) {
+  //     setCurrentTab(index);
+  //   }
+  // };
 
   const fyersAccessToken = localStorage.getItem("fyers_access_token");
 
@@ -122,7 +162,7 @@ const StockDetails = () => {
   return (
     <div className="flex h-[60vh] w-full">
       <div className="w-full">
-        <TabGroup onChange={setCurrentTab}>
+        <TabGroup selectedIndex={currentTab} onChange={setCurrentTab}>
           <div className="flex justify-between items-center">
             <TabList className="flex gap-4">
               {categories.map(({ name }) => (
@@ -158,7 +198,7 @@ const StockDetails = () => {
                       type="checkbox"
                       checked={
                         selectedColumns[categories[currentTab].key]?.[
-                          columnName
+                        columnName
                         ] ?? true
                       }
                       onChange={() => handleColumnToggle(columnName)}
@@ -174,26 +214,17 @@ const StockDetails = () => {
 
           <div className="mt-3 overflow-hidden h-[55vh] rounded-lg auth">
             <TabPanels className="h-full">
-              {categories.map(
-                ({
-                  name,
-                  component: Component,
-                  setCount,
-                  updatePositionCount,
-                }) => (
-                  <TabPanel
-                    key={name}
-                    className="rounded-xl p-3 overflow-y-auto"
-                  >
-                    <Component
-                      setCount={setCount}
-                      updatePositionCount={updatePositionCount}
-                      selectedColumns={getSelectedColumns()}
-                      setColumnNames={setTabColumnNames}
-                    />
-                  </TabPanel>
-                )
-              )}
+              {categories.map(({ name, component: Component }) => (
+                <TabPanel
+                  key={name}
+                  className="rounded-xl p-3 overflow-y-auto"
+                >
+                  <Component
+                    selectedColumns={getSelectedColumns()}
+                    setColumnNames={setTabColumnNames}
+                  />
+                </TabPanel>
+              ))}
             </TabPanels>
           </div>
         </TabGroup>
