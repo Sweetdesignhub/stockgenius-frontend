@@ -65,7 +65,7 @@ function RecommendationIPOs() {
   };
 
   return (
-    <div className="news-table rounded-xl p-4">
+    <div className="news-table rounded-xl p-4 ">
       <div className="border-b pb-2 border-[#FFFFFF1A]">
         <h1 className="text-[#FFFFFF] font-[poppins] font-semibold text-lg">
           Recommendation IPOs
@@ -81,6 +81,7 @@ function RecommendationIPOs() {
               placeholder="Upload logo"
               value={formData.logo}
               onChange={handleChange}
+              required={true}
             />
           </div>
           <div className="w-1/2">
@@ -90,6 +91,7 @@ function RecommendationIPOs() {
               placeholder="Enter name"
               value={formData.title}
               onChange={handleChange}
+              required={true}
             />
           </div>
         </div>
@@ -102,6 +104,7 @@ function RecommendationIPOs() {
               placeholder="Enter category"
               value={formData.category}
               onChange={handleChange}
+              required={true}
             />
           </div>
           <div className="w-1/2">
@@ -111,6 +114,7 @@ function RecommendationIPOs() {
               placeholder="Enter subCategory"
               value={formData.subCategory}
               onChange={handleChange}
+              required={true}
             />
           </div>
         </div>
@@ -123,6 +127,7 @@ function RecommendationIPOs() {
               placeholder="Enter change"
               value={formData.change}
               onChange={handleChange}
+              required={true}
             />
           </div>
         </div>
@@ -132,7 +137,7 @@ function RecommendationIPOs() {
           <button
             type="button"
             onClick={handleClear}
-            className="bg-white text-sm text-[#FF0F0F] py-1 px-3 rounded-lg"
+            className="bg-white text-sm text-[#FF0F0F] py-1 px-3 rounded-lg dark:border-0 border"
           >
             Clear
           </button>

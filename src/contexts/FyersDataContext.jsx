@@ -1,3 +1,15 @@
+/**
+ * File: FyersDataContext
+ * Description: The FyersDataContext is a context provider that manages the fetching and storing of various Fyers-related data such as user profile, holdings, funds, positions, trades, and orders. This data is fetched from the backend API and provided to child components through React's Context API.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import api from "../config";
@@ -35,25 +47,10 @@ export function DataProvider({ children }) {
         setTrades(data.trades || []);
         setOrders(data.orders || []);
       }
-      // const headers = { Authorization: `Bearer ${fyersAccessToken}` };
-      //     const response = await api.get(
-      //       `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
-      //       { headers }
-      //     );
-      //     const data = response.data[0];
-
-      //     setProfile(data.profile);
-      //     setFunds(data.funds || {});
-      //     setHoldings(data.holdings || []);
-      //     setPositions(data.positions || {});
-      //     setTrades(data.trades || []);
-      //     setOrders(data.orders || []);
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Optional: Notify the user of the error
     }
   };
-
 
   useEffect(() => {
     const fetchAllData = async () => {

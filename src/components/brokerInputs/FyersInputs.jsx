@@ -1,3 +1,16 @@
+/**
+ * File: FyersInput
+ * Description: Component to capture user's Fyers credentials (Fyers ID, App ID, Secret ID) as input fields.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name] 
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ *
+ */
+
 import React from "react";
 import Input from "../common/Input";
 

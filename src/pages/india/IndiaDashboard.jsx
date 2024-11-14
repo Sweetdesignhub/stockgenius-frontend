@@ -1,3 +1,15 @@
+/**
+ * File: IndiaDashboard
+ * Description: This component handles the display of top gainers and top losers, including order placing functionality for both "Buy" and "Sell" actions based on the selected broker (Fyers or Zerodha).
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React, { useEffect, useState } from "react";
 import fetchFile from "../../utils/india/fetchFile";
 import parseExcel from "../../utils/india/parseExcel";
@@ -26,8 +38,12 @@ const IndiaDashboard = () => {
   const [brokerModalOpen, setBrokerModalOpen] = useState(false);
 
   const { currentUser } = useSelector((state) => state.user);
-  const fyersAccessToken = useSelector((state) => state.fyers) || localStorage.getItem("fyers_access_token");
-  const zerodhaAccessToken = useSelector((state) => state.zerodha) || localStorage.getItem("zerodha_access_token"); 
+  const fyersAccessToken =
+    useSelector((state) => state.fyers) ||
+    localStorage.getItem("fyers_access_token");
+  const zerodhaAccessToken =
+    useSelector((state) => state.zerodha) ||
+    localStorage.getItem("zerodha_access_token");
 
   const fetchData = async () => {
     try {
@@ -48,7 +64,7 @@ const IndiaDashboard = () => {
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 600000); // 10 minutes
+    const intervalId = setInterval(fetchData, 600000); 
     return () => clearInterval(intervalId);
   }, []);
 
@@ -90,7 +106,7 @@ const IndiaDashboard = () => {
   const handleQuantityChange = (event) => {
     setQuantity(parseInt(event.target.value, 10));
   };
-  
+
   const handleProductTypeChange = (e) => {
     setProductType(e.target.value);
   };
@@ -110,10 +126,10 @@ const IndiaDashboard = () => {
       "Quantity:",
       quantity
     );
-  
+
     let apiUrl = "";
     let requestBody = {};
-  
+
     // Build request based on selected broker
     if (fyersAccessToken) {
       apiUrl = `/api/v1/fyers/placeOrder/${currentUser.id}`;
@@ -122,40 +138,40 @@ const IndiaDashboard = () => {
         order: {
           symbol: `NSE:${selectedRow.Ticker}-EQ`,
           qty: quantity,
-          type: 2, 
-          side: actionType === "buy" ? 1 : -1, 
-          productType: productType || "CNC", 
+          type: 2,
+          side: actionType === "buy" ? 1 : -1,
+          productType: productType || "CNC",
           limitPrice: 0,
-          stopPrice: 0, 
-          disclosedQty: 0, 
-          validity: "DAY", 
+          stopPrice: 0,
+          disclosedQty: 0,
+          validity: "DAY",
           offlineOrder: false,
-          stopLoss: 0, 
-          takeProfit: 0, 
-          orderTag: "stockgenius1", 
+          stopLoss: 0,
+          takeProfit: 0,
+          orderTag: "stockgenius1",
         },
       };
     } else if (zerodhaAccessToken) {
       apiUrl = `/api/v1/zerodha/placeOrder/${currentUser.id}`;
       requestBody = {
         order: {
-          exchange: selectedRow.exchange || "NSE", 
-          tradingsymbol: selectedRow.Ticker, 
+          exchange: selectedRow.exchange || "NSE",
+          tradingsymbol: selectedRow.Ticker,
           transaction_type: actionType.toUpperCase(),
           quantity: quantity,
-          product: productType === "INTRADAY" ? "MIS" : "CNC", 
+          product: productType === "INTRADAY" ? "MIS" : "CNC",
           order_type: selectedRow.orderType || "MARKET",
-          price: 0, 
-          trigger_price: 0, 
-          validity: "DAY", 
-          tag: "STOCKGENIUS ORDER1", 
+          price: 0,
+          trigger_price: 0,
+          validity: "DAY",
+          tag: "STOCKGENIUS ORDER1",
         },
       };
     } else {
       alert("No access token found for the selected broker.");
       return;
     }
-  
+
     try {
       // Send the POST request using axios
       const response = await api.post(apiUrl, requestBody, {
@@ -163,20 +179,22 @@ const IndiaDashboard = () => {
           "Content-Type": "application/json",
         },
       });
-  
+
       console.log(response);
-  
+
       // Show success message
       if (response.data && response.status === 200) {
-        alert(`Order placed successfully for ${selectedRow.Ticker} with quantity ${quantity}`);
+        alert(
+          `Order placed successfully for ${selectedRow.Ticker} with quantity ${quantity}`
+        );
         setModalOpen(false); // Close modal if open
       } else {
-        throw new Error('Failed to place order, please check the input.');
+        throw new Error("Failed to place order, please check the input.");
       }
     } catch (error) {
       // Handle the error response
       let errorMessage = "An error occurred";
-  
+
       // Extract the specific error message from the response
       if (error.response?.data?.error?.message) {
         errorMessage = error.response.data.error.message; // Get the specific message
@@ -184,14 +202,12 @@ const IndiaDashboard = () => {
         // Handle network errors or other thrown errors
         errorMessage = error.message;
       }
-  
+
       alert(`Order failed: ${errorMessage}`);
       console.error("Error placing order:", errorMessage);
-      setModalOpen(false); 
+      setModalOpen(false);
     }
   };
-  
-  
 
   if (loading) {
     return <Loading />;

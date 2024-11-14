@@ -3,6 +3,8 @@ import Loading from "../common/Loading";
 
 const IPODetail = ({ theme, ipoData, formatDate }) => {
   const { company, companyDescription, keyObjectives = [],advantages = [], disadvantages = [] } = ipoData || {};
+  // console.log(keyObjectives);
+  
 
   const darkThemeStyle = {
     boxShadow: "0px 9.67px 29.02px 0px #497BFFB2 inset, 0px 9.67px 38.7px 0px #3F4AAF80",
@@ -12,7 +14,7 @@ const IPODetail = ({ theme, ipoData, formatDate }) => {
     background: "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
   };
 
-  const containerStyle = theme === "dark" ? darkThemeStyle : { backgroundColor: "#FFFFFF" };
+  const containerStyle = theme === "dark" ? darkThemeStyle : { backgroundColor: "#3A6FF8" };
 
   if (!ipoData) {
     return (
@@ -32,79 +34,95 @@ const IPODetail = ({ theme, ipoData, formatDate }) => {
         </p>
       </div>
 
-      <div style={containerStyle} className="p-4 rounded-lg mb-3">
-        <h1 className="text-sm font-semibold mb-2">{company}</h1>
+      <div style={containerStyle} className="p-4 rounded-lg mb-3 bg-blue-300">
+        <h1 className="text-sm text-white font-semibold mb-2">{company}</h1>
         <p className="text-[#B7E5FF] text-xs">{companyDescription}</p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-3">
-        <div className="sm:w-1/2 w-full table-main rounded-lg p-3">
-          <h1 className="text-sm uppercase mb-3 font-semibold">Key Objectives</h1>
-          <ol className="list-decimal pl-4">
-            {keyObjectives.map((objective, index) => (
-              <li key={index} className="text-[11px] text-[#F2BD0F] mb-1">
-                {objective.title}
-                <p className="dark:text-[#FFFFFFCC] text-black">{objective.description}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+      {keyObjectives.length > 0 && keyObjectives.some(obj => obj.title && obj.description) && (
+          <div className="sm:w-1/2 w-full table-main rounded-lg p-3">
+            <h1 className="text-sm uppercase mb-3 font-semibold">Key Objectives</h1>
+            <ol className="list-decimal pl-4">
+              {keyObjectives.map((objective, index) => (
+                objective.title && objective.description && (
+                  <li key={index} className="text-[11px] text-[#E3AE00] mb-1">
+                    {objective.title}
+                    <p className="dark:text-[#FFFFFFCC] text-black">{objective.description}</p>
+                  </li>
+                )
+              ))}
+            </ol>
+          </div>
+        )}
 
-        <div style={containerStyle} className="sm:w-1/2 w-full rounded-lg p-3">
+<div
+  style={theme === "dark" ? containerStyle : {}}
+  className={`sm:w-1/2 w-full rounded-lg p-3 ${theme === "dark" ? "" : "table-main"}`}
+>
+
           <h1 className="text-sm uppercase mb-3 font-semibold">IPO SCHEDULE</h1>
           <div className="flex flex-col h-36 justify-between">
             <div className="flex items-center justify-between text-[11px]">
               <h1>Opening Date</h1>
-              <p className="text-[#A5FCFF]">{formatDate(ipoData.ipoStartDate)}</p>
+              <p className="text-[#3A6FF8] dark:text-[#A5FCFF]">{formatDate(ipoData.ipoStartDate)}</p>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <h1>Closing Date</h1>
-              <p className="text-[#A5FCFF]">{formatDate(ipoData.ipoEndDate)}</p>
+              <p className="text-[#3A6FF8] dark:text-[#A5FCFF]">{formatDate(ipoData.ipoEndDate)}</p>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <h1>Listing Date</h1>
-              <p className="text-[#A5FCFF]">{formatDate(ipoData.listingDate)}</p>
+              <p className="text-[#3A6FF8] dark:text-[#A5FCFF]">{formatDate(ipoData.listingDate)}</p>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <h1>Basis of Allotment</h1>
-              <p className="text-[#A5FCFF]">{formatDate(ipoData.basisOfAllotment)}</p>
+              <p className="text-[#3A6FF8] dark:text-[#A5FCFF]">{formatDate(ipoData.basisOfAllotment)}</p>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <h1>Initiation of Refunds</h1>
-              <p className="text-[#A5FCFF]">{formatDate(ipoData.initiationOfRefunds)}</p>
+              <p className="text-[#3A6FF8] dark:text-[#A5FCFF]">{formatDate(ipoData.initiationOfRefunds)}</p>
             </div>
             <div className="flex items-center justify-between text-[11px]">
               <h1>Credit Shares</h1>
-              <p className="text-[#A5FCFF]">{formatDate(ipoData.creditShares)}</p>
+              <p className="text-[#3A6FF8] dark:text-[#A5FCFF]">{formatDate(ipoData.creditShares)}</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="sm:w-1/2 w-full table-main rounded-lg p-3">
-          <h1 className="text-sm uppercase mb-3 font-semibold">ADVANTAGES</h1>
-          <ol className="list-decimal pl-4">
-            {advantages.map((advantage, index) => (
-              <li key={index} className="text-[9px] text-[#ACFF46] mb-1">
-                {advantage.title}
-                <p className="dark:text-[#FFFFFFCC] text-black">{advantage.description}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+      {advantages.length > 0 && advantages.some(adv => adv.title && adv.description) && (
+          <div className="sm:w-1/2 w-full table-main rounded-lg p-3">
+            <h1 className="text-sm uppercase mb-3 font-semibold">ADVANTAGES</h1>
+            <ol className="list-decimal pl-4">
+              {advantages.map((advantage, index) => (
+                advantage.title && advantage.description && (
+                  <li key={index} className="text-[9px] text-[#2BCC11] mb-1">
+                    {advantage.title}
+                    <p className="dark:text-[#FFFFFFCC] text-black">{advantage.description}</p>
+                  </li>
+                )
+              ))}
+            </ol>
+          </div>
+        )}
 
-        <div className="sm:w-1/2 w-full table-main rounded-lg p-3">
-          <h1 className="text-sm uppercase mb-3 font-semibold">DISADVANTAGES</h1>
-          <ol className="list-decimal pl-4">
-            {disadvantages.map((disadvantage, index) => (
-              <li key={index} className="text-[9px] text-[#DC3C3C] mb-1">
-                {disadvantage.title}
-                <p className="dark:text-[#FFFFFFCC] text-black">{disadvantage.description}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {disadvantages.length > 0 && disadvantages.some(disadv => disadv.title && disadv.description) && (
+          <div className="sm:w-1/2 w-full table-main rounded-lg p-3">
+            <h1 className="text-sm uppercase mb-3 font-semibold">DISADVANTAGES</h1>
+            <ol className="list-decimal pl-4">
+              {disadvantages.map((disadvantage, index) => (
+                disadvantage.title && disadvantage.description && (
+                  <li key={index} className="text-[9px] text-[#DB1010] mb-1">
+                    {disadvantage.title}
+                    <p className="dark:text-[#FFFFFFCC] text-black">{disadvantage.description}</p>
+                  </li>
+                )
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
     </div>
   );

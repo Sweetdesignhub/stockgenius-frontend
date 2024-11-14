@@ -1,3 +1,15 @@
+/**
+ * File: NotAvailable
+ * Description: This component provides a message interface that displays dynamic text and an illustrative image, typically used when a feature or content is unavailable.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React from "react";
 
 const NotAvailable = ({ dynamicText }) => {

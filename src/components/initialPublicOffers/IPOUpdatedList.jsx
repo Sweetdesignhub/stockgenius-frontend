@@ -30,6 +30,7 @@ function IPOUpdatedList({
   }, []);
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return ""; // Return empty string if date is null
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -67,13 +68,13 @@ function IPOUpdatedList({
           return (
             <input
               type="date"
-              value={value ? value.split("T")[0] : ""} // Format to YYYY-MM-DD for date input
+              value={value ? value.split("T")[0] : ""} // If null, render as empty string
               onChange={(e) =>
                 setEditableValues((prev) => ({
                   ...prev,
                   [columnName]: e.target.value,
                 }))
-              } // Update state on change
+              }
               className="border border-gray-300 text-black rounded-md px-2 py-1"
             />
           );
@@ -135,7 +136,7 @@ function IPOUpdatedList({
                 [columnName]: e.target.value,
               }))
             }
-            className="border border-gray-300 text-black rounded-md px-2 py-1"
+            className="border border-gray-300 text-black rounded-md px-2 py-1 w-full"
           />
         );
       }
@@ -170,7 +171,20 @@ function IPOUpdatedList({
     } else {
       setEditableIpoId(ipo._id);
       setIsEditing(true);
-      setEditableValues(ipo);
+      // setEditableValues(ipo);
+      setEditableValues({
+        ...ipo,
+        // If null, default to empty string
+        minQuantity: ipo.minQuantity || "",
+        decisionRate: ipo.decisionRate || "",
+        sentimentScore: ipo.sentimentScore || "",
+        ipoStartDate: ipo.ipoStartDate || "",
+        ipoEndDate: ipo.ipoEndDate || "",
+        listingDate: ipo.listingDate || "",
+        basisOfAllotment: ipo.basisOfAllotment || "",
+        initiationOfRefunds: ipo.initiationOfRefunds || "",
+        creditShares: ipo.creditShares || "",
+      });
     }
   };
 
@@ -247,9 +261,11 @@ function IPOUpdatedList({
   };
 
   const handleDeleteSuggestion = async (cardId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this suggestion?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this suggestion?"
+    );
     if (!confirmDelete) return; // Exit function if the user cancels
-  
+
     try {
       await api.delete(`/api/v1/IPOs/delete-suggestion-card/${cardId}`);
       setIpoRecommendedData((prev) => prev.filter((ipo) => ipo._id !== cardId));
@@ -258,13 +274,25 @@ function IPOUpdatedList({
       alert("Failed to delete IPO. Please try again later.");
     }
   };
-  
-  
-  
+
+  const handleAddField = (category) => {
+    setEditableIpo((prevState) => ({
+      ...prevState,
+      [category]: [...prevState[category], { title: "", description: "" }],
+    }));
+  };
+
+  const handleRemoveField = (category) => {
+    setEditableIpo((prevState) => {
+      const newCategory = [...prevState[category]];
+      newCategory.pop();
+      return { ...prevState, [category]: newCategory };
+    });
+  };
 
   if (loading) {
     return (
-      <div className="text-center">
+      <div className="min-h-40 flex items-center justify-center">
         <Loading />
       </div>
     );
@@ -280,8 +308,8 @@ function IPOUpdatedList({
 
   return (
     <div>
-      <div className="pb-3 px-6 border-collapse border-b border-[#FFFFFF1A] flex justify-between">
-        <h1 className="text-[#FFFFFF] font-[poppins] font-semibold text-lg">
+      <div className="pb-3 px-6 border-collapse border-b  dark:border-[#FFFFFF1A] flex justify-between">
+        <h1 className="dark:text-[#FFFFFF] font-[poppins] font-semibold text-lg">
           IPOs Updated List
         </h1>
         <button
@@ -334,7 +362,7 @@ function IPOUpdatedList({
                     name="companyDescription"
                     value={editableIpo.companyDescription || ""}
                     onChange={handleChange}
-                    className="mt-1 p-2 w-full border rounded  bg-transparent text-[#B7E5FF] placeholder-[#B7E5FF]"
+                    className="mt-1 p-2 w-full border rounded  bg-transparent dark:text-[#B7E5FF] placeholder-[#B7E5FF]"
                     placeholder="Enter Company Description"
                     rows={4} // Adjust row count as needed
                   />
@@ -344,9 +372,29 @@ function IPOUpdatedList({
                 <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
                   {/* Editable Key Objectives */}
                   <div className="sm:w-1/3 w-full table-main rounded-lg p-3">
-                    <h1 className="text-sm uppercase mb-3 font-semibold">
-                      KEY OBJECTIVES
-                    </h1>
+                    <div className="flex items-center justify-between mb-2">
+                      <h1 className="text-sm uppercase  font-semibold">
+                        KEY OBJECTIVES
+                      </h1>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="bg-blue-500 text-lg font-semibold text-white px-2 rounded"
+                          onClick={() => handleAddField("keyObjectives")}
+                          aria-label="Add Key Objective"
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-[10px] font-bold rounded py-[2px]"
+                          onClick={() => handleRemoveField("keyObjectives")}
+                          aria-label="Remove Key Objective"
+                        >
+                          -
+                        </button>
+                      </div>
+                    </div>
                     <ol className="list-decimal pl-4">
                       {editableIpo.keyObjectives.map((objective, index) => (
                         <li
@@ -375,9 +423,29 @@ function IPOUpdatedList({
 
                   {/* Editable Advantages */}
                   <div className="sm:w-1/3 w-full table-main rounded-lg p-3">
-                    <h1 className="text-sm uppercase mb-3 font-semibold">
-                      ADVANTAGES
-                    </h1>
+                    <div className="flex items-center justify-between mb-2">
+                      <h1 className="text-sm uppercase  font-semibold">
+                        ADVANTAGES
+                      </h1>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="bg-blue-500 text-lg font-semibold text-white px-2 rounded"
+                          onClick={() => handleAddField("advantages")}
+                          aria-label="Add Advantage"
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-[10px] font-bold rounded py-[2px]"
+                          onClick={() => handleRemoveField("advantages")}
+                          aria-label="Remove Advantage"
+                        >
+                          -
+                        </button>
+                      </div>
+                    </div>
                     <ol className="list-decimal pl-4">
                       {editableIpo.advantages.map((advantage, index) => (
                         <li
@@ -406,9 +474,29 @@ function IPOUpdatedList({
 
                   {/* Editable Disadvantages */}
                   <div className="sm:w-1/3 w-full table-main rounded-lg p-3">
-                    <h1 className="text-sm uppercase mb-3 font-semibold">
-                      DISADVANTAGES
-                    </h1>
+                    <div className="flex items-center justify-between mb-2">
+                      <h1 className="text-sm uppercase  font-semibold">
+                        DISADVANTAGES
+                      </h1>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="bg-blue-500 text-lg font-semibold text-white px-2 rounded"
+                          onClick={() => handleAddField("disadvantages")}
+                          aria-label="Add Disadvantage"
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red-500 text-white px-[10px] font-bold rounded py-[2px]"
+                          onClick={() => handleRemoveField("disadvantages")}
+                          aria-label="Remove Disadvantage"
+                        >
+                          -
+                        </button>
+                      </div>
+                    </div>
                     <ol className="list-decimal pl-4">
                       {editableIpo.disadvantages.map((disadvantage, index) => (
                         <li
@@ -440,19 +528,19 @@ function IPOUpdatedList({
                 <div className="flex gap-5 items-center justify-center mt-4">
                   <button
                     type="button"
-                    onClick={handleUpdate}
-                    className=" p-2 bg-blue-600 text-white rounded "
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => {
                       setEditableIpo(null);
                     }}
                     className=" bg-red-500 text-white  p-2 rounded hover:bg-red-600"
                   >
                     Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdate}
+                    className=" p-2 bg-blue-600 text-white rounded "
+                  >
+                    Update
                   </button>
                 </div>
               </form>
@@ -471,10 +559,10 @@ function IPOUpdatedList({
             <div className="flex">
               {/* Main Table for Data */}
               <div className="w-[88%] overflow-scroll">
-                <table className="w-full ">
+                <table className="w-full">
                   <thead>
                     <tr>
-                      {columns.map((columnName) => (
+                      {columns.map((columnName, index) => (
                         <th
                           key={columnName}
                           className="px-4 capitalize whitespace-nowrap py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
@@ -488,11 +576,23 @@ function IPOUpdatedList({
                     {ipoData.length > 0 ? (
                       ipoData.map((ipo, index) => (
                         <tr key={index}>
-                          {columns.map((columnName) => (
+                          {columns.map((columnName, colIndex) => (
                             <td
                               key={`${columnName}-${index}`}
                               className={`px-4 h-12 whitespace-nowrap font-semibold py-1 ${
-                                columnName === "name" ? "text-[#6FD4FF]" : ""
+                                columnName === "name"
+                                  ? "dark:text-[#6FD4FF] text-[#1459DE]"
+                                  : ""
+                              } ${
+                                columnName === "category"
+                                  ? ` ${
+                                      ipo[columnName] === "UPCOMING"
+                                        ? "text-[#FF0000]"
+                                        : ipo[columnName] === "PAST"
+                                        ? "text-[#ED9418]"
+                                        : "text-[#0EBC3E]"
+                                    }`
+                                  : ""
                               }`}
                             >
                               {renderCell(

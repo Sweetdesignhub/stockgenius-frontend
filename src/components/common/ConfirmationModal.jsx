@@ -1,3 +1,15 @@
+/**
+ * File: ConfirmationModal
+ * Description:This component is a reusable modal that displays a confirmation message to the user. It is typically used to prompt users for confirmation actions (e.g., "Are you sure?" or "Proceed with the action?"). The modal can show a custom title, message, and confirmation button. Optionally, it can also accept custom actions (such as custom buttons or additional functionality) through the `customActions` prop. The modal is built using `@headlessui/react`'s `Dialog` component and is styled using Tailwind CSS. The component includes smooth animations and support for closing the modal with a button click.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import { Dialog } from "@headlessui/react";
 
 const ConfirmationModal = ({

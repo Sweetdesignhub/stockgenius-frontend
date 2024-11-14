@@ -1,3 +1,15 @@
+/**
+ * File: AuthProvider
+ * Description: This component is a context provider that manages authentication state and session expiration in a React application. It utilizes cookies to store the authentication token (access_token), monitors the token's expiration, and triggers actions such as showing a logout warning and logging the user out when the session expires.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import { useEffect, useState, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

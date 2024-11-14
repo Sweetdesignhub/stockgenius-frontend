@@ -1,3 +1,15 @@
+/**
+ * File: YesNoConfirmationModal
+ * Description: This component is a customized confirmation modal for yes/no user interactions. It provides a tailored prompt using a reusable `ConfirmationModal` component, displaying "Yes" and "No" buttons to confirm or dismiss an action. The modal receives a message, title, and callback functions as props for customizable and dynamic usage across different scenarios. Styled with Tailwind CSS for a consistent look and feel.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React from "react";
 import ConfirmationModal from "./ConfirmationModal";
 

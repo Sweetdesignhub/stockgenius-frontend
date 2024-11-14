@@ -14,6 +14,8 @@ function IPOCard({
   onSelect,
 }) {
 
+  console.log(ipoDate);
+
   let typeBackground;
   
   switch (type) {
@@ -60,74 +62,74 @@ function IPOCard({
 
   return (
     <div
-      className="rounded-md shadow-md transition-transform transform hover:scale-105 hover:bg-gray-600 cursor-pointer"
+      className="group rounded-md shadow-md transition-transform transform hover:scale-105 dark:hover:bg-gray-600 cursor-pointer"
       onClick={() => onSelect(company)}
     >
-      {" "}
       {/* Hover effects */}
-      <div className="news-table rounded-t-md flex items-center justify-between py-3 px-4">
-        <img className="h-10 w-12" loading="lazy" src={logo} alt="logo" />
+      <div className="news-table rounded-t-md flex items-center justify-between py-3 px-4 dark:group-hover:bg-transparent group-hover:bg-blue-600 group-hover:text-white">
+        <img className="h-10 w-12 mr-2" loading="lazy" src={logo} alt="logo" />
 
-        <div className="w-[40%] ">
-          <h2 className="text-sm text-black dark:text-[#FFFFFF]">{name}</h2>
-          <p className="text-xs text-black dark:text-[#FFFFFFB2]">
+        <div className="w-[30%] mr-1">
+          <h2 className="text-sm truncate">{name}</h2>
+          <p className="text-xs truncate">
             {company}
-          </p>{" "}
+          </p>
         </div>
 
-        <div className="w-[40%]">
-          <h2 className="text-sm text-black dark:text-[#FFFFFF]">{ipoDate}</h2>
-          <p className="text-xs text-black dark:text-[#FFFFFFB2]">
+        <div className="w-[30%]">
+          <h2 className="text-sm">{ipoDate}</h2>
+          <p className="text-xs">
             IPO Date
-          </p>{" "}
+          </p>
         </div>
 
-        <div className="w-[25%]">
-          <h2 className="text-sm text-black dark:text-[#FFFFFF]">
+        <div className="w-[30%]">
+          <h2 className="text-sm">
             {listingDate}
           </h2>
-          <p className="text-xs text-black dark:text-[#FFFFFFB2]">
+          <p className="text-xs">
             Listing Date
-          </p>{" "}
+          </p>
         </div>
 
         <div
-          className="w-[12%] px-[6px] py-[2px] text-center rounded-lg"
+          className="w-[10%] px-[6px] py-[2px] text-center rounded-lg"
           style={typeBackground}
         >
           <h2 className="text-[#FFF7D7] text-xs">{type}</h2>
         </div>
       </div>
+
       <div className="px-4 py-2 table-main flex items-center justify-between">
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold text-[#F2BD0F]">
+          <h2 className="text-xs font-semibold dark:text-[#F2BD0F]">
             {sentimentScore}
           </h2>
-          <p className="text-xs text-black dark:text-[#FFFFFFB2]">
+          <p className="text-xs dark:text-[#F2BD0F]">
             Sentiment Score
-          </p>{" "}
+          </p>
         </div>
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold text-[#0DFFB2]">
+          <h2 className="text-xs font-semibold dark:text-[#0DFFB2]">
             {decisionRate}%
           </h2>
-          <p className="text-xs text-black dark:text-[#0DFFB2B2]">
+          <p className="text-xs dark:text-[#0DFFB2]">
             Decision Rate
-          </p>{" "}
+          </p>
         </div>
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold text-[#F8E83A]">{priceRange}</h2>
-          <p className="text-xs text-black dark:text-[#F8E83AB2]">
+          <h2 className="text-xs font-semibold dark:text-[#F8E83A]">{priceRange}</h2>
+          <p className="text-xs dark:text-[#F8E83A]">
             Price Range
-          </p>{" "}
+          </p>
         </div>
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold text-[#ACFF46]">
+          <h2 className="text-xs font-semibold dark:text-[#ACFF46]">
             {minQuantity}
           </h2>
-          <p className="text-xs text-black dark:text-[#ACFF46B2]">
+          <p className="text-xs dark:text-[#ACFF46]">
             Min. Quantity
-          </p>{" "}
+          </p>
         </div>
       </div>
     </div>

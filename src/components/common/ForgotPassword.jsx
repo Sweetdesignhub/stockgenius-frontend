@@ -1,4 +1,16 @@
-// ForgotPassword.js
+/**
+ * File: ForgotPassword
+ * Description: This component allows users to request a password reset by entering their email. It includes form validation, error handling, and communicates with an API endpoint to send a password reset link.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name] 
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';

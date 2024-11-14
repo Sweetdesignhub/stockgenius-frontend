@@ -1,3 +1,16 @@
+/**
+ * File: Bot
+ * Description: This component provides a detailed interface for managing and viewing AI-powered trading bots. It displays real-time bot data such as trade ratio, profit gained, working time, balance, status, and other metrics, while offering options to activate, update, or delete a bot. The component dynamically handles different bot types (e.g., INTRADAY, CNC), supports live WebSocket updates for time-tracked metrics, and interacts with the backend for API calls to fetch, update, and activate bot settings. It also includes modals for user confirmations, real-time updates on bot activity, and alerts for bots created on different dates.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name] 
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
+
 import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment-timezone";
@@ -8,40 +21,10 @@ import ConfirmationModal from "../common/ConfirmationModal";
 import { useSelector } from "react-redux";
 import api from "../../config";
 import { isWithinTradingHours } from "../../utils/helper";
-// import { useBotTime } from "../../contexts/BotTimeContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import BotDropdown from "./BotDropdown";
 import AutoTradeModal from "../brokers/AutoTradeModal";
-
-// New component for Trade Ratio Bar
-const TradeRatioBar = ({ ratio }) => {
-  const percentage = isNaN(parseFloat(ratio)) ? 0 : parseFloat(ratio);
-  const greenPercentage = percentage.toFixed(1);
-  const redPercentage = (100 - percentage).toFixed(1);
-
-  return (
-    <div className="w-full max-w-[6rem] min-w-[4rem]">
-      <div className="flex justify-between mb-[2px]">
-        <span className="text-[#00FF47] font-semibold text-[9px]">
-          {greenPercentage}%
-        </span>
-        <span className="text-[#FF0000] font-semibold text-[9px]">
-          {redPercentage}%
-        </span>
-      </div>
-      <div className="w-full h-1 flex rounded-full overflow-hidden">
-        <div
-          style={{ width: `${greenPercentage}%` }}
-          className="h-full bg-[#00FF47]"
-        ></div>
-        <div
-          style={{ width: `${redPercentage}%`, backgroundColor: "#FF0000" }}
-          className="h-full"
-        ></div>
-      </div>
-    </div>
-  );
-};
+import TradeRatioBar from "./TradeRatioBar";
 
 function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color }) {
   const {
@@ -82,15 +65,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
 
   // Generate a unique ID for the filter
   const filterId = `color-filter-${botData._id}`;
-
-  // const { botTimes, updateBotTime, formatTime } = useBotTime();
-  // // Use botTimes from context
-  // const botTime = botTimes[botData._id] || {
-  //   workingTime: 0,
-  //   todaysBotTime: 0,
-  //   currentWeekTime: 0,
-  // };
-  // const { workingTime, todaysBotTime, currentWeekTime } = botTime;
 
   const [botTime, setBotTime] = useState({
     workingTime: 0,
@@ -165,8 +139,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
   //update bot api
   const updateBot = async (botId, updateData) => {
     try {
-      // localStorage.setItem(`bot_${botId}_workingTime`, workingTime.toString());
-
       // Perform the API update
       const response = await api.put(
         `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`,
@@ -183,11 +155,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
       console.error("Error updating bot:", error);
     }
   };
-
-  // useEffect(() => {
-  //   // Update bot time in context when status changes
-  //   updateBotTime(botData._id, currentStatus);
-  // }, [currentStatus, botData._id, updateBotTime]);
 
   useEffect(() => {
     const today = moment().tz("Asia/Kolkata").startOf("day");
@@ -208,9 +175,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
     }
 
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    // const wsUrl = process.env.NODE_ENV === 'development'
-    //   ? 'ws://localhost:8080'
-    //   : `${wsProtocol}//api.stockgenius.ai`;
 
          const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
@@ -274,11 +238,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
     {
       title: "Working Time",
       value: formatTime(botTime.workingTime),
-      // value: `${
-      //   apiBotData.dynamicData?.[0]?.workingTime ||
-      //   botData.dynamicData[0]?.workingTime ||
-      //   "0"
-      // } hours`,
       valueColor,
     },
     {
@@ -453,118 +412,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
     }
   };
 
-  // is status = schedule then automatic start bot at 9:30am
-  // useEffect(() => {
-  //   // Function to calculate time until the next 9:30 AM
-  //   const getTimeUntil930AM = () => {
-  //     const now = moment().tz('Asia/Kolkata'); // Use timezone if needed
-  //     const targetTime = now.clone().startOf('day').set({ hour: 9, minute: 30, second: 0 });
-
-  //     if (now.isAfter(targetTime)) {
-  //       targetTime.add(1, 'day');
-  //     }
-
-  //     return targetTime.diff(now); // Time in milliseconds
-  //   };
-
-  //   // Function to perform activation request
-  //   const performActivationRequest = async () => {
-  //     try {
-  //       // Filtering bots created today
-  //       const todaysBots = [apiBotData].filter((bot) => {
-  //         const botCreatedDate = moment.tz(bot.createdAt, 'Asia/Kolkata').format('YYYY-MM-DD');
-  //         return botCreatedDate === today;
-  //       });
-
-  //       // Activating bots if status is "Schedule"
-  //       await Promise.all(
-  //         todaysBots.map(async (bot) => {
-  //           if (currentStatus === 'Schedule') {
-  //             await activateBot();
-  //           }
-  //         })
-  //       );
-  //     } catch (error) {
-  //       console.error('Error performing activation:', error);
-  //     }
-  //   };
-
-  //   // Calculate time until 9:30 AM
-  //   const timeUntil930AM = getTimeUntil930AM();
-
-  //   // Set up timeout to perform activation request
-  //   const timeoutId = setTimeout(() => {
-  //     performActivationRequest();
-
-  //     // Set up interval to repeat activation request every 24 hours
-  //     const intervalId = setInterval(performActivationRequest, 24 * 60 * 60 * 1000); // 24 hours
-
-  //     // Cleanup interval
-  //     return () => clearInterval(intervalId);
-  //   }, timeUntil930AM);
-
-  //   // Cleanup timeout
-  //   return () => clearTimeout(timeoutId);
-  // }, [apiBotData, currentStatus, today]);
-
-  // // automatic hit deactive api, after that data to be updated at 3:30pm
-
-  // useEffect(() => {
-  //   const getTimeUntil4PM = () => {
-  //     const now = moment().tz('Asia/Kolkata');
-  //     const next4PM = moment().tz('Asia/Kolkata').set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
-
-  //     // If the current time is past 4 PM, move to the next day
-  //     if (now.isAfter(next4PM)) {
-  //       next4PM.add(1, 'day');
-  //     }
-
-  //     // Calculate the time difference in milliseconds
-  //     return next4PM.diff(now);
-  //   };
-
-  //   const performUpdateRequest = async () => {
-  //     try {
-  //       const todaysBots = [apiBotData].filter((bot) => {
-  //         const botCreatedDate = moment(bot.createdAt).tz('Asia/Kolkata').format('YYYY-MM-DD');
-  //         return botCreatedDate === today;
-  //       });
-
-  //       await Promise.all(
-  //         todaysBots.map(async (bot) => {
-  //           await deactivateBot();
-  //         })
-  //       );
-  //     } catch (error) {
-  //       console.error('Error performing update:', error);
-  //     }
-  //   };
-
-  //   const timeUntil4PM = getTimeUntil4PM();
-
-  //   const timeoutId = setTimeout(() => {
-  //     performUpdateRequest();
-
-  //     // Set up an interval to perform the update request every 24 hours
-  //     const intervalId = setInterval(performUpdateRequest, 24 * 60 * 60 * 1000); // 24 hours
-  //     return () => clearInterval(intervalId); // Cleanup interval
-  //   }, timeUntil4PM);
-
-  //   return () => clearTimeout(timeoutId); // Cleanup timeout
-  // }, [
-  //   botData,
-  //   currentUser.id,
-  //   today,
-  //   formatTime,
-  //   profitGainedValue,
-  //   availableFunds,
-  //   trades,
-  //   orders,
-  //   currentStatus,
-  //   todaysBotTime,
-  //   currentWeekTime,
-  // ]);
-
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
 
@@ -615,9 +462,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
                 createdAt === today
                   ? availableFunds
                   : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-              // workingTime: formatTime(
-              //   now.diff(now.clone().startOf("day"), "seconds")
-              // ),
+          
               totalBalance:
                 createdAt === today
                   ? availableFunds
@@ -647,49 +492,6 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
           setConfirmationModalOpen(true);
           return;
         }
-
-        // console.log("Updating status");
-
-        // // Get the current time in "Asia/Kolkata" time zone using moment-timezone
-        // const now = moment.tz("Asia/Kolkata");
-        // const userTime = now.clone();
-        // const today = userTime.format("YYYY-MM-DD");
-
-        // // Set cutoff times using moment
-        // const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-        // const cutoffEnd = now
-        //   .clone()
-        //   .set({ hour: 9, minute: 30, second: 0, millisecond: 0 }); // 9:30 AM IST
-
-        // // Check if the user time falls within the schedule window
-        // if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
-        //   // If user arrives between 12:00 AM and 9:30 AM, schedule the bot
-        //   await updateBot(apiBotData._id, {
-        //     tradeRatio: 50,
-        //     profitGained: profitGainedValue,
-        //     // workingTime: formatTime(userTime.toDate()), // Convert moment object back to Date if needed
-        //     totalBalance:
-        //       createdAt === today
-        //         ? availableFunds
-        //         : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-        //     scheduled: today,
-        //     numberOfTrades:
-        //       createdAt === today
-        //         ? trades.tradeBook?.length || 0
-        //         : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-        //     percentageGain: 0,
-        //     status: "Schedule",
-        //     reInvestment:
-        //       createdAt === today
-        //         ? orders.orderBook?.length || 0
-        //         : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-        //     limits: 0,
-        //   });
-
-        //   console.log("Bot scheduled");
-        // } else if (isWithinTradingHours()) {
-        //   await activateBot();
-        // }
       } else {
         await deactivateBot();
       }

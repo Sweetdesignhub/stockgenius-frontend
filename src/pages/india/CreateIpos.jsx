@@ -1,3 +1,16 @@
+/**
+ * File: CreateIpos
+ * Description: This component is part of the IPO management section of the platform. It allows users to create new IPOs by filling out a form with various IPO-related details such as name, category, start and end dates, price range, company information, and more.
+ * The form is divided into two tabs, with the first tab collecting general IPO details and the second tab gathering additional information about the IPO's objectives, advantages, and disadvantages.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React, { useEffect, useState } from "react";
 import RecommendationIPOs from "../../components/initialPublicOffers/RecommendationIPOs";
 import IPOsAdminPanel from "../../components/initialPublicOffers/IPOsAdminPanel";
@@ -12,9 +25,10 @@ function CreateIpos() {
   const [ipoRecommendedData, setIpoRecommendedData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [statusMessage, setStatusMessage] = useState(null);
   const [columns, setColumns] = useState([]);
   const [formData, setFormData] = useState({
-    userId: currentUser.id,
+    userId: currentUser?.id,
     logo: "",
     name: "",
     category: "",
@@ -107,16 +121,16 @@ function CreateIpos() {
       "category",
       "exchangeType",
       "company",
-      "listingDate",
-      "ipoStartDate",
-      "ipoEndDate",
-      "sentimentScore",
-      "decisionRate",
-      "priceStartRange",
-      "priceEndRange",
-      "basisOfAllotment",
-      "initiationOfRefunds",
-      "creditShares",
+      // "listingDate",
+      // "ipoStartDate",
+      // "ipoEndDate",
+      // "sentimentScore",
+      // "decisionRate",
+      // "priceStartRange",
+      // "priceEndRange",
+      // "basisOfAllotment",
+      // "initiationOfRefunds",
+      // "creditShares",
     ];
     return requiredFields.every((field) => formData[field]);
   };
@@ -185,15 +199,22 @@ function CreateIpos() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
+    // Check if userId is set in formData
+    if (!formData.userId) {
+      setFormData((prevData) => ({ ...prevData, userId: currentUser?.id }));
+    }
+
     try {
       const response = await api.post(
         `/api/v1/IPOs/create-ipo/${currentUser.id}`,
         formData
       );
 
-      // console.log("Form submitted successfully:", response.data);
+      console.log("Form submitted successfully:", response.data);
+      setStatusMessage({ type: "success", text: "IPO created successfully!" });
       // Optionally reset formData after successful submission
       setFormData({
+        userId: currentUser?.id,
         logo: "",
         name: "",
         category: "",
@@ -216,8 +237,14 @@ function CreateIpos() {
         disadvantages: [{ title: "", description: "" }],
       });
 
+      setActiveTab("first");
+
       fetchData();
     } catch (error) {
+      setStatusMessage({
+        type: "error",
+        text: "Error submitting form. Please refresh and try again.",
+      });
       console.error("Error submitting form:", error);
     }
   };
@@ -237,10 +264,15 @@ function CreateIpos() {
         alt="bear"
       />
 
-      <div className="bg-white min-h-[86vh] max-h-[86vh] news-table p-4 rounded-2xl">
+      <div
+        className={`${
+          theme === "dark" ? "news-table" : "bg-[#F2F5FF]"
+        } min-h-[86vh] max-h-[86vh] p-4 rounded-2xl`}
+      >
         <div className="flex gap-4 h-[40%] mb-6">
           <div className="w-3/4 overflow-scroll">
             <IPOsAdminPanel
+              statusMessage={statusMessage}
               formData={formData}
               activeTab={activeTab}
               handleChange={handleChange}

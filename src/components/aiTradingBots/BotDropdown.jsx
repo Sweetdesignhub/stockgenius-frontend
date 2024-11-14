@@ -1,3 +1,18 @@
+/**
+ * File: BotDropdown
+ * Description: A reusable dropdown component used in the AI trading webpage for bot management.
+ * It allows users to edit or delete bots from the interface.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name] 
+ * Updated on: [Update date]
+ * - Update description: Added dropdown functionality for editing and deleting bots, with event listeners for closing the dropdown when clicked outside.
+ */
+
+
+
 import { useState, useRef, useEffect } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 

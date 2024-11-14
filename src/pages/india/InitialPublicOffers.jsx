@@ -1,3 +1,15 @@
+/**
+ * File: InitialPublicOffers
+ * Description: This component displays a list of Initial Public Offerings (IPOs) with filtering options such as "All", "SME", "DEBT", and "EQUITY". It also allows the user to filter IPOs by their category (Upcoming, Ongoing, or Past). The IPO data and suggestion cards are fetched from the backend, and the IPO details can be viewed upon selecting an individual IPO. The layout is responsive, with a mobile-friendly design and a desktop version that splits the page into two sections: a list of IPOs and a set of suggestion cards. A loading state is displayed while data is being fetched.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React, { useEffect, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
@@ -17,12 +29,11 @@ function InitialPublicOffers() {
   const [ipoData, setIpoData] = useState([]);
   const [suggestionCardsData, setSuggestionCardsData] = useState([]);
   const [selectedIPO, setSelectedIPO] = useState(ipoData[0]?.company || "");
-  const [selectedCategory, setSelectedCategory] = useState("Ongoing");
+  const [selectedCategory, setSelectedCategory] = useState("Upcoming");
   const { theme } = useTheme();
 
   const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(true);
-  // console.log(currentUser);
 
   const options = ["All", "SME", "DEBT", "EQUITY"];
   const categories = ["Ongoing", "Upcoming", "Past"];
@@ -80,8 +91,10 @@ function InitialPublicOffers() {
     setSelectedIPO(company);
   };
 
-  // Format the IPO dates
+  // Format IPO dates or display "To be announced" if dates are null
   const formatIpoDate = (startDate, endDate) => {
+    if (!startDate && !endDate) return "To be announced";
+
     const options = { day: "numeric", month: "short" };
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -89,7 +102,6 @@ function InitialPublicOffers() {
     const startDay = start.toLocaleDateString("en-US", options);
     const endDay = end.toLocaleDateString("en-US", options);
 
-    // Check if both dates fall in the same month and return formatted string
     if (start.getMonth() === end.getMonth()) {
       return `${startDay}-${endDay}`;
     }
@@ -98,6 +110,7 @@ function InitialPublicOffers() {
   };
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return "To be announced";
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -147,7 +160,7 @@ function InitialPublicOffers() {
                   {/* Dropdown Menu */}
                   <Menu as="div" className="relative inline-block text-left">
                     <div>
-                      <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                      <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-[#3A6FF8] shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                         {selectedOption}
                         <ChevronDownIcon
                           aria-hidden="true"
@@ -156,7 +169,7 @@ function InitialPublicOffers() {
                       </MenuButton>
                     </div>
 
-                    <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
+                    <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right  rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
                       <div className="py-1">
                         {options.map((option) => (
                           <MenuItem
@@ -164,7 +177,7 @@ function InitialPublicOffers() {
                             onClick={() => setSelectedOption(option)}
                           >
                             <div
-                              className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
+                              className={`block px-4 py-2 text-sm text-[#3A6FF8] hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
                                 selectedOption === option ? "bg-gray-100" : ""
                               }`}
                             >
@@ -216,8 +229,18 @@ function InitialPublicOffers() {
                       logo={ipo.logo}
                       name={ipo.name}
                       company={ipo.company}
-                      ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)}
-                      listingDate={formatDate(ipo.listingDate)}
+                      // ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)}
+                      // listingDate={formatDate(ipo.listingDate)}
+                      ipoDate={
+                        ipo.ipoStartDate && ipo.ipoEndDate
+                          ? formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)
+                          : "To be announced"
+                      }
+                      listingDate={
+                        ipo.listingDate
+                          ? formatDate(ipo.listingDate)
+                          : "To be announced"
+                      }
                       type={ipo.exchangeType}
                       sentimentScore={ipo.sentimentScore || "0.00"}
                       decisionRate={ipo.decisionRate}

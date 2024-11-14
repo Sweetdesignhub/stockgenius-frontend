@@ -1,6 +1,17 @@
-// SessionExpiredModal.jsx
+/**
+ * File: SessionExpiredModal
+ * Description: A modal component to inform users that their session has expired. The dialog box is centered on the screen on which user will click to Signout.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React from "react";
-import { Dialog } from "@headlessui/react"; // Assuming you're using @headlessui for modal
+import { Dialog } from "@headlessui/react";
 
 const SessionExpiredModal = ({ showModal, onSignOut }) => {
   if (!showModal) return null;

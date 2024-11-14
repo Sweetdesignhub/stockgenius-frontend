@@ -1,3 +1,15 @@
+/**
+ * File: ThemeContext
+ * Description: The ThemeContext manages the theme (dark or light) for the application. It provides the current theme and a function to update the theme. This context can be used throughout the app to dynamically switch between light and dark modes or follow the system's preferred theme.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import { createContext, useContext, useState, useEffect } from "react";
 
 // Create a context for the theme

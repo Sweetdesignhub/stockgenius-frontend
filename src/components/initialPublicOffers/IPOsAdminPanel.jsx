@@ -9,9 +9,10 @@ const IPOsAdminPanel = ({
   handleNext,
   handleBack,
   handleSubmit,
+  statusMessage,
 }) => {
   // console.log(formData);
-  
+
   const initialKeyObjective = { title: "", description: "" };
   // console.log(initialKeyObjective);
 
@@ -20,7 +21,7 @@ const IPOsAdminPanel = ({
 
   const [keyObjectives, setKeyObjectives] = useState([initialKeyObjective]);
   // console.log(keyObjectives);
-  
+
   const [advantages, setAdvantages] = useState([initialAdvantage]);
   const [disadvantages, setDisadvantages] = useState([initialDisadvantage]);
 
@@ -28,38 +29,39 @@ const IPOsAdminPanel = ({
     const { name, value } = event.target;
     const newObjectives = [...keyObjectives];
     newObjectives[index] = { ...newObjectives[index], [name]: value };
-  
+
     // Update local state
     setKeyObjectives(newObjectives);
-  
+
     // Update formData to reflect changes in the parent
     handleChange({ target: { name: "keyObjectives", value: newObjectives } });
   };
-  
+
   const handleAdvantageChange = (index, event) => {
     const { name, value } = event.target;
     const newAdvantages = [...advantages];
     newAdvantages[index] = { ...newAdvantages[index], [name]: value };
-  
+
     // Update local state
     setAdvantages(newAdvantages);
-  
+
     // Update formData to reflect changes in the parent
     handleChange({ target: { name: "advantages", value: newAdvantages } });
   };
-  
+
   const handleDisadvantageChange = (index, event) => {
     const { name, value } = event.target;
     const newDisadvantages = [...disadvantages];
     newDisadvantages[index] = { ...newDisadvantages[index], [name]: value };
-  
+
     // Update local state
     setDisadvantages(newDisadvantages);
-  
+
     // Update formData to reflect changes in the parent
-    handleChange({ target: { name: "disadvantages", value: newDisadvantages } });
+    handleChange({
+      target: { name: "disadvantages", value: newDisadvantages },
+    });
   };
-  
 
   const handleRemoveKeyObjective = (index) => {
     const newObjectives = keyObjectives.filter((_, i) => i !== index);
@@ -104,13 +106,13 @@ const IPOsAdminPanel = ({
       "category",
       "exchangeType",
       "company",
-      "listingDate",
-      "ipoStartDate",
-      "ipoEndDate",
-      "sentimentScore",
-      "decisionRate",
-      "priceStartRange",
-      "priceEndRange",
+      // "listingDate",
+      // "ipoStartDate",
+      // "ipoEndDate",
+      // "sentimentScore",
+      // "decisionRate",
+      // "priceStartRange",
+      // "priceEndRange",
     ];
 
     // Check if each required field in formData has a valid, non-empty value
@@ -122,21 +124,22 @@ const IPOsAdminPanel = ({
   return (
     <div className="flex flex-col gap-3">
       <div className="overflow-y-scroll">
-        <div className="news-table w-full p-4 rounded-xl">
-          <div className="border-b pb-2 border-[#FFFFFF1A]">
-            <h1 className="text-[#FFFFFF] font-[poppins] font-semibold text-lg">
+        <div className="news-table w-full p-3 rounded-xl">
+          <div className="border-b pb-2 dark:border-[#FFFFFF1A] border-[]">
+            <h1 className="dark:text-[#FFFFFF] font-[poppins] font-semibold text-lg">
               IPOs Admin Panel
             </h1>
           </div>
 
-          <div className="p-2 max-h-64 overflow-y-scroll">
+          <div className="p-2  rounded-lg mt-2 max-h-64 overflow-y-scroll">
             {/* First Tab - Initial Fields */}
             {activeTab === "first" && (
-              <>
+              <div>
                 {/* First Row */}
                 <div className="flex space-x-2">
                   <div className="w-1/4">
                     <Input
+                      required={true}
                       label="Logo"
                       name="logo"
                       placeholder="Upload company logo"
@@ -146,6 +149,7 @@ const IPOsAdminPanel = ({
                   </div>
                   <div className="w-1/4">
                     <Input
+                      required={true}
                       label="IPO Name"
                       name="name"
                       placeholder="Enter IPO name"
@@ -158,7 +162,7 @@ const IPOsAdminPanel = ({
                       className="block dark:text-white text-black text-xs mb-2"
                       htmlFor="category"
                     >
-                      Category
+                      Category <span className="text-red-500 ml-1">*</span>
                     </label>
                     <select
                       id="category"
@@ -176,11 +180,8 @@ const IPOsAdminPanel = ({
                     </select>
                   </div>
                   <div className="w-1/4">
-                    <label
-                      className="block dark:text-white text-black text-xs mb-2"
-                     
-                    >
-                      Exchange Type
+                    <label className="block dark:text-white text-black text-xs mb-2">
+                      Exchange Type <span className="text-red-500 ml-1">*</span>
                     </label>
                     <select
                       id="exchangeType"
@@ -208,6 +209,7 @@ const IPOsAdminPanel = ({
                       placeholder="Enter company name"
                       value={formData.company}
                       onChange={handleChange}
+                      required={true}
                     />
                   </div>
                   <div className="w-1/4">
@@ -314,7 +316,7 @@ const IPOsAdminPanel = ({
                 <div className="flex justify-center space-x-2">
                   <button
                     onClick={handleClearAll}
-                    className="bg-white text-sm text-[#FF0F0F] py-1 px-3 rounded-lg"
+                    className="bg-white text-sm text-[#FF0F0F] py-1 px-3 rounded-lg dark:border-0 border"
                   >
                     Clear
                   </button>
@@ -330,7 +332,7 @@ const IPOsAdminPanel = ({
                     Next
                   </button>
                 </div>
-              </>
+              </div>
             )}
 
             {/* Second Tab - New Fields */}
@@ -344,6 +346,7 @@ const IPOsAdminPanel = ({
                       placeholder="Enter company description"
                       value={formData.companyDescription}
                       onChange={handleChange}
+                      required={true}
                     />
                   </div>
                   <div className="w-1/4">
@@ -382,7 +385,6 @@ const IPOsAdminPanel = ({
                             placeholder="Enter objective title"
                             value={objective.title}
                             onChange={(e) => handleKeyObjectiveChange(index, e)}
-                            required
                             aria-label={`Objective Title ${index + 1}`}
                           />
                         </div>
@@ -392,7 +394,6 @@ const IPOsAdminPanel = ({
                             placeholder="Enter objective description"
                             value={objective.description}
                             onChange={(e) => handleKeyObjectiveChange(index, e)}
-                            required
                             aria-label={`Objective Description ${index + 1}`}
                           />
                         </div>
@@ -432,7 +433,6 @@ const IPOsAdminPanel = ({
                             placeholder="Enter advantage title"
                             value={advantage.title}
                             onChange={(e) => handleAdvantageChange(index, e)}
-                            required
                             aria-label={`Advantage Title ${index + 1}`}
                           />
                         </div>
@@ -442,7 +442,6 @@ const IPOsAdminPanel = ({
                             placeholder="Enter advantage description"
                             value={advantage.description}
                             onChange={(e) => handleAdvantageChange(index, e)}
-                            required
                             aria-label={`Advantage Description ${index + 1}`}
                           />
                         </div>
@@ -482,7 +481,6 @@ const IPOsAdminPanel = ({
                             placeholder="Enter disadvantage title"
                             value={disadvantage.title}
                             onChange={(e) => handleDisadvantageChange(index, e)}
-                            required
                             aria-label={`Disadvantage Title ${index + 1}`}
                           />
                         </div>
@@ -492,7 +490,6 @@ const IPOsAdminPanel = ({
                             placeholder="Enter disadvantage description"
                             value={disadvantage.description}
                             onChange={(e) => handleDisadvantageChange(index, e)}
-                            required
                             aria-label={`Disadvantage Description ${index + 1}`}
                           />
                         </div>
@@ -533,6 +530,17 @@ const IPOsAdminPanel = ({
               </div>
             )}
           </div>
+          {statusMessage && (
+            <div
+              className={` text-center ${
+                statusMessage.type === "success"
+                  ? " text-green-500"
+                  : " text-red-500"
+              }`}
+            >
+              {statusMessage.text}
+            </div>
+          )}
         </div>
       </div>
     </div>

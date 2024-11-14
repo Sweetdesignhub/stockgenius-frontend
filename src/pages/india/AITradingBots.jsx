@@ -1,3 +1,19 @@
+/**
+ * File: AITradingBots
+ * Description: This file contains the implementation of the AI Trading Bots page, where users can manage their trading bots,
+ * toggle their states, and schedule auto-trades. It includes the functionality to create, update, and delete bots,
+ * as well as track the status of each bot. The bots' states are managed based on the current market conditions
+ * (e.g., market open/close, trading hours). It also provides integration with WebSockets to track the total
+ * trading time of all bots and shows real-time data.
+ *
+ * Developed by: Arshdeep Singh
+ * Developed on: 2024-11-14
+ *
+ * Updated by: [Name]
+ * Updated on: [Update date]
+ * - Update description: Brief description of what was updated or fixed
+ */
+
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import BrokerModal from "../../components/brokers/BrokerModal";
@@ -12,15 +28,21 @@ import {
   isBeforeMarketOpen,
   isWithinTradingHours,
 } from "../../utils/helper";
-// import { useBotTime } from "../../contexts/BotTimeContext";
 import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../../components/common/Loading";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 // Define an array of colors for the bots
 const botColors = [
-  "#F62024", "#F6208F", "#208FF6", "#20F6F6", "#8FF620", "#F6F620", "#F68F20", "#20F68F"
+  "#F62024",
+  "#F6208F",
+  "#208FF6",
+  "#20F6F6",
+  "#8FF620",
+  "#F6F620",
+  "#F68F20",
+  "#20F68F",
 ];
 
 const getBotStatus = (isActive) => {
@@ -36,19 +58,18 @@ const getBotStatus = (isActive) => {
 };
 
 function Cards({ title, value }) {
-
   const { theme } = useTheme();
 
   const backgroundStyle =
     theme === "dark"
       ? {
-        backgroundImage:
-          "linear-gradient(180deg, rgba(46, 51, 90, 0.1) 0%, rgba(28, 27, 51, 0.02) 100%), " +
-          "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
-      }
+          backgroundImage:
+            "linear-gradient(180deg, rgba(46, 51, 90, 0.1) 0%, rgba(28, 27, 51, 0.02) 100%), " +
+            "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
+        }
       : {
-        backgroundColor: "white",
-      };
+          backgroundColor: "white",
+        };
 
   return (
     <div
@@ -70,24 +91,26 @@ function AITradingBots() {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [confirmationAction, setConfirmationAction] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  // const { botTimes, formatTime } = useBotTime();
-  const [isInitialLoading, setIsInitialLoading] = useState(true); // New state for initial loading
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [togglingBotId, setTogglingBotId] = useState(null);
 
   const [botColorMap, setBotColorMap] = useState({});
   const location = useLocation();
-  const isAITradingPage = location.pathname === '/india/AI-Trading-Bots';
+  const isAITradingPage = location.pathname === "/india/AI-Trading-Bots";
 
   const [allBotsTime, setAllBotsTime] = useState({
     totalTodaysBotTime: 0,
-    totalCurrentWeekTime: 0
+    totalCurrentWeekTime: 0,
   });
 
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
 
-  const { holdings = {}, positions = { overall: {} }, orders = { orderBook: [] } } = useData();
+  const {
+    holdings = {},
+    positions = { overall: {} },
+    orders = { orderBook: [] },
+  } = useData();
 
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;
@@ -118,7 +141,6 @@ function AITradingBots() {
         colorMap[bot._id] = botColors[index % botColors.length];
       });
       setBotColorMap(colorMap);
-
     } catch (error) {
       console.error("Error fetching bots:", error);
     } finally {
@@ -173,7 +195,7 @@ function AITradingBots() {
       console.error("Unexpected error:", error.response?.data || error.message);
       setMessage(
         error.response?.data?.message ||
-        "An unexpected error occurred. Please try again."
+          "An unexpected error occurred. Please try again."
       );
       setConfirmationOpen(true);
     }
@@ -223,7 +245,6 @@ function AITradingBots() {
       setConfirmationOpen(true);
     }
   };
-
 
   const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
@@ -293,34 +314,36 @@ function AITradingBots() {
   };
 
   useEffect(() => {
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     // const wsUrl = process.env.NODE_ENV === 'development'
     //   ? 'ws://localhost:8080'
     //   : `${wsProtocol}//api.stockgenius.ai`;
-    const wsUrl = `${wsProtocol}//api.stockgenius.ai`
+    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
-      console.log('WebSocket connected for all bots time');
-      ws.send(JSON.stringify({
-        type: 'subscribeAllBotsTime',
-        userId: currentUser.id
-      }));
+      console.log("WebSocket connected for all bots time");
+      ws.send(
+        JSON.stringify({
+          type: "subscribeAllBotsTime",
+          userId: currentUser.id,
+        })
+      );
     };
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'allBotsTime') {
+      if (data.type === "allBotsTime") {
         setAllBotsTime({
           totalTodaysBotTime: parseInt(data.totalTodaysBotTime),
-          totalCurrentWeekTime: parseInt(data.totalCurrentWeekTime)
+          totalCurrentWeekTime: parseInt(data.totalCurrentWeekTime),
         });
       }
     };
     ws.onerror = (error) => {
-      console.error('WebSocket error for all bots time:', error);
+      console.error("WebSocket error for all bots time:", error);
     };
     ws.onclose = () => {
-      console.log('WebSocket disconnected for all bots time');
+      console.log("WebSocket disconnected for all bots time");
     };
     return () => {
       ws.close();
@@ -329,7 +352,7 @@ function AITradingBots() {
 
   const formatTime = useCallback((seconds) => {
     if (isNaN(seconds) || seconds < 0) {
-      return '0h 0m 0s';
+      return "0h 0m 0s";
     }
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -360,18 +383,22 @@ function AITradingBots() {
         // For intraday bots, use positions data
         profitAmount = positions?.overall?.pl_total || 0;
         investmentAmount = positions?.overall?.buyVal || 0;
-        reInvestmentCount = orders?.orderBook?.filter(order =>
-          moment(order.orderDateTime).isSame(today, "day") &&
-          order.productType === "INTRADAY"
-        ).length || 0;
+        reInvestmentCount =
+          orders?.orderBook?.filter(
+            (order) =>
+              moment(order.orderDateTime).isSame(today, "day") &&
+              order.productType === "INTRADAY"
+          ).length || 0;
       } else if (bot.productType === "CNC") {
         // For CNC bots, use holdings data
         profitAmount = holdings?.overall?.total_pl || 0;
         investmentAmount = holdings?.overall?.total_investment || 0;
-        reInvestmentCount = orders?.orderBook?.filter(order =>
-          moment(order.orderDateTime).isSame(today, "day") &&
-          order.productType === "CNC"
-        ).length || 0;
+        reInvestmentCount =
+          orders?.orderBook?.filter(
+            (order) =>
+              moment(order.orderDateTime).isSame(today, "day") &&
+              order.productType === "CNC"
+          ).length || 0;
       }
 
       // Calculate metrics for today's bots
@@ -394,42 +421,48 @@ function AITradingBots() {
       return (profit / investment) * 100;
     };
 
-    const todayProfitPercentage = calculatePercentage(todayTotalProfit, todayTotalInvestment);
-    const weekProfitPercentage = calculatePercentage(weekTotalProfit, weekTotalInvestment);
+    const todayProfitPercentage = calculatePercentage(
+      todayTotalProfit,
+      todayTotalInvestment
+    );
+    const weekProfitPercentage = calculatePercentage(
+      weekTotalProfit,
+      weekTotalInvestment
+    );
 
     return [
       {
         title: "Today's Profit %",
-        value: `${todayProfitPercentage.toFixed(2)}%`
+        value: `${todayProfitPercentage.toFixed(2)}%`,
       },
       {
         title: "Last Week Profit %",
-        value: `${weekProfitPercentage.toFixed(2)}%`
+        value: `${weekProfitPercentage.toFixed(2)}%`,
       },
       {
         title: "Today's Bot Time",
-        value: formatTime(allBotsTime.totalTodaysBotTime)
+        value: formatTime(allBotsTime.totalTodaysBotTime),
       },
       {
         title: "Week's Bot Time",
-        value: formatTime(allBotsTime.totalCurrentWeekTime)
+        value: formatTime(allBotsTime.totalCurrentWeekTime),
       },
       {
         title: "No. of AI Bots",
-        value: botDataList.length.toString()
+        value: botDataList.length.toString(),
       },
       {
         title: "Re-investments",
-        value: todayReInvestments.toString()
+        value: todayReInvestments.toString(),
       },
       {
         title: "Total Investment",
-        value: todayTotalInvestment.toFixed(2)
+        value: todayTotalInvestment.toFixed(2),
       },
       {
         title: "Total Profit",
-        value: todayTotalProfit.toFixed(2)
-      }
+        value: todayTotalProfit.toFixed(2),
+      },
     ];
   }, [botDataList, allBotsTime, formatTime, holdings, positions, orders]);
 
@@ -450,8 +483,9 @@ function AITradingBots() {
         />
 
         <div
-          className={`lg:min-h-[85vh] news-table rounded-2xl ${isAITradingPage ? 'bg-gradient' : 'bg-white'
-            }`}
+          className={`lg:min-h-[85vh] news-table rounded-2xl ${
+            isAITradingPage ? "bg-gradient" : "bg-white"
+          }`}
         >
           <div className="flex flex-col lg:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
