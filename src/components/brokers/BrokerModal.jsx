@@ -185,7 +185,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     startFetchingData();
     return () => clearInterval(fetchIntervalRef.current);
-  }, [userId]);
+  }, []);
 
 
   useEffect(() => {

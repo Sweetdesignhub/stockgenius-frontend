@@ -5,12 +5,12 @@
  * Developed by: Arshdeep Singh
  * Developed on: 2024-11-14
  *
- * Updated by: [Name] 
+ * Updated by: [Name]
  * Updated on: [Update date]
  * - Update description: Brief description of what was updated or fixed
  */
 
-
+3;
 import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment-timezone";
@@ -26,7 +26,14 @@ import BotDropdown from "./BotDropdown";
 import AutoTradeModal from "../brokers/AutoTradeModal";
 import TradeRatioBar from "./TradeRatioBar";
 
-function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color }) {
+function Bot({
+  botData,
+  isEnabled,
+  onToggle,
+  updateBotDetails,
+  deleteBot,
+  color,
+}) {
   const {
     holdings = {},
     funds = { fund_limit: [{}] },
@@ -174,20 +181,20 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
       return; // Don't set up WebSocket for historical bots
     }
 
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
-         const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
+    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log('WebSocket connected for bot:', botData._id);
-      ws.send(JSON.stringify({ type: 'subscribeBotTime', botId: botData._id }));
+      console.log("WebSocket connected for bot:", botData._id);
+      ws.send(JSON.stringify({ type: "subscribeBotTime", botId: botData._id }));
     };
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'botTime') {
+      if (data.type === "botTime") {
         if (data.isHistorical) {
           setIsHistoricalBot(true);
           ws.close();
@@ -201,11 +208,11 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error for bot:', botData._id, error);
+      console.error("WebSocket error for bot:", botData._id, error);
     };
 
     ws.onclose = () => {
-      console.log('WebSocket disconnected for bot:', botData._id);
+      console.log("WebSocket disconnected for bot:", botData._id);
     };
 
     return () => {
@@ -215,7 +222,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
 
   const formatTime = useCallback((seconds) => {
     if (isNaN(seconds) || seconds < 0) {
-      return '0h 0m 0s';
+      return "0h 0m 0s";
     }
 
     const hours = Math.floor(seconds / 3600);
@@ -259,32 +266,38 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
       title: "Number of Trades",
       value:
         createdAt === today
-          ? trades?.tradeBook?.filter(trade => trade.productType === botData.productType)?.length || 0
+          ? trades?.tradeBook?.filter(
+              (trade) => trade.productType === botData.productType
+            )?.length || 0
           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
       valueColor,
     },
     {
       title: "Percentage Gain",
-      value: `${apiBotData.dynamicData?.[0]?.percentageGain ||
+      value: `${
+        apiBotData.dynamicData?.[0]?.percentageGain ||
         botData.dynamicData[0]?.percentageGain ||
         "0"
-        }%`,
+      }%`,
       valueColor,
     },
     {
       title: "Reinvestment",
       value:
         createdAt === today
-          ? orders?.orderBook?.filter(order => order.productType === botData.productType)?.length || 0
+          ? orders?.orderBook?.filter(
+              (order) => order.productType === botData.productType
+            )?.length || 0
           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
       valueColor,
     },
     {
       title: "Limits",
-      value: `${apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
+      value: `${
+        apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
         botData.dynamicData[0]?.limits?.toLocaleString() ||
         "0"
-        }`,
+      }`,
       valueColor,
     },
     {
@@ -294,8 +307,8 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
-            ? "#00FF47"
-            : "#FFBF00",
+          ? "#00FF47"
+          : "#FFBF00",
     },
   ];
 
@@ -306,8 +319,9 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
       setConfirmationModalOpen(true);
     } else {
       const newTitle = isEnabled ? "Deactivate Bot" : "Activate Bot";
-      const newMessage = `Are you sure you want to ${isEnabled ? "deactivate" : "activate"
-        } <strong>${botData.name}</strong>?`;
+      const newMessage = `Are you sure you want to ${
+        isEnabled ? "deactivate" : "activate"
+      } <strong>${botData.name}</strong>?`;
 
       setModalTitle(newTitle);
       setModalMessage(newMessage);
@@ -449,7 +463,9 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
 
           // Set cutoff times using moment
           const cutoffStart = now.clone().startOf("day"); // 12:00 AM IST
-          const cutoffEnd = now.clone().set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:15 AM IST
+          const cutoffEnd = now
+            .clone()
+            .set({ hour: 9, minute: 15, second: 0, millisecond: 0 }); // 9:15 AM IST
 
           // Check if the user time falls within the schedule window
           if (userTime.isBetween(cutoffStart, cutoffEnd, null, "[]")) {
@@ -462,22 +478,17 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
                 createdAt === today
                   ? availableFunds
                   : apiBotData.dynamicData?.[0]?.totalBalance || "0",
-          
-              totalBalance:
-                createdAt === today
-                  ? availableFunds
-                  : apiBotData.dynamicData?.[0]?.totalBalance || "0",
               scheduled: today,
-              numberOfTrades: createdAt === today
-                ? trades.tradeBook?.length || 0
-                : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-              numberOfTrades: createdAt === today ? trades.tradeBook?.length || 0 : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+              numberOfTrades:
+                createdAt === today
+                  ? trades.tradeBook?.length || 0
+                  : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
               percentageGain: 0,
               status: "Schedule",
-              reInvestment: createdAt === today ? orders.orderBook?.length || 0 : apiBotData.dynamicData?.[0]?.reInvestment || 0,
-              reInvestment: createdAt === today
-                ? orders.orderBook?.length || 0
-                : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+              reInvestment:
+                createdAt === today
+                  ? orders.orderBook?.length || 0
+                  : apiBotData.dynamicData?.[0]?.reInvestment || 0,
               limits: 0,
             });
 
@@ -487,7 +498,7 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
           }
         } else {
           // alert("Connect your broker before activating the bot");
-          setTitle("Activation Error")
+          setTitle("Activation Error");
           setMessage("Connect your broker before activating the bot");
           setConfirmationModalOpen(true);
           return;
@@ -556,7 +567,12 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
     // setBots(bots.filter((bot) => bot.botId !== botId)); // For demonstration purposes, it removes the bot from state.
   };
 
-  if (loading || !apiBotData || !apiBotData.dynamicData || apiBotData.dynamicData.length === 0) {
+  if (
+    loading ||
+    !apiBotData ||
+    !apiBotData.dynamicData ||
+    apiBotData.dynamicData.length === 0
+  ) {
     return (
       <div className="w-full flex justify-center items-center">
         <Loading />
@@ -566,25 +582,38 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
 
   return (
     <div
-      style={theme === 'dark' ? darkThemeStyle : { backgroundColor: '#FFFFFF' }}
+      style={theme === "dark" ? darkThemeStyle : { backgroundColor: "#FFFFFF" }}
       className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
     >
-
-      <svg width="0" height="0" style={{ position: 'absolute' }}>
+      <svg width="0" height="0" style={{ position: "absolute" }}>
         <filter id={filterId}>
           <feFlood floodColor={color} result="flood" />
-          <feComposite in="SourceGraphic" in2="flood" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
+          <feComposite
+            in="SourceGraphic"
+            in2="flood"
+            operator="arithmetic"
+            k1="1"
+            k2="0"
+            k3="0"
+            k4="0"
+          />
         </filter>
       </svg>
 
       <div className="flex flex-col items-center lg:items-start lg:w-1/4 w-full">
         <div className="flex items-center">
-          <h1 className="mr-4 font-bold" style={{ color: color }}>{botData.name}</h1>
+          <h1 className="mr-4 font-bold" style={{ color: color }}>
+            {botData.name}
+          </h1>
           <img
             src={botData.image}
             alt={`${botData.name} logo`}
             className=""
-            style={{ filter: `url(#${filterId})`, width: '20px', height: '20px' }} // Apply SVG filter and set dimensions
+            style={{
+              filter: `url(#${filterId})`,
+              width: "20px",
+              height: "20px",
+            }} // Apply SVG filter and set dimensions
           />
         </div>
         <div className="py-6 text-center lg:text-left">
@@ -642,19 +671,21 @@ function Bot({ botData, isEnabled, onToggle, updateBotDetails, deleteBot, color 
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
-              ? "opacity-0"
-              : "opacity-100"
-              }`}
+            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-0"
+                : "opacity-100"
+            }`}
           >
             OFF
           </span>
 
           <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${isEnabled && currentStatus !== "Inactive"
-              ? "opacity-100"
-              : "opacity-0"
-              }`}
+            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
+              isEnabled && currentStatus !== "Inactive"
+                ? "opacity-100"
+                : "opacity-0"
+            }`}
           >
             ON
           </span>

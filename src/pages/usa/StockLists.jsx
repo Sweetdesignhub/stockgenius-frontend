@@ -169,7 +169,10 @@ function StockLists() {
   }
 
   const firstTableColumns = Object.keys(data[0] || {});
-  const dataTable = firstTableColumns.slice(0, firstTableColumns.length - 1);
+  // const dataTable = firstTableColumns.slice(0, firstTableColumns.length - 1);
+  const dataTable = firstTableColumns
+    .slice(0, firstTableColumns.length - 1)
+    .filter((_, index) => index !== 4);
   const secondTableColumns = Object.keys(data[0] || {});
   const decision = secondTableColumns.slice(secondTableColumns.length - 1);
 
@@ -219,7 +222,7 @@ function StockLists() {
         </div>
         <div className="p-4 flex news-table h-[80vh] overflow-scroll rounded-2xl">
           {/* First Table */}
-          <div className="lg:max-w-[92%] max-w-[75%]">
+          <div className="lg:max-w-[88%] max-w-[75%]">
             <div className="overflow-x-auto">
               <table className="table-auto w-full bg-transparent">
                 <thead>
@@ -253,13 +256,14 @@ function StockLists() {
                               : ""
                           }`}
                         >
-                          {colIndex === 4 ? (
+                          {/* {colIndex === 4 ? (
                             <Speedometer
                               value={parseFloat(getValue(row[column]))}
                             />
                           ) : (
                             getValue(row[column])
-                          )}
+                          )} */}
+                          {getValue(row[column])}
                         </td>
                       ))}
                     </tr>
@@ -268,7 +272,7 @@ function StockLists() {
               </table>
             </div>
           </div>
-          <div className="flex-1 lg:max-w-[8%] max-w-[25%]">
+          <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
             {/* Second Table */}
             <div className="overflow-x-auto">
               <div className="overflow-y-auto h-full">

@@ -37,6 +37,8 @@ function Table({
   } else {
     maxHeight = ""; // default or other condition
   }
+  // remove sentiment column
+  const filteredColumns = columns.filter((_, index) => index !== 3);
 
   return (
     <div className="flex-1 overflow-auto rounded-xl">
@@ -59,7 +61,7 @@ function Table({
             <table className="table-auto w-full bg-transparent">
               <thead>
                 <tr>
-                  {columns.map((column, index) => (
+                  {filteredColumns.map((column, index) => (
                     <th
                       key={index}
                       className="w-full px-2 text-left py-3 text-xs font-medium tracking-wider"
@@ -72,7 +74,7 @@ function Table({
               <tbody>
                 {data.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    {columns.map((column, colIndex) => {
+                    {filteredColumns.map((column, colIndex) => {
                       const getClassNames = () => {
                         if (colIndex === 1) return "text-[#4882F3]";
                         if (colIndex === 2) return roiColor;
@@ -84,11 +86,12 @@ function Table({
                           key={colIndex}
                           className={`w-full h-20 min-w-24 capitalize px-2 whitespace-nowrap ${getClassNames()}`}
                         >
-                          {colIndex === 3 ? (
+                          {/* {colIndex === 3 ? (
                             <Speedometer value={parseFloat(row[column])} />
                           ) : (
                             row[column]
-                          )}
+                          )} */}
+                          {row[column]}
                         </td>
                       );
                     })}

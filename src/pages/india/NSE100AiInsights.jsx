@@ -303,7 +303,9 @@ function NSE100AiInsights() {
     return <ErrorComponent error={error} />;
   }
 
-  const firstTableColumns = Object.keys(data[0] || {});
+  const firstTableColumns = Object.keys(data[0] || {}).filter(
+    (column) => column !== "sentiment"
+  );
   const dataTable = firstTableColumns.slice(0, firstTableColumns.length - 1);
   const secondTableColumns = Object.keys(data[0] || {});
   const decision = secondTableColumns.slice(secondTableColumns.length - 1);
@@ -372,7 +374,7 @@ function NSE100AiInsights() {
 
         <div className="p-4 flex news-table h-[80vh] overflow-scroll rounded-2xl">
           {/* First Table */}
-          <div className="lg:max-w-[92%] max-w-[75%]">
+          <div className="lg:max-w-[88%] max-w-[75%]">
             <div className="overflow-x-auto">
               <table className="table-auto w-full bg-transparent">
                 {/* Table header */}
@@ -479,7 +481,7 @@ function NSE100AiInsights() {
               </table>
             </div>
           </div>
-          <div className="flex-1 lg:max-w-[8%] max-w-[25%]">
+          <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
             {/* Second Table */}
             <div className="overflow-x-auto">
               <div className="overflow-y-auto h-full">
