@@ -24,6 +24,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
+import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaNewspaper, FaAngleDown } from "react-icons/fa";
 import { BsRobot } from "react-icons/bs";
 import { FaBagShopping } from "react-icons/fa6";
@@ -89,7 +90,8 @@ export default function Header() {
       },
       { name: "Portfolio", to: `/india/portfolio`, icon: FaBagShopping },
       { name: "AI Trading Bots", to: `/india/AI-Trading-Bots`, icon: BsRobot },
-      { name: "IPOs", to: `/india/initial-public-offers`, icon: FaListAlt },
+      { name: "IPOs", to: `/india/initial-public-offers`, icon: RiFilePaper2Fill },
+      { name: "Paper Trading", to: `/india/paper-trading`, icon: FaListAlt },
     ];
   } else if (region === "usa") {
     navigation = [
@@ -238,7 +240,7 @@ export default function Header() {
   return (
     <header>
       <nav
-        className="flex items-center justify-between p-6 lg:px-8"
+        className="flex items-center justify-between p-6 lg:px-6"
         aria-label="Global"
       >
         <div className="flex items-center lg:flex-1">
@@ -249,7 +251,7 @@ export default function Header() {
               alt="Stockgenius.ai"
             />
           </Link>
-          <Link to="/" className="-m-1.5 p-1.5 text-lg font-[aldrich]">
+          <Link to="/" className=" p-1 text-lg font-[aldrich]">
             Stockgenius.ai
           </Link>
         </div>
@@ -297,7 +299,7 @@ export default function Header() {
           </button>
         </div>
         {currentUser ? (
-          <div className="hidden lg:flex lg:gap-x-8">
+          <div className="hidden lg:flex lg:gap-x-4">
             {navigation.map((item) => (
               <NavLink
                 key={item.name}
@@ -305,7 +307,7 @@ export default function Header() {
                 className={({ isActive }) =>
                   classNames(
                     isActive ? "bg-[#3A6FF8] text-white" : "",
-                    "rounded-md px-3 py-2 text-sm flex items-center gap-2"
+                    "rounded-md px-2 py-2 text-sm flex items-center gap-2"
                   )
                 }
                 exact="true"

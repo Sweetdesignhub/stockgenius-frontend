@@ -66,7 +66,7 @@
 // App.jsx
 
 import React, { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute.jsx";
@@ -97,6 +97,8 @@ import { signOut } from "./redux/user/userSlice.js";
 import SessionExpiredModal from "./components/common/SessionExpiredModal";
 import InitialPublicOffers from "./pages/india/InitialPublicOffers.jsx";
 import CreateIpos from "./pages/india/CreateIpos.jsx";
+import PaperTrading from "./pages/india/PaperTrading.jsx";
+import ChatbotComponent from "./components/common/Chatbot.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -127,6 +129,11 @@ function MainApp() {
     };
   }, []);
 
+  const location = useLocation();
+
+  // Pages where chatbot should appear
+  const chatbotPages = ["/india/dashboard"];
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -155,6 +162,7 @@ function MainApp() {
               path="/india/initial-public-offers"
               element={<InitialPublicOffers />}
             />
+            <Route path="/india/paper-trading" element={<PaperTrading />} />
 
             {/* admin route */}
             <Route element={<OnlyAdminPrivateRoute />}>
@@ -176,6 +184,10 @@ function MainApp() {
         showModal={showSessionExpired}
         onSignOut={handleSignOut}
       />
+
+{/* Conditionally render the chatbot */}
+      {/* {chatbotPages.includes(location.pathname) && <ChatbotComponent />} */}
+      <ChatbotComponent />
     </div>
   );
 }
