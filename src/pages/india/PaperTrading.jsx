@@ -30,9 +30,9 @@ function PaperTrading() {
             <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4">
               Welcome to your trading adventure! Let’s set you up for success.
             </h1>
-            <button className="bg-white text-red-500 rounded-2xl px-4 font-semibold text-sm py-1">
+            {/* <button className="bg-white text-red-500 rounded-2xl px-4 font-semibold text-sm py-1">
               Filter
-            </button>
+            </button> */}
           </div>
 
           {/* Content Section */}
@@ -48,7 +48,7 @@ function PaperTrading() {
 
             {/* Right Side */}
             <div className="w-[40%]">
-              <DailyUpdates/>
+              <DailyUpdates />
             </div>
           </div>
         </div>
