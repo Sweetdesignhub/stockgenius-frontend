@@ -3,6 +3,7 @@ import AccountDetailsPT from "../../components/paperTrading/AccountDetailsPT";
 import { useSelector } from "react-redux";
 import AiDrivenList from "../../components/paperTrading/AiDrivenList";
 import DailyUpdates from "../../components/paperTrading/DailyUpdates";
+import { Link } from "react-router-dom";
 
 function PaperTrading() {
   const { currentUser } = useSelector((state) => state.user);
@@ -33,6 +34,15 @@ function PaperTrading() {
             {/* <button className="bg-white text-red-500 rounded-2xl px-4 font-semibold text-sm py-1">
               Filter
             </button> */}
+            <Link to={"/india/paper-trading/portfolio"}>
+              <div className="bg-white rounded-2xl px-4 py-1">
+              <img
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
+                alt="portfolio"
+              />
+              </div>
+            </Link>
           </div>
 
           {/* Content Section */}

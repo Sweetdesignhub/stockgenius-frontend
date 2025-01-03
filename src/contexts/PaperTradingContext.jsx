@@ -11,6 +11,7 @@ export function PaperTradingProvider({ children }) {
   const [positions, setPositions] = useState([]);
   const [trades, setTrades] = useState([]);
   const [holdings, setHoldings] = useState([]);
+  const [orders, setOrders] = useState([]); // Add state for orders
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -28,6 +29,7 @@ export function PaperTradingProvider({ children }) {
         setPositions(data.positions || []);
         setTrades(data.trades || []);
         setHoldings(data.holdings || []);
+        setOrders(data.orders || []); // Update to set orders
       } else {
         setError("User not found");
       }
@@ -50,7 +52,7 @@ export function PaperTradingProvider({ children }) {
 
       const dataInterval = setInterval(() => {
         fetchPaperTradingData();
-      }, 5000); // Fetch data every 5 seconds (you can adjust the interval)
+      }, 10000); // Fetch data every 5 seconds (you can adjust the interval)
 
       return () => clearInterval(dataInterval); // Cleanup interval on unmount
     }
@@ -64,6 +66,7 @@ export function PaperTradingProvider({ children }) {
         positions,
         trades,
         holdings,
+        orders, // Provide orders in the context
         loading,
         error,
         fetchPaperTradingData,

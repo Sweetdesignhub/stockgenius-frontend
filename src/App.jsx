@@ -99,6 +99,7 @@ import InitialPublicOffers from "./pages/india/InitialPublicOffers.jsx";
 import CreateIpos from "./pages/india/CreateIpos.jsx";
 import PaperTrading from "./pages/india/PaperTrading.jsx";
 import ChatbotComponent from "./components/common/Chatbot.jsx";
+import PaperTradingPortfolio from "./pages/india/PaperTradingPortfolio.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -163,6 +164,7 @@ function MainApp() {
               element={<InitialPublicOffers />}
             />
             <Route path="/india/paper-trading" element={<PaperTrading />} />
+            <Route path="/india/paper-trading/portfolio" element={<PaperTradingPortfolio/>} />
 
             {/* admin route */}
             <Route element={<OnlyAdminPrivateRoute />}>
