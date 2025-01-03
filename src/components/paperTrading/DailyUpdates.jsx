@@ -49,7 +49,7 @@ const StockCard = ({
           border: "1px solid #14AE5C",
         }}
       >
-        Predicted ROI - {roi}
+        ROI - {roi}
       </div>
 
       <div
