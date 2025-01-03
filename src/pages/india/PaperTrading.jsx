@@ -6,7 +6,7 @@ import DailyUpdates from "../../components/paperTrading/DailyUpdates";
 
 function PaperTrading() {
   const { currentUser } = useSelector((state) => state.user);
-  console.log(currentUser);
+  // console.log(currentUser);
 
   return (
     <div className="-z-10">

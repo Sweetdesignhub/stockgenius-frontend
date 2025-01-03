@@ -287,6 +287,8 @@ import { Filter } from "lucide-react";
 import fetchFile from "../../utils/india/fetchFile";
 import parseExcel from "../../utils/india/parseExcel";
 import Loading from "../common/Loading";
+import PlaceOrderModal from "./PlaceOrderModal";
+
 
 function AiDrivenList() {
   const [tableData, setTableData] = useState([]);
@@ -294,6 +296,8 @@ function AiDrivenList() {
   const [showFilter, setShowFilter] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("AI Driven Stocks");
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -335,15 +339,33 @@ function AiDrivenList() {
   );
 
   const handleSell = (row) => {
-    console.log("Sell clicked:", row);
+    setSelectedRow({ ...row, action: "SELL" });
+    setModalOpen(true);
   };
 
   const handleBuy = (row) => {
-    console.log("Buy clicked:", row);
+    setSelectedRow({ ...row, action: "BUY" });
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedRow(null);
+  };
+
+  const handleModalSubmit = (orderData) => {
+    console.log("Order placed:", orderData);
+    setModalOpen(false);
   };
 
   return (
-    <div className="auth p-3 rounded-lg flex flex-col h-full relative">
+    <div
+      className="p-3 rounded-lg flex flex-col h-full relative"
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
+      }}
+    >
       {/* Header Section */}
       <div className="flex-shrink-0 justify-between flex items-center border-b border-[#FFFFFF1A] pb-3 mb-4">
         <h1 className="text-white font-semibold text-md">AIDrivenList</h1>
@@ -364,7 +386,7 @@ function AiDrivenList() {
             <Filter className="w-5 h-5 text-white" />
           </button>
           {showFilter && (
-            <div className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 min-w-[200px]">
+            <div className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 min-w-[200px] ">
               <p className="text-[#71717A] text-sm mb-2">Smart Sort</p>
               <div className="space-y-2">
                 {["Top Gainers", "Top Losers", "AI Driven Stocks"].map(
@@ -463,8 +485,18 @@ function AiDrivenList() {
           <p className="text-center text-gray-500 text-sm">No results found</p>
         )}
       </div>
+
+      {/* Place Order Modal */}
+      <PlaceOrderModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSubmit={handleModalSubmit}
+        initialData={selectedRow}
+        cu
+      />
     </div>
   );
 }
 
 export default AiDrivenList;
+

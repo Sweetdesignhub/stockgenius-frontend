@@ -27,6 +27,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import AuthProvider from "./contexts/AuthProvider";
 import { store, persistor } from "./redux/store";
 import { DataProvider } from "./contexts/FyersDataContext";
+import { PaperTradingProvider } from "./contexts/PaperTradingContext";
 // import { BotTimeProvider } from "./contexts/BotTimeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -36,6 +37,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <BrowserRouter>
           <AuthProvider>
             <DataProvider>
+              <PaperTradingProvider>
               {/* <BotTimeProvider> */}
               <GoogleOAuthProvider
                 clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
@@ -43,6 +45,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <App />
               </GoogleOAuthProvider>
               {/* </BotTimeProvider> */}
+              </PaperTradingProvider>
             </DataProvider>
           </AuthProvider>
         </BrowserRouter>

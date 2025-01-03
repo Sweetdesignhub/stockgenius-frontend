@@ -1,39 +1,47 @@
 import React, { useState, useEffect } from "react";
 import Cards from "../brokers/fyers/Cards";
+import { usePaperTrading } from "../../contexts/PaperTradingContext";
 
 function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
 
+  // Accessing funds from context
+  const { funds, loading, error } = usePaperTrading();
+  // console.log(funds);
+  
+
+  // Fallback values for funds if not yet fetched
+  const investedAmount = funds?.reservedFunds  || "00.00";
+  const totalProfit = funds?.totalProfit || "100.00";
+  const totalLoss = funds?.totalLoss || "50.00";
+  const cashBalance = funds?.availableFunds || "100000";
+
   const cardData = [
     {
       title: "Invested Amount",
-      value: "00.00",
+      value: investedAmount,
       valueColor: "text-[#FADB8B]",
-    //   bgColor: "bg-[#E59C4699]",
       width: "w-100px",
       height: "h-[80px]",
     },
     {
       title: "Total Profit",
-      value: "100.00",
+      value: totalProfit,
       valueColor: "text-[#8BFACB]",
-    //   bgColor: "bg-[#94D2BD]",
       width: "w-100px",
       height: "h-[80px]",
     },
     {
       title: "Total Loss",
-      value: "50.00",
+      value: totalLoss,
       valueColor: "text-[#FA8B8B]",
-    //   bgColor: "bg-[#457B9D]",
       width: "w-100px",
       height: "h-[80px]",
     },
     {
       title: "Cash Balance",
-      value: "100000",
+      value: cashBalance,
       valueColor: "text-[#8BFAF3]",
-    //   bgColor: "bg-[#F4A261]",
       width: "w-100px",
       height: "h-[80px]",
     },
@@ -71,6 +79,9 @@ function AccountDetailsPT({ userId }) {
       setCurrentTime(""); // Clear the time when component unmounts
     };
   }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="news-table rounded-xl pb-3 px-2 flex flex-col gap-4">
