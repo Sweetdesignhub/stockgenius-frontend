@@ -8,13 +8,12 @@ function AccountDetailsPT({ userId }) {
   // Accessing funds from context
   const { funds, loading, error } = usePaperTrading();
   // console.log(funds);
-  
 
   // Fallback values for funds if not yet fetched
-  const investedAmount = funds?.reservedFunds  || "00.00";
-  const totalProfit = funds?.totalProfit || "100.00";
-  const totalLoss = funds?.totalLoss || "50.00";
-  const cashBalance = funds?.availableFunds || "100000";
+  const investedAmount = (parseFloat(funds?.reservedFunds) || 0).toFixed(2);
+  const totalProfit = (parseFloat(funds?.totalProfit) || 100.0).toFixed(2);
+  const totalLoss = (parseFloat(funds?.totalLoss) || 50).toFixed(2);
+  const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
 
   const cardData = [
     {

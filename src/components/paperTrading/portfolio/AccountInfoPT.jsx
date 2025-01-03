@@ -10,10 +10,10 @@ function AccountInfoPT() {
   // Use the PaperTrading context
   const { funds, holdings, positions, loading, error } = usePaperTrading();
 
-  const investedAmount = funds?.reservedFunds || "00.00";
-  const totalProfit = funds?.totalProfit || "100.00";
-  const totalLoss = funds?.totalLoss || "50.00";
-  const cashBalance = funds?.availableFunds || "100000";
+  const investedAmount = (parseFloat(funds?.reservedFunds) || 0).toFixed(2);
+  const totalProfit = (parseFloat(funds?.totalProfit) || 100.0).toFixed(2);
+  const totalLoss = (parseFloat(funds?.totalLoss) || 50.0).toFixed(2);
+  const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
 
   // Handle loading and error states
   if (loading) return <div>Loading account information...</div>;
