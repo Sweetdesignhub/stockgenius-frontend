@@ -24,6 +24,8 @@ export function PaperTradingProvider({ children }) {
       if (userId) {
         const response = await api.get(`/api/v1/paper-trading/data/${userId}`);
         const data = response.data.data;
+        // console.log(data);
+        
 
         setFunds(data.funds || {});
         setPositions(data.positions || []);

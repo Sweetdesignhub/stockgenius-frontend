@@ -22,7 +22,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
     } else {
       setColumnNames([]);
     }
-  }, [holdingsData, setColumnNames]);
+  }, []);
 
   if (loading) {
     return (
