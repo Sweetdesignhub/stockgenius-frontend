@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../common/Loading";
 import NotAvailable from "../../common/NotAvailable.jsx";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext.jsx";
+import { formatDate } from "../../../utils/formatDate";
 
 const TradesPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
@@ -11,7 +12,7 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (tradesData.length > 0) {
-      const excludedColumns = ["fees","tags"];
+      const excludedColumns = ["fees", "tags"];
       const allColumnNames = Object.keys(tradesData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
@@ -41,10 +42,13 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   return (
-    <div className="h-[55vh] overflow-auto"  style={{
+    <div
+      className="h-[55vh] overflow-auto"
+      style={{
         background:
           "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-      }}>
+      }}
+    >
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -68,7 +72,11 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
                     columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
                   }`}
                 >
-                  {trade[columnName] || ""}
+                  {["tradeDateTime", "createdAt", "updatedAt"].includes(
+                    columnName
+                  )
+                    ? formatDate(trade[columnName])
+                    : trade[columnName] || ""}
                 </td>
               ))}
             </tr>

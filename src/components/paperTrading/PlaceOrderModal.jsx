@@ -67,7 +67,9 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         setError("Failed to place order. Please try again.");
       }
     } catch (err) {
-      setError("Error placing order: " + err.message);
+      console.log(err.response.data.message);
+      
+      setError("Error placing order: " + err.response.data.message);
     } finally {
       setLoading(false); // Set loading to false
     }
@@ -588,7 +590,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         </form>
 
         {/* Show error message if there's an issue */}
-        {error && <div className="mt-4 text-red-500 text-sm">{error}</div>}
+        {error && <div className="mt-4 text-red-500 text-sm text-center">{error}</div>}
       </div>
     </div>
   );

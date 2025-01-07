@@ -8,7 +8,7 @@ function AccountInfoPT() {
   const { currentUser } = useSelector((state) => state.user);
 
   // Use the PaperTrading context
-  const { funds, holdings, positions, loading, error } = usePaperTrading();
+  const { funds, holdings, positions, loading } = usePaperTrading();
 
   const investedAmount = (parseFloat(funds?.reservedFunds) || 0).toFixed(2);
   const totalProfit = (parseFloat(funds?.totalProfit) || 100.0).toFixed(2);
@@ -17,7 +17,7 @@ function AccountInfoPT() {
 
   // Handle loading and error states
   if (loading) return <div>Loading account information...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  // if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="flex items-center justify-between py-5">
@@ -32,22 +32,26 @@ function AccountInfoPT() {
           <Cards
             title="Invested Amount"
             value={investedAmount}
-            valueColor="text-yellow-500"
+            valueColor="text-[#FADB8B]"
+            bgColor= "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]"
           />
           <Cards
             title="Total Profit"
             value={totalProfit}
-            valueColor="text-green-500"
+                        valueColor="text-[#8BFACB]"
+            bgColor= "bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]"
           />
           <Cards
             title="Total Loss"
             value={totalLoss}
-            valueColor="text-red-500"
+                        valueColor="text-[#FA8B8B]"
+            bgColor= "bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]"
           />
           <Cards
             title="Cash Balance"
             value={cashBalance}
-            valueColor="text-green-200"
+                        valueColor="text-[#8BFAF3]"
+            bgColor= "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]"
           />
         </div>
       </div>
