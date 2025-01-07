@@ -6,13 +6,13 @@ import { ToggleRight, ToggleLeft } from "lucide-react";
 const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     stockSymbol: initialData?.symbol || "", // Stock symbol pre-filled
-    action: "BUY", // Default to BUY
+    action: "BUY",
     orderType: "MARKET", // Default order type
     quantity: "",
     limitPrice: "",
     stopPrice: "",
     exchange: "NSE", // Default exchange
-    productType: "INTRADAY", // Default product type
+    productType: "CNC", // Default product type
   });
 
   const { currentUser } = useSelector((state) => state.user);
@@ -22,10 +22,11 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [error, setError] = useState(""); // Track error state
 
   useEffect(() => {
-    if (initialData?.symbol) {
+    if (initialData) {
       setFormData((prev) => ({
         ...prev,
-        stockSymbol: initialData.symbol,
+        stockSymbol: initialData.symbol || "",
+        action: initialData.action || "BUY", // Set the action based on initialData
       }));
     }
   }, [initialData]);
@@ -33,6 +34,15 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (event) => {
+    const { value } = event.target;
+    // Only allow one order type to be selected
+    setFormData((prevState) => ({
+      ...prevState,
+      orderType: value, // Ensure only one order type is selected
+    }));
   };
 
   const handleActionToggle = () => {
@@ -346,7 +356,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-lg bg-gray-900 rounded-lg shadow-lg">
+      <div className="w-full max-w-lg bg-[#1C1C1E] rounded-lg shadow-lg">
         {/* Modal Header */}
         <div
           className={`px-6 py-4 border-b-gray-900 bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)] text-white`}
@@ -402,20 +412,20 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         <div className="flex gap-2 p-4 border-t mb-">
           <button
             onClick={() => handleOrderTypeToggle("quick")}
-            className={`px-4 py-1 text-sm rounded-full border ${
+            className={`px-4 py-1 text-sm rounded-lg border ${
               isQuickOrder
                 ? "border-blue-500 text-blue-500 bg-white"
-                : "border-gray-900 text-white hover:bg-gray-900"
+                : "border-[#1C1C1E] text-white hover:bg-gray-900"
             }`}
           >
             Quick Order
           </button>
           <button
             onClick={() => handleOrderTypeToggle("regular")}
-            className={`px-4 py-1 text-sm rounded-full border ${
+            className={`px-4 py-1 text-sm rounded-lg border ${
               !isQuickOrder
                 ? "border-blue-500 text-blue-500 bg-white"
-                : "border-gray-900 text-white hover:bg-gray-900"
+                : "border-[#1C1C1E] text-white hover:bg-gray-900"
             }`}
           >
             Regular Order
@@ -438,6 +448,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                   checked={formData.productType === "INTRADAY"}
                   onChange={handleChange}
                   className="mr-2"
+                  disabled
                 />
                 Intraday
               </label>
@@ -468,7 +479,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                   value={formData.quantity}
                   onChange={handleChange}
                   placeholder="Enter quantity"
-                  className="w-full mt-1 border border-gray-300 bg-[#3A6FF8] rounded-lg p-2 text-white"
+                  className="w-full mt-1 border border-gray-900 bg-[#3A6FF8] rounded-lg p-2 text-white"
                 />
               </div>
 
@@ -501,23 +512,58 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                 <label className="block text-sm font-medium text-white">
                   Order Type
                 </label>
-                <select
-                  name="orderType"
-                  value={formData.orderType}
-                  onChange={handleChange}
-                  className="w-full mt-1 border border-gray-300 rounded-lg p-2 text-black"
-                >
-                  <option value="MARKET">Market</option>
-                  <option value="LIMIT">Limit</option>
-                  <option value="STOP_LOSS">Stop Loss</option>
-                  <option value="STOP_LIMIT">Stop Limit</option>
-                </select>
+                <div className="flex gap-4 mt-1 text-white">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="orderType"
+                      value="MARKET"
+                      checked={formData.orderType === "MARKET"}
+                      onChange={handleCheckboxChange}
+                      className="mr-2"
+                    />
+                    Market
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="orderType"
+                      value="LIMIT"
+                      checked={formData.orderType === "LIMIT"}
+                      onChange={handleCheckboxChange}
+                      className="mr-2"
+                    />
+                    Limit
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="orderType"
+                      value="STOP_LOSS"
+                      checked={formData.orderType === "STOP_LOSS"}
+                      onChange={handleCheckboxChange}
+                      className="mr-2"
+                    />
+                    Stop Loss
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="orderType"
+                      value="STOP_LIMIT"
+                      checked={formData.orderType === "STOP_LIMIT"}
+                      onChange={handleCheckboxChange}
+                      className="mr-2"
+                    />
+                    Stop Limit
+                  </label>
+                </div>
               </div>
 
               {/* Limit Price (appears only for Limit or Stop Limit orders) */}
               {["LIMIT", "STOP_LIMIT"].includes(formData.orderType) && (
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-white">
                     Limit Price
                   </label>
                   <input
@@ -534,7 +580,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               {/* Stop Price (appears only for Stop Loss or Stop Limit orders) */}
               {["STOP_LOSS", "STOP_LIMIT"].includes(formData.orderType) && (
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-white">
                     Stop Price
                   </label>
                   <input
