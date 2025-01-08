@@ -7,12 +7,11 @@ import React, {
 } from "react";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext";
-import { RiMenuLine } from "react-icons/ri";
 import OrdersPT from "./OrdersPT";
 import PositionsPT from "./PositionsPT";
 import TradesPT from "./TradesPT";
 import HoldingsPT from "./HoldingsPT";
-import FundsPT from "./FundsPt";
+import FundsPT from "./FundsPT";
 
 const StockDetailsPT = () => {
   const [showFilter, setShowFilter] = useState(false);
