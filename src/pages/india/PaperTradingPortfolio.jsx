@@ -1,7 +1,7 @@
 import React from "react";
-import HeaderPT from "../../components/paperTrading/portfolio/HeaderPt";
 import AccountInfoPT from "../../components/paperTrading/portfolio/AccountInfoPT";
 import StockDetailsPT from "../../components/paperTrading/portfolio/StockDetailsPT";
+import HeaderPT from "../../components/paperTrading/portfolio/HeaderPT";
 
 function PaperTradingPortfolio() {
   return (
