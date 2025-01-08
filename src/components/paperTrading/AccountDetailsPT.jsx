@@ -107,11 +107,11 @@ function AccountDetailsPT({ userId }) {
   return (
     <div className="news-table rounded-xl pb-3 px-2 flex flex-col gap-4">
       <div className="flex justify-between items-center border-b-2 border-[#FFFFFF1A]">
-        <div>
+        <div className="py-2">
           <h1 className="font-semibold text-md">Account : {userId}</h1>
           <p className="text-gray-400 text-sm">{currentTime} IST</p>
         </div>
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <h2 className="font-bold text-xl font-[poppins]">4.8%</h2>
           <img
             loading="lazy"
@@ -119,7 +119,7 @@ function AccountDetailsPT({ userId }) {
             alt="Status"
             className="h-14"
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

@@ -237,7 +237,7 @@ export function PaperTradingProvider({ children }) {
 
       fetchData();
 
-      const dataInterval = setInterval(fetchPaperTradingData, 20000);
+      const dataInterval = setInterval(fetchPaperTradingData, 10000);
 
       return () => {
         clearInterval(dataInterval);
