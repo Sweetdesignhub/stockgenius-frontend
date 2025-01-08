@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext";
 import { RiMenuLine } from "react-icons/ri";
@@ -18,11 +24,11 @@ const StockDetailsPT = () => {
   const { funds, holdings, positions, trades, orders, loading, error } =
     usePaperTrading();
 
-//   console.log("Funds", funds);
-//   console.log("Holdings", holdings);
-//   console.log("Positions", positions);
-//   console.log("Trades", trades);
-//   console.log("Orders", orders);
+  //   console.log("Funds", funds);
+  // console.log("Holdings", holdings);
+  // console.log("Positions", positions);
+  //   console.log("Trades", trades);
+  //   console.log("Orders", orders);
 
   // Stable memoization of categories
   const categories = useMemo(
@@ -33,7 +39,7 @@ const StockDetailsPT = () => {
         key: "orders",
       },
       {
-        name: `All Positions (${positions?.netPositions?.length || 0})`,
+        name: `All Positions (${positions?.length || 0})`,
         component: PositionsPT,
         key: "positions",
       },
@@ -43,7 +49,7 @@ const StockDetailsPT = () => {
         key: "trades",
       },
       {
-        name: `Holdings (${holdings?.holdings?.length || 0})`,
+        name: `Holdings (${holdings?.length || 0})`,
         component: HoldingsPT,
         key: "holdings",
       },
@@ -53,7 +59,12 @@ const StockDetailsPT = () => {
         key: "funds",
       },
     ],
-    [orders?.length, positions?.netPositions?.length, trades?.length, holdings?.length]
+    [
+      orders?.length,
+      positions?.netPositions?.length,
+      trades?.length,
+      holdings?.length,
+    ]
   );
 
   // Handle clicks outside filter dropdown
@@ -180,7 +191,7 @@ const StockDetailsPT = () => {
                       trades: trades,
                       orders: orders,
                       holdings: holdings,
-                      funds: funds
+                      funds: funds,
                     }}
                   />
                 </TabPanel>
