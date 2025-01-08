@@ -71,7 +71,6 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const getConfirmationMessage = () => {
     const orderDetails = [
       `<strong>Stock:</strong> ${formData.stockSymbol}`,
-      `<strong>Action:</strong> ${formData.action}`,
       `<strong>Quantity:</strong> ${formData.quantity}`,
       `<strong>Exchange:</strong> ${formData.exchange}`,
       `<strong>Order Type:</strong> ${formData.orderType}`,
@@ -473,6 +472,8 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         title={`Confirm ${formData.action} Order`}
         message={getConfirmationMessage()}
         onConfirm={handleConfirmedSubmit}
+        isPlaceOrder={true}
+        action={formData.action} // Add this prop
       />
 
       <ConfirmationModal
