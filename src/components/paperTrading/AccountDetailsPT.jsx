@@ -6,32 +6,35 @@ function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
 
   // Accessing funds and positions from context
-  const { funds, positions, loading } = usePaperTrading();
+  const { funds, positions, loading, profitSummary } = usePaperTrading();
 
   // Calculate Total Profit and Loss
   const netPositions = positions?.netPositions || [];
 
-  const { totalProfit, totalLoss } = netPositions.reduce(
-    (acc, position) => {
-      const realizedPnL = position.realizedPnL || 0;
-      const unrealizedPnL = position.unrealizedPnL || 0;
-      const totalPnL = realizedPnL + unrealizedPnL;
+  // const { totalProfit, totalLoss } = netPositions.reduce(
+  //   (acc, position) => {
+  //     const realizedPnL = position.realizedPnL || 0;
+  //     const unrealizedPnL = position.unrealizedPnL || 0;
+  //     const totalPnL = realizedPnL + unrealizedPnL;
 
-      if (totalPnL > 0) {
-        acc.totalProfit += totalPnL;
-      } else {
-        acc.totalLoss += Math.abs(totalPnL);
-      }
+  //     if (totalPnL > 0) {
+  //       acc.totalProfit += totalPnL;
+  //     } else {
+  //       acc.totalLoss += Math.abs(totalPnL);
+  //     }
 
-      return acc;
-    },
-    { totalProfit: 0, totalLoss: 0 }
-  );
+  //     return acc;
+  //   },
+  //   { totalProfit: 0, totalLoss: 0 }
+  // );
 
   // Fallback values for funds
   const investedAmount = (parseFloat(funds?.reservedFunds) || 0).toFixed(2);
-  const formattedTotalProfit = totalProfit.toFixed(2);
-  const formattedTotalLoss = totalLoss.toFixed(2);
+  // const formattedTotalProfit = totalProfit.toFixed(2);
+  // const formattedTotalLoss = totalLoss.toFixed(2);
+  const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
+  const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
+
   const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
 
   const cardData = [
@@ -41,23 +44,26 @@ function AccountDetailsPT({ userId }) {
       valueColor: "text-[#FADB8B]",
       width: "w-100px",
       height: "h-[80px]",
-      bgColor: "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
+      bgColor:
+        "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
     },
     {
       title: "Total Profit",
-      value: formattedTotalProfit,
+      value: totalProfit,
       valueColor: "text-[#8BFACB]",
       width: "w-100px",
       height: "h-[80px]",
-      bgColor: "bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]",
+      bgColor:
+        "bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]",
     },
     {
-      title: "Total Loss",
-      value: formattedTotalLoss,
+      title: "Today's Profit",
+      value: todaysProfit,
       valueColor: "text-[#FA8B8B]",
       width: "w-100px",
       height: "h-[80px]",
-      bgColor: "bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]",
+      bgColor:
+        "bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]",
     },
     {
       title: "Cash Balance",
@@ -65,7 +71,8 @@ function AccountDetailsPT({ userId }) {
       valueColor: "text-[#8BFAF3]",
       width: "w-100px",
       height: "h-[80px]",
-      bgColor: "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]", 
+      bgColor:
+        "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]",
     },
   ];
 
