@@ -3,12 +3,14 @@ import Loading from "../../common/Loading";
 import NotAvailable from "../../common/NotAvailable.jsx";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext.jsx";
 import { formatDate } from "../../../utils/formatDate";
+import { useTheme } from "../../../contexts/ThemeContext.jsx";
 
 const TradesPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
 
   const { trades = [], loading } = usePaperTrading();
   const tradesData = trades || [];
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (tradesData.length > 0) {
@@ -46,7 +48,11 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
       className="h-[55vh] overflow-auto"
       style={{
         background:
-          "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
+          theme === "light"
+            ? "#ffffff"
+            : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        borderRadius: "8px",
       }}
     >
       <table className="w-full border-collapse">

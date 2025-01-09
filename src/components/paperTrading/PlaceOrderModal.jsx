@@ -104,35 +104,6 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     setShowConfirmation(true);
   };
 
-  // const handleConfirmedSubmit = async () => {
-  //   setLoading(true); // Set loading to true
-  //   setError(""); // Clear any previous error
-
-  //   try {
-  //     const response = await api.post(
-  //       `/api/v1/paper-trading/orders/place/${currentUser.id}`,
-  //       formData
-  //     );
-  //     console.log(response);
-
-  //     if (response.status === 201) {
-  //       // Handle success (you can call onSubmit if needed)
-  //       onSubmit(formData);
-  //       onClose(); // Close the modal on success
-  //       setShowSuccessModal(true);
-  //     } else {
-  //       setError("Failed to place order. Please try again.");
-  //     }
-  //   } catch (err) {
-  //     console.log(err.response.data.message);
-
-  //     setError("Error placing order: " + err.response.data.message);
-  //   } finally {
-  //     setLoading(false); // Set loading to false
-  //     setShowConfirmation(false);
-  //   }
-  // };
-
   const handleConfirmedSubmit = async () => {
     setLoading(true);
     setError("");

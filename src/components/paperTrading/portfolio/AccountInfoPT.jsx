@@ -11,10 +11,23 @@ function AccountInfoPT() {
   const { funds, holdings, positions, loading, profitSummary } =
     usePaperTrading();
 
-  const investedAmount = (parseFloat(funds?.reservedFunds) || 0).toFixed(2);
+  const investedAmount = Math.abs(
+    parseFloat(funds?.reservedFunds) || 0
+  ).toFixed(2);
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
+
+  // Helper function to get color based on value
+  const getPnLColor = (value) => {
+    const isPositive = parseFloat(value) >= 0;
+    const textColor = isPositive ? "text-[#15DE73]" : "text-[#FF2950]";
+    const bgColor = isPositive
+      ? "bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]"
+      : "bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]";
+
+    return { textColor, bgColor };
+  };
 
   // Handle loading and error states
   if (loading) return <div>Loading account information...</div>;
@@ -33,25 +46,25 @@ function AccountInfoPT() {
           <Cards
             title="Invested Amount"
             value={investedAmount}
-            valueColor="text-[#FADB8B]"
+            valueColor="text-[#DEB215]"
             bgColor="bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]"
           />
           <Cards
-            title="Total Profit"
+            title="Total PnL"
             value={totalProfit}
-            valueColor="text-[#8BFACB]"
-            bgColor="bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]"
+            valueColor={getPnLColor(totalProfit).textColor}
+            bgColor={getPnLColor(totalProfit).bgColor}
           />
           <Cards
-            title="Today's Profit"
+            title="Today's PnL"
             value={todaysProfit}
-            valueColor="text-[#FA8B8B]"
-            bgColor="bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]"
+            valueColor={getPnLColor(todaysProfit).textColor}
+            bgColor={getPnLColor(todaysProfit).bgColor}
           />
           <Cards
             title="Cash Balance"
             value={cashBalance}
-            valueColor="text-[#8BFAF3]"
+            valueColor="text-[#45FCFC]"
             bgColor="bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]"
           />
         </div>

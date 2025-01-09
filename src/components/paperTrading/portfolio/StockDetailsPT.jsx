@@ -12,7 +12,7 @@ import OrdersPT from "./OrdersPT";
 import PositionsPT from "./PositionsPT";
 import TradesPT from "./TradesPT";
 import HoldingsPT from "./HoldingsPT";
-import FundsPT from "./FundsPt";
+import FundsPT from "./FundsPT";
 
 const StockDetailsPT = () => {
   const [showFilter, setShowFilter] = useState(false);

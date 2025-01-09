@@ -2,12 +2,15 @@ import React, { useEffect, useMemo, useState } from "react";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext.jsx";
 import NotAvailable from "../../common/NotAvailable.jsx";
 import Loading from "../../common/Loading.jsx";
+import { useTheme } from "../../../contexts/ThemeContext.jsx";
 
 const FundsPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
 
   const { funds = [], loading } = usePaperTrading();
   console.log("Funds Response:", funds);
+
+  const { theme } = useTheme();
 
   const fundsData = useMemo(() => {
     // Transform funds response into a consistent table structure
@@ -66,7 +69,13 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (fundsData.length > 0) {
-      const allColumnNames = ["id", "title", "equityAmount", "commodityAmount", "_id"];
+      const allColumnNames = [
+        "id",
+        "title",
+        "equityAmount",
+        "commodityAmount",
+        "_id",
+      ];
       setColumnNames(allColumnNames);
     } else {
       setColumnNames([]);
@@ -94,10 +103,17 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   return (
-    <div className="h-[55vh] overflow-auto"  style={{
+    <div
+      className="h-[55vh] overflow-auto"
+      style={{
         background:
-          "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-      }}>
+          theme === "light"
+            ? "#ffffff"
+            : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        borderRadius: "8px",
+      }}
+    >
       <table className="min-w-full border-collapse">
         <thead>
           <tr>
@@ -106,7 +122,8 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
                 key={columnName}
                 className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
               >
-                {columnName.replace(/([a-z])([A-Z])/g, "$1 $2")} {/* Convert camelCase to spaced */}
+                {columnName.replace(/([a-z])([A-Z])/g, "$1 $2")}{" "}
+                {/* Convert camelCase to spaced */}
               </th>
             ))}
           </tr>
