@@ -1,18 +1,3 @@
-// import React from 'react'
-
-// function DailyUpdates() {
-//   return (
-//     <div className='flex flex-col gap-4'>
-//         <div className='news-table rounded-lg p-2'>Top Pick for Today</div>
-//         <div className='news-table rounded-lg p-2'>High Sentiment Stock</div>
-//         <div className='table-main rounded-lg p-2'>Low Risk Option</div>
-//         <div className='table-main rounded-lg p-2'>News and Events </div>
-//     </div>
-//   )
-// }
-
-// export default DailyUpdates
-
 import React, { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import fetchFileJSON from "../../utils/india/fetchFileJSON";
@@ -28,14 +13,20 @@ const StockCard = ({
   sentimentScore,
   volatility,
 }) => (
-  <div className="bg-[#1a1f2e] rounded-lg p-2 text-white">
+  <div
+    className="dark:bg-[#1a1f2e] rounded-lg p-2 dark:text-white"
+    style={{
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      borderRadius: "12px",
+    }}
+  >
     <h2 className="text-sm font-semibold mb-2 flex justify-between items-center">
       {title}
     </h2>
 
     <div className="flex items-center gap-2 mb-1">
       <div>
-        <h3 className="text-xs font-semibold text-white">{stock}</h3>
+        <h3 className="text-xs font-semibold dark:text-white">{stock}</h3>
         <p className="text-xs text-gray-400">{description}</p>
       </div>
     </div>
@@ -204,7 +195,13 @@ function DailyUpdates() {
         volatility={stockData.lowRisk.volatility}
       />
 
-      <div className="bg-[#1a1f2e] rounded-lg p-4 text-white">
+      <div
+        className="dark:bg-[#1a1f2e] rounded-lg p-4 dark:text-white"
+        style={{
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          borderRadius: "12px",
+        }}
+      >
         <h2 className="text-md font-semibold mb-4">News and Events</h2>
         <div className="max-h-32 overflow-y-auto">
           <ul>
@@ -217,7 +214,7 @@ function DailyUpdates() {
                   href={news["Reference link"]}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-100 text-sm flex-grow"
+                  className="dark:text-gray-100 text-sm flex-grow"
                 >
                   {news.Headline}
                 </a>

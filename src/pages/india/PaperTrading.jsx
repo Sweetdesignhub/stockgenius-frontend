@@ -34,15 +34,25 @@ function PaperTrading() {
             {/* <button className="bg-white text-red-500 rounded-2xl px-4 font-semibold text-sm py-1">
               Filter
             </button> */}
-            <Link to={"/india/paper-trading/portfolio"}>
-              <div className="bg-white rounded-2xl px-4 py-1">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
-                alt="portfolio"
-              />
+            <div className="flex gap-3">
+              <Link to={"/india/paper-trading/portfolio"}>
+                <div className="bg-white rounded-2xl px-4 py-1">
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
+                    alt="portfolio"
+                  />
+                </div>
+              </Link>
+
+              <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
+                <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd8fe962448c0436eb22de11f97927855"
+                  alt="portfolio"
+                />
               </div>
-            </Link>
+            </div>
           </div>
 
           {/* Content Section */}

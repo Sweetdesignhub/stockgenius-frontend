@@ -29,7 +29,9 @@ function AccountDetailsPT({ userId }) {
   // );
 
   // Fallback values for funds
-  const investedAmount = (parseFloat(funds?.reservedFunds) || 0).toFixed(2);
+  const investedAmount = Math.abs(
+    parseFloat(funds?.reservedFunds) || 0
+  ).toFixed(2);
   // const formattedTotalProfit = totalProfit.toFixed(2);
   // const formattedTotalLoss = totalLoss.toFixed(2);
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
@@ -37,38 +39,47 @@ function AccountDetailsPT({ userId }) {
 
   const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
 
+  // Helper function to get color based on value
+  const getPnLColor = (value) => {
+    const isPositive = parseFloat(value) >= 0;
+    const textColor = isPositive ? "text-[#15DE73]" : "text-[#FF2950]";
+    const bgColor = isPositive
+      ? "bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]"
+      : "bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]";
+
+    return { textColor, bgColor };
+  };
+
   const cardData = [
     {
       title: "Invested Amount",
       value: investedAmount,
-      valueColor: "text-[#FADB8B]",
+      valueColor: "text-[#DEB215]",
       width: "w-100px",
       height: "h-[80px]",
       bgColor:
         "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
     },
     {
-      title: "Total Profit",
+      title: "Total PnL",
       value: totalProfit,
-      valueColor: "text-[#8BFACB]",
+      valueColor: getPnLColor(totalProfit).textColor,
       width: "w-100px",
       height: "h-[80px]",
-      bgColor:
-        "bg-[linear-gradient(to_bottom,_rgba(70,_229,_153,_0.3),_rgba(70,_229,_153,_0.1),_rgba(70,_229,_153,_0.3))]",
+      bgColor: getPnLColor(totalProfit).bgColor,
     },
     {
-      title: "Today's Profit",
+      title: "Today's PnL",
       value: todaysProfit,
-      valueColor: "text-[#FA8B8B]",
+      valueColor: getPnLColor(todaysProfit).textColor,
       width: "w-100px",
       height: "h-[80px]",
-      bgColor:
-        "bg-[linear-gradient(to_bottom,_rgba(229,_70,_80,_0.3),_rgba(229,_70,_80,_0.1),_rgba(229,_70,_80,_0.3))]",
+      bgColor: getPnLColor(todaysProfit).bgColor,
     },
     {
       title: "Cash Balance",
       value: cashBalance,
-      valueColor: "text-[#8BFAF3]",
+      valueColor: "text-[#45FCFC]",
       width: "w-100px",
       height: "h-[80px]",
       bgColor:
