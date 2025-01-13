@@ -121,6 +121,24 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   const { positions, loading, realtimePrices } = usePaperTrading();
   const { theme } = useTheme();
 
+  // const getColumnNames = useMemo(() => {
+  //   if (!positions || positions.length === 0) return [];
+
+  //   const excludedColumns = [
+  //     "realizedPnL",
+  //     "unrealizedPnL",
+  //     "sellQty",
+  //     "sellAvgPrice",
+  //   ];
+
+  //   return [
+  //     ...Object.keys(positions[0] || {}).filter(
+  //       (columnName) => !excludedColumns.includes(columnName)
+  //     ),
+  //     "actions",
+  //   ];
+  // }, [positions]);
+
   const getColumnNames = useMemo(() => {
     if (!positions || positions.length === 0) return [];
 
@@ -129,14 +147,12 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
       "unrealizedPnL",
       "sellQty",
       "sellAvgPrice",
+      // "actions",
     ];
 
-    return [
-      ...Object.keys(positions[0] || {}).filter(
-        (columnName) => !excludedColumns.includes(columnName)
-      ),
-      "actions",
-    ];
+    return Object.keys(positions[0] || {}).filter(
+      (columnName) => !excludedColumns.includes(columnName)
+    );
   }, [positions]);
 
   useEffect(() => {

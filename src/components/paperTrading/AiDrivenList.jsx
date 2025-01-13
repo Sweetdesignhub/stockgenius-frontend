@@ -6,6 +6,7 @@ import Loading from "../common/Loading";
 import PlaceOrderModal from "./PlaceOrderModal";
 import { useTheme } from "../../contexts/ThemeContext";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { isWithinTradingHours } from "../../utils/helper";
 
 function AiDrivenList() {
   const [tableData, setTableData] = useState([]);
@@ -131,24 +132,8 @@ function AiDrivenList() {
     setPredictionFilter(filter);
   };
 
-  const isMarketOpen = () => {
-    const now = new Date();
-    const startTime = new Date();
-    const endTime = new Date();
-
-    // Market opens at 9:15 AM IST and closes at 3:30 PM IST
-    startTime.setHours(9, 15, 0, 0); // 9:15 AM IST
-    endTime.setHours(23, 30, 0, 0); // 3:30 PM IST
-
-    const currentTime = new Date(now.getTime()); // Adjust current time to IST
-    console.log("Current Time:", currentTime);
-
-    // Check if current time is within market hours
-    return currentTime >= startTime && currentTime <= endTime;
-  };
-
   const handleBuy = (row) => {
-    if (isMarketOpen()) {
+    if (isWithinTradingHours()) {
       setSelectedRow({ ...row, action: "BUY" });
       setModalOpen(true);
     } else {
@@ -160,7 +145,7 @@ function AiDrivenList() {
   };
 
   const handleSell = (row) => {
-    if (isMarketOpen()) {
+    if (isWithinTradingHours()) {
       setSelectedRow({ ...row, action: "SELL" });
       setModalOpen(true);
     } else {
@@ -170,16 +155,6 @@ function AiDrivenList() {
       setIsConfirmationModalOpen(true); // Open the confirmation modal
     }
   };
-
-  // const handleSell = (row) => {
-  //   setSelectedRow({ ...row, action: "SELL" });
-  //   setModalOpen(true);
-  // };
-
-  // const handleBuy = (row) => {
-  //   setSelectedRow({ ...row, action: "BUY" });
-  //   setModalOpen(true);
-  // };
 
   const handleModalClose = () => {
     setModalOpen(false);

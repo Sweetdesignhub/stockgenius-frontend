@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cards from "../brokers/fyers/Cards";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
+import moment from "moment-timezone";
 
 function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
@@ -88,15 +89,20 @@ function AccountDetailsPT({ userId }) {
   ];
 
   // Function to format the date
+  // const formatTime = () => {
+  //   const date = new Date();
+  //   return new Intl.DateTimeFormat("en-GB", {
+  //     day: "numeric",
+  //     month: "short",
+  //     hour: "numeric",
+  //     minute: "numeric",
+  //     hour12: true,
+  //   }).format(date);
+  // };
+
   const formatTime = () => {
-    const date = new Date();
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "numeric",
-      month: "short",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    }).format(date);
+    const now = moment().tz("Asia/Kolkata"); // Get current time in IST
+    return now.format("DD MMM, hh:mm A"); // Format it as required (e.g., 13 Jan, 09:30 AM)
   };
 
   useEffect(() => {
