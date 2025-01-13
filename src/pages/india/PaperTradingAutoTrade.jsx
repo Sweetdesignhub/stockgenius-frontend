@@ -136,9 +136,6 @@ const PaperTradingAutoTrade = () => {
               AI Trading Bot
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto justify-center items-center space-x-4 flex-grow">
-              <button className="text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8] dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white">
-                <span>Activate Bots</span>
-              </button>
               <button
                 className="text-sm py-2 font-semibold text-blue-700 px-4 rounded-xl bg-white dark:text-white dark:bg-[#3A6FF8] w-full sm:w-auto flex flex-col items-center text-white"
                 onClick={handleScheduleTrade}
