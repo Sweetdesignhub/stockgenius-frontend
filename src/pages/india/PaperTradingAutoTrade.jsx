@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import AutoTradeModal from "../../components/brokers/AutoTradeModal";
 import api from "../../config";
@@ -10,7 +10,7 @@ import Bot from "../../components/aiTradingBots/Bot";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 import moment from "moment-timezone";
 import Loading from "../../components/common/Loading";
-import { isAfterMarketClose } from "../../utils/helper";
+import { isAfterMarketClose, isWithinTradingHours } from "../../utils/helper";
 
 // Define an array of colors for the bots
 const botColors = [
@@ -459,6 +459,25 @@ const PaperTradingAutoTrade = () => {
               >
                 <span>Schedule Bot</span>
               </button>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
+                <Link to={"/india/paper-trading/portfolio"}>
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
+                    alt="portfolio"
+                  />
+                </Link>
+              </div>
+
+              <Link to={"/india/paper-trading"}>
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ff3ddd6a4e36e44b584511bae99659775"
+                  alt=""
+                />
+              </Link>
             </div>
           </div>
 
