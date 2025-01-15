@@ -144,25 +144,36 @@ const PaperTradingAutoTrade = () => {
               </button>
             </div>
             <div className="flex gap-3">
-              <Link to={"/india/paper-trading/portfolio"}>
-                <div className="bg-white rounded-2xl px-4 py-1">
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
-                    alt="portfolio"
-                  />
-                </div>
-              </Link>
+              <div className="relative group">
+                <Link to={"/india/paper-trading/portfolio"}>
+                  <div className="bg-white rounded-2xl px-4 py-1">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
+                      alt="portfolio"
+                    />
+                  </div>
+                </Link>
+                <span className="absolute bottom-10 left-0 right-0 text-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Portfolio
+                </span>
+              </div>
 
-              <Link to={"/india/paper-trading"}>
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ff3ddd6a4e36e44b584511bae99659775"
-                  alt=""
-                />
-              </Link>
+              <div className="relative group">
+                <Link to={"/india/paper-trading"}>
+                  <div>
+                    <img
+                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ff3ddd6a4e36e44b584511bae99659775"
+                      alt="Paper Trading"
+                    />
+                  </div>
+                </Link>
+                <span className="absolute bottom-10 left-[-25px] right-0 text-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                  Paper Trading
+                </span>
+              </div>
             </div>
           </div>
-
           <div className="p-4">
             <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
               {calculateCardData.map((card, index) => (
