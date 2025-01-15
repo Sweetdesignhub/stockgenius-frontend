@@ -14,13 +14,31 @@ const AutoTradeModal = ({
     marginLossPercentage: "",
     botAccess: "Yes",
     productType: "",
+    broker: "",
   });
 
   const [errors, setErrors] = useState({});
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Pre-fill form fields if botData is provided (for editing)
+  useEffect(() => {
+    // Check the broker and set default productType if PaperTrading
+    const fyersAccessToken = localStorage.getItem("fyers_access_token");
+    const zerodhaAccessToken = localStorage.getItem("zerodha_access_token");
+
+    const defaultBroker = fyersAccessToken
+      ? "Fyers"
+      : zerodhaAccessToken
+      ? "Zerodha"
+      : "PaperTrading";
+
+    setFormData((prev) => ({
+      ...prev,
+      broker: defaultBroker,
+      productType: defaultBroker === "PaperTrading" ? "CNC" : prev.productType, // Set default productType to CNC if PaperTrading
+    }));
+  }, []); // Runs only once on initial render
+
   useEffect(() => {
     if (botData) {
       setFormData({
@@ -29,18 +47,28 @@ const AutoTradeModal = ({
         marginLossPercentage: botData.riskPercentage || "",
         botAccess: botData.botAccess || "Yes",
         productType: botData.productType || "",
+        broker: botData.broker || "",
       });
     } else {
-      // Clear the form when no botData is provided (for creating)
+      const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      const zerodhaAccessToken = localStorage.getItem("zerodha_access_token");
+
+      const defaultBroker = fyersAccessToken
+        ? "Fyers"
+        : zerodhaAccessToken
+        ? "Zerodha"
+        : "PaperTrading";
+
       setFormData({
         botName: "",
         marginProfitPercentage: "",
         marginLossPercentage: "",
         botAccess: "Yes",
-        productType: "",
+        productType: defaultBroker === "PaperTrading" ? "CNC" : "",
+        broker: defaultBroker,
       });
     }
-  }, [botData]);
+  }, [botData]); // Runs when botData changes
 
   if (!isOpen) return null;
 
@@ -77,6 +105,10 @@ const AutoTradeModal = ({
       newErrors.productType = "Product type is required.";
     }
 
+    if (!formData.broker) {
+      newErrors.broker = "Broker selection is required.";
+    }
+
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -99,6 +131,7 @@ const AutoTradeModal = ({
         profitPercentage: parseFloat(formData.marginProfitPercentage),
         riskPercentage: parseFloat(formData.marginLossPercentage),
         productType: formData.productType,
+        broker: formData.broker,
       };
 
       try {
@@ -117,6 +150,7 @@ const AutoTradeModal = ({
           marginLossPercentage: "",
           botAccess: "Yes",
           productType: "",
+          broker: "",
         });
 
         onClose();
@@ -163,9 +197,29 @@ const AutoTradeModal = ({
               <h2 className="text-xl text-white font-poppins font-semibold">
                 {botData ? "Update" : "Create"} Bot
               </h2>
-              <p className="text-sm text-gray-300">NSE | EQ | INTRADAY</p>
+              <p className="text-sm text-gray-300">NSE | EQ </p>
             </div>
-            <div className="flex flex-col gap-3 py-3">
+            <div className="flex flex-col">
+              <div className="flex flex-col gap-3 py-3">
+                <label htmlFor="broker" className="text-white">
+                  Broker
+                </label>
+                <select
+                  id="broker"
+                  name="broker"
+                  value={formData.broker}
+                  onChange={handleChange}
+                  className="rounded-lg py-2 px-4 mt-1 text-black"
+                >
+                  <option value="Zerodha">Zerodha</option>
+                  <option value="PaperTrading">Paper Trading</option>
+                  <option value="Fyers">Fyers</option>
+                </select>
+                {errors.broker && (
+                  <p className="text-red-500 text-sm mt-1">{errors.broker}</p>
+                )}
+              </div>
+
               <div className="flex flex-col gap-3 py-3">
                 <label htmlFor="botName" className="text-white">
                   Bot Name
@@ -236,7 +290,12 @@ const AutoTradeModal = ({
                   className="rounded-lg py-2 px-4 mt-1 text-black"
                 >
                   <option value="">Select Product Type</option>
-                  <option value="INTRADAY">INTRADAY</option>
+                  <option
+                    value="INTRADAY"
+                    disabled={formData.broker === "PaperTrading"}
+                  >
+                    INTRADAY
+                  </option>
                   <option value="CNC">CNC</option>
                 </select>
                 {errors.productType && (
@@ -296,6 +355,3 @@ const AutoTradeModal = ({
 };
 
 export default AutoTradeModal;
-
-
-

@@ -15,7 +15,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const getColumnNames = useMemo(() => {
     if (!holdings || holdings.length === 0) return [];
 
-    const excludedColumns = []; // Add any columns you want to exclude
+    const excludedColumns = ["unrealizedPnL"]; // Add any columns you want to exclude
     return Object.keys(holdings[0] || {}).filter(
       (columnName) => !excludedColumns.includes(columnName)
     );

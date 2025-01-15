@@ -166,44 +166,113 @@ function DailyUpdates() {
     return <Loading />; // Step 4: Conditionally render the Loading component
   }
 
+  //   return (
+  //     <div className="flex flex-col gap-4">
+  //       <StockCard
+  //         title="Top Pick for Today"
+  //         stock={stockData.topPick.stock}
+  //         description={stockData.topPick.description}
+  //         roi={stockData.topPick.roi}
+  //         sentimentScore={stockData.topPick.sentimentScore}
+  //         volatility={stockData.topPick.volatility}
+  //       />
+
+  //       <StockCard
+  //         title="High Sentiment Stock"
+  //         stock={stockData.highSentiment.stock}
+  //         description={stockData.highSentiment.description}
+  //         roi={stockData.highSentiment.roi}
+  //         sentimentScore={stockData.highSentiment.sentimentScore}
+  //         volatility={stockData.highSentiment.volatility}
+  //       />
+
+  //       <StockCard
+  //         title="Low Risk Option"
+  //         stock={stockData.lowRisk.stock}
+  //         description={stockData.lowRisk.description}
+  //         roi={stockData.lowRisk.roi}
+  //         sentimentScore={stockData.lowRisk.sentimentScore}
+  //         volatility={stockData.lowRisk.volatility}
+  //       />
+
+  //       <div
+  //         className="dark:bg-[#1a1f2e] rounded-lg p-4 dark:text-white"
+  //         style={{
+  //           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  //           borderRadius: "12px",
+  //         }}
+  //       >
+  //         <h2 className="text-md font-semibold mb-4">News and Events</h2>
+  //         <div className="max-h-32 overflow-y-auto">
+  //           <ul>
+  //             {newsHeadlines.map((news, index) => (
+  //               <li
+  //                 key={index}
+  //                 className="group flex items-center justify-between hover:bg-gray-800 rounded-lg p-2 transition-colors duration-200 cursor-pointer"
+  //               >
+  //                 <a
+  //                   href={news["Reference link"]}
+  //                   target="_blank"
+  //                   rel="noopener noreferrer"
+  //                   className="dark:text-gray-100 text-sm flex-grow"
+  //                 >
+  //                   {news.Headline}
+  //                 </a>
+  //                 <ChevronRight
+  //                   className="text-gray-400 group-hover:text-white transition-colors duration-200"
+  //                   size={20}
+  //                 />
+  //               </li>
+  //             ))}
+  //           </ul>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
-    <div className="flex flex-col gap-4">
-      <StockCard
-        title="Top Pick for Today"
-        stock={stockData.topPick.stock}
-        description={stockData.topPick.description}
-        roi={stockData.topPick.roi}
-        sentimentScore={stockData.topPick.sentimentScore}
-        volatility={stockData.topPick.volatility}
-      />
+    <div className="flex flex-col h-full gap-4">
+      {/* 50% height for Stock Cards Section */}
+      <div className="flex flex-col md:flex-col gap-4 flex-1">
+        <StockCard
+          title="Top Pick for Today"
+          stock={stockData.topPick.stock}
+          description={stockData.topPick.description}
+          roi={stockData.topPick.roi}
+          sentimentScore={stockData.topPick.sentimentScore}
+          volatility={stockData.topPick.volatility}
+        />
 
-      <StockCard
-        title="High Sentiment Stock"
-        stock={stockData.highSentiment.stock}
-        description={stockData.highSentiment.description}
-        roi={stockData.highSentiment.roi}
-        sentimentScore={stockData.highSentiment.sentimentScore}
-        volatility={stockData.highSentiment.volatility}
-      />
+        <StockCard
+          title="High Sentiment Stock"
+          stock={stockData.highSentiment.stock}
+          description={stockData.highSentiment.description}
+          roi={stockData.highSentiment.roi}
+          sentimentScore={stockData.highSentiment.sentimentScore}
+          volatility={stockData.highSentiment.volatility}
+        />
 
-      <StockCard
-        title="Low Risk Option"
-        stock={stockData.lowRisk.stock}
-        description={stockData.lowRisk.description}
-        roi={stockData.lowRisk.roi}
-        sentimentScore={stockData.lowRisk.sentimentScore}
-        volatility={stockData.lowRisk.volatility}
-      />
+        <StockCard
+          title="Low Risk Option"
+          stock={stockData.lowRisk.stock}
+          description={stockData.lowRisk.description}
+          roi={stockData.lowRisk.roi}
+          sentimentScore={stockData.lowRisk.sentimentScore}
+          volatility={stockData.lowRisk.volatility}
+        />
+      </div>
 
+      {/* 50% height for News Section */}
       <div
-        className="dark:bg-[#1a1f2e] rounded-lg p-4 dark:text-white"
+        className="dark:bg-[#1a1f2e] rounded-lg p-4 dark:text-white flex-1 overflow-hidden"
         style={{
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           borderRadius: "12px",
         }}
       >
         <h2 className="text-md font-semibold mb-4">News and Events</h2>
-        <div className="max-h-32 overflow-y-auto">
+        <div className="max-h-full overflow-y-auto">
           <ul>
             {newsHeadlines.map((news, index) => (
               <li

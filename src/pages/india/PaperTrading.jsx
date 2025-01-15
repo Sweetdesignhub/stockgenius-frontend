@@ -46,11 +46,13 @@ function PaperTrading() {
               </Link>
 
               <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd8fe962448c0436eb22de11f97927855"
-                  alt="portfolio"
-                />
+                <Link to={"/india/paper-trading/auto-trade"}>
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd8fe962448c0436eb22de11f97927855"
+                    alt="portfolio"
+                  />
+                </Link>
               </div>
             </div>
           </div>

@@ -100,6 +100,7 @@ import CreateIpos from "./pages/india/CreateIpos.jsx";
 import PaperTrading from "./pages/india/PaperTrading.jsx";
 import ChatbotComponent from "./components/common/Chatbot.jsx";
 import PaperTradingPortfolio from "./pages/india/PaperTradingPortfolio.jsx";
+import PaperTradingAutoTrade from "./pages/india/PaperTradingAutoTrade.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -164,7 +165,14 @@ function MainApp() {
               element={<InitialPublicOffers />}
             />
             <Route path="/india/paper-trading" element={<PaperTrading />} />
-            <Route path="/india/paper-trading/portfolio" element={<PaperTradingPortfolio/>} />
+            <Route
+              path="/india/paper-trading/portfolio"
+              element={<PaperTradingPortfolio />}
+            />
+            <Route
+              path="/india/paper-trading/auto-trade"
+              element={<PaperTradingAutoTrade />}
+            />
 
             {/* admin route */}
             <Route element={<OnlyAdminPrivateRoute />}>
@@ -187,7 +195,7 @@ function MainApp() {
         onSignOut={handleSignOut}
       />
 
-{/* Conditionally render the chatbot */}
+      {/* Conditionally render the chatbot */}
       {/* {chatbotPages.includes(location.pathname) && <ChatbotComponent />} */}
       <ChatbotComponent />
     </div>
