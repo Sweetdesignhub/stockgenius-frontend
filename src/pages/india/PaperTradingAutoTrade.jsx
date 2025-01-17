@@ -10,7 +10,11 @@ import Bot from "../../components/aiTradingBots/Bot";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 import moment from "moment-timezone";
 import Loading from "../../components/common/Loading";
-import { isAfterMarketClose, isWithinTradingHours } from "../../utils/helper";
+import {
+  isAfterMarketClose,
+  isBeforeMarketOpen,
+  isWithinTradingHours,
+} from "../../utils/helper";
 
 // Define an array of colors for the bots
 const botColors = [
@@ -84,7 +88,18 @@ const PaperTradingAutoTrade = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   // Use the PaperTrading context
-  const { holdings, positions, orders, loading } = usePaperTrading();
+  const {
+    funds,
+    holdings,
+    positions,
+    orders,
+    loading,
+    profitSummary,
+    investedAmount,
+  } = usePaperTrading();
+
+  const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
+  const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
 
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;
@@ -199,10 +214,33 @@ const PaperTradingAutoTrade = () => {
     }
   };
 
+  // const deleteBot = async (botId, botName) => {
+  //   try {
+  //     const response = await api.delete(`/api/v1/autotrade-bots/bots/${botId}`);
+  //     if (response.status === 200) {
+  //       await fetchBots();
+  //       setTitle("Bot Deleted");
+  //       setMessage(`${botName} has been successfully deleted.`);
+  //       setConfirmationOpen(true);
+  //     } else {
+  //       console.error("Deletion failed:", response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting bot:", error.response.data.message);
+  //     setTitle("Error");
+  //     setMessage(error.response.data.message);
+  //     setConfirmationOpen(true);
+  //   }
+  // };
+
   const deleteBot = async (botId, botName) => {
     try {
       const response = await api.delete(`/api/v1/autotrade-bots/bots/${botId}`);
       if (response.status === 200) {
+        // Remove the deleted bot from the state immediately
+        setBotDataList((prevBotDataList) =>
+          prevBotDataList.filter((bot) => bot._id !== botId)
+        );
         await fetchBots();
         setTitle("Bot Deleted");
         setMessage(`${botName} has been successfully deleted.`);
@@ -394,7 +432,7 @@ const PaperTradingAutoTrade = () => {
     return [
       {
         title: "Today's Profit %",
-        value: `${todayProfitPercentage.toFixed(2)}%`,
+        value: todaysProfit,
       },
       {
         title: "Last Week Profit %",
@@ -418,11 +456,11 @@ const PaperTradingAutoTrade = () => {
       },
       {
         title: "Total Investment",
-        value: todayTotalInvestment.toFixed(2),
+        value: investedAmount.toFixed(2),
       },
       {
         title: "Total Profit",
-        value: todayTotalProfit.toFixed(2),
+        value: totalProfit,
       },
     ];
   }, [botDataList, allBotsTime, formatTime, holdings, positions, orders]);
@@ -462,25 +500,36 @@ const PaperTradingAutoTrade = () => {
             </div>
 
             <div className="flex gap-3">
-              <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
+              <div className="relative group">
                 <Link to={"/india/paper-trading/portfolio"}>
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
-                    alt="portfolio"
-                  />
+                  <div className="bg-white rounded-2xl px-4 py-1">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
+                      alt="portfolio"
+                    />
+                  </div>
                 </Link>
+                <span className="absolute bottom-10 left-0 right-0 text-center font-semibold dark:text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Portfolio
+                </span>
               </div>
 
-              <Link to={"/india/paper-trading"}>
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ff3ddd6a4e36e44b584511bae99659775"
-                  alt=""
-                />
-              </Link>
+              <div className="relative group">
+                <Link to={"/india/paper-trading"}>
+                  <div className="bg-[#3A6FF8] rounded-2xl px-4 py-1">
+                    <img
+                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Ff3ddd6a4e36e44b584511bae99659775"
+                      alt="Paper Trading"
+                    />
+                  </div>
+                </Link>
+                <span className="absolute bottom-10 left-[-25px] right-0 text-center font-semibold dark:text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                  Paper Trading
+                </span>
+              </div>
             </div>
           </div>
-
           <div className="p-4">
             <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
               {calculateCardData.map((card, index) => (

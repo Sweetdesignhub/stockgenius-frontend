@@ -35,24 +35,34 @@ function PaperTrading() {
               Filter
             </button> */}
             <div className="flex gap-3">
-              <Link to={"/india/paper-trading/portfolio"}>
-                <div className="bg-white rounded-2xl px-4 py-1">
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
-                    alt="portfolio"
-                  />
-                </div>
-              </Link>
-
-              <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
-                <Link to={"/india/paper-trading/auto-trade"}>
-                  <img
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd8fe962448c0436eb22de11f97927855"
-                    alt="portfolio"
-                  />
+              <div className="relative group">
+                <Link to={"/india/paper-trading/portfolio"}>
+                  <div className="bg-white rounded-2xl px-4 py-1">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F1724f58fc6384ce29b80e805d16be7d8"
+                      alt="portfolio"
+                    />
+                  </div>
                 </Link>
+                <span className="absolute bottom-10 left-0 right-0 text-center font-semibold dark:text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Portfolio
+                </span>
+              </div>
+
+              <div className="relative group">
+                <Link to={"/india/paper-trading/auto-trade"}>
+                  <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd8fe962448c0436eb22de11f97927855"
+                      alt="Auto TradeBot"
+                    />
+                  </div>
+                </Link>
+                <span className="absolute bottom-10 left-[-5px] right-0 text-center font-semibold dark:text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                  Auto TradeBot
+                </span>
               </div>
             </div>
           </div>

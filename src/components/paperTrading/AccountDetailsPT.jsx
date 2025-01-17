@@ -7,36 +7,11 @@ function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
 
   // Accessing funds and positions from context
-  const { funds, positions, loading, profitSummary } = usePaperTrading();
+  const { funds, positions, loading, profitSummary,investedAmount } = usePaperTrading();
 
-  // Calculate Total Profit and Loss
-  const netPositions = positions?.netPositions || [];
-
-  // const { totalProfit, totalLoss } = netPositions.reduce(
-  //   (acc, position) => {
-  //     const realizedPnL = position.realizedPnL || 0;
-  //     const unrealizedPnL = position.unrealizedPnL || 0;
-  //     const totalPnL = realizedPnL + unrealizedPnL;
-
-  //     if (totalPnL > 0) {
-  //       acc.totalProfit += totalPnL;
-  //     } else {
-  //       acc.totalLoss += Math.abs(totalPnL);
-  //     }
-
-  //     return acc;
-  //   },
-  //   { totalProfit: 0, totalLoss: 0 }
-  // );
-
-  // Fallback values for funds
-  const investedAmount = Math.abs(
-    parseFloat(funds?.reservedFunds) || 0
-  ).toFixed(2);
-  // const formattedTotalProfit = totalProfit.toFixed(2);
-  // const formattedTotalLoss = totalLoss.toFixed(2);
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
+  const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
 
   const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
 
@@ -62,15 +37,15 @@ function AccountDetailsPT({ userId }) {
         "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
     },
     {
-      title: "Total PnL",
-      value: totalProfit,
-      valueColor: getPnLColor(totalProfit).textColor,
+      title: "Total P&L",
+      value: cumulativeProfit,
+      valueColor: getPnLColor(cumulativeProfit).textColor,
       width: "w-100px",
       height: "h-[80px]",
-      bgColor: getPnLColor(totalProfit).bgColor,
+      bgColor: getPnLColor(cumulativeProfit).bgColor,
     },
     {
-      title: "Today's PnL",
+      title: "Today's P&L",
       value: todaysProfit,
       valueColor: getPnLColor(todaysProfit).textColor,
       width: "w-100px",
