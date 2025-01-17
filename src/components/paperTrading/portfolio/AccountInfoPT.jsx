@@ -16,7 +16,13 @@ function AccountInfoPT() {
   // ).toFixed(2);
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
+  const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
   const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
+
+  // console.log("today", todaysProfit);
+  // console.log("total", totalProfit);
+  // console.log("cummu", cumulativeProfit);
+  
 
   // Helper function to get color based on value
   const getPnLColor = (value) => {
@@ -51,9 +57,9 @@ function AccountInfoPT() {
           />
           <Cards
             title="Total P&L"
-            value={totalProfit}
-            valueColor={getPnLColor(totalProfit).textColor}
-            bgColor={getPnLColor(totalProfit).bgColor}
+            value={cumulativeProfit}
+            valueColor={getPnLColor(cumulativeProfit).textColor}
+            bgColor={getPnLColor(cumulativeProfit).bgColor}
           />
           <Cards
             title="Today's P&L"

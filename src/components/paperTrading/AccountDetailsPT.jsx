@@ -11,6 +11,7 @@ function AccountDetailsPT({ userId }) {
 
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
+  const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
 
   const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
 
@@ -37,11 +38,11 @@ function AccountDetailsPT({ userId }) {
     },
     {
       title: "Total P&L",
-      value: totalProfit,
-      valueColor: getPnLColor(totalProfit).textColor,
+      value: cumulativeProfit,
+      valueColor: getPnLColor(cumulativeProfit).textColor,
       width: "w-100px",
       height: "h-[80px]",
-      bgColor: getPnLColor(totalProfit).bgColor,
+      bgColor: getPnLColor(cumulativeProfit).bgColor,
     },
     {
       title: "Today's P&L",
