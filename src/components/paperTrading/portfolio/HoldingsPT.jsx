@@ -3,28 +3,86 @@ import Loading from "../../common/Loading";
 import NotAvailable from "../../common/NotAvailable.jsx";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext.jsx";
 import { useTheme } from "../../../contexts/ThemeContext.jsx";
+import PlaceOrderModal from "../PlaceOrderModal";
+import { X } from "lucide-react";
+import { isWithinTradingHours } from "../../../utils/helper.js";
+import ConfirmationModal from "../../common/ConfirmationModal.jsx";
 
 const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedHolding, setSelectedHolding] = useState(null);
   const [error, setError] = useState(null);
-
-  // Get holdings and real-time prices directly from context
+  const [isExiting, setIsExiting] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [confirmationModalMessage, setConfirmationModalMessage] = useState("");
   const { holdings, loading, realtimePrices } = usePaperTrading();
   const { theme } = useTheme();
 
-  // Memoize the column names calculation to prevent unnecessary recalculations
+  const getBackgroundStyle = () => {
+    return theme === "light" ? "#ffffff" : "#402788";
+  };
+
+  useEffect(() => {
+    if (!loading && isExiting) {
+      setIsExiting(false);
+    }
+  }, [holdings, loading]);
+
   const getColumnNames = useMemo(() => {
     if (!holdings || holdings.length === 0) return [];
 
-    const excludedColumns = ["unrealizedPnL"]; // Add any columns you want to exclude
-    return Object.keys(holdings[0] || {}).filter(
-      (columnName) => !excludedColumns.includes(columnName)
-    );
+    const excludedColumns = ["unrealizedPnL"];
+
+    // Reorder columns similar to positions table
+    const orderedColumns = [
+      "stockSymbol",
+      "quantity",
+      "averagePrice",
+      "lastTradedPrice",
+      "pnl",
+      "pnlPercentage",
+      "investedValue",
+      "marketValue",
+      "exchange",
+      "_id",
+      "actions",
+    ];
+
+    return orderedColumns;
   }, [holdings]);
 
-  // Update column names when they change
   useEffect(() => {
     setColumnNames(getColumnNames);
   }, [getColumnNames, setColumnNames]);
+
+  const handleExitClick = (holding) => {
+    if (!isWithinTradingHours()) {
+      // If it's outside market hours, show confirmation modal with appropriate message
+      setConfirmationModalMessage(
+        "Orders can only be placed between 9:15 AM and 3:30 PM IST."
+      );
+      setIsConfirmationModalOpen(true); // Open confirmation modal
+      return;
+    }
+    setSelectedHolding({
+      symbol: holding.stockSymbol,
+      quantity: holding.quantity,
+      price: holding.lastTradedPrice,
+      action: "SELL",
+    });
+    setIsOrderModalOpen(true);
+  };
+
+  const handleOrderSubmit = (formData) => {
+    setIsExiting(true);
+  };
+
+  const calculatePnL = (holding, currentPrice) => {
+    const pnl = (currentPrice - holding.averagePrice) * holding.quantity;
+    const pnlPercentage =
+      ((currentPrice - holding.averagePrice) / holding.averagePrice) * 100;
+    return { pnl, pnlPercentage };
+  };
 
   if (loading) {
     return (
@@ -34,10 +92,6 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
     );
   }
 
-  if (error) {
-    return <div className="text-center p-4 text-red-500">{error}</div>;
-  }
-
   if (!holdings || holdings.length === 0) {
     return (
       <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />
@@ -45,60 +99,134 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   return (
-    <div
-      className="h-[55vh] overflow-auto"
-      style={{
-        background:
-          theme === "light"
-            ? "#ffffff"
-            : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-      }}
-    >
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            {selectedColumns.map((columnName) => (
-              <th
-                key={columnName}
-                className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
-              >
-                {columnName}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {holdings.map((holding, index) => {
-            // Get the real-time price for the stock symbol
-            const realTimePrice = realtimePrices[holding.stockSymbol];
-            const updatedLastTradedPrice =
-              realTimePrice || holding.lastTradedPrice; // Use real-time price if available
+    <>
+      <div
+        className="h-[55vh] overflow-auto relative"
+        style={{
+          background: getBackgroundStyle(),
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          borderRadius: "8px",
+        }}
+      >
+        <table className="w-full border-collapse relative">
+          <thead>
+            <tr>
+              {selectedColumns.map((columnName) => (
+                <th
+                  key={columnName}
+                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
+                    columnName === "actions" ? "sticky right-0" : ""
+                  }`}
+                  style={{
+                    background:
+                      columnName === "actions" ? getBackgroundStyle() : "none",
+                    zIndex: columnName === "actions" ? 2 : 1,
+                  }}
+                >
+                  {columnName === "pnlPercentage" ? "% Chng" : columnName}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {holdings.map((holding, index) => {
+              const realTimePrice = realtimePrices[holding.stockSymbol];
+              const updatedLastTradedPrice =
+                realTimePrice || holding.lastTradedPrice;
+              const { pnl, pnlPercentage } = calculatePnL(
+                holding,
+                updatedLastTradedPrice
+              );
 
-            return (
-              <tr key={index}>
-                {selectedColumns.map((columnName) => (
-                  <td
-                    key={`${columnName}-${index}`}
-                    className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
-                      columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
-                    }`}
-                  >
-                    {columnName === "lastTradedPrice"
-                      ? updatedLastTradedPrice
-                      : holding[columnName] !== undefined &&
-                        holding[columnName] !== null
-                      ? holding[columnName]
-                      : "-"}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+              return (
+                <tr
+                  key={index}
+                  className="border-b border-gray-200 dark:border-gray-700"
+                >
+                  {selectedColumns.map((columnName) => {
+                    if (columnName === "actions") {
+                      return (
+                        <td
+                          key={`${columnName}-${index}`}
+                          className="px-4 py-4 sticky right-0"
+                          style={{
+                            background: getBackgroundStyle(),
+                            zIndex: 2,
+                            boxShadow: "-4px 0 8px rgba(0, 0, 0, 0.1)",
+                          }}
+                        >
+                          <button
+                            onClick={() => handleExitClick(holding)}
+                            disabled={isExiting}
+                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
+                              isExiting
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600"
+                            } text-white`}
+                          >
+                            <X size={16} />
+                          </button>
+                        </td>
+                      );
+                    }
+
+                    let content = holding[columnName];
+                    let className =
+                      "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
+
+                    if (columnName === "stockSymbol") {
+                      className += " text-[#6FD4FF]";
+                    } else if (columnName === "lastTradedPrice") {
+                      content = updatedLastTradedPrice;
+                    } else if (columnName === "pnl") {
+                      content = pnl.toFixed(2);
+                      className +=
+                        pnl >= 0 ? " text-green-500" : " text-red-500";
+                    } else if (columnName === "pnlPercentage") {
+                      content = pnlPercentage.toFixed(2) + "%";
+                      className +=
+                        pnlPercentage >= 0
+                          ? " text-green-500"
+                          : " text-red-500";
+                    }
+
+                    return (
+                      <td key={`${columnName}-${index}`} className={className}>
+                        {content !== undefined && content !== null
+                          ? content
+                          : "-"}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {isOrderModalOpen && (
+        <PlaceOrderModal
+          isOpen={isOrderModalOpen}
+          onClose={() => {
+            setIsOrderModalOpen(false);
+            setSelectedHolding(null);
+          }}
+          onSubmit={handleOrderSubmit}
+          initialData={selectedHolding}
+        />
+      )}
+      {isConfirmationModalOpen && (
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={() => setIsConfirmationModalOpen(false)}
+          title="Market Hours Restriction"
+          message={confirmationModalMessage}
+          onConfirm={() => setIsConfirmationModalOpen(false)}
+          isPlaceOrder={false}
+        />
+      )}
+    </>
   );
 };
 

@@ -10,7 +10,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     stockSymbol: initialData?.symbol || "", // Stock symbol pre-filled
     action: "BUY",
     orderType: "MARKET", // Default order type
-    quantity: "",
+    quantity: initialData?.quantity || "",
     limitPrice: "",
     stopPrice: "",
     exchange: "NSE", // Default exchange
@@ -18,27 +18,45 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   });
 
   const { currentUser } = useSelector((state) => state.user);
-
   const [isQuickOrder, setIsQuickOrder] = useState(false); // Toggle state for quick vs regular order
   const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(""); // Track error state
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // useEffect(() => {
+  //   // Reset form data when modal is opened
+  //   if (isOpen) {
+  //     setFormData({
+  //       stockSymbol: initialData?.symbol || "",
+  //       action: initialData?.action || "BUY",
+  //       orderType: "MARKET",
+  //       quantity: initialData.quantity || "",
+  //       limitPrice: "",
+  //       stopPrice: "",
+  //       exchange: "NSE",
+  //       productType: "CNC",
+  //     });
+  //     setError(""); // Clear previous error
+  //     setShowConfirmation(false);
+  //   }
+  // }, [isOpen, initialData]);
+
   useEffect(() => {
-    // Reset form data when modal is opened
-    if (isOpen) {
-      setFormData({
-        stockSymbol: initialData?.symbol || "",
-        action: initialData?.action || "BUY",
-        orderType: "MARKET",
-        quantity: "",
-        limitPrice: "",
-        stopPrice: "",
-        exchange: "NSE",
-        productType: "CNC",
-      });
-      setError(""); // Clear previous error
+    if (isOpen && initialData) {
+      setFormData((prev) => ({
+        ...prev,
+        stockSymbol: initialData.symbol || "",
+        action: initialData.action || "BUY",
+        quantity: initialData.quantity || "",
+        // Keep other form fields as they are
+        orderType: prev.orderType,
+        limitPrice: prev.limitPrice,
+        stopPrice: prev.stopPrice,
+        exchange: prev.exchange,
+        productType: prev.productType,
+      }));
+      setError("");
       setShowConfirmation(false);
     }
   }, [isOpen, initialData]);

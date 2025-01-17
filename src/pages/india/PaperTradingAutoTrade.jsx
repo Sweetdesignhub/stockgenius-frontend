@@ -103,7 +103,6 @@ const PaperTradingAutoTrade = () => {
 
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;
-
     setIsInitialLoading(true); // Only set loading on initial fetch
     try {
       const response = await api.get(
@@ -113,6 +112,7 @@ const PaperTradingAutoTrade = () => {
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setBotDataList(sortedBots);
+
       setBotStates(
         sortedBots.reduce((acc, bot) => {
           acc[bot._id] = {
