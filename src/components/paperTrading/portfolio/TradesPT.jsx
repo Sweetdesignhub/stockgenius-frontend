@@ -47,10 +47,7 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
     <div
       className="h-[55vh] overflow-auto"
       style={{
-        background:
-          theme === "light"
-            ? "#ffffff"
-            : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
+        background: theme === "light" ? "#ffffff" : "#402788",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
       }}

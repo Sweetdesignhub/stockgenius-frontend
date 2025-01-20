@@ -107,7 +107,7 @@ const YesNoConfirmationModal = ({
         }`}
         onClick={close}
       >
-        No
+        NO
       </button>
     </div>
   );

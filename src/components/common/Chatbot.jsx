@@ -66,7 +66,10 @@ const ChatbotComponent = () => {
 
       {/* Chatbot Container */}
       {isOpen && (
-        <div className="fixed bottom-20 right-6 w-[26rem] sm:w-[20rem] md:w-[25rem] lg:w-[32rem] bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+        <div
+          className="fixed bottom-20 right-6 w-[26rem] sm:w-[20rem] md:w-[25rem] lg:w-[32rem] bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
+          style={{ zIndex: isOpen ? 10 : "auto" }}
+        >
           <Chatbot
             config={config}
             messageParser={MessageParser}
@@ -79,4 +82,3 @@ const ChatbotComponent = () => {
 };
 
 export default ChatbotComponent;
-

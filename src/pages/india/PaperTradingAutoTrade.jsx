@@ -6,7 +6,6 @@ import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
 import { useSelector } from "react-redux";
 import NotAvailable from "../../components/common/NotAvailable";
-import Bot from "../../components/aiTradingBots/Bot";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 import moment from "moment-timezone";
 import Loading from "../../components/common/Loading";
@@ -15,6 +14,7 @@ import {
   isBeforeMarketOpen,
   isWithinTradingHours,
 } from "../../utils/helper";
+import PaperTradeBot from "../../components/aiTradingBots/PaperTradeBot";
 
 // Define an array of colors for the bots
 const botColors = [
@@ -89,7 +89,6 @@ const PaperTradingAutoTrade = () => {
 
   // Use the PaperTrading context
   const {
-    funds,
     holdings,
     positions,
     orders,
@@ -103,16 +102,20 @@ const PaperTradingAutoTrade = () => {
 
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;
-
     setIsInitialLoading(true); // Only set loading on initial fetch
     try {
       const response = await api.get(
         `/api/v1/autotrade-bots/bots/user/${currentUser.id}`
       );
+      console.log(response);
+      
       const sortedBots = response.data.bots.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
+      console.log(sortedBots);
+      
       setBotDataList(sortedBots);
+
       setBotStates(
         sortedBots.reduce((acc, bot) => {
           acc[bot._id] = {
@@ -213,25 +216,6 @@ const PaperTradingAutoTrade = () => {
       setConfirmationOpen(true);
     }
   };
-
-  // const deleteBot = async (botId, botName) => {
-  //   try {
-  //     const response = await api.delete(`/api/v1/autotrade-bots/bots/${botId}`);
-  //     if (response.status === 200) {
-  //       await fetchBots();
-  //       setTitle("Bot Deleted");
-  //       setMessage(`${botName} has been successfully deleted.`);
-  //       setConfirmationOpen(true);
-  //     } else {
-  //       console.error("Deletion failed:", response.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting bot:", error.response.data.message);
-  //     setTitle("Error");
-  //     setMessage(error.response.data.message);
-  //     setConfirmationOpen(true);
-  //   }
-  // };
 
   const deleteBot = async (botId, botName) => {
     try {
@@ -420,32 +404,24 @@ const PaperTradingAutoTrade = () => {
       return (profit / investment) * 100;
     };
 
-    const todayProfitPercentage = calculatePercentage(
-      todayTotalProfit,
-      todayTotalInvestment
-    );
-    const weekProfitPercentage = calculatePercentage(
-      weekTotalProfit,
-      weekTotalInvestment
-    );
-
     return [
+      
       {
-        title: "Today's Profit %",
+        title: "Today's Profit",
         value: todaysProfit,
       },
       {
-        title: "Last Week Profit %",
-        value: `${weekProfitPercentage.toFixed(2)}%`,
+        title: "Today's Profit %",
+        value:  `${todaysProfit || "0"}%`,
       },
       {
         title: "Today's Bot Time",
         value: formatTime(allBotsTime.totalTodaysBotTime),
       },
-      {
-        title: "Week's Bot Time",
-        value: formatTime(allBotsTime.totalCurrentWeekTime),
-      },
+      // {
+      //   title: "Week's Bot Time",
+      //   value: formatTime(allBotsTime.totalCurrentWeekTime),
+      // },
       {
         title: "No. of AI Bots",
         value: botDataList.length.toString(),
@@ -531,7 +507,7 @@ const PaperTradingAutoTrade = () => {
             </div>
           </div>
           <div className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-7 gap-2">
               {calculateCardData.map((card, index) => (
                 <Cards key={index} title={card.title} value={card.value} />
               ))}
@@ -541,12 +517,12 @@ const PaperTradingAutoTrade = () => {
           <div className="p-4 overflow-scroll max-h-[60vh]">
             <div className="flex flex-col gap-10">
               {isInitialLoading ? ( // Only show loading on initial fetch
-                <div className="w-full flex justify-center items-center min-h-[200px]">
+                <div className="w-full flex justify-center items-center">
                   <Loading />
                 </div>
               ) : botDataList.length > 0 ? (
                 botDataList.map((bot) => (
-                  <Bot
+                  <PaperTradeBot
                     key={bot._id}
                     botData={bot}
                     isEnabled={botStates[bot._id].isActive}
