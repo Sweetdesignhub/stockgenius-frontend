@@ -89,7 +89,6 @@ const PaperTradingAutoTrade = () => {
 
   // Use the PaperTrading context
   const {
-    funds,
     holdings,
     positions,
     orders,
@@ -405,32 +404,24 @@ const PaperTradingAutoTrade = () => {
       return (profit / investment) * 100;
     };
 
-    const todayProfitPercentage = calculatePercentage(
-      todayTotalProfit,
-      todayTotalInvestment
-    );
-    const weekProfitPercentage = calculatePercentage(
-      weekTotalProfit,
-      weekTotalInvestment
-    );
-
     return [
+      
       {
-        title: "Today's Profit %",
+        title: "Today's Profit",
         value: todaysProfit,
       },
       {
-        title: "Last Week Profit %",
-        value: `${weekProfitPercentage.toFixed(2)}%`,
+        title: "Today's Profit %",
+        value:  `${todaysProfit || "0"}%`,
       },
       {
         title: "Today's Bot Time",
         value: formatTime(allBotsTime.totalTodaysBotTime),
       },
-      {
-        title: "Week's Bot Time",
-        value: formatTime(allBotsTime.totalCurrentWeekTime),
-      },
+      // {
+      //   title: "Week's Bot Time",
+      //   value: formatTime(allBotsTime.totalCurrentWeekTime),
+      // },
       {
         title: "No. of AI Bots",
         value: botDataList.length.toString(),
@@ -516,7 +507,7 @@ const PaperTradingAutoTrade = () => {
             </div>
           </div>
           <div className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-7 gap-2">
               {calculateCardData.map((card, index) => (
                 <Cards key={index} title={card.title} value={card.value} />
               ))}

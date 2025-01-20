@@ -102,8 +102,7 @@ function PaperTradeBot({
 
   const holdingsTotalPL = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const positionTotalPL = (profitSummary?.todaysProfit || 0.0).toFixed(2);
-  const availableFunds =
-    funds?.fund_limit?.[9]?.equityAmount?.toFixed(2) || "0.00";
+    const availableFunds = (parseFloat(funds?.availableFunds) || 100000).toFixed(2) || "0.00";
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {
@@ -245,7 +244,7 @@ function PaperTradeBot({
     },
     {
       title: "Profit Gained",
-      value: profitGainedValue,
+      value: positionTotalPL,
       valueColor,
     },
     {
@@ -272,7 +271,7 @@ function PaperTradeBot({
       title: "Number of Trades",
       value:
         createdAt === today
-          ? trades?.tradeBook?.filter(
+          ? trades?.filter(
               (trade) => trade.productType === botData.productType
             )?.length || 0
           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
@@ -280,9 +279,7 @@ function PaperTradeBot({
     },
     {
       title: "Percentage Gain",
-      value: `${
-        apiBotData.dynamicData?.[0]?.percentageGain ||
-        botData.dynamicData[0]?.percentageGain ||
+      value: `${positionTotalPL ||
         "0"
       }%`,
       valueColor,
@@ -297,15 +294,15 @@ function PaperTradeBot({
           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
       valueColor,
     },
-    {
-      title: "Limits",
-      value: `${
-        apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
-        botData.dynamicData[0]?.limits?.toLocaleString() ||
-        "0"
-      }`,
-      valueColor,
-    },
+    // {
+    //   title: "Limits",
+    //   value: `${
+    //     apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
+    //     botData.dynamicData[0]?.limits?.toLocaleString() ||
+    //     "0"
+    //   }`,
+    //   valueColor,
+    // },
     {
       title: "Status",
       value: currentStatus,
