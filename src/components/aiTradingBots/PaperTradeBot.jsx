@@ -101,7 +101,7 @@ function PaperTradeBot({
   const holdingsTotalPL = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const positionTotalPL = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const availableFunds =
-    (parseFloat(funds?.availableFunds) || 100000).toFixed(2) || "0.00";
+    (parseFloat(funds?.availableFunds) || 2000000).toFixed(2) || "0.00";
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {

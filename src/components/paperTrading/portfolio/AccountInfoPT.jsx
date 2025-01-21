@@ -17,7 +17,7 @@ function AccountInfoPT() {
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
-  const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
+  const cashBalance = (parseFloat(funds?.availableFunds) || 2000000).toFixed(2);
 
   // console.log("today", todaysProfit);
   // console.log("total", totalProfit);
