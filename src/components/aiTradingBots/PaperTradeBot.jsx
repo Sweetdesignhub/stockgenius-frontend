@@ -9,8 +9,6 @@
  * Updated on: [Update date]
  * - Update description: Brief description of what was updated or fixed
  */
-
-3;
 import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment-timezone";
@@ -50,7 +48,7 @@ function PaperTradeBot({
   const [apiBotData, setApiBotData] = useState([]);
 
   console.log("api bot", apiBotData);
-  
+
   const [activeBots, setActiveBots] = useState([]);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
@@ -102,7 +100,8 @@ function PaperTradeBot({
 
   const holdingsTotalPL = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const positionTotalPL = (profitSummary?.todaysProfit || 0.0).toFixed(2);
-    const availableFunds = (parseFloat(funds?.availableFunds) || 100000).toFixed(2) || "0.00";
+  const availableFunds =
+    (parseFloat(funds?.availableFunds) || 100000).toFixed(2) || "0.00";
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {
@@ -188,12 +187,12 @@ function PaperTradeBot({
 
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
+    // const wsUrl = "ws://localhost:8080";
     const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log("WebSocket connected for bot:", botData._id);
       ws.send(JSON.stringify({ type: "subscribeBotTime", botId: botData._id }));
     };
 
@@ -236,6 +235,11 @@ function PaperTradeBot({
     return `${hours}h ${minutes}m ${secs}s`;
   }, []);
 
+  const profitPercentage =
+    investedAmount > 0
+      ? ((profitSummary?.todaysProfit / investedAmount) * 100).toFixed(2)
+      : 0;
+
   const data = [
     {
       title: "Trade Ratio",
@@ -271,17 +275,14 @@ function PaperTradeBot({
       title: "Number of Trades",
       value:
         createdAt === today
-          ? trades?.filter(
-              (trade) => trade.productType === botData.productType
-            )?.length || 0
+          ? trades?.filter((trade) => trade.productType === botData.productType)
+              ?.length || 0
           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
       valueColor,
     },
     {
       title: "Percentage Gain",
-      value: `${positionTotalPL ||
-        "0"
-      }%`,
+      value: `${profitPercentage || "0"}%`,
       valueColor,
     },
     {
@@ -394,8 +395,6 @@ function PaperTradeBot({
       // Hit the deactivation API
       const res = await api.post(endpoint);
       console.log("res", res);
-      
-
 
       // Update the bot status
       await updateBot(apiBotData._id, {
@@ -547,7 +546,7 @@ function PaperTradeBot({
   // Handle Delete function - triggered when a bot is deleted
   const handleDeleteBot = async (botId) => {
     // console.log(`Delete bot with ID: ${botId}`);
-    if (apiBotData.bots[0].status === "Running") {
+    if (apiBotData.dynamicData[0].status === "Running") {
       setTitle("Delete Error");
       setMessage("To delete the bot , please deactivate the bot first.");
       setConfirmationModalOpen(true);
@@ -563,18 +562,18 @@ function PaperTradeBot({
     // setBots(bots.filter((bot) => bot.botId !== botId)); // For demonstration purposes, it removes the bot from state.
   };
 
-//   if (
-//     loading ||
-//     !apiBotData ||
-//     !apiBotData.bots ||
-//     apiBotData.bots.length === 0
-//   ) {
-//     return (
-//       <div className="w-full flex justify-center items-center">
-//         <Loading />
-//       </div>
-//     );
-//   }
+  //   if (
+  //     loading ||
+  //     !apiBotData ||
+  //     !apiBotData.bots ||
+  //     apiBotData.bots.length === 0
+  //   ) {
+  //     return (
+  //       <div className="w-full flex justify-center items-center">
+  //         <Loading />
+  //       </div>
+  //     );
+  //   }
 
   return (
     <div

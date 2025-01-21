@@ -108,12 +108,12 @@ const PaperTradingAutoTrade = () => {
         `/api/v1/autotrade-bots/bots/user/${currentUser.id}`
       );
       console.log(response);
-      
+
       const sortedBots = response.data.bots.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       console.log(sortedBots);
-      
+
       setBotDataList(sortedBots);
 
       setBotStates(
@@ -298,14 +298,11 @@ const PaperTradingAutoTrade = () => {
 
   useEffect(() => {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    // const wsUrl = process.env.NODE_ENV === 'development'
-    //   ? 'ws://localhost:8080'
-    //   : `${wsProtocol}//api.stockgenius.ai`;
+    // const wsUrl = "ws://localhost:8080";
     const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
-      console.log("WebSocket connected for all bots time");
       ws.send(
         JSON.stringify({
           type: "subscribeAllBotsTime",
@@ -398,21 +395,20 @@ const PaperTradingAutoTrade = () => {
       }
     });
 
-    // Calculate percentages
-    const calculatePercentage = (profit, investment) => {
-      if (investment === 0) return 0;
-      return (profit / investment) * 100;
-    };
+    // Calculate profit percentage for today
+    const profitPercentage =
+      investedAmount > 0
+        ? ((todaysProfit / investedAmount) * 100).toFixed(2)
+        : 0;
 
     return [
-      
       {
         title: "Today's Profit",
         value: todaysProfit,
       },
       {
         title: "Today's Profit %",
-        value:  `${todaysProfit || "0"}%`,
+        value: `${profitPercentage}%`,
       },
       {
         title: "Today's Bot Time",
