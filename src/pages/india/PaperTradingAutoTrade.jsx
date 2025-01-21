@@ -97,8 +97,10 @@ const PaperTradingAutoTrade = () => {
     investedAmount,
   } = usePaperTrading();
 
-  const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
+  const totalProfit = (
+    parseFloat(profitSummary?.totalProfit || 0.0) + parseFloat(todaysProfit)
+  ).toFixed(2);
 
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;

@@ -7,7 +7,7 @@ import { useTheme } from "../../../contexts/ThemeContext.jsx";
 const FundsPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
 
-  const { funds = [], loading } = usePaperTrading();
+  const { funds = [], investedAmount, loading } = usePaperTrading();
   console.log("Funds Response:", funds);
 
   const { theme } = useTheme();
@@ -18,52 +18,59 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
       {
         id: 1,
         title: "Total Balance",
-        equityAmount: funds.totalFunds || 0,
+        equityAmount: (funds.totalFunds || 0).toFixed(2),
         commodityAmount: 0, // Assuming no commodityAmount in response
         _id: "6777c6d0364dcb9e52cfec95",
       },
+      // {
+      //   id: 2,
+      //   title: "Utilized Amount",
+      //   equityAmount: funds.usedMargin || 0,
+      //   commodityAmount: 0,
+      //   _id: "6777c6d0364dcb9e52cfec96",
+      // },
       {
         id: 2,
-        title: "Utilized Amount",
-        equityAmount: funds.usedMargin || 0,
-        commodityAmount: 0,
-        _id: "6777c6d0364dcb9e52cfec96",
-      },
-      {
-        id: 3,
-        title: "Clear Balance",
-        equityAmount: funds.availableFunds || 0,
+        title: "Available Balance",
+        equityAmount: (funds.availableFunds || 0).toFixed(2),
         commodityAmount: 0,
         _id: "6777c6d0364dcb9e52cfec97",
       },
+      // {
+      //   id: 4,
+      //   title: "Realized Profit and Loss",
+      //   equityAmount: funds.realizedPnL || 0,
+      //   commodityAmount: 0,
+      //   _id: "6777c6d0364dcb9e52cfec98",
+      // },
+      // {
+      //   id: 5,
+      //   title: "Collaterals",
+      //   equityAmount: funds.availableMargin || 0,
+      //   commodityAmount: 0,
+      //   _id: "6777c6d0364dcb9e52cfec99",
+      // },
       {
-        id: 4,
-        title: "Realized Profit and Loss",
-        equityAmount: funds.realizedPnL || 0,
-        commodityAmount: 0,
-        _id: "6777c6d0364dcb9e52cfec98",
-      },
-      {
-        id: 5,
-        title: "Collaterals",
-        equityAmount: funds.availableMargin || 0,
+        id: 3,
+        title: "Opening Balance",
+        equityAmount: (funds.openingBalance || 0).toFixed(2),
         commodityAmount: 0,
         _id: "6777c6d0364dcb9e52cfec99",
       },
       {
-        id: 6,
-        title: "Fund Transfer",
-        equityAmount: funds.reservedFunds || 0,
+        id: 4,
+        title: "Invested Amount",
+        equityAmount: (investedAmount || 0).toFixed(2),
         commodityAmount: 0,
         _id: "6777c6d0364dcb9e52cfec9a",
       },
-      {
-        id: 7,
-        title: "Receivables",
-        equityAmount: 0, // Assuming no explicit receivables in response
-        commodityAmount: 0,
-        _id: "6777c6d0364dcb9e52cfec9b",
-      },
+      // {
+      //   id: 7,
+      //   title: "Receivables",
+      //   equityAmount: 0, // Assuming no explicit receivables in response
+      //   commodityAmount: 0,
+      //   _id: "6777c6d0364dcb9e52cfec9b",
+      // },
     ];
   }, [funds]);
 
