@@ -32,8 +32,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
     const excludedColumns = [
       "realizedPnL",
       "unrealizedPnL",
-      "sellQty",
-      "sellAvgPrice",
+      // "sellQty",
+      // "sellAvgPrice",
     ];
 
     const baseColumns = Object.keys(positions[0] || {}).filter(
@@ -52,6 +52,7 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
       "side",
       "buyQty",
       "buyAvgPrice",
+            "sellQty",
       "productType",
       "_id",
       "actions",

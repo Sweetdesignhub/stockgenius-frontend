@@ -14,7 +14,7 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (tradesData.length > 0) {
-      const excludedColumns = ["fees", "tags"];
+      const excludedColumns = ["fees", "tags", "createdAt", "updatedAt", "_id"];
       const allColumnNames = Object.keys(tradesData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );

@@ -138,11 +138,11 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                 updatedLastTradedPrice
               );
 
+              // Calculate marketValue
+              const marketValue = updatedLastTradedPrice * holding.quantity;
+
               return (
-                <tr
-                  key={index}
-                  className="border-b border-gray-200 dark:border-gray-700"
-                >
+                <tr key={index}>
                   {selectedColumns.map((columnName) => {
                     if (columnName === "actions") {
                       return (
@@ -188,6 +188,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                         pnlPercentage >= 0
                           ? " text-green-500"
                           : " text-red-500";
+                    } else if (columnName === "marketValue") {
+                      content = marketValue.toFixed(2);
                     }
 
                     return (
