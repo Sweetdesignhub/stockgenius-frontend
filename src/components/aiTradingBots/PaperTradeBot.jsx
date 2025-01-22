@@ -35,11 +35,10 @@ function PaperTradeBot({
   const { funds, orders, trades, profitSummary, investedAmount } =
     usePaperTrading();
 
-    // console.log("is ena", isEnabled);
-    
+  // console.log("is ena", isEnabled);
 
   const { currentUser } = useSelector((state) => state.user);
-  const [apiBotData, setApiBotData] = useState([])
+  const [apiBotData, setApiBotData] = useState([]);
 
   const [activeBots, setActiveBots] = useState([]);
   const [message, setMessage] = useState("");
@@ -167,7 +166,11 @@ function PaperTradeBot({
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
     // const wsUrl = "ws://localhost:8080";
-    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
+    // const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
+    const wsUrl =
+      process.env.NODE_ENV === "development"
+        ? "ws://localhost:8080"
+        : `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
 
@@ -219,6 +222,28 @@ function PaperTradeBot({
       ? ((profitSummary?.todaysProfit / investedAmount) * 100).toFixed(2)
       : 0;
 
+  const filteredTrades = trades.filter((trade) => {
+    const tradeDate = moment(trade.tradeDateTime)
+      .tz("Asia/Kolkata")
+      .format("YYYY-MM-DD");
+    return tradeDate === today;
+  });
+
+  const filteredOrders =
+    orders?.filter((order) => {
+      const orderDate = moment(order.createdAt)
+        .tz("Asia/Kolkata")
+        .format("YYYY-MM-DD");
+      return orderDate === today && order.action === "BUY"; // Only considering 'BUY' orders
+    }) || [];
+
+  console.log(filteredOrders);
+
+  const reinvestment = filteredOrders.reduce((total, order) => {
+    // Calculate the value of each 'BUY' order and accumulate it for reinvestment
+    return total + order.quantity * order.tradedPrice;
+  }, 0);
+
   const data = [
     // {
     //   title: "Trade Ratio",
@@ -253,11 +278,16 @@ function PaperTradeBot({
     {
       title: "Number of Trades",
       value:
-        createdAt === today
-          ? trades?.filter((trade) => trade.productType === botData.productType)
-              ?.length || 0
+        filteredTrades?.length > 0
+          ? filteredTrades.filter(
+              (trade) => trade.productType === botData.productType
+            )?.length || 0
           : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-      valueColor,
+      //   createdAt === today
+      //     ? trades?.filter((trade) => trade.productType === botData.productType)
+      //         ?.length || 0
+      //     : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+      // valueColor,
     },
     {
       title: "Percentage Gain",
@@ -266,12 +296,12 @@ function PaperTradeBot({
     },
     {
       title: "Reinvestment",
-      value:
-        createdAt === today
-          ? orders?.orderBook?.filter(
-              (order) => order.productType === botData.productType
-            )?.length || 0
-          : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+      value: reinvestment,
+      // filteredOrders.length > 0
+      //   ? filteredOrders.filter(
+      //       (order) => order.productType === botData.productType
+      //     ).length || 0
+      //   : apiBotData.dynamicData?.[0]?.reInvestment || 0,
       valueColor,
     },
     {
@@ -401,43 +431,54 @@ function PaperTradeBot({
     }
   };
 
-// Inside your component
-useEffect(() => {
-  const scheduleDeactivation = () => {
-    // Get the current time in IST timezone
-    const now = moment.tz("Asia/Kolkata");
-    console.log("Current Time (IST):", now.format("YYYY-MM-DD HH:mm:ss"));
+  // Inside your component
+  useEffect(() => {
+    const scheduleDeactivation = () => {
+      // Get the current time in IST timezone
+      const now = moment.tz("Asia/Kolkata");
+      console.log("Current Time (IST):", now.format("YYYY-MM-DD HH:mm:ss"));
 
-    // Set the target time for deactivation at 3:30 PM IST
-    let targetTime = now.clone().set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
-    console.log("Target Time (3:30 PM IST):", targetTime.format("YYYY-MM-DD HH:mm:ss"));
+      // Set the target time for deactivation at 3:30 PM IST
+      let targetTime = now
+        .clone()
+        .set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
+      console.log(
+        "Target Time (3:30 PM IST):",
+        targetTime.format("YYYY-MM-DD HH:mm:ss")
+      );
 
-    // If the current time is already past 3:30 PM, schedule for the next day
-    if (now.isAfter(targetTime)) {
-      targetTime.add(1, "days");
-      console.log("Target Time changed to next day:", targetTime.format("YYYY-MM-DD HH:mm:ss"));
-    }
+      // If the current time is already past 3:30 PM, schedule for the next day
+      if (now.isAfter(targetTime)) {
+        targetTime.add(1, "days");
+        console.log(
+          "Target Time changed to next day:",
+          targetTime.format("YYYY-MM-DD HH:mm:ss")
+        );
+      }
 
-    // Calculate the time difference between now and the target time
-    const timeDifference = targetTime.diff(now);
-    console.log("Time Difference (ms):", timeDifference);
+      // Calculate the time difference between now and the target time
+      const timeDifference = targetTime.diff(now);
+      console.log("Time Difference (ms):", timeDifference);
 
-    if (timeDifference > 0) {
-      // Schedule the deactivation to happen at 3:30 PM IST
-      setTimeout(async () => {
-        console.log("Deactivating bot at:", moment().format("YYYY-MM-DD HH:mm:ss"));
-        await deactivateBot();  // Call the deactivateBot function
-        await fetchBotFromApi()
-        console.log("Bot deactivated at 3:30 PM IST");
-      }, timeDifference);
-    } else {
-      console.log("Time difference is invalid, something went wrong");
-    }
-  };
+      if (timeDifference > 0) {
+        // Schedule the deactivation to happen at 3:30 PM IST
+        setTimeout(async () => {
+          console.log(
+            "Deactivating bot at:",
+            moment().format("YYYY-MM-DD HH:mm:ss")
+          );
+          await deactivateBot(); // Call the deactivateBot function
+          await fetchBotFromApi();
+          console.log("Bot deactivated at 3:30 PM IST");
+        }, timeDifference);
+      } else {
+        console.log("Time difference is invalid, something went wrong");
+      }
+    };
 
-  // Call the function to schedule deactivation
-  scheduleDeactivation();
-}, []);
+    // Call the function to schedule deactivation
+    scheduleDeactivation();
+  }, []);
 
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
@@ -510,8 +551,6 @@ useEffect(() => {
       console.log("Bot deleted");
     }
   };
-
-
 
   const handleConfirmationClose = () => {
     setConfirmationModalOpen(false);
