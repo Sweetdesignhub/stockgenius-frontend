@@ -401,44 +401,6 @@ function PaperTradeBot({
     }
   };
 
-// Inside your component
-useEffect(() => {
-  const scheduleDeactivation = () => {
-    // Get the current time in IST timezone
-    const now = moment.tz("Asia/Kolkata");
-    console.log("Current Time (IST):", now.format("YYYY-MM-DD HH:mm:ss"));
-
-    // Set the target time for deactivation at 3:30 PM IST
-    let targetTime = now.clone().set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
-    console.log("Target Time (3:30 PM IST):", targetTime.format("YYYY-MM-DD HH:mm:ss"));
-
-    // If the current time is already past 3:30 PM, schedule for the next day
-    if (now.isAfter(targetTime)) {
-      targetTime.add(1, "days");
-      console.log("Target Time changed to next day:", targetTime.format("YYYY-MM-DD HH:mm:ss"));
-    }
-
-    // Calculate the time difference between now and the target time
-    const timeDifference = targetTime.diff(now);
-    console.log("Time Difference (ms):", timeDifference);
-
-    if (timeDifference > 0) {
-      // Schedule the deactivation to happen at 3:30 PM IST
-      setTimeout(async () => {
-        console.log("Deactivating bot at:", moment().format("YYYY-MM-DD HH:mm:ss"));
-        await deactivateBot();  // Call the deactivateBot function
-        await fetchBotFromApi()
-        console.log("Bot deactivated at 3:30 PM IST");
-      }, timeDifference);
-    } else {
-      console.log("Time difference is invalid, something went wrong");
-    }
-  };
-
-  // Call the function to schedule deactivation
-  scheduleDeactivation();
-}, []);
-
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
 

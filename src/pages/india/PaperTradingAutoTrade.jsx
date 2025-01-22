@@ -109,12 +109,12 @@ const PaperTradingAutoTrade = () => {
       const response = await api.get(
         `/api/v1/autotrade-bots/bots/user/${currentUser.id}`
       );
-      console.log(response);
+      // console.log(response);
 
       const sortedBots = response.data.bots.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
-      console.log(sortedBots);
+      // console.log(sortedBots);
 
       setBotDataList(sortedBots);
 
