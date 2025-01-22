@@ -12,7 +12,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment-timezone";
-import Loading from "../common/Loading";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { useSelector } from "react-redux";
@@ -33,21 +32,14 @@ function PaperTradeBot({
   color,
 }) {
   // Use the PaperTrading context
-  const {
-    funds,
-    holdings,
-    positions,
-    orders,
-    trades,
-    loading,
-    profitSummary,
-    investedAmount,
-  } = usePaperTrading();
+  const { funds, orders, trades, profitSummary, investedAmount } =
+    usePaperTrading();
+
+    // console.log("is ena", isEnabled);
+    
 
   const { currentUser } = useSelector((state) => state.user);
-  const [apiBotData, setApiBotData] = useState([]);
-
-  console.log("api bot", apiBotData);
+  const [apiBotData, setApiBotData] = useState([])
 
   const [activeBots, setActiveBots] = useState([]);
   const [message, setMessage] = useState("");
@@ -61,18 +53,10 @@ function PaperTradeBot({
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
 
-  const currentStatus = apiBotData.dynamicData?.[0]?.status || "Schedule";
+  const currentStatus = apiBotData.dynamicData?.[0]?.status;
 
   const { theme } = useTheme();
   const valueColor = theme === "dark" ? "white" : "black";
-
-  // Function to convert hex to RGB
-  const hexToRGB = (hex) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `${r},${g},${b}`;
-  };
 
   // Generate a unique ID for the filter
   const filterId = `color-filter-${botData._id}`;
@@ -105,11 +89,6 @@ function PaperTradeBot({
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {
-    if (apiBotData.productType === "INTRADAY") {
-      return createdAt === today
-        ? positionTotalPL
-        : apiBotData.dynamicData[0]?.profitGained || 0;
-    }
     if (apiBotData.productType === "CNC") {
       return createdAt === today
         ? holdingsTotalPL
@@ -241,11 +220,11 @@ function PaperTradeBot({
       : 0;
 
   const data = [
-    {
-      title: "Trade Ratio",
-      value: apiBotData.dynamicData?.[0]?.tradeRatio || 0,
-      valueColor: "#00FF47",
-    },
+    // {
+    //   title: "Trade Ratio",
+    //   value: apiBotData.dynamicData?.[0]?.tradeRatio || 0,
+    //   valueColor: "#00FF47",
+    // },
     {
       title: "Profit Gained",
       value: positionTotalPL,
@@ -295,24 +274,17 @@ function PaperTradeBot({
           : apiBotData.dynamicData?.[0]?.reInvestment || 0,
       valueColor,
     },
-    // {
-    //   title: "Limits",
-    //   value: `${
-    //     apiBotData.dynamicData?.[0]?.limits?.toLocaleString() ||
-    //     botData.dynamicData[0]?.limits?.toLocaleString() ||
-    //     "0"
-    //   }`,
-    //   valueColor,
-    // },
     {
       title: "Status",
-      value: currentStatus,
+      value: apiBotData.dynamicData?.[0]?.status || "Inactive",
       valueColor:
         currentStatus === "Inactive"
           ? "#FF4D4D"
           : currentStatus === "Running"
           ? "#00FF47"
-          : "#FFBF00",
+          : currentStatus === "Schedule" // Add this condition for scheduled status
+          ? "#FFBF00" // Schedule color
+          : "#FF4D4D", // Default color
     },
   ];
 
@@ -429,12 +401,49 @@ function PaperTradeBot({
     }
   };
 
+// Inside your component
+useEffect(() => {
+  const scheduleDeactivation = () => {
+    // Get the current time in IST timezone
+    const now = moment.tz("Asia/Kolkata");
+    console.log("Current Time (IST):", now.format("YYYY-MM-DD HH:mm:ss"));
+
+    // Set the target time for deactivation at 3:30 PM IST
+    let targetTime = now.clone().set({ hour: 15, minute: 30, second: 0, millisecond: 0 });
+    console.log("Target Time (3:30 PM IST):", targetTime.format("YYYY-MM-DD HH:mm:ss"));
+
+    // If the current time is already past 3:30 PM, schedule for the next day
+    if (now.isAfter(targetTime)) {
+      targetTime.add(1, "days");
+      console.log("Target Time changed to next day:", targetTime.format("YYYY-MM-DD HH:mm:ss"));
+    }
+
+    // Calculate the time difference between now and the target time
+    const timeDifference = targetTime.diff(now);
+    console.log("Time Difference (ms):", timeDifference);
+
+    if (timeDifference > 0) {
+      // Schedule the deactivation to happen at 3:30 PM IST
+      setTimeout(async () => {
+        console.log("Deactivating bot at:", moment().format("YYYY-MM-DD HH:mm:ss"));
+        await deactivateBot();  // Call the deactivateBot function
+        await fetchBotFromApi()
+        console.log("Bot deactivated at 3:30 PM IST");
+      }, timeDifference);
+    } else {
+      console.log("Time difference is invalid, something went wrong");
+    }
+  };
+
+  // Call the function to schedule deactivation
+  scheduleDeactivation();
+}, []);
+
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
 
     if (confirmAction === "toggle") {
       const activeCNC = activeBots.some((bot) => bot.type === "CNC");
-      const activeIntraday = activeBots.some((bot) => bot.type === "Intraday");
 
       // Check if current time is within trading hours
 
@@ -443,14 +452,6 @@ function PaperTradeBot({
           setTitle("Activation error");
           setMessage(
             "The CNC bot cannot be activated because another CNC bot is already scheduled."
-          );
-          setConfirmationModalOpen(true);
-          return;
-        }
-        if (botData.productType === "Intraday" && activeIntraday) {
-          setTitle("Activation error");
-          setMessage(
-            "The INTRADAY bot cannot be activated because another INTRADAY bot is already scheduled."
           );
           setConfirmationModalOpen(true);
           return;
@@ -510,6 +511,8 @@ function PaperTradeBot({
     }
   };
 
+
+
   const handleConfirmationClose = () => {
     setConfirmationModalOpen(false);
   };
@@ -524,12 +527,6 @@ function PaperTradeBot({
     background:
       "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
   };
-
-  // const lightThemeStyle = {
-  //   background:
-  //     "linear-gradient(180deg, rgba(150, 150, 150, 0.8) 0%, rgba(120, 120, 120, 1) 100%), " +
-  //     "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
-  // };
 
   // Handle Edit function - triggered when a bot is edited
   const handleEditBot = async (botId) => {
@@ -561,19 +558,6 @@ function PaperTradeBot({
     setYesNoModalOpen(true);
     // setBots(bots.filter((bot) => bot.botId !== botId)); // For demonstration purposes, it removes the bot from state.
   };
-
-  //   if (
-  //     loading ||
-  //     !apiBotData ||
-  //     !apiBotData.bots ||
-  //     apiBotData.bots.length === 0
-  //   ) {
-  //     return (
-  //       <div className="w-full flex justify-center items-center">
-  //         <Loading />
-  //       </div>
-  //     );
-  //   }
 
   return (
     <div
@@ -639,7 +623,7 @@ function PaperTradeBot({
         {data.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-1/5 mb-4"
+            className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-[25%] mb-4"
           >
             <h1 className="dark:text-[#A6B2CDB2] text-[black] text-xs mb-1">
               {item.title}
