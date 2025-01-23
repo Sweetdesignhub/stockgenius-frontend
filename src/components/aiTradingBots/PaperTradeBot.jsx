@@ -296,7 +296,7 @@ function PaperTradeBot({
     },
     {
       title: "Reinvestment",
-      value: reinvestment,
+      value: reinvestment.toFixed(2),
       // filteredOrders.length > 0
       //   ? filteredOrders.filter(
       //       (order) => order.productType === botData.productType
