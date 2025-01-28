@@ -469,14 +469,14 @@ const PaperTradingAutoTrade = () => {
             <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
               AI Trading Bots
             </h2>
-            <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto">
+            {/* <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto">
               <button
                 className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
                 onClick={handleScheduleTrade}
               >
                 <span>Schedule Bot</span>
               </button>
-            </div>
+            </div>  */}
 
             <div className="flex gap-3">
               <div className="relative group">
@@ -535,6 +535,7 @@ const PaperTradingAutoTrade = () => {
                     loading={togglingBotId === bot._id} // Pass loading state to individual bot
                     color={botColorMap[bot._id]}
                   />
+                  
                 ))
               ) : (
                 <div>
