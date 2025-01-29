@@ -75,7 +75,7 @@ function PaperTradeBot({
     .tz("Asia/Kolkata")
     .format("YYYY-MM-DD");
 
-  const isCreatedToday = botCreatedDate === today;
+  // const isCreatedToday = botCreatedDate === today;
 
   const createdAt = moment(apiBotData.createdAt)
     .tz("Asia/Kolkata")

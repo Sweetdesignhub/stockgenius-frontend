@@ -243,13 +243,13 @@ const PaperTradingAutoTrade = () => {
   };
 
   const handleToggle = async (botId) => {
-    if (isAfterMarketClose()) {
-      setTitle("Action Not Allowed");
-      setMessage("You can't activate the bot after market closes.");
-      setConfirmationAction(() => () => setConfirmationOpen(false));
-      setConfirmationOpen(true);
-      return;
-    }
+    // if (isAfterMarketClose()) {
+    //   setTitle("Action Not Allowed");
+    //   setMessage("You can't activate the bot after market closes.");
+    //   setConfirmationAction(() => () => setConfirmationOpen(false));
+    //   setConfirmationOpen(true);
+    //   return;
+    // }
 
     setTogglingBotId(botId);
 
