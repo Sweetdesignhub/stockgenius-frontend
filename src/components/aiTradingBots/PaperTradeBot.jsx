@@ -40,6 +40,8 @@ function PaperTradeBot({
   const { currentUser } = useSelector((state) => state.user);
   const [apiBotData, setApiBotData] = useState([]);
 
+  console.log("apibot data", botData);
+
   const [activeBots, setActiveBots] = useState([]);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
@@ -52,7 +54,7 @@ function PaperTradeBot({
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
 
-  const currentStatus = apiBotData.dynamicData?.[0]?.status;
+  const currentStatus = botData?.dynamicData?.[0]?.status;
 
   const { theme } = useTheme();
   const valueColor = theme === "dark" ? "white" : "black";
@@ -77,7 +79,7 @@ function PaperTradeBot({
 
   // const isCreatedToday = botCreatedDate === today;
 
-  const createdAt = moment(apiBotData.createdAt)
+  const createdAt = moment(botData?.createdAt)
     .tz("Asia/Kolkata")
     .format("YYYY-MM-DD");
 
@@ -88,10 +90,10 @@ function PaperTradeBot({
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {
-    if (apiBotData.productType === "CNC") {
+    if (botData?.productType === "CNC") {
       return createdAt === today
         ? holdingsTotalPL
-        : apiBotData.dynamicData[0]?.profitGained || 0;
+        : botData?.dynamicData[0]?.profitGained || 0;
     }
     return 0;
   };
@@ -237,7 +239,7 @@ function PaperTradeBot({
       return orderDate === today && order.action === "BUY"; // Only considering 'BUY' orders
     }) || [];
 
-  console.log(filteredOrders);
+  // console.log(filteredOrders);
 
   const reinvestment = filteredOrders.reduce((total, order) => {
     // Calculate the value of each 'BUY' order and accumulate it for reinvestment
@@ -245,11 +247,6 @@ function PaperTradeBot({
   }, 0);
 
   const data = [
-    // {
-    //   title: "Trade Ratio",
-    //   value: apiBotData.dynamicData?.[0]?.tradeRatio || 0,
-    //   valueColor: "#00FF47",
-    // },
     {
       title: "Profit Gained",
       value: positionTotalPL,
@@ -265,12 +262,12 @@ function PaperTradeBot({
       value:
         createdAt === today
           ? availableFunds
-          : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+          : botData.dynamicData?.[0]?.totalBalance || "0",
       valueColor,
     },
     {
       title: "Scheduled",
-      value: moment(apiBotData.createdAt || botData.createdAt)
+      value: moment(botData.createdAt || botData.createdAt)
         .tz("Asia/Kolkata")
         .format("D MMM, h:mm a"),
       valueColor,
@@ -282,12 +279,7 @@ function PaperTradeBot({
           ? filteredTrades.filter(
               (trade) => trade.productType === botData.productType
             )?.length || 0
-          : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-      //   createdAt === today
-      //     ? trades?.filter((trade) => trade.productType === botData.productType)
-      //         ?.length || 0
-      //     : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
-      // valueColor,
+          : botData.dynamicData?.[0]?.numberOfTrades || 0,
     },
     {
       title: "Percentage Gain",
@@ -297,16 +289,11 @@ function PaperTradeBot({
     {
       title: "Reinvestment",
       value: reinvestment.toFixed(2),
-      // filteredOrders.length > 0
-      //   ? filteredOrders.filter(
-      //       (order) => order.productType === botData.productType
-      //     ).length || 0
-      //   : apiBotData.dynamicData?.[0]?.reInvestment || 0,
       valueColor,
     },
     {
       title: "Status",
-      value: apiBotData.dynamicData?.[0]?.status || "Inactive",
+      value: botData.dynamicData?.[0]?.status || "Inactive",
       valueColor:
         currentStatus === "Inactive"
           ? "#FF4D4D"
@@ -318,45 +305,43 @@ function PaperTradeBot({
     },
   ];
 
-const handleToggle = () => {
-  if (!isEnabled) {
-    // If user is activating the bot
-    const newTitle = "Activate Bot";
-    const newMessage = `
+  const handleToggle = () => {
+    if (!isEnabled) {
+      // If user is activating the bot
+      const newTitle = "Activate Bot";
+      const newMessage = `
       Are you sure you want to activate Default Bot with profit %${botData.profitPercentage} and loss %${botData.riskPercentage}?
       <br />
       <span style="color: blue; text-decoration: underline; cursor: pointer;" id="edit-link">To edit, click here.</span>
     `;
 
-    setModalTitle(newTitle);
-    setModalMessage(newMessage);
-    setConfirmAction("toggle");
-    setYesNoModalOpen(true);
+      setModalTitle(newTitle);
+      setModalMessage(newMessage);
+      setConfirmAction("toggle");
+      setYesNoModalOpen(true);
 
-    // Attach an event listener to the "edit" link after the modal is shown
-    setTimeout(() => {
-      const editLink = document.getElementById("edit-link");
-      if (editLink) {
-        editLink.addEventListener("click", (event) => {
-          event.preventDefault(); // Prevent default behavior
-          setYesNoModalOpen(false); // Close the Yes/No modal
-          setAutoTradeModalOpen(true); // Open the edit modal
-        });
-      }
-    }, 0);
-  } else {
-    // If user is deactivating the bot
-    const newTitle = "Deactivate Bot";
-    const newMessage = `Are you sure you want to deactivate <strong>${botData.name}</strong>?`;
+      // Attach an event listener to the "edit" link after the modal is shown
+      setTimeout(() => {
+        const editLink = document.getElementById("edit-link");
+        if (editLink) {
+          editLink.addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent default behavior
+            setYesNoModalOpen(false); // Close the Yes/No modal
+            setAutoTradeModalOpen(true); // Open the edit modal
+          });
+        }
+      }, 0);
+    } else {
+      // If user is deactivating the bot
+      const newTitle = "Deactivate Bot";
+      const newMessage = `Are you sure you want to deactivate <strong>${botData.name}</strong>?`;
 
-    setModalTitle(newTitle);
-    setModalMessage(newMessage);
-    setConfirmAction("toggle");
-    setYesNoModalOpen(true);
-  }
-};
-
-  
+      setModalTitle(newTitle);
+      setModalMessage(newMessage);
+      setConfirmAction("toggle");
+      setYesNoModalOpen(true);
+    }
+  };
 
   // const handleToggle = () => {
   //   const newTitle = isEnabled ? "Deactivate Bot" : "Activate Bot";
@@ -373,38 +358,42 @@ const handleToggle = () => {
 
   // API endpoint based on the bot type
   const getApiEndpoint = (action) => {
-    const botType = apiBotData.productType;
-    if (botType === "INTRADAY" || botType === "CNC") {
-      return `/api/v1/autoTradeBot/${action}/users/${currentUser.id}/bots/${apiBotData._id}`;
+    const botId = botData?._id;
+
+    if (!botId) {
+      throw new Error("Bot ID not found");
     }
-    throw new Error("Invalid bot type");
+
+    return `/api/v1/autoTradeBot/${action}/users/${currentUser.id}/bots/${botId}`;
   };
 
   const activateBot = async () => {
+    console.log("activating");
+
     try {
       const endpoint = getApiEndpoint("activate");
-      const { profitPercentage, riskPercentage } = apiBotData;
+      const { profitPercentage, riskPercentage } = botData;
 
       // Update the bot status
-      await updateBot(apiBotData._id, {
+      await updateBot(botData._id, {
         tradeRatio: 50,
         profitGained: profitGainedValue,
         // workingTime: formatTime(workingTime),
         totalBalance:
           createdAt === today
             ? availableFunds
-            : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+            : botData.dynamicData?.[0]?.totalBalance || "0",
         scheduled: today,
         numberOfTrades:
           createdAt === today
             ? trades.tradeBook?.length || 0
-            : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+            : botData.dynamicData?.[0]?.numberOfTrades || 0,
         percentageGain: 0,
         status: "Running",
         reInvestment:
           createdAt === today
             ? orders.orderBook?.length || 0
-            : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+            : botData.dynamicData?.[0]?.reInvestment || 0,
         limits: 0,
       });
 
@@ -434,30 +423,30 @@ const handleToggle = () => {
       console.log("res", res);
 
       // Update the bot status
-      await updateBot(apiBotData._id, {
+      await updateBot(botData._id, {
         tradeRatio: 50,
         profitGained: profitGainedValue,
         // workingTime: formatTime(workingTime),
         totalBalance:
           createdAt === today
             ? availableFunds
-            : apiBotData.dynamicData?.[0]?.totalBalance || "0",
+            :botData.dynamicData?.[0]?.totalBalance || "0",
         numberOfTrades:
           createdAt === today
             ? trades.tradeBook?.length || 0
-            : apiBotData.dynamicData?.[0]?.numberOfTrades || 0,
+            : botData.dynamicData?.[0]?.numberOfTrades || 0,
         percentageGain: 0,
         status: "Inactive",
         reInvestment:
           createdAt === today
             ? orders.orderBook?.length || 0
-            : apiBotData.dynamicData?.[0]?.reInvestment || 0,
+            : botData.dynamicData?.[0]?.reInvestment || 0,
         limits: 0,
       });
 
       // Remove the bot from the activeBots state
       setActiveBots((prevBots) =>
-        prevBots.filter((bot) => bot.id !== apiBotData._id)
+        prevBots.filter((bot) => bot.id !== botData._id)
       );
 
       console.log("bot deactivated");
