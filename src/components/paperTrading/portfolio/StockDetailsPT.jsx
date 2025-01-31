@@ -23,12 +23,6 @@ const StockDetailsPT = () => {
   const { funds, holdings, positions, trades, orders, loading, error } =
     usePaperTrading();
 
-  //   console.log("Funds", funds);
-  // console.log("Holdings", holdings);
-  // console.log("Positions", positions);
-  //   console.log("Trades", trades);
-  //   console.log("Orders", orders);
-
   // Stable memoization of categories
   const categories = useMemo(
     () => [
@@ -131,11 +125,11 @@ const StockDetailsPT = () => {
   }, [categories, currentTab, selectedColumns]);
 
   return (
-    <div className="flex h-[60vh] w-full">
+    <div className="flex w-full">
       <div className="w-full">
         <TabGroup selectedIndex={currentTab} onChange={setCurrentTab}>
-          <div className="flex justify-between items-center">
-            <TabList className="flex gap-4">
+          <div className="flex justify-between items-center flex-wrap">
+            <TabList className="flex gap-4 flex-wrap">
               {categories.map(({ name }) => (
                 <Tab
                   key={name}
@@ -204,3 +198,4 @@ const StockDetailsPT = () => {
 };
 
 export default StockDetailsPT;
+

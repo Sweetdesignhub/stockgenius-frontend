@@ -10,7 +10,7 @@ import { isWithinTradingHours } from "../../utils/helper";
 
 function AiDrivenList() {
   const [tableData, setTableData] = useState([]);
-  const [aiDrivenData, setAiDrivenData] = useState([]); // Store AI-driven data for predictions
+  const [aiDrivenData, setAiDrivenData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("AI Driven Stocks");
@@ -21,8 +21,8 @@ function AiDrivenList() {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [confirmationModalMessage, setConfirmationModalMessage] = useState("");
 
-  const filterRef = useRef(null); // Reference for the filter dropdown
-  const filterButtonRef = useRef(null); // Reference for the filter button
+  const filterRef = useRef(null);
+  const filterButtonRef = useRef(null);
 
   const { theme } = useTheme();
 
@@ -33,7 +33,6 @@ function AiDrivenList() {
       try {
         const bucketName = "automationdatabucket";
 
-        // Always fetch AI-driven data for predictions
         const aiDrivenBuffer = await fetchFile(
           bucketName,
           "Realtime_Reports/Final_Report.xlsx"
@@ -45,7 +44,6 @@ function AiDrivenList() {
         }));
         setAiDrivenData(aiDrivenFormatted);
 
-        // Fetch data based on selected filter
         let fileName = "Realtime_Reports/Final_Report.xlsx";
         if (selectedFilter === "Top Gainers") {
           fileName = "Realtime_Reports/top_gaineres.xlsx";
@@ -67,7 +65,6 @@ function AiDrivenList() {
             prediction: row.ReinforcedDecision === "Buy" ? "Buy" : "Sell",
           }));
         } else {
-          // Format data for Top Gainers and Top Losers with predictions
           formattedData = jsonData.map((row) => {
             const aiPrediction = aiDrivenFormatted.find(
               (aiRow) => aiRow.symbol === row.Ticker
@@ -96,7 +93,6 @@ function AiDrivenList() {
     return () => clearInterval(intervalId);
   }, [selectedFilter]);
 
-  // Close the filter dropdown when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -127,7 +123,6 @@ function AiDrivenList() {
     return matchesSearch && matchesPrediction;
   });
 
-  // Rest of the handler functions remain the same
   const handlePredictionFilter = (filter) => {
     setPredictionFilter(filter);
   };
@@ -140,7 +135,7 @@ function AiDrivenList() {
       setConfirmationModalMessage(
         "Orders can only be placed between 9:15 AM and 3:30 PM IST."
       );
-      setIsConfirmationModalOpen(true); // Open the confirmation modal
+      setIsConfirmationModalOpen(true);
     }
   };
 
@@ -152,7 +147,7 @@ function AiDrivenList() {
       setConfirmationModalMessage(
         "Orders can only be placed between 9:15 AM and 3:30 PM IST."
       );
-      setIsConfirmationModalOpen(true); // Open the confirmation modal
+      setIsConfirmationModalOpen(true);
     }
   };
 
@@ -166,7 +161,6 @@ function AiDrivenList() {
     setModalOpen(false);
   };
 
-  // Render table headers - now includes prediction for all views
   const renderTableHeaders = () => {
     return (
       <tr className="text-sm">
@@ -194,7 +188,6 @@ function AiDrivenList() {
     );
   };
 
-  // Render table rows - now includes prediction buttons for all views
   const renderTableRows = () => {
     return filteredData.map((row, index) => (
       <tr
@@ -241,11 +234,6 @@ function AiDrivenList() {
   return (
     <div
       className="p-3 rounded-lg flex flex-col h-full relative"
-      // style={{
-      //   background:
-      //     "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-      //   height: "calc(100vh - 390px)",
-      // }}
       style={{
         background:
           theme === "light"
@@ -257,22 +245,21 @@ function AiDrivenList() {
       }}
     >
       {/* Header Section */}
-      <div className="flex-shrink-0 justify-between flex items-center border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A]">
-        <h1 className="text-black font-semibold text-md dark:text-white">
+      <div className="flex-shrink-0 justify-between flex flex-col sm:flex-row items-center border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A]">
+        <h1 className="text-black font-semibold text-md dark:text-white mb-2 sm:mb-0">
           AIDrivenList
         </h1>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-white font-semibold text-sm border rounded-xl px-2 py-[1px]"
+            className="bg-transparent text-black dark:text-white font-semibold text-sm border rounded-xl px-2 py-[1px] w-full sm:w-auto"
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Prediction filter buttons - now available for all views */}
+        <div className="flex items-center gap-4 mt-2 sm:mt-0">
           <div className="flex items-center gap-2">
             <button
               onClick={() => handlePredictionFilter("all")}
@@ -310,10 +297,9 @@ function AiDrivenList() {
             </button>
           </div>
 
-          {/* Filter button */}
           <div className="relative">
             <button
-              ref={filterButtonRef} // Attach ref to the filter button
+              ref={filterButtonRef}
               onClick={() => setShowFilter(!showFilter)}
               className={`p-1 rounded-md transition-colors ${
                 showFilter
@@ -329,7 +315,7 @@ function AiDrivenList() {
             </button>
             {showFilter && (
               <div
-                ref={filterRef} // Attach ref to the filter dropdown
+                ref={filterRef}
                 className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg p-3 z-50 min-w-[200px]"
               >
                 <p className="text-[#71717A] text-sm mb-2">Smart Sort</p>
@@ -372,10 +358,12 @@ function AiDrivenList() {
             <Loading />
           </div>
         ) : filteredData.length > 0 ? (
-          <table className="w-full text-sm text-left text-black bg-transparent dark:text-white">
-            <thead>{renderTableHeaders()}</thead>
-            <tbody>{renderTableRows()}</tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-black bg-transparent dark:text-white">
+              <thead>{renderTableHeaders()}</thead>
+              <tbody>{renderTableRows()}</tbody>
+            </table>
+          </div>
         ) : (
           <p className="text-center text-gray-500 text-sm">No results found</p>
         )}

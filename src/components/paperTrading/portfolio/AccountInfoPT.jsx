@@ -8,21 +8,14 @@ function AccountInfoPT() {
   const { currentUser } = useSelector((state) => state.user);
 
   // Use the PaperTrading context
-  const { funds, holdings, positions, loading, profitSummary, investedAmount } =
-    usePaperTrading();
+  const { funds, loading, profitSummary, investedAmount } = usePaperTrading();
 
-  // const investedAmount = Math.abs(
-  //   parseFloat(funds?.reservedFunds) || 0
-  // ).toFixed(2);
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
-  const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
+  const cumulativeProfit = (
+    parseFloat(totalProfit) + parseFloat(todaysProfit)
+  ).toFixed(2);
   const cashBalance = (parseFloat(funds?.availableFunds) || 2000000).toFixed(2);
-
-  // console.log("today", todaysProfit);
-  // console.log("total", totalProfit);
-  // console.log("cummu", cumulativeProfit);
-  
 
   // Helper function to get color based on value
   const getPnLColor = (value) => {
@@ -37,18 +30,22 @@ function AccountInfoPT() {
 
   // Handle loading and error states
   if (loading) return <div>Loading account information...</div>;
-  // if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="flex items-center justify-between py-5">
-      <div className="flex-1">
-        <div className="flex flex-col">
-          <h1 className="font-semibold">Account: {currentUser?.id}</h1>
-          <p>{currentUser?.name}</p>
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">
+      {/* User Info Section */}
+      <div className="flex-1 min-w-[200px]">
+        <div className="flex flex-col text-center lg:text-left">
+          <h1 className="font-semibold text-sm lg:text-lg">
+            Account: {currentUser?.id}
+          </h1>
+          <p className="text-xs lg:text-base">{currentUser?.name}</p>
         </div>
       </div>
-      <div className="flex-1">
-        <div className="flex justify-around gap-3">
+  
+      {/* Cards Section */}
+      <div className="flex-1 w-full lg:w-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
           <Cards
             title="Invested Amount"
             value={investedAmount}
@@ -77,6 +74,7 @@ function AccountInfoPT() {
       </div>
     </div>
   );
+  
 }
 
 export default AccountInfoPT;
