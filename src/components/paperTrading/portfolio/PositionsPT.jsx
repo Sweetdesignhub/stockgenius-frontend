@@ -200,6 +200,9 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                           ? " text-green-500"
                           : " text-red-500";
                     }
+                    else if (columnName === "avgPrice") {
+                      content = parseFloat(position[columnName]).toFixed(2);
+                    }
 
                     return (
                       <td key={`${columnName}-${index}`} className={className}>
