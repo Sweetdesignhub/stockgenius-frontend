@@ -24,6 +24,8 @@ export function PaperTradingProvider({ children }) {
     totalProfit: 0,
   });
   const [investedAmount, setInvestedAmount] = useState(0);
+  // console.log(investedAmount);
+  
 
   const { currentUser } = useSelector((state) => state.user);
 
@@ -78,6 +80,12 @@ export function PaperTradingProvider({ children }) {
           const positionProfit = (currentPrice - avgBuyPrice) * quantity;
           todaysProfit += positionProfit;
 
+          // console.log("avg", avgBuyPrice);
+          // console.log("qty", quantity);
+
+          // console.log("total",avgBuyPrice * quantity );
+          
+          
           // Calculate the invested amount for the position
           const investedInPosition = avgBuyPrice * quantity;
           totalInvested += investedInPosition;

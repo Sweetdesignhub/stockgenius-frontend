@@ -18,9 +18,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const { holdings, loading, realtimePrices } = usePaperTrading();
   const { theme } = useTheme();
 
-  const getBackgroundStyle = () => {
-    return theme === "light" ? "#ffffff" : "#402788";
-  };
+  const getBackgroundStyle = () => (theme === "light" ? "#ffffff" : "#402788");
 
   useEffect(() => {
     if (!loading && isExiting) {
@@ -31,24 +29,19 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const getColumnNames = useMemo(() => {
     if (!holdings || holdings.length === 0) return [];
 
-    const excludedColumns = ["unrealizedPnL"];
-
-    // Reorder columns similar to positions table
-    const orderedColumns = [
+    return [
       "stockSymbol",
       "quantity",
       "averagePrice",
-      "lastTradedPrice",
+      "ltp",
       "pnl",
       "pnlPercentage",
-      "investedValue",
-      "marketValue",
+      "totalInvested",  // Renamed from investedValue
+      "currentValue",    // New column added
       "exchange",
       "_id",
       "actions",
     ];
-
-    return orderedColumns;
   }, [holdings]);
 
   useEffect(() => {
@@ -57,17 +50,14 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
 
   const handleExitClick = (holding) => {
     if (!isWithinTradingHours()) {
-      // If it's outside market hours, show confirmation modal with appropriate message
-      setConfirmationModalMessage(
-        "Orders can only be placed between 9:15 AM and 3:30 PM IST."
-      );
-      setIsConfirmationModalOpen(true); // Open confirmation modal
+      setConfirmationModalMessage("Orders can only be placed between 9:15 AM and 3:30 PM IST.");
+      setIsConfirmationModalOpen(true);
       return;
     }
     setSelectedHolding({
       symbol: holding.stockSymbol,
       quantity: holding.quantity,
-      price: holding.lastTradedPrice,
+      price: holding.ltp,
       action: "SELL",
     });
     setIsOrderModalOpen(true);
@@ -79,8 +69,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
 
   const calculatePnL = (holding, currentPrice) => {
     const pnl = (currentPrice - holding.averagePrice) * holding.quantity;
-    const pnlPercentage =
-      ((currentPrice - holding.averagePrice) / holding.averagePrice) * 100;
+    const pnlPercentage = ((currentPrice - holding.averagePrice) / holding.averagePrice) * 100;
     return { pnl, pnlPercentage };
   };
 
@@ -93,9 +82,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   if (!holdings || holdings.length === 0) {
-    return (
-      <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />
-    );
+    return <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />;
   }
 
   return (
@@ -118,8 +105,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                     columnName === "actions" ? "sticky right-0" : ""
                   }`}
                   style={{
-                    background:
-                      columnName === "actions" ? getBackgroundStyle() : "none",
+                    background: columnName === "actions" ? getBackgroundStyle() : "none",
                     zIndex: columnName === "actions" ? 2 : 1,
                   }}
                 >
@@ -131,15 +117,11 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
           <tbody>
             {holdings.map((holding, index) => {
               const realTimePrice = realtimePrices[holding.stockSymbol];
-              const updatedLastTradedPrice =
-                realTimePrice || holding.lastTradedPrice;
-              const { pnl, pnlPercentage } = calculatePnL(
-                holding,
-                updatedLastTradedPrice
-              );
+              const updatedLtp = realTimePrice || holding.ltp;
+              const { pnl, pnlPercentage } = calculatePnL(holding, updatedLtp);
 
-              // Calculate marketValue
-              const marketValue = updatedLastTradedPrice * holding.quantity;
+              const totalInvested = holding.investedValue; // Renamed column
+              const currentValue = updatedLtp * holding.quantity; // New column logic
 
               return (
                 <tr key={index}>
@@ -159,9 +141,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                             onClick={() => handleExitClick(holding)}
                             disabled={isExiting}
                             className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-red-500 hover:bg-red-600"
+                              isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
                             } text-white`}
                           >
                             <X size={16} />
@@ -171,32 +151,30 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                     }
 
                     let content = holding[columnName];
-                    let className =
-                      "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
+                    let className = "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
 
                     if (columnName === "stockSymbol") {
                       className += " text-[#6FD4FF]";
-                    } else if (columnName === "lastTradedPrice") {
-                      content = updatedLastTradedPrice;
+                    } else if (columnName === "ltp") {
+                      content = updatedLtp.toFixed(2);
                     } else if (columnName === "pnl") {
                       content = pnl.toFixed(2);
-                      className +=
-                        pnl >= 0 ? " text-green-500" : " text-red-500";
+                      className += pnl >= 0 ? " text-green-500" : " text-red-500";
                     } else if (columnName === "pnlPercentage") {
                       content = pnlPercentage.toFixed(2) + "%";
-                      className +=
-                        pnlPercentage >= 0
-                          ? " text-green-500"
-                          : " text-red-500";
-                    } else if (columnName === "marketValue") {
-                      content = marketValue.toFixed(2);
+                      className += pnlPercentage >= 0 ? " text-green-500" : " text-red-500";
+                    } else if (columnName === "averagePrice") {
+                      content = parseFloat(holding[columnName]).toFixed(2);
+                    } else if (columnName === "totalInvested") {
+                      content = totalInvested.toFixed(2);
+                    } else if (columnName === "currentValue") {
+                      content = currentValue.toFixed(2);
+                      className += currentValue > totalInvested ? " text-green-500" : " text-red-500";
                     }
 
                     return (
                       <td key={`${columnName}-${index}`} className={className}>
-                        {content !== undefined && content !== null
-                          ? content
-                          : "-"}
+                        {content !== undefined && content !== null ? content : "-"}
                       </td>
                     );
                   })}

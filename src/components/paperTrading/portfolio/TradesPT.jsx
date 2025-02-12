@@ -75,11 +75,11 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
                     columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
                   }`}
                 >
-                  {["tradeDateTime", "createdAt", "updatedAt"].includes(
-                    columnName
-                  )
-                    ? formatDate(trade[columnName])
-                    : trade[columnName] || ""}
+                 {["tradeDateTime", "createdAt", "updatedAt"].includes(columnName)
+    ? formatDate(trade[columnName])
+    : columnName === "tradeValue"
+    ? parseFloat(trade[columnName]).toFixed(2)
+    : trade[columnName] || ""}
                 </td>
               ))}
             </tr>

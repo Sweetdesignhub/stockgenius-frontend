@@ -29,12 +29,7 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   const getColumnNames = useMemo(() => {
     if (!positions || positions.length === 0) return [];
 
-    const excludedColumns = [
-      "realizedPnL",
-      "unrealizedPnL",
-      // "sellQty",
-      // "sellAvgPrice",
-    ];
+    const excludedColumns = ["realizedPnL", "unrealizedPnL"];
 
     const baseColumns = Object.keys(positions[0] || {}).filter(
       (columnName) => !excludedColumns.includes(columnName)
@@ -46,13 +41,15 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
       "exchange",
       "quantity",
       "avgPrice",
+      "totalInvested",
+      "currentValue",
       "ltp",
       "pnl",
       "pnlPercentage",
       "side",
       "buyQty",
       "buyAvgPrice",
-            "sellQty",
+      "sellQty",
       "productType",
       "_id",
       "actions",
@@ -67,11 +64,10 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
 
   const handleExitClick = (position) => {
     if (!isWithinTradingHours()) {
-      // If it's outside market hours, show confirmation modal with appropriate message
       setConfirmationModalMessage(
         "Orders can only be placed between 9:15 AM and 3:30 PM IST."
       );
-      setIsConfirmationModalOpen(true); // Open confirmation modal
+      setIsConfirmationModalOpen(true);
       return;
     }
     setSelectedPosition({
@@ -152,6 +148,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
               const realTimePrice = realtimePrices[position.stockSymbol];
               const updatedLtp = realTimePrice || position.ltp;
               const { pnl, pnlPercentage } = calculatePnL(position, updatedLtp);
+              const totalInvested = position.quantity * position.avgPrice;
+              const currentValue = updatedLtp * position.quantity; // New Calculation
 
               return (
                 <tr key={index}>
@@ -199,9 +197,17 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                         pnlPercentage >= 0
                           ? " text-green-500"
                           : " text-red-500";
-                    }
-                    else if (columnName === "avgPrice") {
+                    } else if (columnName === "avgPrice") {
                       content = parseFloat(position[columnName]).toFixed(2);
+                    } else if (columnName === "totalInvested") {
+                      content = totalInvested.toFixed(2);
+                    } else if (columnName === "currentValue") {
+                      const currentValue = updatedLtp * position.quantity;
+                      content = currentValue.toFixed(2);
+                      className +=
+                        currentValue > totalInvested
+                          ? " text-green-500"
+                          : " text-red-500";
                     }
 
                     return (

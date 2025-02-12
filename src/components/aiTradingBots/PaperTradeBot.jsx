@@ -16,33 +16,19 @@ import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { useSelector } from "react-redux";
 import api from "../../config";
-import { isWithinTradingHours } from "../../utils/helper";
 import { useTheme } from "../../contexts/ThemeContext";
-import BotDropdown from "./BotDropdown";
 import AutoTradeModal from "../brokers/AutoTradeModal";
 import TradeRatioBar from "./TradeRatioBar";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 
-function PaperTradeBot({
-  botData,
-  isEnabled,
-  onToggle,
-  updateBotDetails,
-  deleteBot,
-  color,
-}) {
+function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
+  const isEnabled = botData?.isActive;
+
   // Use the PaperTrading context
   const { funds, orders, trades, profitSummary, investedAmount } =
     usePaperTrading();
 
-  // console.log("is ena", isEnabled);
-
   const { currentUser } = useSelector((state) => state.user);
-  const [apiBotData, setApiBotData] = useState([]);
-
-  console.log("apibot data", botData);
-
-  const [activeBots, setActiveBots] = useState([]);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
 
@@ -53,8 +39,6 @@ function PaperTradeBot({
   const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
-
-  const currentStatus = botData?.dynamicData?.[0]?.status;
 
   const { theme } = useTheme();
   const valueColor = theme === "dark" ? "white" : "black";
@@ -67,7 +51,6 @@ function PaperTradeBot({
     todaysBotTime: 0,
     currentWeekTime: 0,
   });
-  const [isHistoricalBot, setIsHistoricalBot] = useState(false);
 
   // Get today's date in YYYY-MM-DD format
   const today = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
@@ -100,32 +83,20 @@ function PaperTradeBot({
   const profitGainedValue = calculateProfitGainedValue();
 
   // fetch bot api
-  const fetchBotFromApi = useCallback(
-    async (botId) => {
-      try {
-        const response = await api.get(
-          `/api/v1/autotrade-bots/bots/user/${currentUser.id}`
-        );
+  // const fetchBotFromApi = useCallback(
+  //   async (botId) => {
+  //     try {
+  //       const response = await api.get(
+  //         `/api/v1/autotrade-bots/bots/user/${currentUser.id}`
+  //       );
 
-        setApiBotData(response.data);
-      } catch (error) {
-        console.error("Error fetching bot data from API:", error);
-        setError("Failed to fetch bot data from API.");
-      }
-    },
-    [currentUser.id]
-  );
-
-  useEffect(() => {
-    if (botCreatedDate === today) {
-      // Use context data if bot was created today
-      setApiBotData(botData);
-    } else {
-      // Fetch from API if bot was created on a different date
-
-      fetchBotFromApi(botData._id);
-    }
-  }, [botData, botCreatedDate, today, fetchBotFromApi]);
+  //     } catch (error) {
+  //       console.error("Error fetching bot data from API:", error);
+  //       setError("Failed to fetch bot data from API.");
+  //     }
+  //   },
+  //   [currentUser.id]
+  // );
 
   //update bot api
   const updateBot = async (botId, updateData) => {
@@ -138,7 +109,7 @@ function PaperTradeBot({
 
       if (response.status === 200) {
         // Fetch the updated bot data from the API
-        await fetchBotFromApi(botId);
+        await fetchBots();
       } else {
         console.error("Update failed:", response.statusText);
       }
@@ -148,23 +119,6 @@ function PaperTradeBot({
   };
 
   useEffect(() => {
-    const today = moment().tz("Asia/Kolkata").startOf("day");
-    const botCreatedDate = moment(botData.createdAt)
-      .tz("Asia/Kolkata")
-      .startOf("day");
-    const isCreatedToday = botCreatedDate.isSame(today);
-
-    if (!isCreatedToday) {
-      setIsHistoricalBot(true);
-      // Set initial historical values
-      setBotTime({
-        workingTime: parseInt(botData.dynamicData[0]?.workingTime || 0),
-        todaysBotTime: 0, // Historical bots don't have today's time
-        currentWeekTime: parseInt(botData.dynamicData[0]?.currentWeekTime || 0),
-      });
-      return; // Don't set up WebSocket for historical bots
-    }
-
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
     // const wsUrl = "ws://localhost:8080";
@@ -183,10 +137,6 @@ function PaperTradeBot({
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "botTime") {
-        if (data.isHistorical) {
-          setIsHistoricalBot(true);
-          ws.close();
-        }
         setBotTime({
           workingTime: parseInt(data.workingTime || 0),
           todaysBotTime: parseInt(data.todaysBotTime || 0),
@@ -208,16 +158,16 @@ function PaperTradeBot({
     };
   }, [botData._id, botData.createdAt]);
 
-  const formatTime = useCallback((seconds) => {
-    if (isNaN(seconds) || seconds < 0) {
-      return "0h 0m 0s";
-    }
+  // const formatTime = useCallback((seconds) => {
+  //   if (isNaN(seconds) || seconds < 0) {
+  //     return "0h 0m 0s";
+  //   }
 
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours}h ${minutes}m ${secs}s`;
-  }, []);
+  //   const hours = Math.floor(seconds / 3600);
+  //   const minutes = Math.floor((seconds % 3600) / 60);
+  //   const secs = seconds % 60;
+  //   return `${hours}h ${minutes}m ${secs}s`;
+  // }, []);
 
   const profitPercentage =
     investedAmount > 0
@@ -252,11 +202,11 @@ function PaperTradeBot({
       value: positionTotalPL,
       valueColor,
     },
-    {
-      title: "Working Time",
-      value: formatTime(botTime.workingTime),
-      valueColor,
-    },
+    // {
+    //   title: "Working Time",
+    //   value: formatTime(botTime.workingTime),
+    //   valueColor,
+    // },
     {
       title: "Total Balance",
       value:
@@ -293,8 +243,8 @@ function PaperTradeBot({
     },
     {
       title: "Status",
-      value: botData.isActive ? "Running" : "Inactive", // If isActive is true, show "Running", else "Inactive"
-      valueColor: botData.isActive // Check if the bot is active
+      value: isEnabled ? "Running" : "Inactive", // If isActive is true, show "Running", else "Inactive"
+      valueColor: isEnabled // Check if the bot is active
         ? "#00FF47" // Green for Running
         : "#FF4D4D", // Red for Inactive
     },
@@ -351,7 +301,6 @@ function PaperTradeBot({
   };
 
   const botId = botData?._id;
-  console.log(botId);
 
   // API endpoint based on the bot type
   const getApiEndpoint = (action) => {
@@ -406,17 +355,14 @@ function PaperTradeBot({
           marginLossPercentage: riskPercentage,
         });
 
-        setActiveBots((prevBots) => [
-          ...prevBots,
-          { id: botData._id, type: botData.productType },
-        ]);
-
         console.log("Bot fully activated during trading hours");
       } else {
         console.log(
           "Bot activated outside of trading hours (only isActive updated)"
         );
       }
+
+      await fetchBots();
     } catch (error) {
       console.error("Error activating bot:", error);
     }
@@ -459,127 +405,18 @@ function PaperTradeBot({
         // Hit the deactivation API
         await api.post(getApiEndpoint("deactivate"));
 
-        // Remove the bot from the activeBots state
-        setActiveBots((prevBots) =>
-          prevBots.filter((bot) => bot.id !== botData._id)
-        );
-
         console.log("Bot fully deactivated during trading hours");
       } else {
         console.log(
           "Bot deactivated outside of trading hours (only isActive updated)"
         );
       }
+
+      await fetchBots();
     } catch (error) {
       console.error("Error deactivating bot:", error);
     }
   };
-
-  // // API endpoint based on the bot type
-  // const getApiEndpoint = (action) => {
-  //   const botId = botData?._id;
-
-  //   if (!botId) {
-  //     throw new Error("Bot ID not found");
-  //   }
-
-  //   return `/api/v1/autoTradeBot/${action}/users/${currentUser.id}/bots/${botId}`;
-  // };
-
-  // const activateBot = async () => {
-  //   console.log("activating");
-  //   api.patch(
-  //     `/api/v1/autotrade-bots/users/${currentUser.id}/bots/${botId}/activate`
-  //   );
-
-  //   try {
-  //     const endpoint = getApiEndpoint("activate");
-  //     const { profitPercentage, riskPercentage } = botData;
-
-  //     // Update the bot status
-  //     await updateBot(botData._id, {
-  //       tradeRatio: 50,
-  //       profitGained: profitGainedValue,
-  //       // workingTime: formatTime(workingTime),
-  //       totalBalance:
-  //         createdAt === today
-  //           ? availableFunds
-  //           : botData.dynamicData?.[0]?.totalBalance || "0",
-  //       scheduled: today,
-  //       numberOfTrades:
-  //         createdAt === today
-  //           ? trades.tradeBook?.length || 0
-  //           : botData.dynamicData?.[0]?.numberOfTrades || 0,
-  //       percentageGain: 0,
-  //       status: "Running",
-  //       reInvestment:
-  //         createdAt === today
-  //           ? orders.orderBook?.length || 0
-  //           : botData.dynamicData?.[0]?.reInvestment || 0,
-  //       limits: 0,
-  //     });
-
-  //     // Hit the activation API
-  //     await api.post(endpoint, {
-  //       marginProfitPercentage: profitPercentage,
-  //       marginLossPercentage: riskPercentage,
-  //     });
-
-  //     setActiveBots((prevBots) => [
-  //       ...prevBots,
-  //       { id: botData._id, type: botData.productType },
-  //     ]);
-
-  //     console.log("bot activated");
-  //   } catch (error) {
-  //     console.error("Error activating bot:", error);
-  //   }
-  // };
-
-  // const deactivateBot = async () => {
-  //   try {
-  //     const endpoint = getApiEndpoint("deactivate");
-
-  //     api.patch(
-  //       `/api/v1/autotrade-bots/users/${currentUser.id}/bots/${botId}/activate`
-  //     );
-
-  //     // Hit the deactivation API
-  //     const res = await api.post(endpoint);
-  //     console.log("res", res);
-
-  //     // Update the bot status
-  //     await updateBot(botData._id, {
-  //       tradeRatio: 50,
-  //       profitGained: profitGainedValue,
-  //       // workingTime: formatTime(workingTime),
-  //       totalBalance:
-  //         createdAt === today
-  //           ? availableFunds
-  //           : botData.dynamicData?.[0]?.totalBalance || "0",
-  //       numberOfTrades:
-  //         createdAt === today
-  //           ? trades.tradeBook?.length || 0
-  //           : botData.dynamicData?.[0]?.numberOfTrades || 0,
-  //       percentageGain: 0,
-  //       status: "Inactive",
-  //       reInvestment:
-  //         createdAt === today
-  //           ? orders.orderBook?.length || 0
-  //           : botData.dynamicData?.[0]?.reInvestment || 0,
-  //       limits: 0,
-  //     });
-
-  //     // Remove the bot from the activeBots state
-  //     setActiveBots((prevBots) =>
-  //       prevBots.filter((bot) => bot.id !== botData._id)
-  //     );
-
-  //     console.log("bot deactivated");
-  //   } catch (error) {
-  //     console.error("Error deactivating bot:", error);
-  //   }
-  // };
 
   const handleConfirm = async () => {
     setYesNoModalOpen(false);
@@ -591,7 +428,7 @@ function PaperTradeBot({
         await deactivateBot();
       }
 
-      onToggle();
+      // onToggle();
     } else if (confirmAction === "delete") {
       // Deletion logic
       await deleteBot(botData._id, botData.name);
@@ -612,37 +449,6 @@ function PaperTradeBot({
       "linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)",
     background:
       "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-  };
-
-  // Handle Edit function - triggered when a bot is edited
-  const handleEditBot = async (botId) => {
-    // console.log(`Edit bot with ID: ${botId}`);
-    if (apiBotData.dynamicData[0].status === "Running") {
-      setTitle("Update Error");
-      setMessage("To edit the bot details, please deactivate the bot.");
-      setConfirmationModalOpen(true);
-      return;
-    }
-    setAutoTradeModalOpen(true);
-  };
-
-  // Handle Delete function - triggered when a bot is deleted
-  const handleDeleteBot = async (botId) => {
-    // console.log(`Delete bot with ID: ${botId}`);
-    if (apiBotData.dynamicData[0].status === "Running") {
-      setTitle("Delete Error");
-      setMessage("To delete the bot , please deactivate the bot first.");
-      setConfirmationModalOpen(true);
-      return;
-    }
-
-    setModalTitle("Delete Bot");
-    setModalMessage(
-      `Are you sure you want to delete <strong>${botData.name}</strong>?`
-    );
-    setConfirmAction("delete");
-    setYesNoModalOpen(true);
-    // setBots(bots.filter((bot) => bot.botId !== botId)); // For demonstration purposes, it removes the bot from state.
   };
 
   return (
@@ -731,13 +537,13 @@ function PaperTradeBot({
       {/* // Switch component for toggling */}
       <div className="w-full lg:w-[8%] flex justify-center lg:justify-end mt-4 lg:mt-0">
         <Switch
-          checked={botData.isActive} // Switch state should reflect bot's isActive status
+          checked={isEnabled} // Switch state should reflect bot's isActive status
           onChange={handleToggle} // Call handleToggle on state change
           className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
           <span
             className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              botData.isActive ? "opacity-0" : "opacity-100"
+              isEnabled ? "opacity-0" : "opacity-100"
             }`}
           >
             OFF
@@ -745,7 +551,7 @@ function PaperTradeBot({
 
           <span
             className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              botData.isActive ? "opacity-100" : "opacity-0"
+              isEnabled ? "opacity-100" : "opacity-0"
             }`}
           >
             ON

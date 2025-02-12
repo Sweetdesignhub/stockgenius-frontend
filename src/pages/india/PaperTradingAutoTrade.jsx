@@ -9,11 +9,6 @@ import NotAvailable from "../../components/common/NotAvailable";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 import moment from "moment-timezone";
 import Loading from "../../components/common/Loading";
-import {
-  isAfterMarketClose,
-  isBeforeMarketOpen,
-  isWithinTradingHours,
-} from "../../utils/helper";
 import PaperTradeBot from "../../components/aiTradingBots/PaperTradeBot";
 
 // Define an array of colors for the bots
@@ -27,18 +22,6 @@ const botColors = [
   "#F68F20",
   "#20F68F",
 ];
-
-const getBotStatus = (isActive) => {
-  if (isAfterMarketClose()) {
-    return "Inactive";
-  } else if (isWithinTradingHours()) {
-    return isActive ? "Running" : "Inactive";
-  } else if (isBeforeMarketOpen()) {
-    return isActive ? "Schedule" : "Inactive";
-  } else {
-    return "Inactive";
-  }
-};
 
 function Cards({ title, value }) {
   const { theme } = useTheme();
@@ -67,14 +50,11 @@ function Cards({ title, value }) {
 
 const PaperTradingAutoTrade = () => {
   const [botDataList, setBotDataList] = useState([]);
-  const [botStates, setBotStates] = useState({});
   const [autoTradeModalOpen, setAutoTradeModalOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
-  const [confirmationAction, setConfirmationAction] = useState(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [togglingBotId, setTogglingBotId] = useState(null);
 
   const [botColorMap, setBotColorMap] = useState({});
   const location = useLocation();
@@ -88,14 +68,8 @@ const PaperTradingAutoTrade = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   // Use the PaperTrading context
-  const {
-    holdings,
-    positions,
-    orders,
-    loading,
-    profitSummary,
-    investedAmount,
-  } = usePaperTrading();
+  const { holdings, positions, orders, profitSummary, investedAmount } =
+    usePaperTrading();
 
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const totalProfit = (
@@ -118,17 +92,6 @@ const PaperTradingAutoTrade = () => {
 
       setBotDataList(sortedBots);
 
-      setBotStates(
-        sortedBots.reduce((acc, bot) => {
-          acc[bot._id] = {
-            isActive:
-              bot.dynamicData[0]?.status === "Running" ||
-              bot.dynamicData[0]?.status === "Schedule",
-          };
-          return acc;
-        }, {})
-      );
-
       // Assign colors to bots
       const colorMap = {};
       sortedBots.forEach((bot, index) => {
@@ -145,27 +108,6 @@ const PaperTradingAutoTrade = () => {
   useEffect(() => {
     fetchBots();
   }, [currentUser.id]);
-
-  useEffect(() => {
-    const updateBotStates = () => {
-      setBotStates((prevStates) => {
-        const newStates = {};
-        for (const botId of Object.keys(prevStates)) {
-          const { isActive } = prevStates[botId];
-          newStates[botId] = {
-            isActive,
-            status: getBotStatus(isActive),
-          };
-        }
-        return newStates;
-      });
-    };
-
-    updateBotStates(); // Initial call
-    const interval = setInterval(updateBotStates, 60000); // Update every minute
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
 
   const createBot = async (botData) => {
     try {
@@ -217,80 +159,6 @@ const PaperTradingAutoTrade = () => {
       setMessage(error.response.data.message);
       setConfirmationOpen(true);
     }
-  };
-
-  const deleteBot = async (botId, botName) => {
-    try {
-      const response = await api.delete(`/api/v1/autotrade-bots/bots/${botId}`);
-      if (response.status === 200) {
-        // Remove the deleted bot from the state immediately
-        setBotDataList((prevBotDataList) =>
-          prevBotDataList.filter((bot) => bot._id !== botId)
-        );
-        await fetchBots();
-        setTitle("Bot Deleted");
-        setMessage(`${botName} has been successfully deleted.`);
-        setConfirmationOpen(true);
-      } else {
-        console.error("Deletion failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting bot:", error.response.data.message);
-      setTitle("Error");
-      setMessage(error.response.data.message);
-      setConfirmationOpen(true);
-    }
-  };
-
-  const handleToggle = async (botId) => {
-    // if (isAfterMarketClose()) {
-    //   setTitle("Action Not Allowed");
-    //   setMessage("You can't activate the bot after market closes.");
-    //   setConfirmationAction(() => () => setConfirmationOpen(false));
-    //   setConfirmationOpen(true);
-    //   return;
-    // }
-
-    setTogglingBotId(botId);
-
-    try {
-      const bot = botDataList.find((b) => b._id === botId);
-      const currentStatus = bot.dynamicData[0]?.status;
-      let newStatus;
-
-      if (currentStatus === "Running" || currentStatus === "Schedule") {
-        newStatus = "Inactive";
-      } else {
-        if (isWithinTradingHours()) {
-          newStatus = "Running";
-        } else if (isBeforeMarketOpen()) {
-          newStatus = "Schedule";
-        } else {
-          newStatus = "Inactive";
-        }
-      }
-
-      setBotStates((prevStates) => ({
-        ...prevStates,
-        [botId]: {
-          isActive: newStatus === "Running" || newStatus === "Schedule",
-          status: newStatus,
-        },
-      }));
-
-      await fetchBots(); // Refetch bots to get updated data
-    } catch (error) {
-      console.error("Error toggling bot status:", error);
-      setTitle("Error");
-      setMessage("Failed to update bot status. Please try again.");
-      setConfirmationOpen(true);
-    } finally {
-      setTogglingBotId(null);
-    }
-  };
-
-  const handleScheduleTrade = () => {
-    setAutoTradeModalOpen(true);
   };
 
   const handleConfirmationClose = () => {
@@ -417,10 +285,10 @@ const PaperTradingAutoTrade = () => {
         title: "Today's Profit %",
         value: `${profitPercentage}%`,
       },
-      {
-        title: "Today's Bot Time",
-        value: formatTime(allBotsTime.totalTodaysBotTime),
-      },
+      // {
+      //   title: "Today's Bot Time",
+      //   value: formatTime(allBotsTime.totalTodaysBotTime),
+      // },
       // {
       //   title: "Week's Bot Time",
       //   value: formatTime(allBotsTime.totalCurrentWeekTime),
@@ -469,14 +337,6 @@ const PaperTradingAutoTrade = () => {
             <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
               AI Trading Bots
             </h2>
-            {/* <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto">
-              <button
-                className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
-                onClick={handleScheduleTrade}
-              >
-                <span>Schedule Bot</span>
-              </button>
-            </div>  */}
 
             <div className="flex gap-3">
               <div className="relative group">
@@ -510,7 +370,7 @@ const PaperTradingAutoTrade = () => {
             </div>
           </div>
           <div className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-7 gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-6 gap-2">
               {calculateCardData.map((card, index) => (
                 <Cards key={index} title={card.title} value={card.value} />
               ))}
@@ -528,14 +388,10 @@ const PaperTradingAutoTrade = () => {
                   <PaperTradeBot
                     key={bot._id}
                     botData={bot}
-                    isEnabled={botStates[bot._id].isActive}
-                    onToggle={() => handleToggle(bot._id)}
                     updateBotDetails={updateBotDetails}
-                    deleteBot={deleteBot}
-                    loading={togglingBotId === bot._id} // Pass loading state to individual bot
                     color={botColorMap[bot._id]}
+                    fetchBots={fetchBots}
                   />
-                  
                 ))
               ) : (
                 <div>
@@ -560,6 +416,7 @@ const PaperTradingAutoTrade = () => {
           title={title}
           message={message}
           onConfirm={handleConfirmationClose}
+          fetchBots={fetchBots}
         />
       )}
     </div>

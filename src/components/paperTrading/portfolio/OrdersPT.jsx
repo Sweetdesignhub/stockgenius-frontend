@@ -7,29 +7,24 @@ import { useTheme } from "../../../contexts/ThemeContext.jsx";
 
 const OrdersPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
-
   const { orders = [], loading } = usePaperTrading();
-  const ordersData = orders || [];
   const { theme } = useTheme();
 
   useEffect(() => {
-    if (ordersData.length > 0) {
-      const excludedColumns = [
-        "disclosedQuantity",
-        "autoTrade",
-        "createdAt",
-        "updatedAt",
-        "_id",
-      ];
-      const allColumnNames = Object.keys(ordersData[0] || {}).filter(
+    if (orders.length > 0) {
+      const excludedColumns = ["disclosedQuantity", "createdAt", "updatedAt", "_id"];
+      let allColumnNames = Object.keys(orders[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
+
+      // Ensure "autoTrade" is the 2nd column
+      allColumnNames = ["stockSymbol", "autoTrade", ...allColumnNames.filter(col => col !== "autoTrade")];
 
       setColumnNames(allColumnNames);
     } else {
       setColumnNames([]);
     }
-  }, [ordersData, setColumnNames]);
+  }, [orders, setColumnNames]);
 
   if (loading) {
     return (
@@ -43,10 +38,8 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
     return <div className="text-center p-4 text-red-500">{error}</div>;
   }
 
-  if (!ordersData || ordersData.length === 0) {
-    return (
-      <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />
-    );
+  if (!orders || orders.length === 0) {
+    return <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />;
   }
 
   return (
@@ -66,13 +59,13 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
                 key={columnName}
                 className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
               >
-                {columnName}
+                {columnName === "orderTime" ? "Order Time (IST)" : columnName}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {ordersData.map((order, index) => (
+          {orders.map((order, index) => (
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
@@ -81,9 +74,11 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
                     columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
                   }`}
                 >
-                  {["orderTime", "createdAt", "updatedAt"].includes(columnName)
-                    ? formatDate(order[columnName])
-                    : order[columnName] || ""}
+                  {columnName === "orderTime"
+                    ? formatDate(order[columnName]) // Date & time in IST
+                    : columnName === "autoTrade"
+                    ? order[columnName] ? "Yes" : "No" // Display Yes/No for autoTrade
+                    : order[columnName] || "-"}
                 </td>
               ))}
             </tr>
