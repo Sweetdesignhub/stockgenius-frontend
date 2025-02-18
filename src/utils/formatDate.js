@@ -18,21 +18,24 @@ export const formatDate = (dateString) => {
   const date = new Date(dateString);
   if (isNaN(date)) return "";
 
-  // Convert to IST (Indian Standard Time)
-  const options = {
+  // Convert to IST using toLocaleString (Strict)
+  const istDateString = new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata",
-    hour12: false, // 24-hour format
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-  };
+    hour12: false, // 24-hour format
+  }).format(date);
 
-  const day = date.getDate();
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const month = monthNames[date.getMonth()];
-  const year = date.getFullYear();
-  const ordinalSuffix = getOrdinalSuffix(day);
-  const time = new Intl.DateTimeFormat("en-IN", options).format(date);
+  // Extract parts correctly
+  const [day, month, year, time] = istDateString.replace(",", "").split(" ");
 
-  return `${day}${ordinalSuffix}-${month}-${year} ,  ${time} IST`;
+  // Get ordinal suffix
+  const dayNumber = parseInt(day, 10);
+  const ordinalSuffix = getOrdinalSuffix(dayNumber);
+
+  return `${dayNumber}${ordinalSuffix}-${month}-${year} , ${time}`;
 };
