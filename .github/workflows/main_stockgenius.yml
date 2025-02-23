@@ -9,7 +9,6 @@ on:
       - main
   workflow_dispatch:
 
-# Define all environment variables from GitHub Repository Variables
 env:
   VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
   NODE_ENV: ${{ vars.NODE_ENV }}
@@ -24,10 +23,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
 
@@ -38,7 +37,7 @@ jobs:
           npm run test --if-present
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # ✅ Updated to v4
         with:
           name: node-app
           path: dist # Update with your actual build output folder
@@ -52,7 +51,7 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4  # ✅ Updated to v4
         with:
           name: node-app
 
