@@ -31,10 +31,10 @@ function AiDrivenList() {
       setIsLoading(true);
 
       try {
-        const bucketName = "automationdatabucket";
+        const containerName = "sgaiindia";
 
         const aiDrivenBuffer = await fetchFile(
-          bucketName,
+          containerName,
           "Realtime_Reports/Final_Report.xlsx"
         );
         const aiDrivenJson = parseExcel(aiDrivenBuffer);
@@ -51,7 +51,7 @@ function AiDrivenList() {
           fileName = "Realtime_Reports/top_losers.xlsx";
         }
 
-        const fileBuffer = await fetchFile(bucketName, fileName);
+        const fileBuffer = await fetchFile(containerName, fileName);
         const jsonData = parseExcel(fileBuffer);
 
         let formattedData;

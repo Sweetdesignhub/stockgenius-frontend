@@ -99,9 +99,9 @@ function DailyUpdates() {
     const fetchStockData = async () => {
       setLoading(true); // Step 2: Set loading to true when fetching data
       try {
-        const bucketName = "automationdatabucket";
+        const containerName = "sgaiindia";
         const fileName = "Realtime_Reports/Final_Report.xlsx";
-        const fileBuffer = await fetchFile(bucketName, fileName);
+        const fileBuffer = await fetchFile(containerName, fileName);
         const jsonData = parseExcel(fileBuffer);
 
         const formattedData = jsonData.map((row) => ({

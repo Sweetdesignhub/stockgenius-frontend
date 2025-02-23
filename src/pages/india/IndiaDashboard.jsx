@@ -21,8 +21,8 @@ import Modal from "../../components/common/Modal";
 import BrokerModal from "../../components/brokers/BrokerModal";
 import api from "../../config.js";
 
-const bucketName = "automationdatabucket";
-const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
+const containerName = "sgaiindia"; 
+const gainerFile = "Realtime_Reports/top_gainers.xlsx";
 const loserFile = "Realtime_Reports/top_losers.xlsx";
 
 const IndiaDashboard = () => {
@@ -45,22 +45,25 @@ const IndiaDashboard = () => {
     useSelector((state) => state.zerodha) ||
     localStorage.getItem("zerodha_access_token");
 
-  const fetchData = async () => {
-    try {
-      const [gainersFileData, losersFileData] = await Promise.all([
-        fetchFile(bucketName, gainerFile),
-        fetchFile(bucketName, loserFile),
-      ]);
-      const gainersJsonData = parseExcel(gainersFileData);
-      const losersJsonData = parseExcel(losersFileData);
-      setGainersData(gainersJsonData);
-      setLosersData(losersJsonData);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+    const fetchData = async () => {
+      try {
+        const [gainersFileData, losersFileData] = await Promise.all([
+          fetchFile(containerName, gainerFile),
+          fetchFile(containerName, loserFile),
+        ]);
+  
+        const gainersJsonData = parseExcel(gainersFileData);
+        const losersJsonData = parseExcel(losersFileData);
+  
+        setGainersData(gainersJsonData);
+        setLosersData(losersJsonData);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
     fetchData();

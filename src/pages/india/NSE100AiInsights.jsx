@@ -57,13 +57,13 @@ function NSE100AiInsights() {
     setQuantity(parseInt(event.target.value));
   };
 
-  const bucketName = "automationdatabucket";
+  const containerName = "sgaiindia";
   const fileName = "Realtime_Reports/Final_Report.xlsx";
   const timeFileName = "Realtime_Reports/last_run_time.json";
 
   const fetchData = async () => {
     try {
-      const fileData = await fetchFile(bucketName, fileName);
+      const fileData = await fetchFile(containerName, fileName);
       const jsonData = parseExcel(fileData);
       const sortedData = jsonData.sort(
         (a, b) => parseFloat(b.ROI) - parseFloat(a.ROI)
@@ -71,7 +71,7 @@ function NSE100AiInsights() {
       setData(sortedData);
       setFilteredData(sortedData);
       // Fetch the last updated time
-      const timeFileData = await fetchFile(bucketName, timeFileName);
+      const timeFileData = await fetchFile(containerName, timeFileName);
 
       // Convert the ArrayBuffer to a string
       const decoder = new TextDecoder("utf-8");
