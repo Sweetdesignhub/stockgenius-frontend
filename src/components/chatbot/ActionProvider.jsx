@@ -224,7 +224,8 @@ class ActionProvider {
         { ticker }
       );
 
-      const summary = response.data?.Summary?.Summary?.highlights || "No summary available.";
+      const summary = response.data?.Summary || "No summary available.";
+      
 
       const newsMessage = this.createChatBotMessage(summary, {
         loading: false,

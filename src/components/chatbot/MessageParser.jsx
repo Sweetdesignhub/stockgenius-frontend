@@ -77,7 +77,7 @@ class MessageParser {
 
   parse(message) {
     message = message.toLowerCase();
-    console.log(message);
+    // console.log(message);
 
     if (message.includes("relevant news")) {
       return this.actionProvider.askForTicker();

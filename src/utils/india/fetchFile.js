@@ -39,21 +39,25 @@ const fetchFile = async (containerName, blobName) => {
   const accountName = import.meta.env.VITE_AZURE_STORAGE_ACCOUNT_NAME;
   const sasToken = import.meta.env.VITE_AZURE_STORAGE_SAS_TOKEN;
 
-  // Construct the Blob URL
-  const blobUrl = `https://${accountName}.blob.core.windows.net/${containerName}/${blobName}?${sasToken}`;
+  if (!accountName || !sasToken) {
+    throw new Error("Azure Storage credentials are missing in .env");
+  }
+
+  // Ensure the SAS token does not have duplicate '?'
+  const formattedSasToken = sasToken.startsWith("?") ? sasToken : `?${sasToken}`;
+  const blobUrl = `https://${accountName}.blob.core.windows.net/${containerName}/${blobName}${formattedSasToken}`;
+  
   // console.log("Fetching from URL:", blobUrl);
 
   try {
     const response = await fetch(blobUrl);
     
-    // Handle potential errors
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
     }
 
-    // Convert response to an ArrayBuffer (Fix for getReader() issue)
-    const arrayBuffer = await response.arrayBuffer();
-    return arrayBuffer;
+    // Convert response to ArrayBuffer
+    return await response.arrayBuffer();
   } catch (error) {
     console.error("Error fetching the file:", error);
     throw error;
@@ -61,3 +65,4 @@ const fetchFile = async (containerName, blobName) => {
 };
 
 export default fetchFile;
+

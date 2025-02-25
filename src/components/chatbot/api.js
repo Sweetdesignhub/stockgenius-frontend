@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://chatbot.stockgenius.ai/Chatbot";
+const API_BASE_URL = "https://chatbot.stockgenius.ai";
 
 // Define API endpoints
 const endpoints = {

@@ -133,11 +133,6 @@ function MainApp() {
 
   const location = useLocation();
 
-  console.log("AWS Region India: ", import.meta.env.VITE_AWS_REGION_INDIA);
-console.log("AWS Region USA:", import.meta.env.VITE_AWS_REGION_USA);
-console.log("Google Client ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-
-
   // Pages where chatbot should appear
   const chatbotPages = ["/india/dashboard"];
 
