@@ -510,9 +510,15 @@ function NSE100AiInsights() {
                     {filteredData.map((row, rowIndex) => (
                       <tr key={rowIndex}>
                         {decision.map((column, colIndex) => {
-                          const cellValue = row[column];
-                          const isSell = cellValue.toLowerCase() === "sell";
-                          const isBuy = cellValue.toLowerCase() === "buy";
+                          if (column !== "ReinforcedDecision") return null; // Only render this column
+
+                          const cellValue = row[column] || ""; // Default to empty string to prevent errors
+                          const isSell =
+                            typeof cellValue === "string" &&
+                            cellValue.toLowerCase() === "sell";
+                          const isBuy =
+                            typeof cellValue === "string" &&
+                            cellValue.toLowerCase() === "buy";
 
                           return (
                             <td
