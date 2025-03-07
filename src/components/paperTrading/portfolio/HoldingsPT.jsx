@@ -7,6 +7,8 @@ import PlaceOrderModal from "../PlaceOrderModal";
 import { X } from "lucide-react";
 import { isWithinTradingHours } from "../../../utils/helper.js";
 import ConfirmationModal from "../../common/ConfirmationModal.jsx";
+import { useSelector } from "react-redux";
+import { fetchAllPaperTradingData } from "../../../paperTradingApi";
 
 const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -15,16 +17,44 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [confirmationModalMessage, setConfirmationModalMessage] = useState("");
-  const { holdings, loading, realtimePrices } = usePaperTrading();
-  const { theme } = useTheme();
+  // const { holdings, loading, realtimePrices } = usePaperTrading();
+  const [holdings, setHoldings] = useState([]);
 
+  const { theme } = useTheme();
+  const [usersId, setUsersId] = useState("");
+
+  const auth = useSelector((state) => state.user?.currentUser);
+
+  useEffect(() => {
+    if (auth?.id) {
+      setUsersId(auth.id);
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    if (!usersId) return;
+
+    const fetchData = async () => {
+      try {
+        console.log("cdsuhvbcuadbvjhcbadjb");
+        const dataPaperTrading = await fetchAllPaperTradingData(usersId);
+        console.log("Paper Trading Data fetched from fetchAllPaperTradingData Inside ordersPT:", dataPaperTrading.orders?.orders[0].orders);
+
+        setHoldings(dataPaperTrading.holdings.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [usersId]);
   const getBackgroundStyle = () => (theme === "light" ? "#ffffff" : "#402788");
 
   useEffect(() => {
-    if (!loading && isExiting) {
+    if (isExiting) {
       setIsExiting(false);
     }
-  }, [holdings, loading]);
+  }, [holdings]);
 
   const getColumnNames = useMemo(() => {
     if (!holdings || holdings.length === 0) return [];
@@ -73,13 +103,13 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
     return { pnl, pnlPercentage };
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-40 items-center justify-center p-4">
-        <Loading />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-40 items-center justify-center p-4">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   if (!holdings || holdings.length === 0) {
     return <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />;
@@ -101,9 +131,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <th
                   key={columnName}
-                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
-                    columnName === "actions" ? "sticky right-0" : ""
-                  }`}
+                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${columnName === "actions" ? "sticky right-0" : ""
+                    }`}
                   style={{
                     background: columnName === "actions" ? getBackgroundStyle() : "none",
                     zIndex: columnName === "actions" ? 2 : 1,
@@ -116,8 +145,10 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
           </thead>
           <tbody>
             {holdings.map((holding, index) => {
-              const realTimePrice = realtimePrices[holding.stockSymbol];
-              const updatedLtp = realTimePrice || holding.ltp;
+              // const realTimePrice = realtimePrices[holding.stockSymbol];
+              // const updatedLtp = realTimePrice || holding.ltp;
+              const updatedLtp = holding.lastTradedPrice;
+              console.log("The LTP is: ", holding);
               const { pnl, pnlPercentage } = calculatePnL(holding, updatedLtp);
 
               const totalInvested = holding.investedValue; // Renamed column
@@ -140,9 +171,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                           <button
                             onClick={() => handleExitClick(holding)}
                             disabled={isExiting}
-                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
-                            } text-white`}
+                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+                              } text-white`}
                           >
                             <X size={16} />
                           </button>

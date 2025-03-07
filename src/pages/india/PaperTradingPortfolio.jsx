@@ -4,6 +4,7 @@ import StockDetailsPT from "../../components/paperTrading/portfolio/StockDetails
 import HeaderPT from "../../components/paperTrading/portfolio/HeaderPT";
 
 function PaperTradingPortfolio() {
+  
   return (
     <div className="-z-10">
       <div className="min-h-screen lg:px-32 p-4 relative">

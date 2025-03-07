@@ -128,6 +128,7 @@ import ConfirmationModal from '../components/common/ConfirmationModal';
 import { Eye, EyeOff } from 'lucide-react';
 
 function SignIn() {
+  console.log("Sign In")
   const [formData, setFormData] = useState({});
   const [useOTP, setUseOTP] = useState(false);
   const [load, setLoad] = useState(false);

@@ -7,11 +7,20 @@ function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
 
   // Accessing funds and positions from context
-  const { funds, positions, loading, profitSummary,investedAmount } = usePaperTrading();
-
+  const { funds, positions, loading, profitSummary, investedAmount } =
+    usePaperTrading();
+  console.log("Using Paper Trading: ", {
+    funds,
+    positions,
+    loading,
+    profitSummary,
+    investedAmount,
+  });
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
-  const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
+  const cumulativeProfit = (
+    parseFloat(totalProfit) + parseFloat(todaysProfit)
+  ).toFixed(2);
 
   const cashBalance = (parseFloat(funds?.availableFunds) || 2000000).toFixed(2);
 
@@ -45,7 +54,7 @@ function AccountDetailsPT({ userId }) {
       bgColor: getPnLColor(cumulativeProfit).bgColor,
     },
     {
-      title: "Today's P&L",
+      title: "Day's P&L",
       value: todaysProfit,
       valueColor: getPnLColor(todaysProfit).textColor,
       width: "w-100px",

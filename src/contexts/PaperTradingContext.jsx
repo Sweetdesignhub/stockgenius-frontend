@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import { useSelector } from "react-redux";
 import api from "../config";
+import axios from "axios";
+import { fetchAllPaperTradingData } from "../paperTradingApi.js";
 
 const PaperTradingContext = createContext();
 
@@ -25,12 +27,12 @@ export function PaperTradingProvider({ children }) {
   });
   const [investedAmount, setInvestedAmount] = useState(0);
   // console.log(investedAmount);
-  
 
   const { currentUser } = useSelector((state) => state.user);
 
   const fetchRealtimePrices = useCallback(async (symbols) => {
     try {
+      console.log("Inside Fetch Real Time Prices");
       const pricePromises = symbols.map((symbol) =>
         api
           .get(`/api/v1/stocks/price/${symbol}`)
@@ -57,7 +59,7 @@ export function PaperTradingProvider({ children }) {
         ...prevPrices,
         ...priceMap,
       }));
-
+      console.log("Working", priceMap);
       return priceMap;
     } catch (error) {
       console.error("Error fetching real-time prices:", error);
@@ -84,8 +86,7 @@ export function PaperTradingProvider({ children }) {
           // console.log("qty", quantity);
 
           // console.log("total",avgBuyPrice * quantity );
-          
-          
+
           // Calculate the invested amount for the position
           const investedInPosition = avgBuyPrice * quantity;
           totalInvested += investedInPosition;
@@ -120,39 +121,60 @@ export function PaperTradingProvider({ children }) {
 
   const fetchPaperTradingData = useCallback(async () => {
     try {
+      console.log("Inside fetchPaperTradingData");
       const userId = currentUser?.id;
+      // const userId = "66fb6e900665edf9447ca673";
+      console.log("user Id: ", userId);
       if (!userId) {
         setError("User not found");
         return;
       }
-  
-      const response = await api.get(`/api/v1/paper-trading/data/${userId}`);
-      const data = response.data.data;
-  
-      const positionsArray = data.positions?.netPositions || [];
-      const holdingsArray = data.holdings?.holdings || [];
-  
-      setFunds(data.funds || {});
-      setPositions(positionsArray);
-      setHoldings(holdingsArray);
-      setTrades(Array.isArray(data.trades) ? data.trades : []);
-      setOrders(Array.isArray(data.orders) ? data.orders : []);
-  
+
+      const dataPaperTrading = await fetchAllPaperTradingData(userId);
+      console.log("Paper Trading Data from the context: ", dataPaperTrading);
+
+      
+      const data = dataPaperTrading.data;
+      console.log(
+        "Data fetched dataPaperTrading.data is :",
+        dataPaperTrading.positions
+      );
+      const positionsArray = dataPaperTrading.positions || [];
+      const holdingsArray = dataPaperTrading.holdings.data || [];
+
+      setFunds(dataPaperTrading.funds || {});
+      setPositions(dataPaperTrading.positions);
+      setHoldings(dataPaperTrading.holdings.data);
+      setTrades(
+        Array.isArray(dataPaperTrading.trades.data[0].trades)
+          ? dataPaperTrading.trades.data[0].trades
+          : []
+      );
+      setOrders(
+        Array.isArray(dataPaperTrading.orders?.orders)
+          ? dataPaperTrading.orders?.orders
+          : []
+      );
+
+      // console.log("Positions are: ", positions);
+
       const positionSymbols = positionsArray
         .map((p) => p.stockSymbol)
         .filter(Boolean);
-  
+
       const holdingSymbols = holdingsArray
         .map((h) => h.stockSymbol)
         .filter(Boolean);
-  
+
       const uniqueSymbols = [
         ...new Set([...positionSymbols, ...holdingSymbols]),
       ];
-  
+
       if (uniqueSymbols.length > 0) {
         const prices = await fetchRealtimePrices(uniqueSymbols);
-  
+
+        console.log("Unique Symbols: ", uniqueSymbols);
+        console.log("Prices Symbols: ", prices);
         // Calculate profits after updating data
         calculateProfits(prices, positionsArray, holdingsArray);
       } else {
@@ -164,7 +186,6 @@ export function PaperTradingProvider({ children }) {
       console.error("Error fetching data:", error);
     }
   }, [currentUser?.id, fetchRealtimePrices, calculateProfits]);
-  
 
   useEffect(() => {
     if (currentUser?.id) {

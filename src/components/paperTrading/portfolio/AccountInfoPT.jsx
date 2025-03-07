@@ -42,7 +42,7 @@ function AccountInfoPT() {
           <p className="text-xs lg:text-base">{currentUser?.name}</p>
         </div>
       </div>
-  
+
       {/* Cards Section */}
       <div className="flex-1 w-full lg:w-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
@@ -59,7 +59,7 @@ function AccountInfoPT() {
             bgColor={getPnLColor(cumulativeProfit).bgColor}
           />
           <Cards
-            title="Today's P&L"
+            title="Day's P&L"
             value={todaysProfit}
             valueColor={getPnLColor(todaysProfit).textColor}
             bgColor={getPnLColor(todaysProfit).bgColor}
@@ -74,7 +74,7 @@ function AccountInfoPT() {
       </div>
     </div>
   );
-  
+
 }
 
 export default AccountInfoPT;

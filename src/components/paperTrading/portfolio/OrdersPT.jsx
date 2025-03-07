@@ -4,10 +4,43 @@ import NotAvailable from "../../common/NotAvailable.jsx";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext.jsx";
 import { formatDate } from "../../../utils/formatDate.js";
 import { useTheme } from "../../../contexts/ThemeContext.jsx";
+import { useSelector } from "react-redux";
+import { fetchAllPaperTradingData } from "../../../paperTradingApi";
 
 const OrdersPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
-  const { orders = [], loading } = usePaperTrading();
+  const [orders, setOrders] = useState([]);
+  console.log("Inside OrderPT");
+  console.log({ selectedColumns, setColumnNames });
+  const [usersId, setUsersId] = useState("");
+
+  const auth = useSelector((state) => state.user?.currentUser);
+
+  console.log("Orders are: ", orders);
+  useEffect(() => {
+    if (auth?.id) {
+      setUsersId(auth.id);
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    if (!usersId) return;
+
+    const fetchData = async () => {
+      try {
+        console.log("cdsuhvbcuadbvjhcbadjb");
+        const dataPaperTrading = await fetchAllPaperTradingData(usersId);
+        console.log("Paper Trading Data fetched from fetchAllPaperTradingData Inside ordersPT:", dataPaperTrading.orders?.orders[0].orders);
+
+        setOrders(Array.isArray(dataPaperTrading.orders?.orders[0].orders) ? dataPaperTrading.orders?.orders[0].orders : []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [usersId]);
+  // const { orders = [], loading } = usePaperTrading();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -26,13 +59,13 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
     }
   }, [orders, setColumnNames]);
 
-  if (loading) {
-    return (
-      <div className="flex h-40 items-center justify-center p-4">
-        <Loading />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-40 items-center justify-center p-4">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return <div className="text-center p-4 text-red-500">{error}</div>;
@@ -70,15 +103,14 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
-                    columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
-                  }`}
+                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
+                    }`}
                 >
                   {columnName === "orderTime"
                     ? formatDate(order[columnName]) // Date & time in IST
                     : columnName === "autoTrade"
-                    ? order[columnName] ? "Yes" : "No" // Display Yes/No for autoTrade
-                    : order[columnName] || "-"}
+                      ? order[columnName] ? "Yes" : "No" // Display Yes/No for autoTrade
+                      : order[columnName] || "-"}
                 </td>
               ))}
             </tr>
