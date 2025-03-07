@@ -70,7 +70,6 @@
 // //     }
 // //   };
 
-
 // //   formatSummary(summary) {
 // //     const lines = summary
 // //       .replace(/\*\*/g, "") // Remove any bold markdown (double asterisks)
@@ -107,7 +106,6 @@
 // // export default ActionProvider;
 
 // // src/chatbot/ActionProvider.js
-
 
 // class ActionProvider {
 //   constructor(createChatBotMessage, setStateFunc, createClientMessage) {
@@ -171,13 +169,11 @@
 //     this.addMessageToState(message);
 //   };
 
-
 //   handleThanks = () => {
 //     const message = this.createChatBotMessage("You're welcome!");
 
 //     this.addMessageToState(message);
 //   };
-
 
 //   addMessageToState = (message) => {
 //     this.setState((state) => ({
@@ -188,7 +184,6 @@
 // }
 
 // export default ActionProvider;
-
 
 // import axios from "axios";
 // import HistoricalPerformanceChart from "./widgets/HistoricalPerformanceChart";
@@ -225,7 +220,6 @@
 //       );
 
 //       const summary = response.data?.Summary || "No summary available.";
-
 
 //       const newsMessage = this.createChatBotMessage(summary, {
 //         loading: false,
@@ -361,9 +355,6 @@
 //     }
 //   };
 
-
-
-
 //   addMessageToState = (message) => {
 //     this.setState((state) => ({
 //       ...state,
@@ -387,7 +378,6 @@ class ActionProvider {
   // works
   // Existing methods for stock-specific queries
   askForTicker = () => {
-
     console.log("Inside Send To ask for ticker: ");
     const message = this.createChatBotMessage(
       "Please enter the ticker symbol you'd like to get news for."
@@ -487,7 +477,10 @@ class ActionProvider {
           `Sorry, no profile data found for ${ticker}.`
         );
         this.addMessageToState(noProfileMessage);
-        this.setState((state) => ({ ...state, awaitingTickerForProfile: false }));
+        this.setState((state) => ({
+          ...state,
+          awaitingTickerForProfile: false,
+        }));
       }
     } catch (error) {
       const errorMessage = this.createChatBotMessage(
@@ -550,18 +543,20 @@ class ActionProvider {
       messages: [...state.messages, message],
     }));
 
-    const loadingMessage = this.createChatBotMessage("Processing your query...", {
-      loading: true,
-      withAvatar: true,
-    });
+    const loadingMessage = this.createChatBotMessage(
+      "Processing your query...",
+      {
+        loading: true,
+        withAvatar: true,
+      }
+    );
     this.addMessageToState(loadingMessage);
 
     try {
       // Retrieve userId before making the request
       const userId = this.state?.userId || "defaultUserId"; // Fallback if userId is undefined
-
       const response = await axios.post(
-        "http://localhost:8080/api/v1/chatbot/chats",
+        "https://api.stockgenius.ai/api/v1/chatbot/chats",
         {
           userId, // Use stored userId
           prompt: message,
