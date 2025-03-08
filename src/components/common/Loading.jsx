@@ -5,15 +5,12 @@
  * Developed by: Arshdeep Singh
  * Developed on: 2024-11-14
  *
- * Updated by: [Name] 
+ * Updated by: [Name]
  * Updated on: [Update date]
  * - Update description: Brief description of what was updated or fixed
  */
 
-
-
-
-import React from 'react';
+import React from "react";
 
 const Loading = () => (
   <div className="flex justify-center items-center h-screen">

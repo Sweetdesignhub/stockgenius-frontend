@@ -77,6 +77,7 @@ const OrdersTable = ({ selectedColumns, setColumnNames }) => {
     return (
       <div className="flex h-40 items-center justify-center p-4">
         <Loading />
+        {/* <h1>Hiiii</h1> */}
       </div>
     );
   }

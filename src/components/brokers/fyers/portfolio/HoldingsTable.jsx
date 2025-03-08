@@ -80,6 +80,7 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
     return (
       <div className="flex h-40 items-center justify-center p-4">
         <Loading />
+        {/* <h1>Hiiii</h1> */}
       </div>
     );
   }
@@ -123,8 +124,9 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
-                    }`}
+                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
+                    columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                  }`}
                 >
                   {holding[columnName] || ""}
                 </td>

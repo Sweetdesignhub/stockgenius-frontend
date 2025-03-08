@@ -121,24 +121,23 @@ export function PaperTradingProvider({ children }) {
 
   const fetchPaperTradingData = useCallback(async () => {
     try {
-      console.log("Inside fetchPaperTradingData");
+      // console.log("Inside fetchPaperTradingData");
       const userId = currentUser?.id;
       // const userId = "66fb6e900665edf9447ca673";
-      console.log("user Id: ", userId);
+      // console.log("user Id: ", userId);
       if (!userId) {
         setError("User not found");
         return;
       }
 
       const dataPaperTrading = await fetchAllPaperTradingData(userId);
-      console.log("Paper Trading Data from the context: ", dataPaperTrading);
+      // console.log("Paper Trading Data from the context: ", dataPaperTrading);
 
-      
       const data = dataPaperTrading.data;
-      console.log(
-        "Data fetched dataPaperTrading.data is :",
-        dataPaperTrading.positions
-      );
+      // console.log(
+      //   "Data fetched dataPaperTrading.data is :",
+      //   dataPaperTrading.funds
+      // );
       const positionsArray = dataPaperTrading.positions || [];
       const holdingsArray = dataPaperTrading.holdings.data || [];
 
@@ -173,8 +172,8 @@ export function PaperTradingProvider({ children }) {
       if (uniqueSymbols.length > 0) {
         const prices = await fetchRealtimePrices(uniqueSymbols);
 
-        console.log("Unique Symbols: ", uniqueSymbols);
-        console.log("Prices Symbols: ", prices);
+        // console.log("Unique Symbols: ", uniqueSymbols);
+        // console.log("Prices Symbols: ", prices);
         // Calculate profits after updating data
         calculateProfits(prices, positionsArray, holdingsArray);
       } else {
@@ -190,9 +189,9 @@ export function PaperTradingProvider({ children }) {
   useEffect(() => {
     if (currentUser?.id) {
       const fetchData = async () => {
-        setLoading(true);
+        // setLoading(true);
         await fetchPaperTradingData();
-        setLoading(false);
+        // setLoading(false);
       };
 
       fetchData();

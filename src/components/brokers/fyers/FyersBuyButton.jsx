@@ -248,6 +248,8 @@ const FyersButton = ({
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           {/* <AiOutlineLoading className="animate-spin text-white text-6xl" /> */}
           <Loading />
+          {/* <Loading /> */}
+          {/* <h1>Hiiii</h1> */}
         </div>
       )}
       {!loading && (

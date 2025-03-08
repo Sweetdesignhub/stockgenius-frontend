@@ -156,9 +156,9 @@ function StockLists() {
     return value !== null && value !== undefined && value !== "" ? value : "NA";
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   if (error) {
     return <ErrorComponent error={error} />;

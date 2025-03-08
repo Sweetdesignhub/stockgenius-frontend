@@ -576,6 +576,7 @@ function Bot({
     return (
       <div className="w-full flex justify-center items-center">
         <Loading />
+        <h1>Hiiii</h1>
       </div>
     );
   }
