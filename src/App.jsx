@@ -101,6 +101,7 @@ import PaperTrading from "./pages/india/PaperTrading.jsx";
 import ChatbotComponent from "./components/common/Chatbot.jsx";
 import PaperTradingPortfolio from "./pages/india/PaperTradingPortfolio.jsx";
 import PaperTradingAutoTrade from "./pages/india/PaperTradingAutoTrade.jsx";
+import BankNifty from "./pages/india/BankNifty.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -153,6 +154,10 @@ function MainApp() {
             <Route
               path="/india/NSE100-ai-insights"
               element={<NSE100AiInsights />}
+            />
+            <Route
+              path="/india/bankNifty"
+              element={<BankNifty/>}
             />
             <Route path="/india/referrals" element={<Referral />} />
             <Route path="/india/portfolio" element={<IndiaPortfolio />} />

@@ -26,6 +26,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaNewspaper, FaAngleDown } from "react-icons/fa";
+import { BsBank2 } from "react-icons/bs";
 import { BsRobot } from "react-icons/bs";
 import { FaBagShopping } from "react-icons/fa6";
 import { FaListAlt } from "react-icons/fa";
@@ -88,6 +89,11 @@ export default function Header() {
         to: `/india/NSE100-ai-insights`,
         icon: FaNewspaper,
       },
+      // {
+      //   name: "Bank Nifty",
+      //   to: `/india/bankNifty`,
+      //   icon: BsBank2,
+      // },
       { name: "Portfolio", to: `/india/portfolio`, icon: FaBagShopping },
       { name: "AI Trading Bots", to: `/india/AI-Trading-Bots`, icon: BsRobot },
       { name: "IPOs", to: `/india/initial-public-offers`, icon: RiFilePaper2Fill },
@@ -240,10 +246,10 @@ export default function Header() {
   return (
     <header>
       <nav
-        className="flex items-center justify-between p-6 lg:px-6"
+        className="flex items-center justify-between p-6 lg:px-5"
         aria-label="Global"
       >
-        <div className="flex items-center lg:flex-1">
+        <div className="flex items-center ">
           <Link to="/">
             <img
               className="h-7 mr-3"
@@ -299,7 +305,7 @@ export default function Header() {
           </button>
         </div>
         {currentUser ? (
-          <div className="hidden lg:flex lg:gap-x-4">
+          <div className="hidden lg:flex lg:gap-x-2">
             {navigation.map((item) => (
               <NavLink
                 key={item.name}
@@ -320,8 +326,8 @@ export default function Header() {
         ) : (
           ""
         )}
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <div className="flex items-center gap-3">
+        <div className="hidden lg:flex  lg:justify-end">
+          <div className="flex items-center gap-2">
             <ToggleButton className="mr-4" />
 
             {currentUser ? (
