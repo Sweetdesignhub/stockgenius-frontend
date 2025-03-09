@@ -108,9 +108,9 @@ function UsaDashboard() {
   };
 
   // Render loading component if data is still loading
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   // Render error component if there was an error
   if (error) {

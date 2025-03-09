@@ -134,177 +134,177 @@ function InitialPublicOffers() {
         alt="bear"
       />
 
-      {loading ? (
+      {/* loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <Loading />
         </div>
-      ) : (
-        <div className="bg-white min-h-[85vh] news-table rounded-2xl">
-          <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-start lg:gap-4">
-            {/* Left Side (100% for mobile, 45% for desktop) */}
-            <div className="w-full lg:w-[45%]">
-              <div className="flex justify-between items-center border-b border-[#FFFFFF1A] pb-4">
-                <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4">
-                  Initial Public Offers (IPOs)
-                </h1>
+      ) : ( */}
 
-                <div className="flex ">
-                  {currentUser.isAdmin && currentUser.role === "admin" && (
-                    <Link to={"/india/admin-create-ipos"} className="mr-3">
-                      <button className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                        Create Ipos [Admin]
-                      </button>
-                    </Link>
-                  )}
+      <div className="bg-white min-h-[85vh] news-table rounded-2xl">
+        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-start lg:gap-4">
+          {/* Left Side (100% for mobile, 45% for desktop) */}
+          <div className="w-full lg:w-[45%]">
+            <div className="flex justify-between items-center border-b border-[#FFFFFF1A] pb-4">
+              <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4">
+                Initial Public Offers (IPOs)
+              </h1>
 
-                  {/* Dropdown Menu */}
-                  <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-[#3A6FF8] shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                        {selectedOption}
-                        <ChevronDownIcon
-                          aria-hidden="true"
-                          className="-mr-1 h-5 w-5 text-gray-400"
-                        />
-                      </MenuButton>
-                    </div>
-
-                    <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right  rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
-                      <div className="py-1">
-                        {options.map((option) => (
-                          <MenuItem
-                            key={option}
-                            onClick={() => setSelectedOption(option)}
-                          >
-                            <div
-                              className={`block px-4 py-2 text-sm text-[#3A6FF8] hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
-                                selectedOption === option ? "bg-gray-100" : ""
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          </MenuItem>
-                        ))}
-                      </div>
-                    </MenuItems>
-                  </Menu>
-                </div>
-              </div>
-
-              {/* Ongoing, Upcoming, Past Selection */}
-              <div className="flex justify-between items-center pt-4">
-                <div className="flex justify-center items-center">
-                  {categories.map((category) => (
-                    <div
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className="flex items-center mr-4 cursor-pointer"
-                    >
-                      <div
-                        className={`p-1 rounded-md ${
-                          selectedCategory === category
-                            ? "bg-blue-500"
-                            : "bg-gray-300"
-                        }`}
-                      >
-                        <BsStopwatchFill className="text-white" size={22} />
-                      </div>
-                      <h2 className="ml-2 font-[poppins]">{category}</h2>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Information Icon */}
-                <div>
-                  <IoMdInformationCircle className="text-gray-500" size={30} />
-                </div>
-              </div>
-
-              {/* Render filtered IPO Cards */}
-              <div className="pt-4 mt-2 overflow-y-scroll overflow-x-hidden min-h-[70vh] max-h-[70vh] rounded-lg">
-                {filteredIpoData.length > 0 ? (
-                  filteredIpoData.map((ipo) => (
-                    <IPOCard
-                      key={ipo.name}
-                      logo={ipo.logo}
-                      name={ipo.name}
-                      company={ipo.company}
-                      // ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)}
-                      // listingDate={formatDate(ipo.listingDate)}
-                      ipoDate={
-                        ipo.ipoStartDate && ipo.ipoEndDate
-                          ? formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)
-                          : "To be announced"
-                      }
-                      listingDate={
-                        ipo.listingDate
-                          ? formatDate(ipo.listingDate)
-                          : "To be announced"
-                      }
-                      type={ipo.exchangeType}
-                      sentimentScore={ipo.sentimentScore || "0.00"}
-                      decisionRate={ipo.decisionRate}
-                      priceRange={`${ipo.priceStartRange}-${ipo.priceEndRange}`}
-                      minQuantity={ipo.minQuantity}
-                      onSelect={handleSelect}
-                    />
-                  ))
-                ) : (
-                  <div className="text-center p-4 text-gray-500">
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F774045b915a94da8b083607e7ede6341"
-                      alt="no ipos availabe"
-                    />
-                  </div>
+              <div className="flex ">
+                {currentUser.isAdmin && currentUser.role === "admin" && (
+                  <Link to={"/india/admin-create-ipos"} className="mr-3">
+                    <button className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                      Create Ipos [Admin]
+                    </button>
+                  </Link>
                 )}
+
+                {/* Dropdown Menu */}
+                <Menu as="div" className="relative inline-block text-left">
+                  <div>
+                    <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-[#3A6FF8] shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                      {selectedOption}
+                      <ChevronDownIcon
+                        aria-hidden="true"
+                        className="-mr-1 h-5 w-5 text-gray-400"
+                      />
+                    </MenuButton>
+                  </div>
+
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right  rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
+                    <div className="py-1">
+                      {options.map((option) => (
+                        <MenuItem
+                          key={option}
+                          onClick={() => setSelectedOption(option)}
+                        >
+                          <div
+                            className={`block px-4 py-2 text-sm text-[#3A6FF8] hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
+                              selectedOption === option ? "bg-gray-100" : ""
+                            }`}
+                          >
+                            {option}
+                          </div>
+                        </MenuItem>
+                      ))}
+                    </div>
+                  </MenuItems>
+                </Menu>
               </div>
             </div>
 
-            {/* Right Side (100% for mobile, 55% for desktop) */}
-            <div className="w-full lg:w-[55%] p-1 flex flex-col h-full mt-6 lg:mt-0">
-              <div className="h-[10%] overflow-x-auto flex space-x-2 py-1">
-                {suggestionCardsData.length > 0 ? (
-                  suggestionCardsData.map((card, index) => (
-                    <div className="flex-shrink-0" key={index}>
-                      <SuggestionCard
-                        logo={card.logo}
-                        category={card.category}
-                        subCategory={card.subCategory}
-                        change={card.change}
-                        title={card.title}
-                        image={card.graph}
-                      />
+            {/* Ongoing, Upcoming, Past Selection */}
+            <div className="flex justify-between items-center pt-4">
+              <div className="flex justify-center items-center">
+                {categories.map((category) => (
+                  <div
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className="flex items-center mr-4 cursor-pointer"
+                  >
+                    <div
+                      className={`p-1 rounded-md ${
+                        selectedCategory === category
+                          ? "bg-blue-500"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      <BsStopwatchFill className="text-white" size={22} />
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center w-96 p-4 text-gray-500">
-                    No suggestion available.
+                    <h2 className="ml-2 font-[poppins]">{category}</h2>
                   </div>
-                )}
+                ))}
               </div>
 
-              <div className="h-[90%] mt-4">
-                {selectedIPO && (
-                  <IPODetail
-                    theme={theme}
-                    formatDate={formatDate}
-                    ipoData={
-                      ipoData.length > 0
-                        ? ipoData.find(
-                            (ipo) =>
-                              selectedIPO.toLowerCase() ===
-                              ipo.company.toLowerCase()
-                          ) || null
-                        : null
-                    }
-                  />
-                )}
+              {/* Information Icon */}
+              <div>
+                <IoMdInformationCircle className="text-gray-500" size={30} />
               </div>
+            </div>
+
+            {/* Render filtered IPO Cards */}
+            <div className="pt-4 mt-2 overflow-y-scroll overflow-x-hidden min-h-[70vh] max-h-[70vh] rounded-lg">
+              {filteredIpoData.length > 0 ? (
+                filteredIpoData.map((ipo) => (
+                  <IPOCard
+                    key={ipo.name}
+                    logo={ipo.logo}
+                    name={ipo.name}
+                    company={ipo.company}
+                    // ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)}
+                    // listingDate={formatDate(ipo.listingDate)}
+                    ipoDate={
+                      ipo.ipoStartDate && ipo.ipoEndDate
+                        ? formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)
+                        : "To be announced"
+                    }
+                    listingDate={
+                      ipo.listingDate
+                        ? formatDate(ipo.listingDate)
+                        : "To be announced"
+                    }
+                    type={ipo.exchangeType}
+                    sentimentScore={ipo.sentimentScore || "0.00"}
+                    decisionRate={ipo.decisionRate}
+                    priceRange={`${ipo.priceStartRange}-${ipo.priceEndRange}`}
+                    minQuantity={ipo.minQuantity}
+                    onSelect={handleSelect}
+                  />
+                ))
+              ) : (
+                <div className="text-center p-4 text-gray-500">
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F774045b915a94da8b083607e7ede6341"
+                    alt="no ipos availabe"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Side (100% for mobile, 55% for desktop) */}
+          <div className="w-full lg:w-[55%] p-1 flex flex-col h-full mt-6 lg:mt-0">
+            <div className="h-[10%] overflow-x-auto flex space-x-2 py-1">
+              {suggestionCardsData.length > 0 ? (
+                suggestionCardsData.map((card, index) => (
+                  <div className="flex-shrink-0" key={index}>
+                    <SuggestionCard
+                      logo={card.logo}
+                      category={card.category}
+                      subCategory={card.subCategory}
+                      change={card.change}
+                      title={card.title}
+                      image={card.graph}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="text-center w-96 p-4 text-gray-500">
+                  No suggestion available.
+                </div>
+              )}
+            </div>
+
+            <div className="h-[90%] mt-4">
+              {selectedIPO && (
+                <IPODetail
+                  theme={theme}
+                  formatDate={formatDate}
+                  ipoData={
+                    ipoData.length > 0
+                      ? ipoData.find(
+                          (ipo) =>
+                            selectedIPO.toLowerCase() ===
+                            ipo.company.toLowerCase()
+                        ) || null
+                      : null
+                  }
+                />
+              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

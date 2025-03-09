@@ -74,7 +74,10 @@ export default function OAuth() {
   return (
     <>
       {isLoading ? (
-        <Loading />
+        <div>
+          <Loading />
+          {/* <h1>Hiiii</h1> */}
+        </div>
       ) : (
         <div
           style={{ display: "flex", justifyContent: "center", width: "100%" }}

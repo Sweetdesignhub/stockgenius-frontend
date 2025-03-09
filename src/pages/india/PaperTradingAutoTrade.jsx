@@ -381,7 +381,7 @@ const PaperTradingAutoTrade = () => {
             <div className="flex flex-col gap-10">
               {isInitialLoading ? ( // Only show loading on initial fetch
                 <div className="w-full flex justify-center items-center">
-                  <Loading />
+                  {/* <Loading /> */}
                 </div>
               ) : botDataList.length > 0 ? (
                 botDataList.map((bot) => (

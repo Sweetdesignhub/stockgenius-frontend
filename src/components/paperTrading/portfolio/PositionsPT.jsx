@@ -8,23 +8,53 @@ import { useSelector } from "react-redux";
 import PlaceOrderModal from "../PlaceOrderModal.jsx";
 import ConfirmationModal from "../../common/ConfirmationModal.jsx";
 import { isWithinTradingHours } from "../../../utils/helper.js";
+// import { useSelector } from "react-redux";
+import { fetchAllPaperTradingData } from "../../../paperTradingApi";
 
 const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const [positions, setPositions] = useState([]);
   const [error, setError] = useState(null);
   const [isExiting, setIsExiting] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [confirmationModalMessage, setConfirmationModalMessage] = useState("");
   const { currentUser } = useSelector((state) => state.user);
-  const { positions, loading, realtimePrices } = usePaperTrading();
+  // const { positions, loading, realtimePrices } = usePaperTrading();
   const { theme } = useTheme();
+  const [usersId, setUsersId] = useState("");
+
+  const auth = useSelector((state) => state.user?.currentUser);
 
   useEffect(() => {
-    if (!loading && isExiting) {
-      setIsExiting(false);
+    if (auth?.id) {
+      setUsersId(auth.id);
     }
-  }, [positions, loading]);
+  }, [auth]);
+
+  useEffect(() => {
+    if (!usersId) return;
+
+    const fetchData = async () => {
+      try {
+        console.log("posssitionPPPTTTTTT");
+        const dataPaperTrading = await fetchAllPaperTradingData(usersId);
+        console.log("Paper Trading Data fetched from fetchAllPaperTradingData:", dataPaperTrading);
+
+        setPositions(dataPaperTrading.positions);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [usersId]);
+
+  // useEffect(() => {
+  //   if (isExiting) {
+  //     setIsExiting(false);
+  //   }
+  // }, [positions]);
 
   const getColumnNames = useMemo(() => {
     if (!positions || positions.length === 0) return [];
@@ -94,13 +124,13 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
     return theme === "light" ? "#ffffff" : "#402788";
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-40 items-center justify-center p-4">
-        <Loading />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-40 items-center justify-center p-4">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   if (!positions || positions.length === 0) {
     return (
@@ -129,9 +159,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <th
                   key={columnName}
-                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
-                    columnName === "actions" ? "sticky right-0" : ""
-                  }`}
+                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${columnName === "actions" ? "sticky right-0" : ""
+                    }`}
                   style={{
                     background:
                       columnName === "actions" ? getBackgroundStyle() : "none",
@@ -145,8 +174,9 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
           </thead>
           <tbody>
             {positions.map((position, index) => {
-              const realTimePrice = realtimePrices[position.stockSymbol];
-              const updatedLtp = realTimePrice || position.ltp;
+              // const realTimePrice = realtimePrices[position.stockSymbol];
+              // const updatedLtp = realTimePrice || position.ltp;
+              const updatedLtp = position.ltp;
               const { pnl, pnlPercentage } = calculatePnL(position, updatedLtp);
               const totalInvested = position.quantity * position.avgPrice;
               const currentValue = updatedLtp * position.quantity; // New Calculation
@@ -167,11 +197,10 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                           <button
                             onClick={() => handleExitClick(position)}
                             disabled={isExiting}
-                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-red-500 hover:bg-red-600"
-                            } text-white`}
+                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${isExiting
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-red-500 hover:bg-red-600"
+                              } text-white`}
                           >
                             <X size={16} />
                           </button>

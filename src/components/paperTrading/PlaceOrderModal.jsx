@@ -127,10 +127,11 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     setError("");
 
     try {
-      const response = await api.post(
-        `/api/v1/paper-trading/orders/place/${currentUser.id}`,
-        formData
-      );
+      // const response = await api.post(
+      //   `/api/v1/paper-trading/orders/place/${currentUser.id}`,
+      //   formData
+      // );
+      const response = await placeOrder(currentUser.id, formData);
 
       if (response.status === 201) {
         setShowConfirmation(false); // First hide the confirmation modal
@@ -226,21 +227,19 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <div className="flex gap-2 p-4 border-t mb-">
             <button
               onClick={() => handleOrderTypeToggle("quick")}
-              className={`px-4 py-1 text-sm rounded-lg border ${
-                isQuickOrder
+              className={`px-4 py-1 text-sm rounded-lg border ${isQuickOrder
                   ? "border-blue-500 text-blue-500 bg-white"
                   : "border-[#1C1C1E] text-white hover:bg-gray-900"
-              }`}
+                }`}
             >
               Quick Order
             </button>
             <button
               onClick={() => handleOrderTypeToggle("regular")}
-              className={`px-4 py-1 text-sm rounded-lg border ${
-                !isQuickOrder
+              className={`px-4 py-1 text-sm rounded-lg border ${!isQuickOrder
                   ? "border-blue-500 text-blue-500 bg-white"
                   : "border-[#1C1C1E] text-white hover:bg-gray-900"
-              }`}
+                }`}
             >
               Regular Order
             </button>
@@ -308,11 +307,10 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                   </button>
                   <button
                     type="submit"
-                    className={`px-4 py-2 text-sm text-white rounded-lg ${
-                      isBuy
+                    className={`px-4 py-2 text-sm text-white rounded-lg ${isBuy
                         ? "bg-blue-500 hover:bg-blue-600"
                         : "bg-red-500 hover:bg-red-600"
-                    }`}
+                      }`}
                     disabled={loading} // Disable button while loading
                   >
                     {loading ? "Placing Order..." : isBuy ? "Buy" : "Sell"}
@@ -434,11 +432,10 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                   </button>
                   <button
                     type="submit"
-                    className={`px-4 py-2 text-sm text-white rounded-lg ${
-                      isBuy
+                    className={`px-4 py-2 text-sm text-white rounded-lg ${isBuy
                         ? "bg-blue-500 hover:bg-blue-600"
                         : "bg-red-500 hover:bg-red-600"
-                    }`}
+                      }`}
                     disabled={loading} // Disable button while loading
                   >
                     {loading ? "Placing Order..." : isBuy ? "Buy" : "Sell"}

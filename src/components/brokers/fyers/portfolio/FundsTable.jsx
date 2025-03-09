@@ -74,6 +74,8 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
     return (
       <div className="flex h-40 items-center justify-center p-4">
         <Loading />
+        {/* <Loading /> */}
+        {/* <h1>Hiiii</h1> */}
       </div>
     );
   }
@@ -119,8 +121,9 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "title" ? "text-[#6FD4FF]" : ""
-                    }`}
+                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
+                    columnName === "title" ? "text-[#6FD4FF]" : ""
+                  }`}
                 >
                   {fund[columnName]}
                 </td>
