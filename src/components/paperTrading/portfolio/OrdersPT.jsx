@@ -45,13 +45,13 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (orders.length > 0) {
-      const excludedColumns = ["disclosedQuantity", "createdAt", "updatedAt", "_id"];
+      const excludedColumns = ["disclosedQuantity",'autoTrade',"filledQuantity", "createdAt", "updatedAt", "_id"];
       let allColumnNames = Object.keys(orders[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
 
       // Ensure "autoTrade" is the 2nd column
-      allColumnNames = ["stockSymbol", "autoTrade", ...allColumnNames.filter(col => col !== "autoTrade")];
+      allColumnNames = ["stockSymbol", ...allColumnNames.filter(col => col !== "autoTrade")];
 
       setColumnNames(allColumnNames);
     } else {
