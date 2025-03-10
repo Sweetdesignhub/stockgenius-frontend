@@ -180,8 +180,10 @@ function AccountDetailsPT({ userId }) {
       setLoading(true);
       try {
         const response = await getUserFunds(userId);
-        const data = response.data.data;
-
+        const data = response?.data?.data || {}; // Ensure data is an object
+    
+        console.log("Fetched data:", data);
+    
         setAccountData({
           investedAmount: data.investedAmount || 0,
           availableFunds: data.availableFunds || 2000000,
@@ -190,11 +192,24 @@ function AccountDetailsPT({ userId }) {
         });
       } catch (error) {
         console.error("Error fetching account data:", error);
-        setError("Failed to load account data");
+    
+        // If 404, show default empty data instead of an error message
+        if (error.response && error.response.status === 404) {
+          console.warn("No account data found. Displaying default values.");
+          setAccountData({
+            investedAmount: 0,
+            availableFunds: 2000000,
+            totalProfit: 0,
+            todaysProfit: 0,
+          });
+        } else {
+          setError("Failed to load account data");
+        }
       } finally {
         setLoading(false);
       }
     };
+    
 
     fetchUserFunds();
   }, [userId]);

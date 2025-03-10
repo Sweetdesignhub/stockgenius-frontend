@@ -4,6 +4,7 @@ import api from "../../config";
 import { ToggleRight, ToggleLeft } from "lucide-react";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { placeOrder } from "../../paperTradingApi";
 
 const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
@@ -132,8 +133,10 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       //   formData
       // );
       const response = await placeOrder(currentUser.id, formData);
+      console.log(response);
+      
 
-      if (response.status === 201) {
+      if (response.success) {
         setShowConfirmation(false); // First hide the confirmation modal
         setShowSuccessModal(true); // Then show the success modal
 
