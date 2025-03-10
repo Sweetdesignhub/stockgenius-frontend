@@ -46,12 +46,12 @@
 // src/components/ChatbotComponent.jsx
 import React, { useState, useEffect } from "react";
 import Chatbot from "react-chatbot-kit";
-import { useSelector, useDispatch } from 'react-redux'; // Import useSelector to access Redux state
+import { useSelector, useDispatch } from "react-redux"; // Import useSelector to access Redux state
 import "react-chatbot-kit/build/main.css";
 import config from "../chatbot/config";
 import MessageParser from "../chatbot/MessageParser";
 import ActionProvider from "../chatbot/ActionProvider";
-import { signOut } from "../../redux/user/userSlice.js"
+import { signOut } from "../../redux/user/userSlice.js";
 import api from "../../config.js";
 import { clearRegion } from "../../redux/region/regionSlice.js";
 // import { clearRegion } from "./redux/region/regionSlice.js";
@@ -115,9 +115,6 @@ const ChatbotComponent = () => {
   //   }
   // }, []);
 
-
-
-
   return (
     <div>
       {/* Toggle Button */}
@@ -131,7 +128,7 @@ const ChatbotComponent = () => {
       {/* Chatbot Container */}
       {isOpen && (
         <div
-          className="fixed bottom-20 right-6 w-[26rem] sm:w-[20rem] md:w-[25rem] lg:w-[32rem] bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
+          className="fixed bottom-20 right-4 max-w-[90%] sm:max-w-[20rem] md:max-w-[25rem] lg:max-w-[32rem] w-full min-w-[18rem] bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
           style={{ zIndex: isOpen ? 10 : "auto" }}
         >
           <Chatbot
@@ -140,6 +137,17 @@ const ChatbotComponent = () => {
             actionProvider={ActionProvider}
           />
         </div>
+
+        // <div
+        //   className="fixed bottom-20 right-6 w-[26rem] sm:w-[20rem] md:w-[25rem] lg:w-[32rem] bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
+        //   style={{ zIndex: isOpen ? 10 : "auto" }}
+        // >
+        //   <Chatbot
+        //     config={chatbotConfig}
+        //     messageParser={MessageParser}
+        //     actionProvider={ActionProvider}
+        //   />
+        // </div>
       )}
     </div>
   );
