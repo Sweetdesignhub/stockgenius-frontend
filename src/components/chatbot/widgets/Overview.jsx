@@ -23,7 +23,6 @@
 
 // export default GeneralOptions;
 
-
 import React from "react";
 
 const Overview = (props) => {
@@ -33,16 +32,16 @@ const Overview = (props) => {
       handler: props.actionProvider.askForTicker,
       id: 1,
     },
-        {
+    {
       name: "Show Profile Analysis",
       handler: props.actionProvider.askForTickerProfile,
-      id: 2
+      id: 2,
     },
-        {
+    {
       name: "Show Historical Performance",
-      handler: props.actionProvider.askForTickerHistoricalPerformance ,
-      id: 3
-    }
+      handler: props.actionProvider.askForTickerHistoricalPerformance,
+      id: 3,
+    },
   ];
 
   return (
