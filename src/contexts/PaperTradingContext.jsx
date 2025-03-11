@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { useSelector } from "react-redux";
-import api from "../config";
+import api, { paperTradeApi } from "../config";
 
 const PaperTradingContext = createContext();
 
@@ -24,40 +24,28 @@ export function PaperTradingProvider({ children }) {
     totalProfit: 0,
   });
   const [investedAmount, setInvestedAmount] = useState(0);
-  // console.log(investedAmount);
-  
 
   const { currentUser } = useSelector((state) => state.user);
 
+  // ✅ Fetch Real-time Prices for Stocks
   const fetchRealtimePrices = useCallback(async (symbols) => {
+    if (!symbols.length) return {};
+
     try {
       const pricePromises = symbols.map((symbol) =>
         api
           .get(`/api/v1/stocks/price/${symbol}`)
-          .then((response) => ({
-            symbol,
-            price: response.data.price,
-          }))
-          .catch((error) => ({
-            symbol,
-            price: null,
-            error: true,
-          }))
+          .then((response) => ({ symbol, price: response.data.price }))
+          .catch(() => ({ symbol, price: null }))
       );
 
       const prices = await Promise.all(pricePromises);
       const priceMap = prices.reduce((acc, { symbol, price }) => {
-        if (price !== null) {
-          acc[symbol] = price;
-        }
+        if (price !== null) acc[symbol] = price;
         return acc;
       }, {});
 
-      setRealtimePrices((prevPrices) => ({
-        ...prevPrices,
-        ...priceMap,
-      }));
-
+      setRealtimePrices((prev) => ({ ...prev, ...priceMap }));
       return priceMap;
     } catch (error) {
       console.error("Error fetching real-time prices:", error);
@@ -65,60 +53,40 @@ export function PaperTradingProvider({ children }) {
     }
   }, []);
 
-  const calculateProfits = useCallback(
-    (prices, positionsArray, holdingsArray) => {
-      let todaysProfit = 0;
-      let totalProfit = 0;
-      let totalInvested = 0; // Track the total invested amount
+  // ✅ Calculate Profits & Invested Amount
+  const calculateProfits = useCallback((prices, positionsArray, holdingsArray) => {
+    let todaysProfit = 0;
+    let totalProfit = 0;
+    let totalInvested = 0;
 
-      if (Array.isArray(positionsArray)) {
-        positionsArray.forEach((position) => {
-          const currentPrice =
-            prices[position.stockSymbol] || position.ltp || 0;
-          const quantity = position.quantity || 0;
-          const avgBuyPrice = position.avgPrice || position.buyAvgPrice || 0;
-          const positionProfit = (currentPrice - avgBuyPrice) * quantity;
-          todaysProfit += positionProfit;
+    positionsArray.forEach((position) => {
+      const currentPrice = prices[position.stockSymbol] || position.ltp || 0;
+      const quantity = position.quantity || 0;
+      const avgBuyPrice = position.avgPrice || position.buyAvgPrice || 0;
+      const positionProfit = (currentPrice - avgBuyPrice) * quantity;
+      todaysProfit += positionProfit;
+      totalInvested += avgBuyPrice * quantity;
+    });
 
-          // console.log("avg", avgBuyPrice);
-          // console.log("qty", quantity);
+    holdingsArray.forEach((holding) => {
+      const currentPrice = prices[holding.stockSymbol] || holding.lastTradedPrice || 0;
+      const quantity = holding.quantity || 0;
+      const avgBuyPrice = holding.averagePrice || 0;
+      const holdingProfit = (currentPrice - avgBuyPrice) * quantity;
+      totalProfit += holdingProfit;
+      totalInvested += avgBuyPrice * quantity;
+    });
 
-          // console.log("total",avgBuyPrice * quantity );
-          
-          
-          // Calculate the invested amount for the position
-          const investedInPosition = avgBuyPrice * quantity;
-          totalInvested += investedInPosition;
-        });
-      }
+    setProfitSummary({
+      todaysProfit: Number(todaysProfit.toFixed(2)),
+      totalProfit: Number(totalProfit.toFixed(2)),
+    });
 
-      if (Array.isArray(holdingsArray)) {
-        holdingsArray.forEach((holding) => {
-          const currentPrice =
-            prices[holding.stockSymbol] || holding.lastTradedPrice || 0;
-          const quantity = holding.quantity || 0;
-          const avgBuyPrice = holding.averagePrice || 0;
+    setInvestedAmount(Number(totalInvested.toFixed(2)));
+  }, []);
 
-          const holdingProfit = (currentPrice - avgBuyPrice) * quantity;
-          totalProfit += holdingProfit;
-
-          // Calculate the invested amount for the holding
-          const investedInHolding = avgBuyPrice * quantity;
-          totalInvested += investedInHolding;
-        });
-      }
-
-      setProfitSummary({
-        todaysProfit: Number(todaysProfit.toFixed(2)),
-        totalProfit: Number(totalProfit.toFixed(2)),
-      });
-
-      setInvestedAmount(Number(totalInvested.toFixed(2))); // Set the total invested amount
-    },
-    []
-  );
-
-  const fetchPaperTradingData = useCallback(async () => {
+  // ✅ Fetch Paper Trading Data
+  const fetchPaperTradingData = useCallback(async (isFirstLoad = false) => {
     try {
       const userId = currentUser?.id;
       if (!userId) {
@@ -126,80 +94,85 @@ export function PaperTradingProvider({ children }) {
         return;
       }
   
-      const response = await api.get(`/api/v1/paper-trading/data/${userId}`);
-      const data = response.data.data;
+      if (isFirstLoad) {
+        setLoading(true); // ✅ Only set loading on the first load
+      }
   
-      const positionsArray = data.positions?.netPositions || [];
-      const holdingsArray = data.holdings?.holdings || [];
+      const [
+        fundsResponse,
+        positionsResponse,
+        tradesResponse,
+        holdingsResponse,
+        ordersResponse,
+      ] = await Promise.all([
+        paperTradeApi.get(`/api/v1/paper-trading/funds/${userId}`),
+        paperTradeApi.get(`/api/v1/paper-trading/positions/${userId}`),
+        paperTradeApi.get(`/api/v1/paper-trading/trades/${userId}`),
+        paperTradeApi.get(`/api/v1/paper-trading/holdings/${userId}`),
+        paperTradeApi.get(`/api/v1/paper-trading/orders/${userId}`),
+      ]);
   
-      setFunds(data.funds || {});
+      const fundsData = fundsResponse.data.data || {};
+      const positionsArray = positionsResponse?.data.data?.netPositions || [];
+      const tradesArray = tradesResponse?.data?.data[0]?.trades || [];
+      const holdingsArray = holdingsResponse?.data?.data || [];
+      const ordersArray = ordersResponse?.data?.orders[0]?.orders || [];
+  
+      setFunds(fundsData);
       setPositions(positionsArray);
+      setTrades(tradesArray);
       setHoldings(holdingsArray);
-      setTrades(Array.isArray(data.trades) ? data.trades : []);
-      setOrders(Array.isArray(data.orders) ? data.orders : []);
+      setOrders(ordersArray);
   
-      const positionSymbols = positionsArray
-        .map((p) => p.stockSymbol)
-        .filter(Boolean);
-  
-      const holdingSymbols = holdingsArray
-        .map((h) => h.stockSymbol)
-        .filter(Boolean);
-  
-      const uniqueSymbols = [
-        ...new Set([...positionSymbols, ...holdingSymbols]),
-      ];
+      const positionSymbols = positionsArray.map((p) => p.stockSymbol).filter(Boolean);
+      const holdingSymbols = holdingsArray.map((h) => h.stockSymbol).filter(Boolean);
+      const uniqueSymbols = [...new Set([...positionSymbols, ...holdingSymbols])];
   
       if (uniqueSymbols.length > 0) {
         const prices = await fetchRealtimePrices(uniqueSymbols);
-  
-        // Calculate profits after updating data
         calculateProfits(prices, positionsArray, holdingsArray);
       } else {
-        // Handle cases with no symbols, clear profits
         calculateProfits({}, positionsArray, holdingsArray);
       }
     } catch (error) {
       setError("Error fetching paper trading data");
       console.error("Error fetching data:", error);
+    } finally {
+      if (isFirstLoad) {
+        setLoading(false); // ✅ Stop loading only on first load
+      }
     }
   }, [currentUser?.id, fetchRealtimePrices, calculateProfits]);
   
+  
+  
 
+  // ✅ Auto-fetch Data Every 10 Seconds
   useEffect(() => {
     if (currentUser?.id) {
       const fetchData = async () => {
-        setLoading(true);
-        await fetchPaperTradingData();
-        setLoading(false);
+        setLoading(true); // ✅ Show loading only for the first fetch
+        await fetchPaperTradingData(true); // ✅ Pass true to indicate first load
       };
-
+  
       fetchData();
-
-      const dataInterval = setInterval(fetchPaperTradingData, 10000);
-
-      return () => {
-        clearInterval(dataInterval);
-      };
+  
+      const dataInterval = setInterval(() => {
+        fetchPaperTradingData(false); // ✅ Subsequent fetches won't trigger loading state
+      }, 10000);
+  
+      return () => clearInterval(dataInterval);
     }
   }, [currentUser?.id, fetchPaperTradingData]);
+   // Removed fetchPaperTradingData from dependencies to avoid unnecessary re-renders
 
-  // useEffect(() => {
-  //   if (funds) {
-  //     const invested = positions.reduce((acc, position) => {
-  //       const investedInPosition = position.avgPrice * position.quantity;
-  //       return acc + investedInPosition;
-  //     }, 0);
-  //     setInvestedAmount(Number(invested.toFixed(2)));
-  //   }
-  // }, [funds, positions]);
-
+  // ✅ Context Value
   const contextValue = {
     funds,
     positions,
     trades,
     holdings,
-    orders,
+    orders, // ✅ Orders now have the correct structure
     loading,
     error,
     realtimePrices,

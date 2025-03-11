@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import api from "../../config";
+import { paperTradeApi } from "../../config";
 import { ToggleRight, ToggleLeft } from "lucide-react";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
@@ -127,8 +127,8 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     setError("");
 
     try {
-      const response = await api.post(
-        `/api/v1/paper-trading/orders/place/${currentUser.id}`,
+      const response = await paperTradeApi.post(
+        `/api/v1/paper-trading/orders/placeOrder/${currentUser.id}`,
         formData
       );
 
