@@ -89,11 +89,11 @@ export default function Header() {
         to: `/india/NSE100-ai-insights`,
         icon: FaNewspaper,
       },
-      // {
-      //   name: "Bank Nifty",
-      //   to: `/india/bankNifty`,
-      //   icon: BsBank2,
-      // },
+      {
+        name: "Bank Nifty",
+        to: `/india/bankNifty`,
+        icon: BsBank2,
+      },
       { name: "Portfolio", to: `/india/portfolio`, icon: FaBagShopping },
       { name: "AI Trading Bots", to: `/india/AI-Trading-Bots`, icon: BsRobot },
       { name: "IPOs", to: `/india/initial-public-offers`, icon: RiFilePaper2Fill },

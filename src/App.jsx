@@ -89,7 +89,7 @@ import ForgotPassword from "./components/common/ForgotPassword";
 import ResetPassword from "./components/common/ResetPassword";
 import CompleteProfile from "./pages/CompleteProfile";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import api from "./config.js";
 import { clearRegion } from "./redux/region/regionSlice.js";
 import { clearFyersAccessToken } from "./redux/brokers/fyersSlice.js";
@@ -106,6 +106,8 @@ import BankNifty from "./pages/india/BankNifty.jsx";
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const dispatch = useDispatch();
+
+  const { currentUser } = useSelector((state) => state.user);
 
   const handleSignOut = async () => {
     try {
@@ -202,7 +204,8 @@ function MainApp() {
 
       {/* Conditionally render the chatbot */}
       {/* {chatbotPages.includes(location.pathname) && <ChatbotComponent />} */}
-      <ChatbotComponent />
+      {/* <ChatbotComponent /> */}
+      {currentUser && <ChatbotComponent />}
     </div>
   );
 }

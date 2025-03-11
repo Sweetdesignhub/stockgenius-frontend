@@ -57,7 +57,7 @@ function BankNifty() {
     setQuantity(parseInt(event.target.value));
   };
 
-  const containerName = "sgaiindia";
+  const containerName = "banknifty";
   const fileName = "Realtime_Reports/Final_Report.xlsx";
   const timeFileName = "Realtime_Reports/last_run_time.json";
 

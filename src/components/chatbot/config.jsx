@@ -156,7 +156,7 @@ import HistoricalPerformance from "./widgets/HistoricalPerformance";
 
 const config = (userId) => ({
   lang: "en",
-  botName: "StockBot",
+  botName: "Stockgenius Agent",
   customStyles: {
     botMessageBox: {
       backgroundColor: "#04668a",
