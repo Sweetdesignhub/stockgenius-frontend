@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import fetchFile from "../../utils/usa/fetchFile";
+import fetchFile from "../../utils/fetchFile.js";
 import parseExcel from "../../utils/usa/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
@@ -21,15 +21,15 @@ function UsaDashboard() {
 
   const market = useSelector((state) => state.market);
 
-  let bucketName = "";
-  const gainerFile = "Realtime_Reports/top_gaineres.xlsx";
+  let containerName = "";
+  const gainerFile = "Realtime_Reports/top_gainers.xlsx";
   const loserFile = "Realtime_Reports/top_losers.xlsx";
 
-  // Set bucketName based on the market
+  // Set containerName based on the market
   if (market === "NYSE") {
-    bucketName = "stock-genius-ai";
+    containerName = "nasdaq";
   } else if (market === "NASDAQ") {
-    bucketName = "nasdaq-stockgenius-ai";
+    containerName = "nyse";
   }
 
   // Fetch data from the bucket
@@ -38,8 +38,8 @@ function UsaDashboard() {
     setError(null);
     try {
       const [gainersFileData, losersFileData] = await Promise.all([
-        fetchFile(bucketName, gainerFile),
-        fetchFile(bucketName, loserFile),
+        fetchFile(containerName, gainerFile),
+        fetchFile(containerName, loserFile),
       ]);
       const gainersJsonData = parseExcel(gainersFileData);
       const losersJsonData = parseExcel(losersFileData);

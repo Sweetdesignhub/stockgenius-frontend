@@ -6,9 +6,10 @@ import Loading from "../common/Loading";
 import PlaceOrderModal from "./PlaceOrderModal";
 import { useTheme } from "../../contexts/ThemeContext";
 import ConfirmationModal from "../common/ConfirmationModal";
-import { isWithinTradingHours } from "../../utils/helper";
+import { isWithinTradingHoursUS } from "../../utils/helper";
+import { useSelector } from "react-redux";
 
-function AiDrivenList() {
+function AiDrivenListUsa() {
   const [tableData, setTableData] = useState([]);
   const [aiDrivenData, setAiDrivenData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,16 +24,24 @@ function AiDrivenList() {
 
   const filterRef = useRef(null);
   const filterButtonRef = useRef(null);
+  const market = useSelector((state) => state.market);
 
   const { theme } = useTheme();
+
+  let containerName = "";
+  if (market === "NYSE") {
+    containerName = "nasdaq";
+  } else if (market === "NASDAQ") {
+    containerName = "nyse";
+  } else {
+    containerName = "sgaiindia"; // Default fallback
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
 
       try {
-        const containerName = "sgaiindia";
-
         const aiDrivenBuffer = await fetchFile(
           containerName,
           "Realtime_Reports/Final_Report.xlsx"
@@ -46,7 +55,7 @@ function AiDrivenList() {
 
         let fileName = "Realtime_Reports/Final_Report.xlsx";
         if (selectedFilter === "Top Gainers") {
-          fileName = "Realtime_Reports/top_gaineres.xlsx";
+          fileName = "Realtime_Reports/top_gainers.xlsx";
         } else if (selectedFilter === "Top Losers") {
           fileName = "Realtime_Reports/top_losers.xlsx";
         }
@@ -91,7 +100,7 @@ function AiDrivenList() {
     fetchData();
     const intervalId = setInterval(fetchData, 3600000);
     return () => clearInterval(intervalId);
-  }, [selectedFilter]);
+  }, [selectedFilter, market]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -126,30 +135,30 @@ function AiDrivenList() {
   const handlePredictionFilter = (filter) => {
     setPredictionFilter(filter);
   };
-
   const handleBuy = (row) => {
-    if (isWithinTradingHours()) {
+    if (isWithinTradingHoursUS()) {
       setSelectedRow({ ...row, action: "BUY" });
       setModalOpen(true);
     } else {
       setConfirmationModalMessage(
-        "Orders can only be placed between 9:15 AM and 3:30 PM IST."
+        "Orders can only be placed between 9:30 AM and 4:00 PM EST (New York Time)."
       );
       setIsConfirmationModalOpen(true);
     }
   };
-
+  
   const handleSell = (row) => {
-    if (isWithinTradingHours()) {
+    if (isWithinTradingHoursUS()) {
       setSelectedRow({ ...row, action: "SELL" });
       setModalOpen(true);
     } else {
       setConfirmationModalMessage(
-        "Orders can only be placed between 9:15 AM and 3:30 PM IST."
+        "Orders can only be placed between 9:30 AM and 4:00 PM EST (New York Time)."
       );
       setIsConfirmationModalOpen(true);
     }
   };
+  
 
   const handleModalClose = () => {
     setModalOpen(false);
@@ -388,4 +397,4 @@ function AiDrivenList() {
   );
 }
 
-export default AiDrivenList;
+export default AiDrivenListUsa;

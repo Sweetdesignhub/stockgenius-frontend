@@ -18,7 +18,7 @@
  */
 
 import { useEffect, useState } from "react";
-import fetchFile from "../../utils/india/fetchFile";
+import fetchFile from "../../utils/fetchFile";
 import parseExcel from "../../utils/india/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";

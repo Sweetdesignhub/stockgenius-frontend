@@ -56,7 +56,9 @@ export default function Header() {
 
   const isMarketDropdownVisible =
     location.pathname === "/usa/dashboard" ||
-    location.pathname === "/usa/stock-lists";
+    location.pathname === "/usa/portfolio" ||
+    location.pathname === "/usa/paper-trading/portfolio" ||
+    location.pathname === "/usa/stock-lists" || location.pathname === "/usa/paper-trading";
 
   useEffect(() => {
     if (region) {
@@ -108,6 +110,7 @@ export default function Header() {
         icon: FaNewspaper,
       },
       { name: "Portfolio", to: `/usa/portfolio`, icon: FaBagShopping },
+      { name: "Paper Trading", to: `/usa/paper-trading`, icon: FaListAlt },
     ];
   }
 

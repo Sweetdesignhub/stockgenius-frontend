@@ -11,7 +11,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import fetchFile from "../../utils/india/fetchFile";
+import fetchFile from "../../utils/fetchFile.js";
 import parseExcel from "../../utils/india/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
@@ -21,7 +21,7 @@ import Modal from "../../components/common/Modal";
 import BrokerModal from "../../components/brokers/BrokerModal";
 import api from "../../config.js";
 
-const containerName = "sgaiindia"; 
+const containerName = "sgaiindia";
 const gainerFile = "Realtime_Reports/top_gainers.xlsx";
 const loserFile = "Realtime_Reports/top_losers.xlsx";
 
@@ -45,29 +45,28 @@ const IndiaDashboard = () => {
     useSelector((state) => state.zerodha) ||
     localStorage.getItem("zerodha_access_token");
 
+  const fetchData = async () => {
+    try {
+      const [gainersFileData, losersFileData] = await Promise.all([
+        fetchFile(containerName, gainerFile),
+        fetchFile(containerName, loserFile),
+      ]);
 
-    const fetchData = async () => {
-      try {
-        const [gainersFileData, losersFileData] = await Promise.all([
-          fetchFile(containerName, gainerFile),
-          fetchFile(containerName, loserFile),
-        ]);
-  
-        const gainersJsonData = parseExcel(gainersFileData);
-        const losersJsonData = parseExcel(losersFileData);
-  
-        setGainersData(gainersJsonData);
-        setLosersData(losersJsonData);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const gainersJsonData = parseExcel(gainersFileData);
+      const losersJsonData = parseExcel(losersFileData);
+
+      setGainersData(gainersJsonData);
+      setLosersData(losersJsonData);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 600000); 
+    const intervalId = setInterval(fetchData, 600000);
     return () => clearInterval(intervalId);
   }, []);
 

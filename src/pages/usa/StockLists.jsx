@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import fetchFile from "../../utils/usa/fetchFile";
+import fetchFile from "../../utils/fetchFile.js";
 import parseExcel from "../../utils/usa/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
@@ -27,16 +27,16 @@ function StockLists() {
   const getBucketAndFileName = () => {
     if (market === "NYSE") {
       return {
-        bucketName: "stock-genius-ai",
+        containerName: "nyse",
         fileName: "Realtime_Reports/Final_Report.xlsx",
       };
     } else if (market === "NASDAQ") {
       return {
-        bucketName: "nasdaq-stockgenius-ai",
+        containerName: "nasdaq",
         fileName: "Realtime_Reports/Final_Report.xlsx",
       };
     } else {
-      return { bucketName: "", fileName: "" };
+      return { containerName: "", fileName: "" };
     }
   };
 
@@ -46,15 +46,15 @@ function StockLists() {
     setLoading(true);
     setError(null);
     try {
-      const { bucketName, fileName } = getBucketAndFileName();
-      if (!bucketName || !fileName) throw new Error("Invalid market selection");
+      const { containerName, fileName } = getBucketAndFileName();
+      if (!containerName || !fileName) throw new Error("Invalid market selection");
 
-      const fileData = await fetchFile(bucketName, fileName);
+      const fileData = await fetchFile(containerName, fileName);
       const jsonData = parseExcel(fileData);
       setData(jsonData);
 
       // Fetch the last updated time
-      const timeFileData = await fetchFile(bucketName, timeFileName);
+      const timeFileData = await fetchFile(containerName, timeFileName);
 
       // Convert the ArrayBuffer to a string
       const decoder = new TextDecoder("utf-8");

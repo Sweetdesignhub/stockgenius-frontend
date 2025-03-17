@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { paperTradeApi } from "../../config";
+import { paperTradeApi, paperTradeUsaApi } from "../../config";
 import { ToggleRight, ToggleLeft } from "lucide-react";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
 
 const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
+  const region = useSelector((state) => state.region);
+  const market = useSelector((state) => state.market);
+  const { currentUser } = useSelector((state) => state.user);
+
   const [formData, setFormData] = useState({
     stockSymbol: initialData?.symbol || "", // Stock symbol pre-filled
     action: "BUY",
@@ -13,34 +17,15 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     quantity: initialData?.quantity || "",
     limitPrice: "",
     stopPrice: "",
-    exchange: "NSE", // Default exchange
+    exchange: region === "usa" ? market : "NSE", 
     productType: "CNC", // Default product type
   });
 
-  const { currentUser } = useSelector((state) => state.user);
   const [isQuickOrder, setIsQuickOrder] = useState(false); // Toggle state for quick vs regular order
   const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(""); // Track error state
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  // useEffect(() => {
-  //   // Reset form data when modal is opened
-  //   if (isOpen) {
-  //     setFormData({
-  //       stockSymbol: initialData?.symbol || "",
-  //       action: initialData?.action || "BUY",
-  //       orderType: "MARKET",
-  //       quantity: initialData.quantity || "",
-  //       limitPrice: "",
-  //       stopPrice: "",
-  //       exchange: "NSE",
-  //       productType: "CNC",
-  //     });
-  //     setError(""); // Clear previous error
-  //     setShowConfirmation(false);
-  //   }
-  // }, [isOpen, initialData]);
 
   useEffect(() => {
     if (isOpen && initialData) {
@@ -59,7 +44,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       setError("");
       setShowConfirmation(false);
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, region, market]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -126,8 +111,10 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     setLoading(true);
     setError("");
 
+    const apiToUse = region === "usa" ? paperTradeUsaApi : paperTradeApi;
+
     try {
-      const response = await paperTradeApi.post(
+      const response = await apiToUse.post(
         `/api/v1/paper-trading/orders/placeOrder/${currentUser.id}`,
         formData
       );

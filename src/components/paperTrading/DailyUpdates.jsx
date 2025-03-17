@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import fetchFileJSON from "../../utils/india/fetchFileJSON";
-import fetchFile from "../../utils/india/fetchFile";
+import fetchFile from "../../utils/fetchFile";
 import parseExcel from "../../utils/india/parseExcel";
 import Loading from "../common/Loading";
 

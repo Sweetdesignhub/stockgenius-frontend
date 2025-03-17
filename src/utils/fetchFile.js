@@ -44,16 +44,20 @@ const fetchFile = async (containerName, blobName) => {
   }
 
   // Ensure the SAS token does not have duplicate '?'
-  const formattedSasToken = sasToken.startsWith("?") ? sasToken : `?${sasToken}`;
+  const formattedSasToken = sasToken.startsWith("?")
+    ? sasToken
+    : `?${sasToken}`;
   const blobUrl = `https://${accountName}.blob.core.windows.net/${containerName}/${blobName}${formattedSasToken}`;
-  
+
   // console.log("Fetching from URL:", blobUrl);
 
   try {
     const response = await fetch(blobUrl);
-    
+
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+      throw new Error(
+        `HTTP error! Status: ${response.status} - ${response.statusText}`
+      );
     }
 
     // Convert response to ArrayBuffer
@@ -65,4 +69,3 @@ const fetchFile = async (containerName, blobName) => {
 };
 
 export default fetchFile;
-

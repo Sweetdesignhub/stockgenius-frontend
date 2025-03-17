@@ -1,12 +1,18 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function HeaderPT() {
+  const region = useSelector((state) => state.region);
+  const regionPath = region === "usa" ? "usa" : "india"; // Dynamic region path
+
   return (
     <div className="flex flex-wrap justify-between items-center pb-2 border-b">
-      <h1 className="font-[poppins] font-semibold text-base lg:text-lg">Account Manager</h1>
+      <h1 className="font-[poppins] font-semibold text-base lg:text-lg">
+        Account Manager
+      </h1>
       <div className="flex gap-3 mt-2 lg:mt-0">
         <div className="relative group">
-          <Link to={"/india/paper-trading/auto-trade"}>
+          <Link to={`/${regionPath}/paper-trading/auto-trade`}>
             <div className="bg-white rounded-2xl px-4 py-1 cursor-pointer">
               <img
                 loading="lazy"
@@ -21,7 +27,7 @@ function HeaderPT() {
           </span>
         </div>
         <div className="relative group">
-          <Link to={"/india/paper-trading"}>
+          <Link to={`/${regionPath}/paper-trading`}>
             <div className="bg-[#3A6FF8] rounded-2xl px-4 py-1">
               <img
                 className="w-6 h-6 lg:w-auto lg:h-auto"

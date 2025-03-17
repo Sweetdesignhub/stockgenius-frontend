@@ -102,6 +102,8 @@ import ChatbotComponent from "./components/common/Chatbot.jsx";
 import PaperTradingPortfolio from "./pages/india/PaperTradingPortfolio.jsx";
 import PaperTradingAutoTrade from "./pages/india/PaperTradingAutoTrade.jsx";
 import BankNifty from "./pages/india/BankNifty.jsx";
+import UsaPaperTrading from "./pages/usa/UsaPaperTrading.jsx";
+import UsaPaperTradingPortfolio from "./pages/usa/UsaPaperTradingPortfolio.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -157,10 +159,7 @@ function MainApp() {
               path="/india/NSE100-ai-insights"
               element={<NSE100AiInsights />}
             />
-            <Route
-              path="/india/bankNifty"
-              element={<BankNifty/>}
-            />
+            <Route path="/india/bankNifty" element={<BankNifty />} />
             <Route path="/india/referrals" element={<Referral />} />
             <Route path="/india/portfolio" element={<IndiaPortfolio />} />
             <Route path="/india/notifications" element={<Notifications />} />
@@ -194,6 +193,11 @@ function MainApp() {
             <Route path="/usa/notifications" element={<Notifications />} />
             <Route path="/usa/profile" element={<Profile />} />
             <Route path="/usa/brokerage" element={<Brokerage />} />
+            <Route path="/usa/paper-trading" element={<UsaPaperTrading />} />
+            <Route
+              path="/usa/paper-trading/portfolio"
+              element={<UsaPaperTradingPortfolio />}
+            />
           </Route>
         </Routes>
       </div>
