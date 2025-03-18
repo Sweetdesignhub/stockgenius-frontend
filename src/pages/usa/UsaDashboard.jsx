@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import fetchFile from "../../utils/fetchFile.js";
-import parseExcel from "../../utils/usa/parseExcel";
+import parseExcel from "../../utils/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
 import Table from "../../components/dashboard/Table";

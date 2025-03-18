@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Filter, Infinity, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import fetchFile from "../../utils/fetchFile";
-import parseExcel from "../../utils/india/parseExcel";
+import parseExcel from "../../utils/parseExcel";
 import Loading from "../common/Loading";
 import PlaceOrderModal from "./PlaceOrderModal";
 import { useTheme } from "../../contexts/ThemeContext";

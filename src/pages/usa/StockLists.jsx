@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import fetchFile from "../../utils/fetchFile.js";
-import parseExcel from "../../utils/usa/parseExcel";
+import parseExcel from "../../utils/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
 import Speedometer from "../../components/common/Speedometer";
@@ -202,19 +202,19 @@ function StockLists() {
               <h1 className="text-sm font-bold">At Close : &nbsp;</h1>
               <p className="text-xs font-semibold">{lastUpdated}</p>
             </div>
-            <div class="relative group">
+            <div className="relative group">
               <button
                 onClick={downloadExcel}
-                class="px-2 py-1 rounded-lg border border-gray-500"
+                className="px-2 py-1 rounded-lg border border-gray-500"
               >
                 <img
-                  class="h-6 w-6"
+                  className="h-6 w-6"
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
                   alt="Download excel"
                 />
               </button>
-              <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Download excel
               </span>
             </div>

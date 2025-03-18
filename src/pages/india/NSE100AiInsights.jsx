@@ -19,7 +19,7 @@
 
 import { useEffect, useState } from "react";
 import fetchFile from "../../utils/fetchFile";
-import parseExcel from "../../utils/india/parseExcel";
+import parseExcel from "../../utils/parseExcel";
 import Loading from "../../components/common/Loading";
 import ErrorComponent from "../../components/common/Error";
 import Modal from "../../components/common/Modal";

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux"; // Import Redux selector
 import { ChevronRight } from "lucide-react";
-import fetchFileJSON from "../../utils/india/fetchFileJSON";
+import fetchFileJSON from "../../utils/fetchFileJSON";
 import fetchFile from "../../utils/fetchFile";
-import parseExcel from "../../utils/india/parseExcel";
+import parseExcel from "../../utils/parseExcel";
 import Loading from "../common/Loading";
 
 const StockCard = ({
@@ -23,45 +24,20 @@ const StockCard = ({
     <h2 className="text-sm font-semibold mb-2 flex justify-between items-center">
       {title}
     </h2>
-
     <div className="flex items-center gap-2 mb-1">
       <div>
         <h3 className="text-xs font-semibold dark:text-white">{stock}</h3>
         <p className="text-xs text-gray-400">{description}</p>
       </div>
     </div>
-
     <div className="flex gap-1 flex-wrap">
-      <div
-        className="px-2 py-1 rounded-full text-xs"
-        style={{
-          backgroundColor: "#14AE5C1A",
-          color: "#7EF36B",
-          border: "1px solid #14AE5C",
-        }}
-      >
+      <div className="px-2 py-1 rounded-full text-xs bg-[#14AE5C1A] text-[#7EF36B] border border-[#14AE5C]">
         ROI - {roi}
       </div>
-
-      <div
-        className="px-2 py-1 rounded-full text-xs"
-        style={{
-          backgroundColor: "#8B5CF61A",
-          color: "#C4B5FD",
-          border: "1px solid #8B5CF6",
-        }}
-      >
+      <div className="px-2 py-1 rounded-full text-xs bg-[#8B5CF61A] text-[#C4B5FD] border border-[#8B5CF6]">
         Sentiment Score - {sentimentScore}
       </div>
-
-      <div
-        className="px-2 py-1 rounded-full text-xs"
-        style={{
-          backgroundColor: "#F59E0B1A",
-          color: "#FCD34D",
-          border: "1px solid #F59E0B",
-        }}
-      >
+      <div className="px-2 py-1 rounded-full text-xs bg-[#F59E0B1A] text-[#FCD34D] border border-[#F59E0B]">
         Volatility - {volatility}
       </div>
     </div>
@@ -75,13 +51,26 @@ function DailyUpdates() {
     highSentiment: {},
     lowRisk: {},
   });
-  const [loading, setLoading] = useState(true); // Step 1: Add loading state
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 Get region and market from Redux store
+  const region = useSelector((state) => state.region);
+  const market = useSelector((state) => state.market);
+
+  // ✅ Determine container name dynamically
+  let containerName = "";
+  if (region === "india") {
+    containerName = "sgaiindia";
+  } else if (region === "usa") {
+    containerName =
+      market === "NASDAQ" ? "nasdaq" : market === "NYSE" ? "nyse" : "NYSE";
+  }
 
   useEffect(() => {
     const getNewsData = async () => {
       try {
         const data = await fetchFileJSON(
-          "automationdatabucket",
+          containerName,
           "EOD_Reports/NewsData/merged_plain_news.json"
         );
         setNewsHeadlines(data);
@@ -93,13 +82,12 @@ function DailyUpdates() {
     getNewsData();
     const intervalId = setInterval(getNewsData, 3600000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [containerName]);
 
   useEffect(() => {
     const fetchStockData = async () => {
-      setLoading(true); // Step 2: Set loading to true when fetching data
+      setLoading(true);
       try {
-        const containerName = "sgaiindia";
         const fileName = "Realtime_Reports/Final_Report.xlsx";
         const fileBuffer = await fetchFile(containerName, fileName);
         const jsonData = parseExcel(fileBuffer);
@@ -115,37 +103,35 @@ function DailyUpdates() {
           rsi: row["RSI"],
         }));
 
-        const topPick = formattedData.reduce((prev, current) => {
-          return prev.roi > current.roi ? prev : current;
-        });
-
-        const highSentimentStock = formattedData.reduce((prev, current) => {
-          return prev.sentimentScore > current.sentimentScore ? prev : current;
-        });
-
-        const lowRiskStock = formattedData.reduce((prev, current) => {
-          return prev.volatility < current.volatility ? prev : current;
-        });
+        const topPick = formattedData.reduce((prev, current) =>
+          prev.roi > current.roi ? prev : current
+        );
+        const highSentimentStock = formattedData.reduce((prev, current) =>
+          prev.sentimentScore > current.sentimentScore ? prev : current
+        );
+        const lowRiskStock = formattedData.reduce((prev, current) =>
+          prev.volatility < current.volatility ? prev : current
+        );
 
         setStockData({
           topPick: {
             stock: topPick.stockName,
             description: `Strong quarterly earnings and positive sentiment drive this stock.`,
-            roi: `${topPick.roi}RS in 1 Week`,
+            roi: `${topPick.roi} RS in 1 Week`,
             sentimentScore: topPick.sentimentScore,
             volatility: topPick.volatility,
           },
           highSentiment: {
             stock: highSentimentStock.stockName,
             description: `Strong quarterly earnings and positive sentiment drive this stock.`,
-            roi: `${highSentimentStock.roi}RS in 1 Week`,
+            roi: `${highSentimentStock.roi} RS in 1 Week`,
             sentimentScore: highSentimentStock.sentimentScore,
             volatility: highSentimentStock.volatility,
           },
           lowRisk: {
             stock: lowRiskStock.stockName,
             description: `Strong quarterly earnings and positive sentiment drive this stock.`,
-            roi: `${lowRiskStock.roi}RS in 1 Week`,
+            roi: `${lowRiskStock.roi} RS in 1 Week`,
             sentimentScore: lowRiskStock.sentimentScore,
             volatility: lowRiskStock.volatility,
           },
@@ -153,52 +139,27 @@ function DailyUpdates() {
       } catch (error) {
         console.error("Error fetching or parsing file:", error);
       } finally {
-        setLoading(false); // Step 3: Set loading to false after data fetch completes
+        setLoading(false);
       }
     };
 
     fetchStockData();
     const intervalId = setInterval(fetchStockData, 3600000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [containerName]);
 
   if (loading) {
-    return <Loading />; // Step 4: Conditionally render the Loading component
+    return <Loading />;
   }
 
   return (
     <div className="flex flex-col h-full gap-4">
-      {/* 50% height for Stock Cards Section */}
       <div className="flex flex-col md:flex-col gap-4 flex-1">
-        <StockCard
-          title="Top Pick for Today"
-          stock={stockData.topPick.stock}
-          description={stockData.topPick.description}
-          roi={stockData.topPick.roi}
-          sentimentScore={stockData.topPick.sentimentScore}
-          volatility={stockData.topPick.volatility}
-        />
-
-        <StockCard
-          title="High Sentiment Stock"
-          stock={stockData.highSentiment.stock}
-          description={stockData.highSentiment.description}
-          roi={stockData.highSentiment.roi}
-          sentimentScore={stockData.highSentiment.sentimentScore}
-          volatility={stockData.highSentiment.volatility}
-        />
-
-        <StockCard
-          title="Low Risk Option"
-          stock={stockData.lowRisk.stock}
-          description={stockData.lowRisk.description}
-          roi={stockData.lowRisk.roi}
-          sentimentScore={stockData.lowRisk.sentimentScore}
-          volatility={stockData.lowRisk.volatility}
-        />
+        <StockCard {...stockData.topPick} title="Top Pick for Today" />
+        <StockCard {...stockData.highSentiment} title="High Sentiment Stock" />
+        <StockCard {...stockData.lowRisk} title="Low Risk Option" />
       </div>
 
-      {/* 50% height for News Section */}
       <div
         className="dark:bg-[#1a1f2e] rounded-lg p-4 dark:text-white flex-1 overflow-hidden"
         style={{
