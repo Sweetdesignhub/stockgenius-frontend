@@ -184,7 +184,9 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               </div>
 
               {/* Radio Buttons moved to header */}
-              <div className="flex gap-8 mt-3">
+              {
+                region === "india" && 
+                  <div className="flex gap-8 mt-3">
                 <div className="flex gap-3">
                   <input
                     type="radio"
@@ -206,6 +208,8 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                   BSE {initialData.price}
                 </div>
               </div>
+                
+              }
             </div>
           </div>
 
