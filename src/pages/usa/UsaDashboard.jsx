@@ -27,9 +27,9 @@ function UsaDashboard() {
 
   // Set containerName based on the market
   if (market === "NYSE") {
-    containerName = "nasdaq";
-  } else if (market === "NASDAQ") {
     containerName = "nyse";
+  } else if (market === "NASDAQ") {
+    containerName = "nasdaq";
   }
 
   // Fetch data from the bucket

@@ -42,8 +42,8 @@ import moment from "moment-timezone";
 // India Market (NSE) Trading Hours
 const startHourIST = 9;
 const startMinIST = 15;
-const endHourIST = 15;
-const endMinIST = 30;
+const endHourIST = 16;
+const endMinIST = 0;
 
 // US Market (NYSE/NASDAQ) Trading Hours
 const startHourUS = 9;

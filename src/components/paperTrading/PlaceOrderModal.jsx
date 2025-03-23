@@ -17,7 +17,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     quantity: initialData?.quantity || "",
     limitPrice: "",
     stopPrice: "",
-    exchange: region === "usa" ? market : "NSE", 
+    exchange: region === "usa" ? market : "NSE",
     productType: "CNC", // Default product type
   });
 
@@ -184,32 +184,30 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               </div>
 
               {/* Radio Buttons moved to header */}
-              {
-                region === "india" && 
-                  <div className="flex gap-8 mt-3">
-                <div className="flex gap-3">
-                  <input
-                    type="radio"
-                    name="exchange"
-                    value="NSE"
-                    checked={formData.exchange === "NSE"}
-                    onChange={handleChange}
-                    className="mr-0"
-                  />
-                  NSE {initialData.price}
-                  <input
-                    type="radio"
-                    name="exchange"
-                    value="BSE"
-                    checked={formData.exchange === "BSE"}
-                    onChange={handleChange}
-                    className="mr-0"
-                  />
-                  BSE {initialData.price}
+              {region === "india" && (
+                <div className="flex gap-8 mt-3">
+                  <div className="flex gap-3">
+                    <input
+                      type="radio"
+                      name="exchange"
+                      value="NSE"
+                      checked={formData.exchange === "NSE"}
+                      onChange={handleChange}
+                      className="mr-0"
+                    />
+                    NSE {initialData.price}
+                    <input
+                      type="radio"
+                      name="exchange"
+                      value="BSE"
+                      checked={formData.exchange === "BSE"}
+                      onChange={handleChange}
+                      className="mr-0"
+                    />
+                    BSE {initialData.price}
+                  </div>
                 </div>
-              </div>
-                
-              }
+              )}
             </div>
           </div>
 

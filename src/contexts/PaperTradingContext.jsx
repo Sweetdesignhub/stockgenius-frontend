@@ -33,7 +33,7 @@ export function PaperTradingProvider({ children }) {
 
     try {
       const pricePromises = symbols.map((symbol) =>
-        api
+        paperTradeApi
           .get(`/api/v1/stocks/price/${symbol}`)
           .then((response) => ({ symbol, price: response.data.price }))
           .catch(() => ({ symbol, price: null }))
@@ -58,32 +58,42 @@ export function PaperTradingProvider({ children }) {
     let todaysProfit = 0;
     let totalProfit = 0;
     let totalInvested = 0;
-
+  
+    // ✅ Iterate through positions (active trades)
     positionsArray.forEach((position) => {
       const currentPrice = prices[position.stockSymbol] || position.ltp || 0;
-      const quantity = position.quantity || 0;
+      const quantity = position.quantity || 0; // Ensure this is the remaining quantity
       const avgBuyPrice = position.avgPrice || position.buyAvgPrice || 0;
-      const positionProfit = (currentPrice - avgBuyPrice) * quantity;
-      todaysProfit += positionProfit;
-      totalInvested += avgBuyPrice * quantity;
+      
+      // ✅ Ensure calculation only considers remaining quantity
+      if (quantity > 0) {
+        const positionProfit = (currentPrice - avgBuyPrice) * quantity;
+        todaysProfit += positionProfit;
+        totalInvested += avgBuyPrice * quantity; 
+      }
     });
-
+  
+    // ✅ Iterate through holdings (stocks owned)
     holdingsArray.forEach((holding) => {
       const currentPrice = prices[holding.stockSymbol] || holding.lastTradedPrice || 0;
       const quantity = holding.quantity || 0;
       const avgBuyPrice = holding.averagePrice || 0;
-      const holdingProfit = (currentPrice - avgBuyPrice) * quantity;
-      totalProfit += holdingProfit;
-      totalInvested += avgBuyPrice * quantity;
+  
+      if (quantity > 0) {
+        const holdingProfit = (currentPrice - avgBuyPrice) * quantity;
+        totalProfit += holdingProfit;
+        totalInvested += avgBuyPrice * quantity;
+      }
     });
-
+  
     setProfitSummary({
       todaysProfit: Number(todaysProfit.toFixed(2)),
       totalProfit: Number(totalProfit.toFixed(2)),
     });
-
-    setInvestedAmount(Number(totalInvested.toFixed(2)));
+  
+    // setInvestedAmount(Number(totalInvested.toFixed(2)));
   }, []);
+  
 
   // ✅ Fetch Paper Trading Data
   const fetchPaperTradingData = useCallback(async (isFirstLoad = false) => {
@@ -117,12 +127,15 @@ export function PaperTradingProvider({ children }) {
       const tradesArray = tradesResponse?.data?.data[0]?.trades || [];
       const holdingsArray = holdingsResponse?.data?.data || [];
       const ordersArray = ordersResponse?.data?.orders[0]?.orders || [];
+      const investedAmountFromDb = fundsResponse?.data?.data?.investedAmount || 0;
   
       setFunds(fundsData);
       setPositions(positionsArray);
       setTrades(tradesArray);
       setHoldings(holdingsArray);
       setOrders(ordersArray);
+      setInvestedAmount(Number(investedAmountFromDb.toFixed(2)));
+
   
       const positionSymbols = positionsArray.map((p) => p.stockSymbol).filter(Boolean);
       const holdingSymbols = holdingsArray.map((h) => h.stockSymbol).filter(Boolean);
@@ -147,7 +160,25 @@ export function PaperTradingProvider({ children }) {
   
   
 
-  // ✅ Auto-fetch Data Every 10 Seconds
+  // // ✅ Auto-fetch Data Every 10 Seconds
+  // useEffect(() => {
+  //   if (currentUser?.id) {
+  //     const fetchData = async () => {
+  //       setLoading(true); // ✅ Show loading only for the first fetch
+  //       await fetchPaperTradingData(true); // ✅ Pass true to indicate first load
+  //     };
+  
+  //     fetchData();
+  
+  //     const dataInterval = setInterval(() => {
+  //       fetchPaperTradingData(false); // ✅ Subsequent fetches won't trigger loading state
+  //     }, 10000);
+  
+  //     return () => clearInterval(dataInterval);
+  //   }
+  // }, [currentUser?.id, fetchPaperTradingData]);
+  //  // Removed fetchPaperTradingData from dependencies to avoid unnecessary re-renders
+
   useEffect(() => {
     if (currentUser?.id) {
       const fetchData = async () => {
@@ -155,16 +186,32 @@ export function PaperTradingProvider({ children }) {
         await fetchPaperTradingData(true); // ✅ Pass true to indicate first load
       };
   
-      fetchData();
+      fetchData(); // ✅ Initial fetch
   
-      const dataInterval = setInterval(() => {
-        fetchPaperTradingData(false); // ✅ Subsequent fetches won't trigger loading state
-      }, 10000);
+      const checkAndFetchData = () => {
+        const now = new Date();
+        const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+  
+        const isWeekday = day >= 1 && day <= 5; // Monday to Friday
+        const isTradingHours =
+          (hours === 9 && minutes >= 15) || (hours > 9 && hours < 16); // 9:15 AM - 4:00 PM
+  
+        if (isWeekday && isTradingHours) {
+          fetchPaperTradingData(false); // ✅ Hit every 15 sec in trading hours
+        } else {
+          fetchPaperTradingData(false); // ✅ Hit once on weekends or after trading hours
+          clearInterval(dataInterval); // ✅ Stop repeated calls
+        }
+      };
+  
+      const dataInterval = setInterval(checkAndFetchData, 15000); // ✅ 15 sec interval
   
       return () => clearInterval(dataInterval);
     }
   }, [currentUser?.id, fetchPaperTradingData]);
-   // Removed fetchPaperTradingData from dependencies to avoid unnecessary re-renders
+  
 
   // ✅ Context Value
   const contextValue = {
