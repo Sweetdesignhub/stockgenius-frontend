@@ -11,15 +11,15 @@ function PaperTrading() {
   return (
     <div className="-z-10">
       <div className="min-h-screen lg:px-32 p-4 relative">
-        <img
+      <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px] md:w-[100px] sm:w-[80px]"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
           alt="bull"
         />
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px] md:w-[100px] sm:w-[80px]"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
           alt="bear"
         />

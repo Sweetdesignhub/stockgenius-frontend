@@ -104,6 +104,9 @@ import PaperTradingAutoTrade from "./pages/india/PaperTradingAutoTrade.jsx";
 import BankNifty from "./pages/india/BankNifty.jsx";
 import UsaPaperTrading from "./pages/usa/UsaPaperTrading.jsx";
 import UsaPaperTradingPortfolio from "./pages/usa/UsaPaperTradingPortfolio.jsx";
+import ELearning from "./pages/ELearning.jsx";
+import ELearningModules from "./pages/ELearningModules.jsx";
+import ModuleDetail from "./components/eLearning/ModuleDetail.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -153,6 +156,22 @@ function MainApp() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route element={<PrivateRoute />}>
+
+          {/* common route */}
+          <Route
+              path="/e-learning"
+              element={<ELearning/>}
+            />
+          <Route
+              path="/e-learning/modules"
+              element={<ELearningModules/>}
+            />
+          <Route
+              path="/e-learning/modules/:moduleId"
+              element={<ModuleDetail/>}
+            />
+
+
             {/* India routes */}
             <Route path="/india/dashboard" element={<IndiaDashboard />} />
             <Route
@@ -179,6 +198,8 @@ function MainApp() {
               path="/india/paper-trading/auto-trade"
               element={<PaperTradingAutoTrade />}
             />
+
+            
 
             {/* admin route */}
             <Route element={<OnlyAdminPrivateRoute />}>

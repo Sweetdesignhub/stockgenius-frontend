@@ -5,12 +5,14 @@ import storage from "redux-persist/lib/storage";
 import regionReducer from "./region/regionSlice.js";
 import marketReducer from "./region/marketSlice.js";
 import fyersReducer from './brokers/fyersSlice.js'
+import learningReducer from './eLearning/learningSlice.js'
 
 const rootReducer = combineReducers({
   user: userReducer,
   region: regionReducer,
   market: marketReducer,
-  fyers:fyersReducer
+  fyers:fyersReducer,
+  learning: learningReducer,
 });
 
 const persistConfig = {

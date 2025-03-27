@@ -26,6 +26,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaNewspaper, FaAngleDown } from "react-icons/fa";
+import { GiGraduateCap } from "react-icons/gi";
 import { BsBank2 } from "react-icons/bs";
 import { BsRobot } from "react-icons/bs";
 import { FaBagShopping } from "react-icons/fa6";
@@ -58,7 +59,8 @@ export default function Header() {
     location.pathname === "/usa/dashboard" ||
     location.pathname === "/usa/portfolio" ||
     location.pathname === "/usa/paper-trading/portfolio" ||
-    location.pathname === "/usa/stock-lists" || location.pathname === "/usa/paper-trading";
+    location.pathname === "/usa/stock-lists" ||
+    location.pathname === "/usa/paper-trading";
 
   useEffect(() => {
     if (region) {
@@ -83,6 +85,10 @@ export default function Header() {
 
   let navigation = [];
 
+  const commonItems = [
+    { name: "E-Learning", to: `/e-learning`, icon: GiGraduateCap },
+  ];
+
   if (region === "india") {
     navigation = [
       { name: "Dashboard", to: `/india/dashboard`, icon: MdDashboard },
@@ -91,28 +97,27 @@ export default function Header() {
         to: `/india/NSE100-ai-insights`,
         icon: FaNewspaper,
       },
-      {
-        name: "Bank Nifty",
-        to: `/india/bankNifty`,
-        icon: BsBank2,
-      },
+      { name: "Bank Nifty", to: `/india/bankNifty`, icon: BsBank2 },
       { name: "Portfolio", to: `/india/portfolio`, icon: FaBagShopping },
       { name: "AI Trading Bots", to: `/india/AI-Trading-Bots`, icon: BsRobot },
-      { name: "IPOs", to: `/india/initial-public-offers`, icon: RiFilePaper2Fill },
+      {
+        name: "IPOs",
+        to: `/india/initial-public-offers`,
+        icon: RiFilePaper2Fill,
+      },
       { name: "Paper Trading", to: `/india/paper-trading`, icon: FaListAlt },
     ];
   } else if (region === "usa") {
     navigation = [
       { name: "Dashboard", to: `/usa/dashboard`, icon: MdDashboard },
-      {
-        name: "Stock Lists",
-        to: `/usa/stock-lists`,
-        icon: FaNewspaper,
-      },
+      { name: "Stock Lists", to: `/usa/stock-lists`, icon: FaNewspaper },
       { name: "Portfolio", to: `/usa/portfolio`, icon: FaBagShopping },
       { name: "Paper Trading", to: `/usa/paper-trading`, icon: FaListAlt },
     ];
   }
+
+  // Merge region-specific and common items
+  navigation = [...navigation, ...commonItems];
 
   const regionOptions = [
     {
@@ -249,18 +254,18 @@ export default function Header() {
   return (
     <header>
       <nav
-        className="flex items-center justify-between p-6 lg:px-5"
+        className="flex items-center justify-between p-6 lg:px-4"
         aria-label="Global"
       >
         <div className="flex items-center ">
           <Link to="/">
             <img
-              className="h-7 mr-3"
+              className="h-7 mr-1"
               src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F44c1d4cdd7274260a729d09f18bb553e"
               alt="Stockgenius.ai"
             />
           </Link>
-          <Link to="/" className=" p-1 text-lg font-[aldrich]">
+          <Link to="/" className="ml-1 text-lg font-[aldrich]">
             Stockgenius.ai
           </Link>
         </div>
@@ -316,7 +321,7 @@ export default function Header() {
                 className={({ isActive }) =>
                   classNames(
                     isActive ? "bg-[#3A6FF8] text-white" : "",
-                    "rounded-md px-2 py-2 text-sm flex items-center gap-2"
+                    "rounded-md px-[7px] py-2 text-[13px] flex items-center gap-2"
                   )
                 }
                 exact="true"
@@ -382,18 +387,18 @@ export default function Header() {
                     <div>Region flag</div>
                   )}
                 </div>
-                <Menu as="div" className="relative ml-3">
+                <Menu as="div" className="relative">
                   <div>
                     <MenuButton className="relative flex rounded-full  text-md focus:outline-none">
-                      <div className="flex items-center px-2 ">
+                      <div className="flex items-center px-1 ">
                         <img
-                          className="h-9 w-9 mr-2 rounded-xl"
+                          className="h-9 w-9 mr-1 rounded-xl"
                           src={currentUser?.avatar}
                           alt="User avatar"
                           loading="lazy"
                         />
                         <div className="flex items-center">
-                          <h2 className="mr-2 capitalize">
+                          <h2 className="mr-1 capitalize">
                             {currentUser.name.slice(0, 10)}
                           </h2>
                           <FaAngleDown />
