@@ -12,33 +12,151 @@ import {
   MdMoreVert,
 } from "react-icons/md";
 import { VscMultipleWindows } from "react-icons/vsc";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-const ModuleDetails = ({
-  module,
-  onBack,
-  onNext,
-  onReturnToList,
-  currentIndex,
-  totalModules,
-}) => {
-  console.log(module);
-  
+const ModuleDetails = () => {
+  const { moduleId } = useParams(); // Get moduleId from URL (e.g., "1", "2", etc.)
+  const navigate = useNavigate();
+
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [videoIndex, setVideoIndex] = useState(0);
-
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
-  const navigate = useNavigate();
+  // Module data
+  const modules = [
+    {
+      id: "1",
+      title: "Module 1",
+      description: "Introduction to Stock Market Basics (Super Simple)",
+      bgImage:
+        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F449e542a8e474ca09fb87ff0dbf82cfc",
+      descColor: "#CCFDFF",
+      content:
+        "🚀 Learn the basics of stock market investing with real-world examples.",
+      videos: [
+        {
+          title: "Scence 1 (1)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F6a940b51a6ac498d8381e0f9fc0eae3f%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=6a940b51a6ac498d8381e0f9fc0eae3f&alt=media&optimized=true",
+        },
+        {
+          title: "section before lesson (2)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2Ffa41c1476acf408280d90818bb99b08f%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=fa41c1476acf408280d90818bb99b08f&alt=media&optimized=true",
+        },
+        {
+          title: "lesson 1 (3)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2Fdaf30f7efd8c4eaa99139edbad372b5f%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=daf30f7efd8c4eaa99139edbad372b5f&alt=media&optimized=true",
+        },
+        {
+          title: "filler 2 (4)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F9944509d1a06489195b104db24540fcb%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=9944509d1a06489195b104db24540fcb&alt=media&optimized=true",
+        },
+        {
+          title: "lesson 2 (5)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F5ad366a3f3fa4f819ba306b2f86c3309%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=5ad366a3f3fa4f819ba306b2f86c3309&alt=media&optimized=true",
+        },
+        {
+          title: "filler 3 (6)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2Fc84ab01f393e4a6f9cb5c907659e86e5%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=c84ab01f393e4a6f9cb5c907659e86e5&alt=media&optimized=true",
+        },
+        {
+          title: "lesson 3 (7)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F97f5f74f2aa04f46b33224ff16838442%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=97f5f74f2aa04f46b33224ff16838442&alt=media&optimized=true",
+        },
+        {
+          title: "filler 3 & 4 (8)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F0916f029773c443fa71981cf228357a9%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=0916f029773c443fa71981cf228357a9&alt=media&optimized=true",
+        },
+        {
+          title: "lesson 4 (9)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F829eba082e2d4435864352c9c269f528%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=829eba082e2d4435864352c9c269f528&alt=media&optimized=true",
+        },
+        {
+          title: "after lesson 4 (10)",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F5e8cb89c8bff4b9d95d249056c6bdebd%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=5e8cb89c8bff4b9d95d249056c6bdebd&alt=media&optimized=true",
+        },
+      ],
+    },
+    {
+      id: "2",
+      title: "Module 2",
+      description: "Understanding Derivatives (Super Simple Story)",
+      bgImage:
+        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F3636bc3d3ef1489e9bab8d4ec141ba99",
+      descColor: "#D6FFF0",
+      content: "📈 Understand how derivatives work and how traders use them.",
+      videos: [
+        {
+          title: "video 1, module 2",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+        },
+      ],
+    },
+    {
+      id: "3",
+      title: "Module 3",
+      description: "What Are Futures Contracts? (Super Simple with Story)",
+      bgImage:
+        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F044f0c30f30240cb9763f0640450ef68",
+      descColor: "#FFF0F0",
+      content: "🔮 Explore the mechanics of futures contracts in trading.",
+      videos: [], // No videos provided, will show "Videos are in progress..."
+    },
+    {
+      id: "4",
+      title: "Module 4",
+      description: "What are Options Contracts? (Super Simple with Stories)",
+      bgImage:
+        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F48eb8037a3664f94827e5c54e88ee8f1",
+      descColor: "#FFEECC",
+      content: "💡 Options contracts explained in the simplest way possible!",
+      videos: [], // No videos provided
+    },
+    {
+      id: "5",
+      title: "Module 5",
+      description: "Understanding Option Chain",
+      bgImage:
+        "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fa369009079804034898ca9186a441725",
+      descColor: "#CDFFCC",
+      content: "📊 Learn how to analyze an option chain like a pro.",
+      videos: [], // No videos provided
+    },
+  ];
 
-  const hasVideos = Array.isArray(module?.videos) && module.videos.length > 0;
+  // Find the current module by ID
+  const module = modules.find((m) => m.id === moduleId) || {
+    id: "not-found",
+    title: "Module Not Found",
+    description: "This module does not exist.",
+    videos: [],
+  };
+
+  const hasVideos = Array.isArray(module.videos) && module.videos.length > 0;
   const currentVideo = hasVideos ? module.videos[videoIndex] : null;
 
+  // Functions for Previous and Next Module navigation
+  const goToPreviousModule = () => {
+    const currentIndex = modules.findIndex((m) => m.id === moduleId);
+    if (currentIndex > 0) {
+      const prevModuleId = modules[currentIndex - 1].id;
+      navigate(`/e-learning/learning/${prevModuleId}`);
+    }
+  };
+
+  const goToNextModule = () => {
+    const currentIndex = modules.findIndex((m) => m.id === moduleId);
+    if (currentIndex < modules.length - 1) {
+      const nextModuleId = modules[currentIndex + 1].id;
+      navigate(`/e-learning/learning/${nextModuleId}`);
+    }
+  };
+
+  // Video control functions
   const togglePlayPause = () => {
     if (videoRef.current.paused) {
       videoRef.current.play();
@@ -92,15 +210,26 @@ const ModuleDetails = ({
       setVideoIndex(videoIndex + 1);
       setIsPlaying(false);
     } else {
-      setShowQuizPopup(true); // show the popup
-      setCountdown(5); // start from 5
+      setShowQuizPopup(true);
+      setCountdown(5);
 
       const countdownInterval = setInterval(() => {
         setCountdown((prev) => {
           if (prev === 1) {
             clearInterval(countdownInterval);
-            // localStorage.setItem("selectedModuleIndex", currentIndex);
-            navigate(`/quiz/module/${module.id}`); // redirect after countdown ends
+            // Check if quiz exists for this module
+            const hasQuiz = ["1", "2"].includes(moduleId); // Only modules 1 and 2 have quizzes based on quizMap
+            if (hasQuiz) {
+              navigate(`/quiz/module/${moduleId}`);
+            } else {
+              // If no quiz, go to next module or back to learning tab
+              const currentIndex = modules.findIndex((m) => m.id === moduleId);
+              if (currentIndex < modules.length - 1) {
+                navigate(`/e-learning/learning/${modules[currentIndex + 1].id}`);
+              } else {
+                navigate("/e-learning/learning");
+              }
+            }
           }
           return prev - 1;
         });
@@ -108,6 +237,7 @@ const ModuleDetails = ({
     }
   };
 
+  // Reset video state when module changes
   useEffect(() => {
     setVideoIndex(0);
     setIsPlaying(false);
@@ -115,8 +245,9 @@ const ModuleDetails = ({
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
-  }, [module]);
+  }, [moduleId]);
 
+  // Autoplay video when videoIndex changes
   useEffect(() => {
     if (videoRef.current && hasVideos) {
       videoRef.current.load();
@@ -127,7 +258,11 @@ const ModuleDetails = ({
           .catch((err) => console.warn("Autoplay failed:", err));
       }
     }
-  }, [videoIndex]);
+  }, [videoIndex, hasVideos]);
+
+  const currentIndex = modules.findIndex((m) => m.id === moduleId);
+  const isFirstModule = currentIndex === 0;
+  const isLastModule = currentIndex === modules.length - 1;
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -149,39 +284,37 @@ const ModuleDetails = ({
 
         <div className="flex gap-2">
           <button
-            onClick={onReturnToList}
+            onClick={() => navigate("/e-learning/learning")}
             className="bg-white text-[#FF9400] flex items-center gap-1 px-2 py-1 rounded-lg transition-opacity"
           >
             <VscMultipleWindows />
           </button>
 
           <button
-            onClick={onBack}
-            disabled={currentIndex === 0}
+            onClick={goToPreviousModule}
+            disabled={isFirstModule}
             className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-opacity 
               ${
-                currentIndex === 0
+                isFirstModule
                   ? "bg-gray-500 cursor-not-allowed opacity-50"
                   : "bg-[#FF9400] hover:bg-[#e68300] text-white"
               }
             `}
           >
             <MdNavigateBefore size={18} />
-            {/* <span>Prev Module</span> */}
           </button>
 
           <button
-            onClick={onNext}
-            disabled={currentIndex === totalModules - 1}
+            onClick={goToNextModule}
+            disabled={isLastModule}
             className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-opacity
               ${
-                currentIndex === totalModules - 1
+                isLastModule
                   ? "bg-gray-500 cursor-not-allowed opacity-50"
                   : "bg-[#FF9400] hover:bg-[#e68300] text-white"
               }
             `}
           >
-            {/* <span>Next Module</span> */}
             <MdNavigateNext size={18} />
           </button>
         </div>

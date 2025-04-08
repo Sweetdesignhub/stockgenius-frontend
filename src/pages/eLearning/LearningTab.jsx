@@ -1,6 +1,10 @@
 import React from "react";
-import ModulesCard from "./ModulesCard";
+import { useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
+import ModulesCard from "../../components/eLearning/ModulesCard";
 
+
+// Module data
 const modules = [
   {
     id: "1",
@@ -9,7 +13,8 @@ const modules = [
     bgImage:
       "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F449e542a8e474ca09fb87ff0dbf82cfc",
     descColor: "#CCFDFF",
-    content: "🚀 Learn the basics of stock market investing with real-world examples.",
+    content:
+      "🚀 Learn the basics of stock market investing with real-world examples.",
   },
   {
     id: "2",
@@ -49,10 +54,15 @@ const modules = [
   },
 ];
 
-function ModuleContent({ onModuleSelect }) {
+function LearningTab() {
+  const selectedOptions = useSelector((state) => state.learning);
+
   return (
-    <div className="w-[100%] flex flex-col gap-8">
-       {/* 🔥 Top Section - Gamified Learning Header */}
+    <div className="flex flex-col gap-6 p-4">
+      {/* Show module cards only on the main learning page */}
+      {window.location.pathname === "/e-learning/learning" && (
+        <>
+           {/* 🔥 Top Section - Gamified Learning Header */}
        <div
          className="h-[15%] p-4 flex flex-col justify-center rounded-xl backdrop-blur-xl"
          style={{
@@ -69,22 +79,24 @@ function ModuleContent({ onModuleSelect }) {
            Master stock trading with step-by-step lessons, live simulations & AI-powered coaching
          </p>
        </div>
-
-      {/* Modules Grid */}
-      <div className="h-[80%] p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {modules.map((module) => (
-          <div key={module.id} onClick={() => onModuleSelect(module)}>
-            <ModulesCard
-              moduleTitle={module.title}
-              moduleDescription={module.description}
-              bgImage={module.bgImage}
-              descColor={module.descColor}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {modules.map((module) => (
+              <ModulesCard
+                key={module.id}
+                moduleTitle={module.title}
+                moduleDescription={module.description}
+                bgImage={module.bgImage}
+                link={module.id} // Links to /e-learning/learning/1, /e-learning/learning/2, etc.
+                descColor={module.descColor}
+              />
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+      {/* Render module details when a module is selected */}
+      <Outlet />
     </div>
   );
 }
 
-export default ModuleContent;
+export default LearningTab;

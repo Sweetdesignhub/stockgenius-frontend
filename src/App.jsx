@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import "./App.css";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute.jsx";
@@ -38,8 +38,13 @@ import BankNifty from "./pages/india/BankNifty.jsx";
 import UsaPaperTrading from "./pages/usa/UsaPaperTrading.jsx";
 import UsaPaperTradingPortfolio from "./pages/usa/UsaPaperTradingPortfolio.jsx";
 import ELearning from "./pages/ELearning.jsx";
-import ELearningModules from "./pages/ELearningModules.jsx";
-import QuizPage from "./components/eLearning/quiz/QuizPage.jsx";
+import QuizPage from "./pages/eLearning/QuizPage.jsx";
+import LearningTab from "./pages/eLearning/LearningTab.jsx";
+import MedalTab from "./pages/eLearning/MedalTab.jsx";
+import ModuleDetails from "./components/eLearning/ModuleDetails.jsx";
+import TrophyTab from "./pages/eLearning/TrophyTab.jsx";
+import LibraryTab from "./pages/eLearning/LibraryTab.jsx";
+import GroupTab from "./pages/eLearning/GroupTab.jsx";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -74,7 +79,6 @@ function MainApp() {
 
   const location = useLocation();
 
-
   // ✅ Hide Header on specific routes like /quiz/*
   const hideHeaderOnRoutes = ["/quiz/"];
   const shouldHideHeader = hideHeaderOnRoutes.some((path) =>
@@ -97,19 +101,20 @@ function MainApp() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route element={<PrivateRoute />}>
+            {/* common route */}
 
-          {/* common route */}
-          <Route
-              path="/e-learning"
-              element={<ELearning/>}
-            />
-          <Route
-              path="/e-learning/modules"
-              element={<ELearningModules/>}
-            />
+            <Route path="/e-learning" element={<ELearning />}>
+              <Route index element={<Navigate to="learning" replace />} />
+              <Route path="learning" element={<LearningTab />}>
+                {/* Nested route for module details */}
+                <Route path=":moduleId" element={<ModuleDetails />} />
+              </Route>
+              <Route path="medal" element={<MedalTab />} />
+              <Route path="trophy" element={<TrophyTab />} />
+              <Route path="library" element={<LibraryTab />} />
+              <Route path="group" element={<GroupTab />} />
+            </Route>
             <Route path="/quiz/module/:moduleId" element={<QuizPage />} />
-
-
 
             {/* India routes */}
             <Route path="/india/dashboard" element={<IndiaDashboard />} />
@@ -137,8 +142,6 @@ function MainApp() {
               path="/india/paper-trading/auto-trade"
               element={<PaperTradingAutoTrade />}
             />
-
-            
 
             {/* admin route */}
             <Route element={<OnlyAdminPrivateRoute />}>

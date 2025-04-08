@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,39 +7,40 @@ import {
   updateLearningPreferences,
 } from "../../redux/eLearning/learningSlice";
 
-function WelcomeFormELearning({ options, openDropdown, setOpenDropdown }) {
+function WelcomeFormELearning() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // ✅ Get selected values directly from Redux
   const selectedOptions = useSelector((state) => state.learning);
 
-  // ✅ Updates individual selections in Redux
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const options = {
+    tradingExperience: ["Beginner", "Intermediate", "Expert"],
+    focusArea: ["Stocks", "Options", "Futures", "All"],
+    learningTime: ["5 min", "15 min", "30 min+"],
+  };
+
   const handleSelection = (category, option) => {
-    dispatch(updateLearningPreferences({ category, value: option })); // ✅ Save one value at a time
+    dispatch(updateLearningPreferences({ category, value: option }));
     setOpenDropdown(null);
   };
 
-  // ✅ Saves all selected values & navigates to next page
   const handleSubmit = () => {
-    dispatch(setLearningPreferences(selectedOptions)); // ✅ Save full state
-    navigate("/e-learning/modules");
+    dispatch(setLearningPreferences(selectedOptions));
+    navigate("/e-learning/learning");
   };
 
   return (
     <div className="absolute inset-0 flex flex-col justify-between p-4 md:p-8">
-      {/* Title */}
       <h1 className="text-white text-2xl md:text-4xl lg:text-6xl font-bold">
         Master the Stock Market – One Lesson at a Time!
       </h1>
 
-      {/* Glass Effect */}
       <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-7%] w-[101%] bg-white/30 backdrop-blur-lg p-6 rounded-2xl overflow-visible">
         <h1 className="font-semibold text-lg mb-6 text-left">
           Welcome to Stock Genius Learning!
         </h1>
 
-        {/* Dropdowns */}
         <div className="w-full flex flex-wrap md:flex-nowrap gap-4 md:gap-8 justify-center md:justify-between items-center">
           {Object.entries(options).map(([category, values], index) => (
             <div
@@ -63,7 +64,6 @@ function WelcomeFormELearning({ options, openDropdown, setOpenDropdown }) {
                 <FaChevronDown className="text-gray-500" />
               </div>
 
-              {/* Dropdown Menu */}
               {openDropdown === category && (
                 <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 shadow-lg rounded-lg z-50 p-2">
                   <div className="flex flex-wrap justify-between">
@@ -89,7 +89,6 @@ function WelcomeFormELearning({ options, openDropdown, setOpenDropdown }) {
           ))}
         </div>
 
-        {/* Submit Button - CENTERED */}
         <div className="flex justify-center mt-10">
           <button
             className="px-6 md:px-16 py-1 rounded-xl text-white text-xs md:text-base"
