@@ -3,18 +3,23 @@ import { Link } from "react-router-dom";
 
 function ModulesCard({ moduleTitle, moduleDescription, bgImage, link, descColor }) {
   return (
-    <Link to={link} className="block w-full h-full">
+    <Link to={link} className="block w-full">
       <div
-        className="relative rounded-2xl text-white bg-cover bg-center flex flex-col justify-center text-left h-48 w-[95%] p-8 overflow-hidden transition-transform transform hover:scale-105"
-        style={{ backgroundImage: `url(${bgImage})`, height: "80%", width: "95%" }}
+        className="relative rounded-2xl text-white bg-cover bg-center flex flex-col justify-start items-start p-6 overflow-hidden transition-transform transform hover:scale-105"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          height: "160px", 
+          width: "100%",
+          minWidth: "250px", 
+        }}
       >
         {/* Blurry Overlay */}
-        <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-2xl"></div>
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl"></div>
 
-        {/* Text Content */}
-        <div className="relative z-10 flex flex-col justify-center h-full">
-          <h1 className="text-2xl font-bold mb-2">{moduleTitle}</h1>
-          <p className="text-sm" style={{ color: descColor }}>{moduleDescription}</p>
+        {/* Text Content (Positioned Consistently) */}
+        <div className="relative z-10 flex flex-col justify-start h-full">
+          <h1 className="text-2xl font-bold mb-1">{moduleTitle}</h1> {/* ✅ Title position fixed */}
+          <p className="text-md" style={{ color: descColor }}>{moduleDescription}</p> {/* ✅ Description position fixed */}
         </div>
       </div>
     </Link>
