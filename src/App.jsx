@@ -45,6 +45,7 @@ import ModuleDetails from "./components/eLearning/ModuleDetails.jsx";
 import TrophyTab from "./pages/eLearning/TrophyTab.jsx";
 import LibraryTab from "./pages/eLearning/LibraryTab.jsx";
 import GroupTab from "./pages/eLearning/GroupTab.jsx";
+import SGAITool from "./pages/SGAITool";
 
 function MainApp() {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -115,7 +116,8 @@ function MainApp() {
               <Route path="group" element={<GroupTab />} />
             </Route>
             <Route path="/quiz/module/:moduleId" element={<QuizPage />} />
-
+            <Route path="/sgai-tool" element={<SGAITool />} />
+            {/* sgai-tool */}
             {/* India routes */}
             <Route path="/india/dashboard" element={<IndiaDashboard />} />
             <Route

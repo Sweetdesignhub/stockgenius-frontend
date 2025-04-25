@@ -50,10 +50,21 @@ export default function Header() {
   const region = useSelector((state) => state.region);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const [isHovered, setIsHovered] = useState(false);
+  let hoverTimeout;
 
   // console.log(currentUser);
 
   const dispatch = useDispatch();
+
+  const handleMouseEnter = () => {
+    clearTimeout(hoverTimeout);
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeout = setTimeout(() => setIsHovered(false), 300); // delay in ms
+  };
 
   const isMarketDropdownVisible =
     location.pathname === "/usa/dashboard" ||
@@ -93,11 +104,20 @@ export default function Header() {
     navigation = [
       { name: "Dashboard", to: `/india/dashboard`, icon: MdDashboard },
       {
-        name: "NSE 100 AI Insights",
-        to: `/india/NSE100-ai-insights`,
+        name: "StockList", // <-- this will be the default shown text
+        to: `/india/NSE100-ai-insights`, // default route
         icon: FaNewspaper,
+        submenu: [
+          { name: "NSE 100 AI Insights", to: `/india/NSE100-ai-insights` },
+          { name: "Bank Nifty", to: `/india/bankNifty` },
+        ],
       },
-      { name: "Bank Nifty", to: `/india/bankNifty`, icon: BsBank2 },
+      // {
+      //   name: "NSE 100 AI Insights",
+      //   to: `/india/NSE100-ai-insights`,
+      //   icon: FaNewspaper,
+      // },
+      // { name: "Bank Nifty", to: `/india/bankNifty`, icon: BsBank2 },
       { name: "Portfolio", to: `/india/portfolio`, icon: FaBagShopping },
       { name: "AI Trading Bots", to: `/india/AI-Trading-Bots`, icon: BsRobot },
       {
@@ -106,6 +126,7 @@ export default function Header() {
         icon: RiFilePaper2Fill,
       },
       { name: "Paper Trading", to: `/india/paper-trading`, icon: FaListAlt },
+      { name: "SGAI Tool", to: `/sgai-tool`, icon: FaListAlt },
     ];
   } else if (region === "usa") {
     navigation = [
@@ -113,6 +134,7 @@ export default function Header() {
       { name: "Stock Lists", to: `/usa/stock-lists`, icon: FaNewspaper },
       { name: "Portfolio", to: `/usa/portfolio`, icon: FaBagShopping },
       { name: "Paper Trading", to: `/usa/paper-trading`, icon: FaListAlt },
+      { name: "SGAI Tool", to: `/sgai-tool`, icon: FaListAlt },
     ];
   }
 
@@ -315,20 +337,41 @@ export default function Header() {
         {currentUser ? (
           <div className="hidden lg:flex lg:gap-x-2">
             {navigation.map((item) => (
-              <NavLink
+              <div
                 key={item.name}
-                to={item.to}
-                className={({ isActive }) =>
-                  classNames(
-                    isActive ? "bg-[#3A6FF8] text-white" : "",
-                    "rounded-md px-[7px] py-2 text-[13px] flex items-center gap-2"
-                  )
-                }
-                exact="true"
+                className="relative group"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               >
-                <item.icon className="h-5 w-5" aria-hidden="true" />
-                {item.name}
-              </NavLink>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    classNames(
+                      isActive ? "bg-[#3A6FF8] text-white" : "",
+                      "rounded-md px-[7px] py-2 text-[13px] flex items-center gap-2"
+                    )
+                  }
+                  exact="true"
+                >
+                  <item.icon className="h-5 w-5" aria-hidden="true" />
+                  {item.name}
+                </NavLink>
+
+                {/* Dropdown for items with submenu */}
+                {item.submenu && isHovered && (
+                  <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-white shadow-lg rounded-md mt-1 py-1 z-10 min-w-[180px]">
+                    {item.submenu.map((subItem) => (
+                      <NavLink
+                        key={subItem.name}
+                        to={subItem.to}
+                        className="px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 whitespace-nowrap"
+                      >
+                        {subItem.name}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         ) : (
