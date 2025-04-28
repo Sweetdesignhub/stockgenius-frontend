@@ -14,6 +14,7 @@ const SmartTradeBlueprint = () => {
   const themeColor = theme === "dark" ? "white" : "black";
   const gradientBackground = "";
   const plainBackground = "bg-white text-black";
+  const isDark = theme === "dark";
   const bgClass =
     theme === "dark" ? `${gradientBackground} text-white` : plainBackground;
 
@@ -121,10 +122,13 @@ const SmartTradeBlueprint = () => {
   // }
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-8">
+    <div className="rounded-2xl shadow-lg py-4 px-6">
       {/* Your content goes here */}
       <Header onReRun={handleReRun} isLoading={isLoading} />
-      <hr className="my-4 border-t border-gray-300 dark:border-gray-600" />
+
+      <div
+        className={`h-px w-full my-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+      ></div>
 
       <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
         {/* Left Panel - SGAI Calc */}

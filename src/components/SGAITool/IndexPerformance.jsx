@@ -25,24 +25,45 @@ const IndexPerformance = ({ data }) => {
   `;
 
   const fancyRedCardClass = `
-    ${cardBaseClass}
-    bg-gradient-to-b from-[#FF1E1E] to-[#8B0000]
-    shadow-[0px_8.97px_26.92px_0px_#FF1E1EB2_inset,_0px_8.97px_35.9px_0px_#8B000080]
-    text-white
-  `.trim();
+    relative
+    border-[0.9px] border-transparent
+    text-[#FFD7D7]
+    rounded-lg py-1 px-2
+    shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380]
+    backdrop-blur-[17.95px]
+    overflow-hidden
+    [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)]
+    [border-image-slice:1]
+    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]
+`.trim();
 
   const fancyGreenCardClass = `
-    ${cardBaseClass}
-    bg-gradient-to-b from-[#00FF7F] to-[#006400]
-    shadow-[0px_8.97px_26.92px_0px_#00FF7FB2_inset,_0px_8.97px_35.9px_0px_#00640080]
+    relative
+    text-[#FFD7D7]
+    border-[0.9px] border-transparent
+    
     text-white
+    rounded-lg py-1 px-2
+    shadow-[inset_0px_8.97px_26.92px_0px_#00FF7FB2,0px_8.97px_35.9px_0px_#00640080]
+    backdrop-blur-[18px]
+    overflow-hidden
+    [border-image:linear-gradient(180deg,rgba(0,100,0,0.4)_17.19%,rgba(0,255,127,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(0,100,0,0)_-4.69%,rgba(144,238,144,0.3)_100%)]
+    [border-image-slice:1]
   `.trim();
 
   const fancyPurpleCardClass = `
-    ${cardBaseClass}
-    bg-gradient-to-b from-[#C084FC] to-[#9333EA]
-    shadow-[0px_8.97px_26.92px_0px_#C084FCB2_inset,_0px_8.97px_35.9px_0px_#9333EA80]
-    text-white
+    relative
+    text-[#FFD7FF]
+    border-[0.9px] border-transparent
+    rounded-lg py-1 px-2
+    overflow-hidden
+    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#882776_132.95%)]
+    [border-image:linear-gradient(180deg,rgba(136,39,118,0.4)_17.19%,rgba(251,98,241,0.77)_100%),
+    linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),
+    linear-gradient(180deg,rgba(136,39,118,0)_-4.69%,rgba(254,189,253,0.3)_100%)]
+    [border-image-slice:1]
+    shadow-[inset_0px_8.97px_26.92px_0px_#FF49F3B2,0px_8.97px_35.9px_0px_#AF3FA080]
+    backdrop-blur-[17.95px]
   `.trim();
 
   const getValueCardClass = (open, close) =>
@@ -52,10 +73,10 @@ const IndexPerformance = ({ data }) => {
   return (
     <div
       className={`max-w-3xl h-full mx-auto p-6 rounded-3xl  shadow-2xl backdrop-blur-md ${
-        theme === "dark" ? "bg-white/1" : "bg-white/1"
+        theme === "dark" ? "bg-white/1" : "bg-white/50"
       }`}
     >
-      <h2 className={`text-2xl font-bold mb-3  ${headerColor}`}>
+      <h2 className={`text-base md:text-xl font-bold mb-3  ${headerColor}`}>
         Index Performance
       </h2>
       <div
@@ -123,3 +144,13 @@ const IndexPerformance = ({ data }) => {
 };
 
 export default IndexPerformance;
+
+function CurrencyDisplay() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-800">
+      <div className="px-6 py-3 text-xl font-medium text-white rounded-full bg-gradient-to-r from-red-900/90 to-red-800/90 shadow-lg shadow-red-900/30 border border-red-700/30">
+        4028.45 Rs
+      </div>
+    </div>
+  );
+}

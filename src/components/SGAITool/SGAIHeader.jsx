@@ -14,21 +14,21 @@ const Header = ({ onReRun, isLoading }) => {
 
       <div className="flex space-x-2">
         {isLoading ? (
-          <div className="flex items-center px-4 py-2 text-orange-500 border rounded-full bg-white text-extrabold transition-colors">
+          <div className="flex items-center px-4  text-orange-500 border rounded-full bg-white text-extrabold transition-colors">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
             <span>Loading</span>
           </div>
         ) : (
           <button
             onClick={onReRun}
-            className="flex items-center px-4 py-2 text-orange-500 border rounded-full bg-white text-extrabold transition-colors"
+            className="flex items-center px-4  text-orange-500 border rounded-2xl bg-white text-extrabold transition-colors"
           >
             <FiRefreshCw className="mr-2" />
             Re-Run
           </button>
         )}
 
-        <button className="flex items-center px-4 py-2 bg-white text-blue-500 border rounded-full text-extrabold hover:bg-gray-100 transition-colors">
+        <button className="flex items-center px-4 py-2 bg-white text-blue-500 border rounded-2xl text-extrabold hover:bg-gray-100 transition-colors">
           <FiPrinter className="mr-2" />
           Print
         </button>

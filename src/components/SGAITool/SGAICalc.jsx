@@ -11,12 +11,12 @@ const SGAICalc = ({ onSimulationComplete }) => {
   const [currency, setCurrency] = useState("₹");
   const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
+  const isDark = theme === "dark";
   const bgClass =
     theme === "dark"
-      ? "text-white shadow-2xl ring-1 ring-black/30"
-      : "text-gray-800 shadow-2xl ring-1 t ring-white/30";
+      ? "text-white border border-[0.73px]  border-white/10 shadow-lg shadow-[inset_0_0_2px_1px_rgba(255,255,255,0.4)] "
+      : "text-gray-800 shadow-2xl ring-1 ring-white/30 ";
   // shadow-2xl backdrop-blur-md
-  const isDark = theme === "dark";
 
   useEffect(() => {
     if (region === "india") {
@@ -120,12 +120,14 @@ const SGAICalc = ({ onSimulationComplete }) => {
 
   return (
     <div
-      className={`max-w-3xl  mx-auto p-6 rounded-xl backdrop-blur-md ${bgClass} 
-  `}
+      className={`max-w-3xl h-90  mx-auto py-4 px-6 rounded-xl inset-0 
+      bg-gradient-to-t from-white/1  to-transparent
+      backdrop-blur-[1px]
+      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] ${bgClass} `}
     >
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <div className="flex-1">
-          <h1 className="text-base md:text-2xl font-bold">
+          <h1 className="text-base md:text-xl font-bold">
             SGAI - Investment Simulation Tool
           </h1>
         </div>
@@ -133,21 +135,21 @@ const SGAICalc = ({ onSimulationComplete }) => {
         <button
           type="button"
           onClick={handleClear}
-          className="px-4 py-2 bg-white text-red-500 rounded-full font-medium hover:bg-gray-100 transition-colors"
+          className="px-4 py-1 bg-white text-red-500 rounded-xl font-medium hover:bg-gray-100 transition-colors"
         >
           Clear
         </button>
       </div>
+      {/* <div className={` w-full${isDark ? "bg-white/20" : "bg-gray-300"}`}></div> */}
       <div
-        className={` w-full mb-6 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+        className={`h-px w-full mb-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
       ></div>
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-2">
           {/* Initial Cash */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-lg">Initial Cash</label>
+              <label className="text-base">Initial Cash</label>
               <RadioGroup
                 value={currency}
                 onChange={setCurrency}
@@ -156,7 +158,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                 <RadioGroup.Option value="₹">
                   {({ checked }) => (
                     <span
-                      className={`w-10 h-10 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 ${
+                      className={`w-6 h-8 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 ${
                         checked
                           ? "bg-blue-600 text-white"
                           : isDark
@@ -171,7 +173,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                 <RadioGroup.Option value="$" className="ml-2">
                   {({ checked }) => (
                     <span
-                      className={`w-10 h-10 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 ${
+                      className={`w-6 h-8 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 ${
                         checked
                           ? "bg-blue-600 text-white"
                           : isDark
@@ -195,7 +197,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                     <input
                       {...field}
                       type="text"
-                      className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
+                      className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
                       placeholder="Enter initial cash"
                     />
                     <button
@@ -233,7 +235,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Start Date */}
             <div>
-              <label className="block text-lg mb-2">Start Date</label>
+              <label className="block text-base mb-2">Start Date</label>
               <div className="relative">
                 <Controller
                   name="startDate"
@@ -244,7 +246,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
                         placeholder="YYYY/MM/DD"
                       />
                       <FiCalendar
@@ -262,7 +264,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
 
             {/* End Date */}
             <div>
-              <label className="block text-lg mb-2">End Date</label>
+              <label className="block text-base mb-2">End Date</label>
               <div className="relative">
                 <Controller
                   name="endDate"
@@ -273,7 +275,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
                         placeholder="YYYY/MM/DD"
                       />
                       <FiCalendar
@@ -294,7 +296,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Margin Profit */}
             <div>
-              <label className="block text-lg mb-2">Margin Profit (%)</label>
+              <label className="block text-base mb-2">Margin Profit (%)</label>
               <div className="relative">
                 <Controller
                   name="marginProfit"
@@ -305,7 +307,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
                         placeholder="00.00"
                       />
                       <button
@@ -343,7 +345,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
 
             {/* Margin Loss */}
             <div>
-              <label className="block text-lg mb-2">Margin Loss (%)</label>
+              <label className="block text-base mb-2">Margin Loss (%)</label>
               <div className="relative">
                 <Controller
                   name="marginLoss"
@@ -354,7 +356,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
                         placeholder="00.00"
                       />
                       <button
@@ -393,7 +395,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-3 mt-4 bg-blue-600 rounded-full text-white font-medium text-lg hover:bg-blue-700 transition-colors ${
+              className={`px-6 py-3 mt-2 bg-blue-600 rounded-full text-white font-medium text-base hover:bg-blue-700 transition-colors ${
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
