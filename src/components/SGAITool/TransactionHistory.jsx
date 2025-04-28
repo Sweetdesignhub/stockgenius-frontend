@@ -6,9 +6,8 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useTheme(); // Get the current theme (light or dark)
   console.log("Trans", transactions);
-  const filteredTransactions = transactions.filter(
-    (transaction) =>
-      transaction.Ticker.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTransactions = transactions.filter((transaction) =>
+    transaction.Ticker.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDownloadCSV = () => {
@@ -68,7 +67,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
   return (
     <div
       className={`p-4 rounded-xl shadow-lg ${
-        theme === "dark" ? "bg-gray-800" : "bg-white"
+        theme === "dark" ? "bg-gray-700" : "bg-white"
       }`}
     >
       <div className="flex justify-between items-center mb-4">
@@ -87,7 +86,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`pl-8 pr-4 py-1 rounded-full ${
-              theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-200"
+              theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-200"
             } text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           <FiSearch
@@ -141,7 +140,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
         }`}
       >
         <table
-          className={`min-w-full divide-y ${
+          className={`min-w-full  ${
             theme === "dark" ? "divide-gray-700" : "divide-gray-300"
           }`}
         >
@@ -170,7 +169,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
             </tr>
           </thead>
           <tbody
-            className={`divide-y ${
+            className={` ${
               theme === "dark" ? "divide-gray-700" : "divide-gray-300"
             }`}
           >
