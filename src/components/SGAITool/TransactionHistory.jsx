@@ -9,8 +9,6 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
   const filteredTransactions = transactions.filter(
     (transaction) =>
       transaction.Ticker.toLowerCase().includes(searchTerm.toLowerCase())
-    // ||
-    // transaction.id.includes(searchTerm)
   );
 
   const handleDownloadCSV = () => {
@@ -134,7 +132,14 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* <div className="overflow-x-auto"> */}
+      <div
+        className={`overflow-x-auto ${
+          filteredTransactions.length >= 10
+            ? "max-h-[400px] overflow-y-auto"
+            : ""
+        }`}
+      >
         <table
           className={`min-w-full divide-y ${
             theme === "dark" ? "divide-gray-700" : "divide-gray-300"

@@ -114,13 +114,17 @@ const SmartTradeBlueprint = () => {
     }
   };
 
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
+
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-8">
       {/* Your content goes here */}
       <Header onReRun={handleReRun} />
       <hr className="my-4 border-t border-gray-300 dark:border-gray-600" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4 ">
+      <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
         {/* Left Panel - SGAI Calc */}
         <div className="lg:col-span-5">
           <SGAICalc onSimulationComplete={handleSimulationComplete} />

@@ -4,6 +4,7 @@ import { RadioGroup } from "@headlessui/react";
 import { FiCalendar, FiMinus, FiPlus } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { useTheme } from "../../contexts/ThemeContext";
+import Loading from "../common/Loading";
 
 const SGAICalc = ({ onSimulationComplete }) => {
   const region = useSelector((state) => state.region); // Get region from store
@@ -112,6 +113,11 @@ const SGAICalc = ({ onSimulationComplete }) => {
       : Math.max(0, newValue).toFixed(2).padStart(5, "0");
   };
 
+  // Render loading component if data is still loading
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
+
   return (
     <div
       className={`max-w-3xl  mx-auto p-6 rounded-xl backdrop-blur-md ${bgClass} 
@@ -133,11 +139,11 @@ const SGAICalc = ({ onSimulationComplete }) => {
         </button>
       </div>
       <div
-        className={`h-px w-full mb-6 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+        className={` w-full mb-6 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
       ></div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-6">
+        <div className="space-y-2">
           {/* Initial Cash */}
           <div>
             <div className="flex justify-between items-center mb-2">
@@ -189,7 +195,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                     <input
                       {...field}
                       type="text"
-                      className="w-full p-3 rounded-lg bg-white text-black text-lg"
+                      className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
                       placeholder="Enter initial cash"
                     />
                     <button
@@ -238,7 +244,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full p-3 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
                         placeholder="YYYY/MM/DD"
                       />
                       <FiCalendar
@@ -267,7 +273,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full p-3 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
                         placeholder="YYYY/MM/DD"
                       />
                       <FiCalendar
@@ -299,7 +305,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full p-3 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
                         placeholder="00.00"
                       />
                       <button
@@ -348,7 +354,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full p-3 rounded-lg bg-white text-black text-lg"
+                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-lg"
                         placeholder="00.00"
                       />
                       <button
@@ -382,17 +388,16 @@ const SGAICalc = ({ onSimulationComplete }) => {
               )}
             </div>
           </div>
-
           {/* Submit Button */}
           <div className="flex justify-center mt-8">
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-3 bg-blue-600 rounded-full text-white font-medium text-lg hover:bg-blue-700 transition-colors ${
+              className={`px-6 py-3 mt-4 bg-blue-600 rounded-full text-white font-medium text-lg hover:bg-blue-700 transition-colors ${
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {isLoading ? "Running..." : "Run Simulation"}
+              {isLoading ? <CalcLoading className="h-2" /> : "Run Simulation"}
             </button>
           </div>
         </div>
@@ -402,3 +407,10 @@ const SGAICalc = ({ onSimulationComplete }) => {
 };
 
 export default SGAICalc;
+
+const CalcLoading = () => (
+  <div className="flex justify-center h-2 items-center h-screen px-6 py-3 ">
+    <div className="animate-spin rounded-full h-2 w-2 border-b-2 dark:border-white border-gray-900"></div>
+    <h1 className="mx-2">Loading</h1>
+  </div>
+);
