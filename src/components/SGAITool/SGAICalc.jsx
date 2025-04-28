@@ -409,7 +409,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
 export default SGAICalc;
 
 const CalcLoading = () => (
-  <div className="flex justify-center h-2 items-center h-screen px-6 py-3 ">
+  <div className="flex justify-center h-2 items-center px-6 py-3 ">
     <div className="animate-spin rounded-full h-2 w-2 border-b-2 dark:border-white border-gray-900"></div>
     <h1 className="mx-2">Loading</h1>
   </div>

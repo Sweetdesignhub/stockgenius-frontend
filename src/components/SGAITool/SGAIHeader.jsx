@@ -2,7 +2,7 @@
 
 import { FiRefreshCw, FiPrinter, FiSettings } from "react-icons/fi";
 
-const Header = ({ onReRun }) => {
+const Header = ({ onReRun, isLoading }) => {
   return (
     <div className="flex justify-between font-poppins items-center">
       <div>
@@ -13,13 +13,20 @@ const Header = ({ onReRun }) => {
       </div>
 
       <div className="flex space-x-2">
-        <button
-          onClick={onReRun}
-          className="flex items-center px-4 py-2 text-orange-500 border rounded-full bg-white text-extrabold transition-colors"
-        >
-          <FiRefreshCw className="mr-2" />
-          Re-Run
-        </button>
+        {isLoading ? (
+          <div className="flex items-center px-4 py-2 text-orange-500 border rounded-full bg-white text-extrabold transition-colors">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
+            <span>Loading</span>
+          </div>
+        ) : (
+          <button
+            onClick={onReRun}
+            className="flex items-center px-4 py-2 text-orange-500 border rounded-full bg-white text-extrabold transition-colors"
+          >
+            <FiRefreshCw className="mr-2" />
+            Re-Run
+          </button>
+        )}
 
         <button className="flex items-center px-4 py-2 bg-white text-blue-500 border rounded-full text-extrabold hover:bg-gray-100 transition-colors">
           <FiPrinter className="mr-2" />
@@ -36,3 +43,10 @@ const Header = ({ onReRun }) => {
 };
 
 export default Header;
+
+const HeaderLoading = () => (
+  <div className="flex justify-center h-2 items-center px-6 py-3 ">
+    <div className="animate-spin rounded-full h-2 w-2 border-b-2 dark:border-white border-gray-900"></div>
+    <h1 className="mx-2">Loading</h1>
+  </div>
+);

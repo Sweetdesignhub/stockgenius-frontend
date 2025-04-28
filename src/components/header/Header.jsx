@@ -28,7 +28,7 @@ import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaNewspaper, FaAngleDown } from "react-icons/fa";
 import { GiGraduateCap } from "react-icons/gi";
 import { BsBank2 } from "react-icons/bs";
-import { BsRobot } from "react-icons/bs";
+import { BsRobot, BsTools } from "react-icons/bs";
 import { FaBagShopping } from "react-icons/fa6";
 import { FaListAlt } from "react-icons/fa";
 import ToggleButton from "../common/ToggleButton";
@@ -126,7 +126,7 @@ export default function Header() {
         icon: RiFilePaper2Fill,
       },
       { name: "Paper Trading", to: `/india/paper-trading`, icon: FaListAlt },
-      { name: "SGAI Tool", to: `/sgai-tool`, icon: FaListAlt },
+      { name: "SGAI Tool", to: `/sgai-tool`, icon: BsTools },
     ];
   } else if (region === "usa") {
     navigation = [
@@ -134,7 +134,7 @@ export default function Header() {
       { name: "Stock Lists", to: `/usa/stock-lists`, icon: FaNewspaper },
       { name: "Portfolio", to: `/usa/portfolio`, icon: FaBagShopping },
       { name: "Paper Trading", to: `/usa/paper-trading`, icon: FaListAlt },
-      { name: "SGAI Tool", to: `/sgai-tool`, icon: FaListAlt },
+      { name: "SGAI Tool", to: `/sgai-tool`, icon: BsTools },
     ];
   }
 

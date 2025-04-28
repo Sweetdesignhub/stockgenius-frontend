@@ -17,6 +17,8 @@ const SmartTradeBlueprint = () => {
   const bgClass =
     theme === "dark" ? `${gradientBackground} text-white` : plainBackground;
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [simulationData, setSimulationData] = useState({
     initialCash: 5000.0,
     finalValue: 4028.45,
@@ -63,7 +65,7 @@ const SmartTradeBlueprint = () => {
         savedFormValues
       );
       setIsSimulationComplete(false);
-      // setIsLoading(true);
+      setIsLoading(true);
 
       try {
         const response = await fetch("http://localhost:8000/run-simulation", {
@@ -109,7 +111,7 @@ const SmartTradeBlueprint = () => {
       } catch (error) {
         console.error("Re-run simulation error:", error);
       } finally {
-        // setIsLoading(false);
+        setIsLoading(false);
       }
     }
   };
@@ -121,7 +123,7 @@ const SmartTradeBlueprint = () => {
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-8">
       {/* Your content goes here */}
-      <Header onReRun={handleReRun} />
+      <Header onReRun={handleReRun} isLoading={isLoading} />
       <hr className="my-4 border-t border-gray-300 dark:border-gray-600" />
 
       <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
