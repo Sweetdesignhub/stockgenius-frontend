@@ -5,13 +5,15 @@ import imgs from "../../assets/ZeroTransactionBull.jpg";
 
 // ZeroTransactionBull.jpg
 
-const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
+const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useTheme(); // Get the current theme (light or dark)
   console.log("Trans", transactions);
+  const isDark = theme === "dark";
   const filteredTransactions = transactions.filter((transaction) =>
     transaction.Ticker.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  // Get either all transactions or top 20 when expanded
 
   const handleDownloadCSV = () => {
     const headers = [
@@ -62,6 +64,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
   };
 
   const handleMagnifyClick = () => {
+    console.log("Toggled");
     if (onMagnifyToggle) {
       onMagnifyToggle("TransactionHistory"); // Notify parent
     }
@@ -104,7 +107,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
     <div
       className={`p-4 rounded-xl shadow-lg ${
         theme === "dark"
-          ? "border border-[0.73px]  border-blue-500 shadow-lg shadow-[inset_0_0_8px_2px_rgba(96,165,250,0.6)]"
+          ? "border border-[0.73px]  border-blue-500 shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)]"
           : "bg-white"
       }`}
       style={{
@@ -138,7 +141,6 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
               theme === "dark" ? "text-gray-400" : "text-gray-600"
             } cursor-pointer`}
             size={14}
-            onClick={handleMagnifyClick}
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -169,16 +171,23 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
                 ? "bg-gray-700 hover:bg-gray-600"
                 : "bg-gray-200 hover:bg-gray-300"
             } transition-colors`}
+            onClick={handleMagnifyClick}
           >
             <FiGrid size={16} />
           </button>
         </div>
       </div>
-
+      <div
+        className={`h-px w-full mb-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+      ></div>
       {/* <div className="overflow-x-auto"> */}
       <div
         className={`overflow-x-auto ${
-          filteredTransactions.length >= 10
+          isExpanded
+            ? filteredTransactions.length >= 20
+              ? "max-h-[800px] overflow-y-auto"
+              : ""
+            : filteredTransactions.length >= 10
             ? "max-h-[400px] overflow-y-auto"
             : ""
         }`}
@@ -200,7 +209,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle }) => {
                   "Action",
                   "Price",
                   "Qty",
-                  "Cash Balance",
+                  "Cash_Balance",
                   "PnL_Percent",
                   "Buy_Price",
                 ].map((title) => (

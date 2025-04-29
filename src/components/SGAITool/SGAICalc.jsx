@@ -5,9 +5,14 @@ import { FiCalendar, FiMinus, FiPlus } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { useTheme } from "../../contexts/ThemeContext";
 import Loading from "../common/Loading";
+import axios from "axios";
 
 const SGAICalc = ({ onSimulationComplete }) => {
   const region = useSelector((state) => state.region); // Get region from store
+  const market = useSelector((state) => state.market); // Get region from store
+  console.log("Region is: ", market);
+
+  const [marketTitle, setMarketTitle] = useState("NYSE");
   const [currency, setCurrency] = useState("₹");
   const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
@@ -21,7 +26,13 @@ const SGAICalc = ({ onSimulationComplete }) => {
   useEffect(() => {
     if (region === "india") {
       setCurrency("₹");
+      setMarketTitle("NSE");
     } else {
+      if (market === "NYSE") {
+        setMarketTitle("NYSE");
+      } else {
+        setMarketTitle("NASDAQ");
+      }
       setCurrency("$");
     }
   }, [region]);
@@ -56,44 +67,97 @@ const SGAICalc = ({ onSimulationComplete }) => {
   };
   const onSubmit = async (data) => {
     setIsLoading(true);
-    console.log("Data inout ois", data);
-    try {
-      const response = await fetch("http://localhost:8000/run-simulation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          initial_cash: parseFloat(data.initialCash),
-          start_date: formatDate(data.startDate),
-          end_date: formatDate(data.endDate),
-          profit_margin: parseFloat(data.marginProfit),
-          loss_margin: parseFloat(data.marginLoss),
-        }),
-      });
+    console.log("(Calc Onsubmit)Region", region);
 
-      if (!response.ok) {
-        throw new Error("API request failed");
+    console.log("(Calc Onsubmit)Data inout ois", data);
+    if (region === "india") {
+      try {
+        // http://20.29.48.73:8000/simulate
+        // http://20.244.43.100:8000/simulate INDIA(WORKING)
+        const response = await axios.post(
+          "https://nsereports.stockgenius.ai/simulate",
+          {
+            initial_cash: parseFloat(data.initialCash),
+            start_date: formatDate(data.startDate),
+            end_date: formatDate(data.endDate),
+            profit_margin: parseFloat(data.marginProfit).toFixed(2),
+            loss_margin: parseFloat(data.marginLoss).toFixed(2),
+          },
+          {
+            timeout: 600000, // 10 minutes
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        console.log("(Calc)response: ", response.data);
+        // if (!response.ok) {
+        //   throw new Error("API request failed");
+        // }
+        const result = response.data;
+        // const result = await response.data.json();
+        console.log("result is: ", result);
+        if (onSimulationComplete) {
+          onSimulationComplete({
+            formValues: {
+              ...data,
+              currency,
+              marketTitle,
+            },
+            results: {
+              ...result,
+              currency,
+              marketTitle,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Simulation error:", error);
+      } finally {
+        setIsLoading(false);
       }
+    } else {
+      try {
+        const response = await axios.post(
+          "https://nasdaqnysereports.stockgenius.ai/simulate",
+          {
+            initial_cash: parseFloat(data.initialCash),
+            start_date: formatDate(data.startDate),
+            end_date: formatDate(data.endDate),
+            profit_margin: parseFloat(data.marginProfit).toFixed(2),
+            loss_margin: parseFloat(data.marginLoss).toFixed(2),
+          },
+          {
+            timeout: 600000, // 10 minutes in milliseconds
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      const result = await response.json();
-      console.log("result is: ", result.data);
-      if (onSimulationComplete) {
-        onSimulationComplete({
-          formValues: {
-            ...data,
-            currency,
-          },
-          results: {
-            ...result.data,
-            currency,
-          },
-        });
+        // if (!response.ok) {
+        //   throw new Error("API request failed");
+        // }
+        const result = response.data;
+        // const result = await response.json();
+        console.log("result is: ", result);
+        if (onSimulationComplete) {
+          onSimulationComplete({
+            formValues: {
+              ...data,
+              currency,
+              marketTitle,
+            },
+            results: {
+              ...result,
+              currency,
+              marketTitle,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Simulation error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Simulation error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -191,7 +255,17 @@ const SGAICalc = ({ onSimulationComplete }) => {
               <Controller
                 name="initialCash"
                 control={control}
-                rules={{ required: "Initial cash is required" }}
+                rules={{
+                  required: "Initial cash is required",
+                  validate: {
+                    positive: (value) =>
+                      parseFloat(value) >= 0 ||
+                      "Amount must be greater than or Equal to 0",
+                    validNumber: (value) =>
+                      !isNaN(parseFloat(value)) ||
+                      "Please enter a valid number",
+                  },
+                }}
                 render={({ field }) => (
                   <div className="flex items-center">
                     <input
@@ -301,7 +375,17 @@ const SGAICalc = ({ onSimulationComplete }) => {
                 <Controller
                   name="marginProfit"
                   control={control}
-                  rules={{ required: "Margin profit is required" }}
+                  rules={{
+                    required: "Margin Profit is required",
+                    validate: {
+                      positive: (value) =>
+                        parseFloat(value) >= 0 ||
+                        "Margin Profit must be greater than or Equal to 0",
+                      validNumber: (value) =>
+                        !isNaN(parseFloat(value)) ||
+                        "Please enter a valid number",
+                    },
+                  }}
                   render={({ field }) => (
                     <div className="flex items-center">
                       <input

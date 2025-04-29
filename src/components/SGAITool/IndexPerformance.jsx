@@ -4,12 +4,12 @@ import { useTheme } from "../../contexts/ThemeContext";
 const IndexPerformance = ({ data }) => {
   const {
     start_date,
-    end_date,
     start_open,
     start_close,
+    end_date,
     end_open,
-    end_close,
-    nifty100_return,
+    end_close, // problem end_close
+    total_return, // problem total_return
     currency = "Rs",
   } = data;
   const { theme } = useTheme();
@@ -68,11 +68,14 @@ const IndexPerformance = ({ data }) => {
 
   const getValueCardClass = (open, close) =>
     close >= open ? fancyGreenCardClass : fancyRedCardClass;
-  const isNiftyReturnNegative = nifty100_return < 0;
+  const isNiftyReturnNegative = total_return < 0;
 
   return (
     <div
-      className={`max-w-3xl h-full mx-auto p-6 rounded-3xl  shadow-2xl backdrop-blur-md ${
+      className={`max-w-3xl h-full mx-auto p-6 rounded-3xl inset-0 
+      bg-gradient-to-b from-white/1  to-transparent
+      backdrop-blur-[1px]
+      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]  shadow-2xl  ${
         theme === "dark" ? "bg-white/1" : "bg-white/50"
       }`}
     >
@@ -83,7 +86,7 @@ const IndexPerformance = ({ data }) => {
         className={`h-px w-full mb-6 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
       ></div>
 
-      <div className="space-y-8">
+      <div className="space-y-4">
         {/* Start Date */}
         <div>
           <p className={`text-lg mb-3 ${textColor}`}>
@@ -113,7 +116,7 @@ const IndexPerformance = ({ data }) => {
         </div>
 
         {/* Nifty Return */}
-        <div className="mt-8">
+        <div className="mt-8 pt-6">
           <div className="flex items-center justify-center">
             <p className={`text-xl ${textColor}`}>Nifty 100 Return -</p>
             <div className="flex items-center ml-2">
@@ -122,7 +125,7 @@ const IndexPerformance = ({ data }) => {
                   isNiftyReturnNegative ? "text-red-500" : "text-green-500"
                 }`}
               >
-                {nifty100_return.toFixed(2)}%
+                {total_return.toFixed(2)}%
               </p>
               <div
                 className={`ml-2 p-2 rounded-full ${

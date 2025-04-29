@@ -1,13 +1,13 @@
 import { useTheme } from "../../contexts/ThemeContext";
 
-const SimulationResults = ({ data }) => {
+const SimulationResults = ({ title = "NSE", data }) => {
   const {
     initial_cash,
     final_value,
     realized_pnl,
     unrealized_pnl,
-    total_return,
-    total_profit_loss,
+    returns,
+    total_pnl,
     currency = "Rs",
   } = data;
 
@@ -18,16 +18,16 @@ const SimulationResults = ({ data }) => {
   const isDark = theme === "dark";
 
   const fancyRedCardClass = `
-  relative
-  border-[0.9px] border-transparent
-  text-[#FFD7D7]
-  rounded-lg py-1 px-2
-  shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380]
-  backdrop-blur-[17.95px]
-  overflow-hidden
-  [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)]
-  [border-image-slice:1]
-  [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]
+    relative
+    border-[0.9px] border-transparent
+    text-[#FFD7D7]
+    rounded-lg py-1 px-2
+    shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380]
+    backdrop-blur-[17.95px]
+    overflow-hidden
+    [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)]
+    [border-image-slice:1]
+    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]
 `.trim();
 
   const fancyGreenCardClass = `
@@ -65,7 +65,7 @@ const SimulationResults = ({ data }) => {
       `}
     >
       <h2 className="text-base md:text-xl font-bold mb-3">
-        NSE Simulation Results
+        {title} Simulation Results
       </h2>
 
       <div
@@ -81,9 +81,7 @@ const SimulationResults = ({ data }) => {
           >
             Initial Cash
           </p>
-          <div
-            className={`${fancyYellowCardClass} p-3 rounded-xl text-white font-medium shadow-lg`}
-          >
+          <div className={`${fancyYellowCardClass}`}>
             {initial_cash.toFixed(2)} {currency}
           </div>
         </div>
@@ -96,9 +94,7 @@ const SimulationResults = ({ data }) => {
           >
             Final Value
           </p>
-          <div
-            className={`${gradientClass} p-3 rounded-xl text-white font-medium shadow-lg`}
-          >
+          <div className={`${gradientClass} `}>
             {final_value.toFixed(2)} {currency}
           </div>
         </div>
@@ -111,9 +107,7 @@ const SimulationResults = ({ data }) => {
           >
             Realized PnL
           </p>
-          <div
-            className={`${gradientClass} p-3 rounded-xl text-white font-medium shadow-lg`}
-          >
+          <div className={`${gradientClass} `}>
             {realized_pnl.toFixed(2)} {currency}
           </div>
         </div>
@@ -126,9 +120,7 @@ const SimulationResults = ({ data }) => {
           >
             Unrealized PnL
           </p>
-          <div
-            className={`${gradientClass} p-3 rounded-xl text-white font-medium shadow-lg`}
-          >
+          <div className={`${gradientClass} `}>
             {unrealized_pnl.toFixed(2)} {currency}
           </div>
         </div>
@@ -141,11 +133,7 @@ const SimulationResults = ({ data }) => {
           >
             Total Return
           </p>
-          <div
-            className={`${gradientClass} p-3 rounded-xl text-white font-medium shadow-lg`}
-          >
-            {total_return.toFixed(2)}%
-          </div>
+          <div className={`${gradientClass} `}>{returns.toFixed(2)}%</div>
         </div>
 
         <div>
@@ -156,10 +144,8 @@ const SimulationResults = ({ data }) => {
           >
             Total Profit/Loss
           </p>
-          <div
-            className={`${gradientClass} p-3 rounded-xl text-white font-medium shadow-lg`}
-          >
-            {total_profit_loss.toFixed(2)} {currency}
+          <div className={`${gradientClass}`}>
+            {total_pnl.toFixed(2)} {currency}
           </div>
         </div>
       </div>
