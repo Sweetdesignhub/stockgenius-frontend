@@ -12,6 +12,7 @@ import axios from "axios";
 const SmartTradeBlueprint = () => {
   const [isSimulationComplete, setIsSimulationComplete] = useState(false);
   const [savedFormValues, setSavedFormValues] = useState(null);
+  const [currency, setCurrency] = useState(null);
   const { theme } = useTheme();
   const themeColor = theme === "dark" ? "white" : "black";
   const region = useSelector((state) => state.region); // Get region from store
@@ -48,6 +49,8 @@ const SmartTradeBlueprint = () => {
       "(Data which can be passed)Simulation completed with data:",
       data.results
     );
+    const currency = data.results.currency;
+    setCurrency(currency);
     // Update state with dynamic data
     if (region === "india") {
       console.log("NSE: ", data.results);
@@ -219,7 +222,11 @@ const SmartTradeBlueprint = () => {
             simulationData &&
             Object.keys(simulationData).length > 0 && (
               <div className="lg:col-span-3">
-                <SimulationResults title={marketTitle} data={simulationData} />
+                <SimulationResults
+                  title={marketTitle}
+                  data={simulationData}
+                  currency={currency}
+                />
               </div>
             )}
 
@@ -228,7 +235,7 @@ const SmartTradeBlueprint = () => {
             indexData &&
             Object.keys(indexData).length > 0 && (
               <div className="lg:col-span-4">
-                <IndexPerformance data={indexData} />
+                <IndexPerformance data={indexData} currency={currency} />
               </div>
             )}
         </div>
@@ -239,6 +246,7 @@ const SmartTradeBlueprint = () => {
       <div className="mt-4">
         <TransactionHistory
           transactions={transactions}
+          currency={currency}
           onMagnifyToggle={handleMagnifyToggle}
           isExpanded={expandedView === "TransactionHistory"}
         />

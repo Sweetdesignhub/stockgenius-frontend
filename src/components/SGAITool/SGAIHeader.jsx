@@ -28,7 +28,10 @@ const Header = ({ onReRun, isLoading }) => {
           </button>
         )}
 
-        <button className="flex items-center px-4 py-2 bg-white text-blue-500 border rounded-2xl text-extrabold hover:bg-gray-100 transition-colors">
+        <button
+          className="flex items-center px-4 py-2 bg-white text-blue-500 border rounded-2xl text-extrabold hover:bg-gray-100 transition-colors cursor-not-allowed"
+          disabled
+        >
           <FiPrinter className="mr-2" />
           Print
         </button>

@@ -1,6 +1,6 @@
 import { useTheme } from "../../contexts/ThemeContext";
 
-const SimulationResults = ({ title = "NSE", data }) => {
+const SimulationResults = ({ title = "NSE", data, currency = "" }) => {
   const {
     initial_cash,
     final_value,
@@ -8,7 +8,6 @@ const SimulationResults = ({ title = "NSE", data }) => {
     unrealized_pnl,
     returns,
     total_pnl,
-    currency = "Rs",
   } = data;
 
   console.log("daat is recieved", data);
@@ -82,7 +81,7 @@ const SimulationResults = ({ title = "NSE", data }) => {
             Initial Cash
           </p>
           <div className={`${fancyYellowCardClass}`}>
-            {initial_cash.toFixed(2)} {currency}
+            {currency} {initial_cash.toFixed(2)}
           </div>
         </div>
 
@@ -95,7 +94,7 @@ const SimulationResults = ({ title = "NSE", data }) => {
             Final Value
           </p>
           <div className={`${gradientClass} `}>
-            {final_value.toFixed(2)} {currency}
+            {currency} {final_value.toFixed(2)}
           </div>
         </div>
 
@@ -108,7 +107,7 @@ const SimulationResults = ({ title = "NSE", data }) => {
             Realized PnL
           </p>
           <div className={`${gradientClass} `}>
-            {realized_pnl.toFixed(2)} {currency}
+            {currency} {realized_pnl.toFixed(2)}
           </div>
         </div>
 
@@ -121,7 +120,7 @@ const SimulationResults = ({ title = "NSE", data }) => {
             Unrealized PnL
           </p>
           <div className={`${gradientClass} `}>
-            {unrealized_pnl.toFixed(2)} {currency}
+            {currency} {unrealized_pnl.toFixed(2)}
           </div>
         </div>
 
@@ -145,7 +144,7 @@ const SimulationResults = ({ title = "NSE", data }) => {
             Total Profit/Loss
           </p>
           <div className={`${gradientClass}`}>
-            {total_pnl.toFixed(2)} {currency}
+            {currency} {total_pnl.toFixed(2)}
           </div>
         </div>
       </div>

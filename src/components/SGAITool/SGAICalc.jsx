@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { RadioGroup } from "@headlessui/react";
+import DatePicker from "react-datepicker";
 import { FiCalendar, FiMinus, FiPlus } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { useTheme } from "../../contexts/ThemeContext";
 import Loading from "../common/Loading";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const SGAICalc = ({ onSimulationComplete }) => {
   const region = useSelector((state) => state.region); // Get region from store
   const market = useSelector((state) => state.market); // Get region from store
   console.log("Region is: ", market);
+  const [showDateErrorModal, setShowDateErrorModal] = useState(false);
 
   const [marketTitle, setMarketTitle] = useState("NYSE");
   const [currency, setCurrency] = useState("₹");
@@ -62,12 +65,27 @@ const SGAICalc = ({ onSimulationComplete }) => {
     });
   };
   const formatDate = (date) => {
-    const [year, month, day] = date.split("/"); // Split the date by '/'
+    console.log("Format Date: ", date);
+
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    // const [year, month, day] = date.split("/"); // Split the date by '/'
     return `${year}-${month}-${day}`; // Return in YYYY-MM-DD format
   };
   const onSubmit = async (data) => {
     setIsLoading(true);
     console.log("(Calc Onsubmit)Region", region);
+
+    const start = new Date(data.startDate);
+    const end = new Date(data.endDate);
+
+    if (start > end) {
+      setShowDateErrorModal(true);
+      setIsLoading(false);
+      return;
+    }
 
     console.log("(Calc Onsubmit)Data inout ois", data);
     if (region === "india") {
@@ -214,36 +232,32 @@ const SGAICalc = ({ onSimulationComplete }) => {
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-base">Initial Cash</label>
-              <RadioGroup
-                value={currency}
-                onChange={setCurrency}
-                className="flex"
-              >
-                <RadioGroup.Option value="₹">
+              <RadioGroup value={currency} onChange={() => {}} className="flex">
+                <RadioGroup.Option value="₹" disabled>
                   {({ checked }) => (
                     <span
-                      className={`w-6 h-8 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 ${
+                      className={`w-6 h-8 flex items-center justify-center rounded-full transition-colors duration-200 ${
                         checked
                           ? "bg-blue-600 text-white"
                           : isDark
                           ? "bg-gray-700 text-white"
                           : "bg-gray-300 text-black"
-                      }`}
+                      } opacity-50 cursor-not-allowed`}
                     >
                       ₹
                     </span>
                   )}
                 </RadioGroup.Option>
-                <RadioGroup.Option value="$" className="ml-2">
+                <RadioGroup.Option value="$" className="ml-2" disabled>
                   {({ checked }) => (
                     <span
-                      className={`w-6 h-8 flex items-center justify-center rounded-full cursor-pointer transition-colors duration-200 ${
+                      className={`w-6 h-8 flex items-center justify-center rounded-full transition-colors duration-200 ${
                         checked
                           ? "bg-blue-600 text-white"
                           : isDark
                           ? "bg-gray-700 text-white"
                           : "bg-gray-300 text-black"
-                      }`}
+                      } opacity-100 cursor-not-allowed`}
                     >
                       $
                     </span>
@@ -306,31 +320,31 @@ const SGAICalc = ({ onSimulationComplete }) => {
           </div>
 
           {/* Date Range */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Start Date */}
             <div>
               <label className="block text-base mb-2">Start Date</label>
-              <div className="relative">
-                <Controller
-                  name="startDate"
-                  control={control}
-                  rules={{ required: "Start date is required" }}
-                  render={({ field }) => (
-                    <div className="relative">
-                      <input
-                        {...field}
-                        type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
-                        placeholder="YYYY/MM/DD"
-                      />
-                      <FiCalendar
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                        size={20}
-                      />
-                    </div>
-                  )}
-                />
-              </div>
+              <Controller
+                name="startDate"
+                control={control}
+                rules={{ required: "Start date is required" }}
+                render={({ field }) => (
+                  <div className="relative">
+                    <DatePicker
+                      {...field}
+                      selected={field.value}
+                      onChange={(date) => field.onChange(date)}
+                      placeholderText="YYYY/MM/DD"
+                      dateFormat="yyyy/MM/dd"
+                      className="w-full px-4 py-2 rounded-lg bg-white text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
+                    />
+                    <FiCalendar
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                      size={20}
+                    />
+                  </div>
+                )}
+              />
               {errors.startDate && (
                 <p className="mt-1 text-red-400">{errors.startDate.message}</p>
               )}
@@ -339,27 +353,27 @@ const SGAICalc = ({ onSimulationComplete }) => {
             {/* End Date */}
             <div>
               <label className="block text-base mb-2">End Date</label>
-              <div className="relative">
-                <Controller
-                  name="endDate"
-                  control={control}
-                  rules={{ required: "End date is required" }}
-                  render={({ field }) => (
-                    <div className="relative">
-                      <input
-                        {...field}
-                        type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
-                        placeholder="YYYY/MM/DD"
-                      />
-                      <FiCalendar
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                        size={20}
-                      />
-                    </div>
-                  )}
-                />
-              </div>
+              <Controller
+                name="endDate"
+                control={control}
+                rules={{ required: "End date is required" }}
+                render={({ field }) => (
+                  <div className="relative">
+                    <DatePicker
+                      {...field}
+                      selected={field.value}
+                      onChange={(date) => field.onChange(date)}
+                      placeholderText="YYYY/MM/DD"
+                      dateFormat="yyyy/MM/dd"
+                      className="w-full px-4 py-2 rounded-lg bg-white text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
+                    />
+                    <FiCalendar
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                      size={20}
+                    />
+                  </div>
+                )}
+              />
               {errors.endDate && (
                 <p className="mt-1 text-red-400">{errors.endDate.message}</p>
               )}
@@ -434,12 +448,19 @@ const SGAICalc = ({ onSimulationComplete }) => {
                 <Controller
                   name="marginLoss"
                   control={control}
-                  rules={{ required: "Margin loss is required" }}
+                  rules={{
+                    required: "Margin loss is required",
+                    min: {
+                      value: 2.0,
+                      message: "Margin loss must be at least 2.00",
+                    },
+                  }}
                   render={({ field }) => (
                     <div className="flex items-center">
                       <input
                         {...field}
                         type="text"
+                        step="0.1"
                         className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
                         placeholder="00.00"
                       />
@@ -488,6 +509,24 @@ const SGAICalc = ({ onSimulationComplete }) => {
           </div>
         </div>
       </form>
+      {showDateErrorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md text-center">
+            <h2 className="text-xl font-semibold text-red-600 mb-2">
+              Invalid Date Range
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Start date must be earlier than or equal to end date.
+            </p>
+            <button
+              className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              onClick={() => setShowDateErrorModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

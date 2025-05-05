@@ -1,7 +1,7 @@
 import { FiArrowDown, FiArrowUp } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 
-const IndexPerformance = ({ data }) => {
+const IndexPerformance = ({ data, currency = "" }) => {
   const {
     start_date,
     start_open,
@@ -10,7 +10,6 @@ const IndexPerformance = ({ data }) => {
     end_open,
     end_close, // problem end_close
     total_return, // problem total_return
-    currency = "Rs",
   } = data;
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -94,10 +93,10 @@ const IndexPerformance = ({ data }) => {
           </p>
           <div className="grid grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
-              Open - {start_open.toFixed(2)} {currency}
+              Open - {currency} {start_open.toFixed(2)}
             </div>
             <div className={getValueCardClass(start_open, start_close)}>
-              Close - {start_close.toFixed(2)} {currency}
+              Close - {currency} {start_close.toFixed(2)}
             </div>
           </div>
         </div>
@@ -107,10 +106,10 @@ const IndexPerformance = ({ data }) => {
           <p className={`text-lg mb-3 ${textColor}`}>End Date - {end_date}</p>
           <div className="grid grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
-              Open - {end_open.toFixed(2)} {currency}
+              Open - {currency} {end_open.toFixed(2)}
             </div>
             <div className={getValueCardClass(end_open, end_close)}>
-              Close - {end_close.toFixed(2)} {currency}
+              Close - {currency} {end_close.toFixed(2)}
             </div>
           </div>
         </div>
