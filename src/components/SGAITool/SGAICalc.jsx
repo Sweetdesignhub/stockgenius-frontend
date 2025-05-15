@@ -8,12 +8,16 @@ import { useTheme } from "../../contexts/ThemeContext";
 import Loading from "../common/Loading";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/style.css";
 
-const SGAICalc = ({ onSimulationComplete }) => {
+const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   const region = useSelector((state) => state.region); // Get region from store
   const market = useSelector((state) => state.market); // Get region from store
   console.log("Region is: ", market);
   const [showDateErrorModal, setShowDateErrorModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState();
 
   const [marketTitle, setMarketTitle] = useState("NYSE");
   const [currency, setCurrency] = useState("₹");
@@ -24,7 +28,6 @@ const SGAICalc = ({ onSimulationComplete }) => {
     theme === "dark"
       ? "text-white border border-[0.73px]  border-white/10 shadow-lg shadow-[inset_0_0_2px_1px_rgba(255,255,255,0.4)] "
       : "text-gray-800 shadow-2xl ring-1 ring-white/30 ";
-  // shadow-2xl backdrop-blur-md
 
   useEffect(() => {
     if (region === "india") {
@@ -63,6 +66,11 @@ const SGAICalc = ({ onSimulationComplete }) => {
       marginProfit: "",
       marginLoss: "",
     });
+
+    // Clear simulation results in parent component
+    if (onSimulationComplete) {
+      onSimulationComplete(null); // or onSimulationComplete({})
+    }
   };
   const formatDate = (date) => {
     console.log("Format Date: ", date);
@@ -202,7 +210,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
 
   return (
     <div
-      className={`max-w-3xl h-90  mx-auto py-4 px-6 rounded-xl inset-0 
+      className={`max-w-[726px] max-h-[354px]  mx-auto py-4 px-6 rounded-xl inset-0 
       bg-gradient-to-t from-white/1  to-transparent
       backdrop-blur-[1px]
       mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] ${bgClass} `}
@@ -285,7 +293,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                     <input
                       {...field}
                       type="text"
-                      className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
+                      className="w-full px-3 py-1 rounded-lg bg-[#DDDDDD] text-black text-base"
                       placeholder="Enter initial cash"
                     />
                     <button
@@ -336,7 +344,39 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
-                      className="w-full px-4 py-2 rounded-lg bg-white text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
+                      className="w-full px-2 py-1 rounded-lg bg-[#DDDDDD] text-black text-sm border border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                      popperClassName="!z-50" // Ensures the modal appears above other elements
+                      wrapperClassName="w-full"
+                      renderCustomHeader={({
+                        monthDate,
+                        decreaseMonth,
+                        increaseMonth,
+                        prevMonthButtonDisabled,
+                        nextMonthButtonDisabled,
+                      }) => (
+                        <div className="flex items-center justify-between px-2 text-sm bg-gray-100 rounded-t-lg">
+                          <button
+                            onClick={decreaseMonth}
+                            disabled={prevMonthButtonDisabled}
+                            className="p-1 rounded hover:bg-gray-200"
+                          >
+                            <FiChevronLeft className="w-5 h-5 text-gray-700" />
+                          </button>
+                          <span className="font-semibold text-gray-800">
+                            {monthDate.toLocaleString("en-US", {
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                          <button
+                            onClick={increaseMonth}
+                            disabled={nextMonthButtonDisabled}
+                            className="p-1 rounded hover:bg-gray-200"
+                          >
+                            <FiChevronRight className="w-5 h-5 text-gray-700" />
+                          </button>
+                        </div>
+                      )}
                     />
                     <FiCalendar
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
@@ -346,7 +386,9 @@ const SGAICalc = ({ onSimulationComplete }) => {
                 )}
               />
               {errors.startDate && (
-                <p className="mt-1 text-red-400">{errors.startDate.message}</p>
+                <p className="text-xs text-red-400">
+                  {errors.startDate.message}
+                </p>
               )}
             </div>
 
@@ -365,8 +407,20 @@ const SGAICalc = ({ onSimulationComplete }) => {
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
-                      className="w-full px-4 py-2 rounded-lg bg-white text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
+                      className="w-full px-2 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
                     />
+                    {/* <DayPicker
+                      animate
+                      mode="single"
+                      // onChange={(date) => field.onChange(date)}
+                      selectedDate={field.value}
+                      onSelect={setSelectedDate}
+                      footer={
+                        selectedDate
+                          ? `Selected: ${selectedDate.toLocaleDateString()}`
+                          : "Pick a day."
+                      }
+                    /> */}
                     <FiCalendar
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
                       size={20}
@@ -384,8 +438,17 @@ const SGAICalc = ({ onSimulationComplete }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Margin Profit */}
             <div>
-              <label className="block text-base mb-2">Margin Profit (%)</label>
-              <div className="relative">
+              {!errors.marginProfit && (
+                <label className="block text-base mb-2">
+                  Margin Profit (%)
+                </label>
+              )}
+              {errors.marginProfit && (
+                <p className="block text-base mb-2 text-red-400">
+                  {errors.marginProfit.message}
+                </p>
+              )}
+              <div className="relative ">
                 <Controller
                   name="marginProfit"
                   control={control}
@@ -401,11 +464,11 @@ const SGAICalc = ({ onSimulationComplete }) => {
                     },
                   }}
                   render={({ field }) => (
-                    <div className="flex items-center">
+                    <div className="flex items-center ">
                       <input
                         {...field}
                         type="text"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
+                        className="w-full border-1 border-black px-3 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base"
                         placeholder="00.00"
                       />
                       <button
@@ -434,16 +497,23 @@ const SGAICalc = ({ onSimulationComplete }) => {
                   )}
                 />
               </div>
-              {errors.marginProfit && (
+              {/* {errors.marginProfit && (
                 <p className="mt-1 text-red-400">
                   {errors.marginProfit.message}
                 </p>
-              )}
+              )} */}
             </div>
 
             {/* Margin Loss */}
             <div>
-              <label className="block text-base mb-2">Margin Loss (%)</label>
+              {!errors.marginLoss && (
+                <label className="block text-base mb-2">Margin Loss (%)</label>
+              )}
+              {errors.marginLoss && (
+                <p className="block text-base mb-2 text-red-400">
+                  {errors.marginLoss.message}
+                </p>
+              )}
               <div className="relative">
                 <Controller
                   name="marginLoss"
@@ -461,7 +531,7 @@ const SGAICalc = ({ onSimulationComplete }) => {
                         {...field}
                         type="text"
                         step="0.1"
-                        className="w-full px-3 py-2 rounded-lg bg-white text-black text-base"
+                        className="w-full px-3 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base"
                         placeholder="00.00"
                       />
                       <button
@@ -490,9 +560,6 @@ const SGAICalc = ({ onSimulationComplete }) => {
                   )}
                 />
               </div>
-              {errors.marginLoss && (
-                <p className="mt-1 text-red-400">{errors.marginLoss.message}</p>
-              )}
             </div>
           </div>
           {/* Submit Button */}
@@ -500,11 +567,11 @@ const SGAICalc = ({ onSimulationComplete }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-3 mt-2 bg-blue-600 rounded-full text-white font-medium text-base hover:bg-blue-700 transition-colors ${
+              className={`px-6 py-1 mt-2 bg-blue-600 rounded-xl text-white font-medium text-base hover:bg-blue-700 transition-colors ${
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {isLoading ? <CalcLoading className="h-2" /> : "Run Simulation"}
+              {isLoading ? <CalcLoading className="h-1" /> : "Run Simulation"}
             </button>
           </div>
         </div>

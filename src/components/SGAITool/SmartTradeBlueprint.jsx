@@ -45,35 +45,39 @@ const SmartTradeBlueprint = () => {
   const [marketTitle, setMarketTitle] = useState("NYSE");
 
   const handleSimulationComplete = (data) => {
-    console.log(
-      "(Data which can be passed)Simulation completed with data:",
-      data.results
-    );
-    const currency = data.results.currency;
-    setCurrency(currency);
-    // Update state with dynamic data
-    if (region === "india") {
-      console.log("NSE: ", data.results);
-      setSimulationData(data.results.nse_simulation); // Replace static simulation data
-      setIndexData(data.results.index_performance);
-      setTransactions(data.results.transactions);
+    if (!data) {
+      setIsSimulationComplete(false);
     } else {
-      if (marketTitle === "NYSE") {
-        console.log("NYSE: ", data.results.data);
-        setSimulationData(data.results.data.nyse_simulation); // Replace static simulation data
-        setIndexData(data.results.data.index_performance.nyse);
-        setTransactions(data.results.data.transaction_history.nyse);
+      console.log(
+        "(Data which can be passed)Simulation completed with data:",
+        data.results
+      );
+      const currency = data.results.currency;
+      setCurrency(currency);
+      // Update state with dynamic data
+      if (region === "india") {
+        console.log("NSE: ", data.results);
+        setSimulationData(data.results.nse_simulation); // Replace static simulation data
+        setIndexData(data.results.index_performance);
+        setTransactions(data.results.transactions);
       } else {
-        console.log("NASDAQ: ", data.results);
-        setSimulationData(data.results.nasdaq_simulation); // Replace static simulation data
-        setIndexData(data.results.index_performance.nasdaq);
-        setTransactions(data.results.transaction_history.nasdaq);
+        if (marketTitle === "NYSE") {
+          console.log("NYSE: ", data.results.data);
+          setSimulationData(data.results.data.nyse_simulation); // Replace static simulation data
+          setIndexData(data.results.data.index_performance.nyse);
+          setTransactions(data.results.data.transaction_history.nyse);
+        } else {
+          console.log("NASDAQ: ", data.results);
+          setSimulationData(data.results.nasdaq_simulation); // Replace static simulation data
+          setIndexData(data.results.index_performance.nasdaq);
+          setTransactions(data.results.transaction_history.nasdaq);
+        }
       }
-    }
 
-    setSavedFormValues(data.formValues);
-    setIsSimulationComplete(true);
-    setMarketTitle(data.results.marketTitle);
+      setSavedFormValues(data.formValues);
+      setIsSimulationComplete(true);
+      setMarketTitle(data.results.marketTitle);
+    }
   };
 
   const formatDate = (date) => {
@@ -88,7 +92,7 @@ const SmartTradeBlueprint = () => {
         "Re-running simulation with saved form values:",
         savedFormValues
       );
-      setIsSimulationComplete(false);
+      // setIsSimulationComplete(false);
       setIsLoading(true);
 
       try {
@@ -96,11 +100,13 @@ const SmartTradeBlueprint = () => {
           const response = await axios.post(
             "https://nsereports.stockgenius.ai/simulate",
             {
-              initial_cash: parseFloat(data.initialCash),
-              start_date: formatDate(data.startDate),
-              end_date: formatDate(data.endDate),
-              profit_margin: parseFloat(data.marginProfit).toFixed(2),
-              loss_margin: parseFloat(data.marginLoss).toFixed(2),
+              initial_cash: parseFloat(savedFormValues.initialCash),
+              start_date: formatDate(savedFormValues.startDate),
+              end_date: formatDate(savedFormValues.endDate),
+              profit_margin: parseFloat(savedFormValues.marginProfit).toFixed(
+                2
+              ),
+              loss_margin: parseFloat(savedFormValues.marginLoss).toFixed(2),
             },
             {
               timeout: 600000, // 10 minutes
@@ -114,7 +120,7 @@ const SmartTradeBlueprint = () => {
           setSimulationData(result.data.nse_simulation); // Replace static simulation data
           setIndexData(result.data.index_performance);
           setTransactions(result.data.transaction_history);
-
+          console.log("REACHED HERE");
           setIsSimulationComplete(true);
           if (handleSimulationComplete) {
             handleSimulationComplete({
@@ -253,6 +259,62 @@ const SmartTradeBlueprint = () => {
       </div>
     </div>
   );
+  // return (
+  //   <div className="rounded-2xl shadow-lg py-4 px-4 sm:px-6 w-full max-w-7xl mx-auto">
+  //     <Header onReRun={handleReRun} isLoading={isLoading} />
+
+  //     <div
+  //       className={`h-px w-full my-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+  //     ></div>
+
+  //     {expandedView === null ? (
+  //       <div className="flex flex-col lg:flex-row gap-4 mt-4">
+  //         {/* Left Column - Calculator */}
+  //         <div className="w-full lg:w-6/12 xl:w-1/3">
+  //           <SGAICalc onSimulationComplete={handleSimulationComplete} />
+  //         </div>
+
+  //         {/* Right Column - Results or InfoCard */}
+  //         <div className="w-full lg:w-6/12 xl:w-2/3">
+  //           {!isSimulationComplete ? (
+  //             <InfoCard />
+  //           ) : (
+  //             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  //               {simulationData && Object.keys(simulationData).length > 0 && (
+  //                 <div className="md:col-span-1">
+  //                   <SimulationResults
+  //                     title={marketTitle}
+  //                     data={simulationData}
+  //                     currency={currency}
+  //                   />
+  //                 </div>
+  //               )}
+  //               {indexData && Object.keys(indexData).length > 0 && (
+  //                 <div className="md:col-span-1">
+  //                   <IndexPerformance data={indexData} currency={currency} />
+  //                 </div>
+  //               )}
+  //             </div>
+  //           )}
+  //         </div>
+  //       </div>
+  //     ) : (
+  //       <div className="min-h-[50vh]">
+  //         {/* Expanded view content would go here */}
+  //       </div>
+  //     )}
+
+  //     {/* Transaction History - always at bottom */}
+  //     <div className="mt-4 w-full">
+  //       <TransactionHistory
+  //         transactions={transactions}
+  //         currency={currency}
+  //         onMagnifyToggle={handleMagnifyToggle}
+  //         isExpanded={expandedView === "TransactionHistory"}
+  //       />
+  //     </div>
+  //   </div>
+  // );
 };
 
 export default SmartTradeBlueprint;

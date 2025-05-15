@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { FiSearch, FiDownload, FiPlus, FiGrid } from "react-icons/fi";
+import { CgMaximizeAlt } from "react-icons/cg";
+import { RiExpandUpDownFill } from "react-icons/ri";
 import { useTheme } from "../../contexts/ThemeContext";
 import imgs from "../../assets/ZeroTransactionBull.jpg";
 
@@ -71,19 +73,43 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   };
 
   const EmptyState = () => (
-    <div className="relative w-full h-80 rounded-lg overflow-hidden">
-      {/* Background Image */}
-      <img
-        src={imgs}
-        alt="No transactions"
-        className="w-full h-full object-cover"
-      />
-
-      {/* Text Overlay - Left-aligned */}
-      <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-start justify-center p-8 text-left">
+    // <div
+    //   className="relative w-full h-80 rounded-lg "
+    //   style={{
+    //     zIndex: 1,
+    //   }}
+    // >
+    //   {/* Background Image */}
+    //   <img
+    //     src={imgs}
+    //     alt="No transactions"
+    //     className="w-full h-full object-cover"
+    //     style={{
+    //       zIndex: 1,
+    //     }}
+    //   />
+    <div className="relative">
+      {" "}
+      {/* This creates a positioning context */}
+      {/* Image Container - now with z-index: 0 */}
+      <div
+        className="relative w-full h-80 rounded-lg overflow-hidden"
+        style={{
+          zIndex: -1, // Changed from -1 to 0
+          backgroundImage: `url(${imgs})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Semi-transparent overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+      </div>
+      {/* Text Content - absolutely positioned over the image */}
+      <div className="absolute inset-0 flex items-center justify-start p-8">
         <p
-          className={`text-base max-w-md ${
-            theme === "dark" ? "text-gray-200" : "text-gray-100"
+          className={`text-medium max-w-md ${
+            theme === "dark" ? "text-white" : "text-gray-100"
           }`}
         >
           Have you ever looked at a stock chart and thought... 'If only I had
@@ -105,7 +131,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   );
   return (
     <div
-      className={`p-4 rounded-xl shadow-lg ${
+      className={`p-4 rounded-xl min-w-[1317px] shadow-2xl bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)] ${
         theme === "dark"
           ? "border border-[0.73px]  border-blue-500 shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)]"
           : "bg-white"
@@ -126,21 +152,21 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
           Transaction History
         </h2>
 
-        <div className="relative w-40">
+        <div className="relative w-[264px]">
           <input
             type="text"
             placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`pl-8 pr-4 py-1 rounded-full ${
+            className={`pl-4 pr-4 py-1  w-[264px] rounded-full placeholder-white ${
               theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-200"
             } text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           <FiSearch
-            className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
-              theme === "dark" ? "text-gray-400" : "text-gray-600"
+            className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
+              theme === "dark" ? "text-white" : "text-gray-600"
             } cursor-pointer`}
-            size={14}
+            size={20}
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -161,19 +187,18 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                 ? "bg-gray-700 hover:bg-gray-600"
                 : "bg-gray-200 hover:bg-gray-300"
             } transition-colors`}
+            onClick={handleMagnifyClick}
           >
-            <FiPlus size={16} />
+            <CgMaximizeAlt size={16} />
           </button>
-
           <button
             className={`p-2 rounded-full ${
               theme === "dark"
                 ? "bg-gray-700 hover:bg-gray-600"
                 : "bg-gray-200 hover:bg-gray-300"
             } transition-colors`}
-            onClick={handleMagnifyClick}
           >
-            <FiGrid size={16} />
+            <RiExpandUpDownFill size={16} />
           </button>
         </div>
       </div>
@@ -240,7 +265,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                   {transaction.id}
                 </td> */}
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
-                    {transaction.Timestamp}
+                    {transaction.Timestamp.replace("T", "   ")}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm text-cyan-400">
                     {transaction.Ticker}
@@ -249,19 +274,19 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                     {transaction.Action}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
-                    {transaction.Price}
+                    {Number(transaction.Price).toFixed(2)}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
                     {transaction.Qty}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
-                    {transaction.Cash_Balance}
+                    {Number(transaction.Cash_Balance).toFixed(2)}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
-                    {transaction.PnL_Percent}
+                    {Number(transaction.PnL_Percent).toFixed(2)}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
-                    {transaction.Buy_Price}
+                    {Number(transaction.Buy_Price).toFixed(2)}
                   </td>
                 </tr>
               ))}
