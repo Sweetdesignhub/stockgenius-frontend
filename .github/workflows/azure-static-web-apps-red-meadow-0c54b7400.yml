@@ -14,7 +14,11 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    
+    env:
+      VITE_AZURE_STORAGE_ACCOUNT_NAME: sgaicoreengine
+      VITE_AZURE_STORAGE_CONTAINER_NAME: sgaiindia
+      VITE_AZURE_STORAGE_SAS_TOKEN: sv=2022-11-02&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2030-02-24T14:05:50Z&st=2025-02-24T06:05:50Z&spr=https,http&sig=KEgla7bzOZPB80o7AZC8Afe8jTshYpN8D5e9N3YVw38%3D
+      VITE_GOOGLE_CLIENT_ID: 139066726123-bbupf44e4dagnc4fs3pu346o191s4dth.apps.googleusercontent.com
     permissions:
        id-token: write
        contents: read
