@@ -327,7 +327,7 @@ function Bot({
       setModalMessage(newMessage);
       setConfirmAction("toggle");
       setYesNoModalOpen(true);
-    }
+    } 
   };
 
   //  API endpoint based on the bot type
