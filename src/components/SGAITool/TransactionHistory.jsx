@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IoFilter } from "react-icons/io5";
 import { FiSearch, FiDownload, FiPlus, FiGrid } from "react-icons/fi";
 import { CgMaximizeAlt } from "react-icons/cg";
 import { RiExpandUpDownFill } from "react-icons/ri";
@@ -11,7 +12,9 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useTheme(); // Get the current theme (light or dark)
   console.log("Trans", transactions);
+  console.log("Theme is:", theme);
   const isDark = theme === "dark";
+  console.log("idDark is:", isDark);
   const filteredTransactions = transactions.filter((transaction) =>
     transaction.Ticker.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -198,7 +201,8 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                 : "bg-gray-200 hover:bg-gray-300"
             } transition-colors`}
           >
-            <RiExpandUpDownFill size={16} />
+            <IoFilter size={16} />
+            {/* <RiExpandUpDownFill size={16} /> */}
           </button>
         </div>
       </div>

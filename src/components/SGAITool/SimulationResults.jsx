@@ -19,7 +19,6 @@ const SimulationResults = ({ title = "NSE", data, currency = "" }) => {
   const fancyRedCardClass = `
     relative
     border-[0.9px] border-transparent
-    text-[#FFD7D7]
     rounded-lg py-1 px-2
     shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380]
     backdrop-blur-[17.95px]
@@ -31,9 +30,7 @@ const SimulationResults = ({ title = "NSE", data, currency = "" }) => {
 
   const fancyGreenCardClass = `
     relative
-    text-[#FFD7D7]
     border-[0.9px] border-transparent
-    text-white
     rounded-lg py-1 px-2
     shadow-[inset_0px_8.97px_26.92px_0px_#00FF7FB2,0px_8.97px_35.9px_0px_#00640080]
     backdrop-blur-[18px]
@@ -43,7 +40,6 @@ const SimulationResults = ({ title = "NSE", data, currency = "" }) => {
 `.trim();
   const fancyYellowCardClass = `
     relative
-    text-[#FFD7D7]
     border-[0.9px] border-transparent
     rounded-lg py-1 px-2
     overflow-hidden

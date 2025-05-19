@@ -26,23 +26,48 @@ function SGAITool() {
     currency: "Rs",
   });
   return (
-    <div className=" flex items-center justify-center">
+    <div className="relative w-full h-screen flex items-center justify-between overflow-hidden">
+      {/* Left Image */}
       <img
         loading="lazy"
-        className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
+        className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0 w-[165px]"
         src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
         alt="bull"
       />
+
+      {/* Center Content */}
+      <div className="flex-1 flex justify-center items-center h-full">
+        <div className="h-full w-full mx-36 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4">
+          <SmartTradeBlueprint />
+        </div>
+      </div>
+
+      {/* Right Image */}
       <img
         loading="lazy"
-        className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
+        className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0 w-[160px]"
         src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
         alt="bear"
       />
-      <div className="h-full bg-white/10 backdrop-blur-md rounded-2xl shadow-lg">
-        <SmartTradeBlueprint />{" "}
-      </div>
     </div>
+
+    // <div className=" flex items-center justify-center">
+    //   <img
+    //     loading="lazy"
+    //     className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
+    //     src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
+    //     alt="bull"
+    //   />
+    //   <div className="h-full bg-white/10 backdrop-blur-md rounded-2xl shadow-lg">
+    //     <SmartTradeBlueprint />{" "}
+    //   </div>
+    //   <img
+    //     loading="lazy"
+    //     className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
+    //     src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
+    //     alt="bear"
+    //   />
+    // </div>
   );
 }
 

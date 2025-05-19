@@ -331,7 +331,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Start Date */}
             <div>
-              <label className="block text-base mb-2">Start Date</label>
+              <label className="block text-medium mb-2">Start Date</label>
               <Controller
                 name="startDate"
                 control={control}
@@ -344,7 +344,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
-                      className="w-full px-2 py-1 rounded-lg bg-[#DDDDDD] text-black text-sm border border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-2 py-1 rounded-lg bg-[#DDDDDD] text-black text-base border border-gray-300 focus:ring-blue-500 focus:border-transparent"
                       popperClassName="!z-50" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -401,13 +401,53 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                 rules={{ required: "End date is required" }}
                 render={({ field }) => (
                   <div className="relative">
-                    <DatePicker
+                    {/* <DatePicker
                       {...field}
                       selected={field.value}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
                       className="w-full px-2 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
+                    /> */}
+                    <DatePicker
+                      {...field}
+                      selected={field.value}
+                      onChange={(date) => field.onChange(date)}
+                      placeholderText="YYYY/MM/DD"
+                      dateFormat="yyyy/MM/dd"
+                      className="w-full px-2 py-1 rounded-lg bg-[#DDDDDD] text-black text-base border border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                      popperClassName="!z-50" // Ensures the modal appears above other elements
+                      wrapperClassName="w-full"
+                      renderCustomHeader={({
+                        monthDate,
+                        decreaseMonth,
+                        increaseMonth,
+                        prevMonthButtonDisabled,
+                        nextMonthButtonDisabled,
+                      }) => (
+                        <div className="flex items-center justify-between px-2 text-sm bg-gray-100 rounded-t-lg">
+                          <button
+                            onClick={decreaseMonth}
+                            disabled={prevMonthButtonDisabled}
+                            className="p-1 rounded hover:bg-gray-200"
+                          >
+                            <FiChevronLeft className="w-5 h-5 text-gray-700" />
+                          </button>
+                          <span className="font-semibold text-gray-800">
+                            {monthDate.toLocaleString("en-US", {
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                          <button
+                            onClick={increaseMonth}
+                            disabled={nextMonthButtonDisabled}
+                            className="p-1 rounded hover:bg-gray-200"
+                          >
+                            <FiChevronRight className="w-5 h-5 text-gray-700" />
+                          </button>
+                        </div>
+                      )}
                     />
                     {/* <DayPicker
                       animate

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./SGAIHeader";
 import SGAICalc from "./SGAICalc";
 import SimulationResults from "./SimulationResults";
@@ -13,12 +13,18 @@ const SmartTradeBlueprint = () => {
   const [isSimulationComplete, setIsSimulationComplete] = useState(false);
   const [savedFormValues, setSavedFormValues] = useState(null);
   const [currency, setCurrency] = useState(null);
-  const { theme } = useTheme();
+  const { theme, updateTheme } = useTheme();
   const themeColor = theme === "dark" ? "white" : "black";
   const region = useSelector((state) => state.region); // Get region from store
   const market = useSelector((state) => state.market); // Get region from store
   console.log("Region is: ", market);
 
+  useEffect(() => {
+    if (theme === "system") {
+      console.log("Theme updatedD");
+      updateTheme("dark");
+    }
+  }, [theme, updateTheme]);
   const gradientBackground = "";
   const plainBackground = "bg-white text-black";
   const isDark = theme === "dark";
@@ -202,12 +208,12 @@ const SmartTradeBlueprint = () => {
   };
 
   return (
-    <div className="rounded-2xl shadow-lg py-4 px-6">
+    <div className="rounded-2xl  shadow-lg py-4 px-6">
       {/* Your content goes here */}
       <Header onReRun={handleReRun} isLoading={isLoading} />
 
       <div
-        className={`h-px w-full my-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+        className={`h-px my-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
       ></div>
       {expandedView === null ? (
         <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
