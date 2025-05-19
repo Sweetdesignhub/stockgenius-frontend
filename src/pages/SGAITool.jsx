@@ -26,7 +26,7 @@ function SGAITool() {
     currency: "Rs",
   });
   return (
-    <div className="relative w-full h-screen flex items-center justify-between overflow-hidden">
+    <div className="relative w-full flex items-center justify-between overflow-hidden">
       {/* Left Image */}
       <img
         loading="lazy"
