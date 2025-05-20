@@ -108,9 +108,16 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
 
   // ✅ Dynamically select the correct trading context
   const { trades = [], loading } =
-    region === "usa" ? useUsaPaperTrading() : usePaperTrading();
-
-  const tradesData = trades || [];
+    region === "usa" ? useUsaPaperTrading() : usePaperTrading();  const tradesData = [...(trades || [])].sort((a, b) => {
+    const dateA = new Date(a.tradeDateTime);
+    const dateB = new Date(b.tradeDateTime);
+    // First sort by date, then by time if dates are equal
+    if (dateB.getTime() !== dateA.getTime()) {
+      return dateB.getTime() - dateA.getTime();
+    }
+    return dateB.getHours() * 3600 + dateB.getMinutes() * 60 + dateB.getSeconds() -
+           (dateA.getHours() * 3600 + dateA.getMinutes() * 60 + dateA.getSeconds());
+  });
   const { theme } = useTheme();
 
   useEffect(() => {

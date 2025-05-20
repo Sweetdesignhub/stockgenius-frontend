@@ -109,9 +109,17 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
   const region = useSelector((state) => state.region);
 
   // ✅ Use appropriate context based on region
-  const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
-
-  const { orders = [], loading } = tradingContext;
+  const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();  const { orders = [], loading } = tradingContext;
+  const sortedOrders = [...orders].sort((a, b) => {
+    const dateA = new Date(a.orderTime);
+    const dateB = new Date(b.orderTime);
+    // First sort by date, then by time if dates are equal
+    if (dateB.getTime() !== dateA.getTime()) {
+      return dateB.getTime() - dateA.getTime();
+    }
+    return dateB.getHours() * 3600 + dateB.getMinutes() * 60 + dateB.getSeconds() -
+           (dateA.getHours() * 3600 + dateA.getMinutes() * 60 + dateA.getSeconds());
+  });
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -168,8 +176,7 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
             ))}
           </tr>
         </thead>
-        <tbody>
-          {orders.map((order, index) => (
+        <tbody>          {sortedOrders.map((order, index) => (
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
