@@ -1,11 +1,18 @@
 import { useParams } from "react-router-dom";
 import module1 from "../../components/eLearning/quiz/data/module1.js";
 import module2 from "../../components/eLearning/quiz/data/module2.js";
+import module3 from "../../components/eLearning/quiz/data/module3.js";
+import module4 from "../../components/eLearning/quiz/data/module4.js";
+import module5 from "../../components/eLearning/quiz/data/module5.js";
 import Quiz from "../../components/eLearning/quiz/Quiz.jsx";
 
 const quizMap = {
   1: module1,
   2: module2,
+  3: module3,
+  4: module4,
+  5: module5,
+  // Add more modules as needed
 };
 
 const QuizPage = () => {

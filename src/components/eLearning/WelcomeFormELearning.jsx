@@ -6,11 +6,14 @@ import {
   setLearningPreferences,
   updateLearningPreferences,
 } from "../../redux/eLearning/learningSlice";
+import ConfirmationModal from "../common/ConfirmationModal";
 
 function WelcomeFormELearning() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const selectedOptions = useSelector((state) => state.learning);
+  // Initialize with empty object instead of pre-selected values
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const selectedOptions = useSelector((state) => state.learning || {});
 
   const [openDropdown, setOpenDropdown] = useState(null);
 
@@ -21,13 +24,27 @@ function WelcomeFormELearning() {
   };
 
   const handleSelection = (category, option) => {
-    dispatch(updateLearningPreferences({ category, value: option }));
+    // Add this check to toggle selection
+    const newValue = selectedOptions[category] === option ? '' : option;
+    dispatch(updateLearningPreferences({ category, value: newValue }));
     setOpenDropdown(null);
   };
 
-  const handleSubmit = () => {
-    dispatch(setLearningPreferences(selectedOptions));
-    navigate("/e-learning/learning");
+  const areAllOptionsSelected = () => {
+    return (
+      selectedOptions.tradingExperience &&
+      selectedOptions.focusArea &&
+      selectedOptions.learningTime
+    );
+  };
+
+const handleSubmit = () => {
+    if (areAllOptionsSelected()) {
+      dispatch(setLearningPreferences(selectedOptions));
+      navigate("/e-learning/learning");
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -55,14 +72,14 @@ function WelcomeFormELearning() {
                   "How much time do you want to spend learning per week?"}
               </label>
               <div
-                className="bg-white text-black px-3 py-1 rounded-lg flex justify-between items-center cursor-pointer border border-gray-300"
-                onClick={() =>
-                  setOpenDropdown(openDropdown === category ? null : category)
-                }
-              >
-                {selectedOptions[category] || "Select an option"}
-                <FaChevronDown className="text-gray-500" />
-              </div>
+      className="bg-white text-black px-3 py-1 rounded-lg flex justify-between items-center cursor-pointer border border-gray-300"
+      onClick={() =>
+        setOpenDropdown(openDropdown === category ? null : category)
+      }
+    >
+      {selectedOptions[category] || "Select an option"}
+      <FaChevronDown className="text-gray-500" />
+    </div>
 
               {openDropdown === category && (
                 <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 shadow-lg rounded-lg z-50 p-2">
@@ -89,21 +106,35 @@ function WelcomeFormELearning() {
           ))}
         </div>
 
+        <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Required Fields"
+        message="Please select all options before proceeding"
+        onConfirm={() => setIsModalOpen(false)}
+      />
+
         <div className="flex justify-center mt-10">
-          <button
-            className="px-6 md:px-16 py-1 rounded-xl text-white text-xs md:text-base"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #885627 132.95%)",
-              boxShadow:
-                "0px 10px 30px 0px #FFA049B2 inset, 0px 10px 40px 0px #AF823F80",
-              backdropFilter: "blur(20px)",
-            }}
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
-        </div>
+        <button
+          className="px-6 md:px-16 py-1 rounded-xl text-white text-xs md:text-base"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #885627 132.95%)",
+            boxShadow:
+              "0px 10px 30px 0px #FFA049B2 inset, 0px 10px 40px 0px #AF823F80",
+            backdropFilter: "blur(20px)",
+          }}
+          onClick={handleSubmit}
+        aria-label="Submit learning preferences"
+        title={
+          !areAllOptionsSelected()
+            ? "Please select all options before proceeding"
+            : "Submit learning preferences"
+        }
+      >
+          Submit
+        </button>
+      </div>
       </div>
     </div>
   );

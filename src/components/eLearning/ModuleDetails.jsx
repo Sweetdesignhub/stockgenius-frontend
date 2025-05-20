@@ -104,7 +104,12 @@ const ModuleDetails = () => {
         "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F044f0c30f30240cb9763f0640450ef68",
       descColor: "#FFF0F0",
       content: "🔮 Explore the mechanics of futures contracts in trading.",
-      videos: [], // No videos provided, will show "Videos are in progress..."
+      videos: [
+        {
+          title: "video 1, module 2",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+        },
+      ], // No videos provided, will show "Videos are in progress..."
     },
     {
       id: "4",
@@ -114,7 +119,12 @@ const ModuleDetails = () => {
         "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F48eb8037a3664f94827e5c54e88ee8f1",
       descColor: "#FFEECC",
       content: "💡 Options contracts explained in the simplest way possible!",
-      videos: [], // No videos provided
+      videos: [
+        {
+          title: "video 1, module 2",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+        },
+      ], // No videos provided
     },
     {
       id: "5",
@@ -124,7 +134,12 @@ const ModuleDetails = () => {
         "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fa369009079804034898ca9186a441725",
       descColor: "#CDFFCC",
       content: "📊 Learn how to analyze an option chain like a pro.",
-      videos: [], // No videos provided
+      videos: [
+        {
+          title: "video 1, module 2",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+        },
+      ], // No videos provided
     },
   ];
 
@@ -218,7 +233,7 @@ const ModuleDetails = () => {
           if (prev === 1) {
             clearInterval(countdownInterval);
             // Check if quiz exists for this module
-            const hasQuiz = ["1", "2"].includes(moduleId); // Only modules 1 and 2 have quizzes based on quizMap
+            const hasQuiz = ["1", "2","3","4","5"].includes(moduleId); // Only modules 1 and 2 have quizzes based on quizMap
             if (hasQuiz) {
               navigate(`/quiz/module/${moduleId}`);
             } else {

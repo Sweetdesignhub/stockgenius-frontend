@@ -23,6 +23,18 @@ const Quiz = ({ questions }) => {
       title: "Module 2: Understanding Derivatives",
       extra: "You’ve now grasped how derivatives work—pretty cool, right?",
     },
+    3: {
+      title: "Module 3: What Are Futures Contracts?",
+      extra: "Great job understanding futures trading! Just like Rahul's sugar deal, you now know how traders can lock in prices for future transactions.",
+    },
+    4: {
+      title: "Module 4: What are Options Contracts?",
+      extra: "Well done! You've mastered the basics of Call and Put options. Remember, just like Rahul's tea stall example, options give you the right but not the obligation to trade.",
+    },
+    5: {
+      title: "Module 5: Understanding Option Chain",
+      extra: "Congratulations! You now understand both the opportunities and risks in options trading. Remember to always trade wisely and use protective strategies like our tea stall examples!",
+    }
     // Add more modules as needed
   };
 
