@@ -22,7 +22,8 @@ const IndexPerformance = ({ data, currency = "" }) => {
     text-white 
     border-[0.9px] border-transparent
     rounded-lg py-1 px-2
-   
+   text-[clamp(0.8rem,0.8rem,2rem)]
+
     
     overflow-hidden
     ${
@@ -38,7 +39,8 @@ const IndexPerformance = ({ data, currency = "" }) => {
     border-[0.9px] border-transparent
     text-white
     rounded-lg py-1 px-2
-    
+    text-[clamp(0.8rem,0.8rem,2rem)]
+
     
     overflow-hidden
     ${
@@ -52,6 +54,8 @@ const IndexPerformance = ({ data, currency = "" }) => {
     relative
     text-white
     border-[0.9px] border-transparent
+    text-[clamp(0.8rem,0.8rem,2rem)]
+
     rounded-lg py-1 px-2
     overflow-hidden
     ${
@@ -68,14 +72,16 @@ const IndexPerformance = ({ data, currency = "" }) => {
 
   return (
     <div
-      className={`max-w-3xl h-full mx-auto p-6 rounded-3xl inset-0 
+      className={`max-w-3xl h-full mx-auto py-5 px-3 rounded-xl inset-0 
       bg-gradient-to-b from-white/1  to-transparent
       backdrop-blur-[1px]
       mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]    ${
-        theme === "dark" ? "bg-white/1" : "bg-[#FFFFFF]"
+        theme === "dark" ? "bg-white/1" : "bg-white"
       }`}
     >
-      <h2 className={`text-base md:text-xl font-bold mb-3  ${headerColor}`}>
+      <h2
+        className={`text-[clamp(1.2rem,1.2rem,2rem)] font-bold mb-3  ${headerColor}`}
+      >
         Index Performance
       </h2>
       <div
@@ -85,7 +91,7 @@ const IndexPerformance = ({ data, currency = "" }) => {
       <div className="space-y-4">
         {/* Start Date */}
         <div>
-          <p className={`text-lg mb-3 ${textColor}`}>
+          <p className={`text-[clamp(0.8rem,1rem,2rem)] mb-3 ${textColor}`}>
             Start Date - {start_date}
           </p>
           <div className="grid grid-cols-2 gap-4">
@@ -100,7 +106,9 @@ const IndexPerformance = ({ data, currency = "" }) => {
 
         {/* End Date */}
         <div>
-          <p className={`text-lg mb-3 ${textColor}`}>End Date - {end_date}</p>
+          <p className={`text-[clamp(0.8rem,1rem,2rem)] mb-3 ${textColor}`}>
+            End Date - {end_date}
+          </p>
           <div className="grid grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
               Open - {currency} {end_open.toFixed(2)}

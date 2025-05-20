@@ -205,10 +205,10 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
         className={`overflow-x-auto ${
           isExpanded
             ? filteredTransactions.length >= 20
-              ? " overflow-y-auto"
+              ? "max-h-[800px] overflow-y-auto"
               : ""
             : filteredTransactions.length >= 10
-            ? " overflow-y-auto"
+            ? "max-h-[400px] overflow-y-auto"
             : ""
         }`}
       >

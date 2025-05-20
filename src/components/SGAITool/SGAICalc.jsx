@@ -210,14 +210,13 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
 
   return (
     <div
-      className={` mx-auto py-4 px-6 rounded-xl inset-0 
-      
+      className={`mx-auto py-4 px-6 rounded-xl flex flex-col justify-around items-start w-full inset-0 h-full
       backdrop-blur-[1px]
       mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] ${bgClass} `}
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center w-full mb-2">
         <div className="flex-1">
-          <h1 className="text-base md:text-xl font-bold">
+          <h1 className="text-[clamp(1.2rem,1.2rem,2rem)] font-bold">
             SGAI - Investment Simulation Tool
           </h1>
         </div>
@@ -230,15 +229,15 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
           Clear
         </button>
       </div>
-      {/* <div className={` w-full${isDark ? "bg-white/20" : "bg-gray-300"}`}></div> */}
       <div
         className={`h-px w-full mb-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
       ></div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-2">
+      {/* <div className={` w-full${isDark ? "bg-white/20" : "bg-gray-300"}`}></div> */}
+      <form onSubmit={handleSubmit(onSubmit)} className=" w-full">
+        <div className="h-full">
           {/* Initial Cash */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
+          <div className="">
+            <div className="flex justify-between items-center w-full mb-2">
               <label className="text-base">Initial Cash</label>
               <RadioGroup value={currency} onChange={() => {}} className="flex">
                 <RadioGroup.Option value="₹" disabled>
@@ -293,7 +292,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                     <input
                       {...field}
                       type="text"
-                      className="w-full px-3 py-1 border border-gray-300 rounded-lg text-black text-base"
+                      className="w-full  px-3 py-1 border border-gray-300 rounded-lg text-black text-base"
                       placeholder="Enter initial cash"
                     />
                     <button
@@ -603,7 +602,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             </div>
           </div>
           {/* Submit Button */}
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center mt-4">
             <button
               type="submit"
               disabled={isLoading}

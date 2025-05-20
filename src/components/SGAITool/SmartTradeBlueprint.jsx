@@ -27,7 +27,7 @@ const SmartTradeBlueprint = () => {
   }, [theme, updateTheme]);
   const gradientBackground = "";
   const plainBackground = "bg-white text-black";
-  
+
   const isDark = theme === "dark";
   const bgClass =
     theme === "dark" ? `${gradientBackground} text-white` : plainBackground;
@@ -223,13 +223,13 @@ const SmartTradeBlueprint = () => {
       {expandedView === null ? (
         <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
           {/* Left Panel - SGAI Calc */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 h-full">
             <SGAICalc onSimulationComplete={handleSimulationComplete} />
           </div>
 
           {/* InfoCard - shown only before simulation */}
           {!isSimulationComplete && (
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-7 h-full">
               <InfoCard />
             </div>
           )}
@@ -238,7 +238,7 @@ const SmartTradeBlueprint = () => {
           {isSimulationComplete &&
             simulationData &&
             Object.keys(simulationData).length > 0 && (
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-3 h-full">
                 <SimulationResults
                   title={marketTitle}
                   data={simulationData}
@@ -251,7 +251,7 @@ const SmartTradeBlueprint = () => {
           {isSimulationComplete &&
             indexData &&
             Object.keys(indexData).length > 0 && (
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-4 h-full">
                 <IndexPerformance data={indexData} currency={currency} />
               </div>
             )}
