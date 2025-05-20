@@ -330,7 +330,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Start Date */}
             <div>
-              <label className="block text-medium mb-2">Start Date</label>
+              <label className="block text-medium mt-1 mb-2">Start Date</label>
               <Controller
                 name="startDate"
                 control={control}
@@ -393,7 +393,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
 
             {/* End Date */}
             <div>
-              <label className="block text-base mb-2">End Date</label>
+              <label className="block text-base mt-1 mb-2">End Date</label>
               <Controller
                 name="endDate"
                 control={control}
@@ -478,7 +478,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             {/* Margin Profit */}
             <div>
               {!errors.marginProfit && (
-                <label className="block text-base mb-2">
+                <label className="block text-base mt-1 mb-2">
                   Margin Profit (%)
                 </label>
               )}
@@ -546,7 +546,9 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             {/* Margin Loss */}
             <div>
               {!errors.marginLoss && (
-                <label className="block text-base mb-2">Margin Loss (%)</label>
+                <label className="block text-base mt-1 mb-2">
+                  Margin Loss (%)
+                </label>
               )}
               {errors.marginLoss && (
                 <p className="block text-base mb-2 text-red-400">

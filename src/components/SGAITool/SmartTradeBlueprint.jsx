@@ -54,6 +54,7 @@ const SmartTradeBlueprint = () => {
   const handleSimulationComplete = (data) => {
     if (!data) {
       setIsSimulationComplete(false);
+      setTransactions([]);
     } else {
       console.log(
         "(Data which can be passed)Simulation completed with data:",
