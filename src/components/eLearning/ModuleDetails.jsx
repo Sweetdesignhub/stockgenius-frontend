@@ -106,8 +106,8 @@ const ModuleDetails = () => {
       content: "🔮 Explore the mechanics of futures contracts in trading.",
       videos: [
         {
-          title: "video 1, module 2",
-          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+          title: "video 1, module 3",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F3e78b7a3210541569563fab7e178c50c%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=3e78b7a3210541569563fab7e178c50c&alt=media&optimized=true",
         },
       ], // No videos provided, will show "Videos are in progress..."
     },
@@ -121,8 +121,8 @@ const ModuleDetails = () => {
       content: "💡 Options contracts explained in the simplest way possible!",
       videos: [
         {
-          title: "video 1, module 2",
-          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+          title: "video 1, module 4",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2Fb80356695d8b482d979b8f3465db8a79%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=b80356695d8b482d979b8f3465db8a79&alt=media&optimized=true",
         },
       ], // No videos provided
     },
@@ -136,8 +136,8 @@ const ModuleDetails = () => {
       content: "📊 Learn how to analyze an option chain like a pro.",
       videos: [
         {
-          title: "video 1, module 2",
-          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F63118228763d4f0a9166324cf0caa748%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=63118228763d4f0a9166324cf0caa748&alt=media&optimized=true",
+          title: "video 1, module 5",
+          url: "https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F348918b434444b08a6821bac1872a7c8%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=348918b434444b08a6821bac1872a7c8&alt=media&optimized=true",
         },
       ], // No videos provided
     },
