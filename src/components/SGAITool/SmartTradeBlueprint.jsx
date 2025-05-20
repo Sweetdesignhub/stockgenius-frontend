@@ -209,9 +209,9 @@ const SmartTradeBlueprint = () => {
 
   return (
     <div
-      className={`rounded-2xl backdrop-blur-md w-[80%] shadow-lg py-4 px-6 ${
-        theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
-      }`}
+    // className={`rounded-2xl backdrop-blur-md w-[84%] shadow-lg py-4 px-4 ${
+    //   theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
+    // }`}
     >
       {/* Your content goes here */}
       <Header onReRun={handleReRun} isLoading={isLoading} />

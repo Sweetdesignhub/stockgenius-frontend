@@ -15,9 +15,9 @@ function SGAITool() {
 
       {/* Center Content */}
       <div className="flex-1 flex justify-center items-center ">
-        {/* <div className="h-full w-full mx-36 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4"> */}
-        <SmartTradeBlueprint />
-        {/* </div> */}
+        <div className="h-full w-full mx-36 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4">
+          <SmartTradeBlueprint />
+        </div>
       </div>
 
       {/* Right Image */}

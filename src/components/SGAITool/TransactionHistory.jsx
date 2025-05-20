@@ -170,6 +170,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                 : "bg-[#3A6FF8] hover:bg-blue-300"
             } transition-colors`}
             onClick={handleDownloadCSV}
+            disabled={transactions.length === 0}
           >
             <FiDownload size={16} color={"white"} />
           </button>
