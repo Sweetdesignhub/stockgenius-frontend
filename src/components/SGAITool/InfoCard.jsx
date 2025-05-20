@@ -8,22 +8,28 @@ const InfoCard = () => {
 
   return (
     <div
-      className={`relative h-full rounded-xl text-white overflow-hidden w-full mx-auto border shadow-2xl ${
-        isDark
-          ? "bg-white/5 border-white/10 "
-          : "bg-[linear-gradient(90deg,#141B2D_4.98%,#202F56_23.34%,#2D4683_43.88%,#2D4683_67.48%,#22345F_81.9%,#111829_95.89%)] text-black"
-      }`}
+      className={`relative h-full z-[-1]
+ rounded-xl text-white overflow-hidden w-full mx-auto border shadow-2xl ${
+   isDark
+     ? "bg-white/5 border-white/10 "
+     : "bg-[linear-gradient(90deg,#141B2D_4.98%,#202F56_23.34%,#2D4683_43.88%,#2D4683_67.48%,#22345F_81.9%,#111829_95.89%)] text-black"
+ }`}
     >
       {/* Background Image Layer */}
       <img
         src={imgs}
         alt="Background"
-        className={`absolute right-0 h-full w-80 object-cover rounded-xl`}
-        style={{ background: "transparent" }}
+        className={`
+          absolute right-0 
+          h-full 
+          w-48 sm:w-48 md:w-64 lg:w-80 
+          object-cover 
+          rounded-xl
+        `}
       />
 
       {/* Glass-like Overlay Content */}
-      <div className="relative z-10 flex flex-row p-6 w-full">
+      <div className="relative  flex flex-row p-6 w-full">
         <div className="flex flex-col h-full justify-between items-start w-full">
           <h2 className="font-poppins font-semibold text-[28px] leading-none tracking-[0.03em]">
             It is not just a tool. It is your trading machine
