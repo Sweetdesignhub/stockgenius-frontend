@@ -17,48 +17,49 @@ const IndexPerformance = ({ data, currency = "" }) => {
   const headerColor = theme === "dark" ? "text-white" : "text-black";
   const textColor = theme === "dark" ? "text-gray-300" : "text-gray-600";
 
-  const cardBaseClass = `
-    relative border border-transparent
-    bg-clip-border backdrop-blur-[18px]
-    rounded-lg py-2 px-4 font-medium shadow-lg
-  `;
-
   const fancyRedCardClass = `
     relative
+    text-white 
     border-[0.9px] border-transparent
     rounded-lg py-1 px-2
-    shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380]
-    backdrop-blur-[17.95px]
+   
+    
     overflow-hidden
-    [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)]
-    [border-image-slice:1]
-    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]
+    ${
+      isDark
+        ? "backdrop-blur-[17.95px] shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380] [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)] [border-image-slice:1] [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]"
+        : "bg-[#FF0000E5]"
+    }
+    
 `.trim();
 
   const fancyGreenCardClass = `
     relative
     border-[0.9px] border-transparent
-    
+    text-white
     rounded-lg py-1 px-2
-    shadow-[inset_0px_8.97px_26.92px_0px_#00FF7FB2,0px_8.97px_35.9px_0px_#00640080]
-    backdrop-blur-[18px]
+    
+    
     overflow-hidden
-    [border-image:linear-gradient(180deg,rgba(0,100,0,0.4)_17.19%,rgba(0,255,127,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(0,100,0,0)_-4.69%,rgba(144,238,144,0.3)_100%)]
-    [border-image-slice:1]
+    ${
+      isDark
+        ? "backdrop-blur-[18px] shadow-[inset_0px_8.97px_26.92px_0px_#00FF7FB2,0px_8.97px_35.9px_0px_#00640080] [border-image:linear-gradient(180deg,rgba(0,100,0,0.4)_17.19%,rgba(0,255,127,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(0,100,0,0)_-4.69%,rgba(144,238,144,0.3)_100%)] [border-image-slice:1]"
+        : "bg-[#0EBC34E5]"
+    }
   `.trim();
 
   const fancyPurpleCardClass = `
     relative
+    text-white
     border-[0.9px] border-transparent
     rounded-lg py-1 px-2
     overflow-hidden
-    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#882776_132.95%)]
-    [border-image:linear-gradient(180deg,rgba(136,39,118,0.4)_17.19%,rgba(251,98,241,0.77)_100%),
-    linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),
-    linear-gradient(180deg,rgba(136,39,118,0)_-4.69%,rgba(254,189,253,0.3)_100%)]
-    [border-image-slice:1]
-    shadow-[inset_0px_8.97px_26.92px_0px_#FF49F3B2,0px_8.97px_35.9px_0px_#AF3FA080]
-    backdrop-blur-[17.95px]
+    ${
+      isDark
+        ? "backdrop-blur-[17.95px] shadow-[inset_0px_8.97px_26.92px_0px_#FF49F3B2,0px_8.97px_35.9px_0px_#AF3FA080] [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#882776_132.95%)] [border-image:linear-gradient(180deg,rgba(136,39,118,0.4)_17.19%,rgba(251,98,241,0.77)_100%), linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)), linear-gradient(180deg,rgba(136,39,118,0)_-4.69%,rgba(254,189,253,0.3)_100%)] [border-image-slice:1]"
+        : "bg-[#F507C2]"
+    }
+    
   `.trim();
 
   const getValueCardClass = (open, close) =>
@@ -70,8 +71,8 @@ const IndexPerformance = ({ data, currency = "" }) => {
       className={`max-w-3xl h-full mx-auto p-6 rounded-3xl inset-0 
       bg-gradient-to-b from-white/1  to-transparent
       backdrop-blur-[1px]
-      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]  shadow-2xl  ${
-        theme === "dark" ? "bg-white/1" : "bg-white/50"
+      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]    ${
+        theme === "dark" ? "bg-white/1" : "bg-[#FFFFFF]"
       }`}
     >
       <h2 className={`text-base md:text-xl font-bold mb-3  ${headerColor}`}>

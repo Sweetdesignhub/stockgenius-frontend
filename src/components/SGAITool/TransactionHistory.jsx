@@ -74,70 +74,60 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
       onMagnifyToggle("TransactionHistory"); // Notify parent
     }
   };
+  const EmptyState = () => {
+    const { theme } = useTheme(); // Get the current theme (light or dark)
+    const isDark = theme === "dark";
 
-  const EmptyState = () => (
-    // <div
-    //   className="relative w-full h-80 rounded-lg "
-    //   style={{
-    //     zIndex: 1,
-    //   }}
-    // >
-    //   {/* Background Image */}
-    //   <img
-    //     src={imgs}
-    //     alt="No transactions"
-    //     className="w-full h-full object-cover"
-    //     style={{
-    //       zIndex: 1,
-    //     }}
-    //   />
-    <div className="relative">
-      {" "}
-      {/* This creates a positioning context */}
-      {/* Image Container - now with z-index: 0 */}
-      <div
-        className="relative w-full h-80 rounded-lg overflow-hidden"
-        style={{
-          zIndex: -1, // Changed from -1 to 0
-          backgroundImage: `url(${imgs})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        {/* Semi-transparent overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-      </div>
-      {/* Text Content - absolutely positioned over the image */}
-      <div className="absolute inset-0 flex items-center justify-start p-8">
-        <p
-          className={`text-medium max-w-md ${
-            theme === "dark" ? "text-white" : "text-gray-100"
-          }`}
+    console.log("Theme is:", theme);
+
+    return (
+      <div className="relative ">
+        {/* Image Container */}
+        <div
+          className="relative w-full h-80 rounded-lg overflow-hidden"
+          style={{
+            zIndex: -1,
+            backgroundImage: `url(${imgs})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
         >
-          Have you ever looked at a stock chart and thought... 'If only I had
-          invested then...'?
-          <br />
-          <br />
-          Or wondered, How much could I have gained?
-          <br />
-          <br />
-          This tool doesn't just simulate trades — it brings your missed
-          opportunities, uncertain decisions, and future plans into a real,
-          visual experience.
-          <br />
-          <br />
-          So you can trade smarter, with clarity and confidence
-        </p>
+          {/* Semi-transparent overlay */}
+          {/* <div className="absolute inset-0 bg-black bg-opacity-10"></div> */}
+        </div>
+
+        {/* Text Content */}
+        <div className="absolute inset-0 flex items-center justify-start p-8">
+          <p
+            className={`text-medium max-w-md ${
+              isDark ? "text-white" : "text-white"
+            }`}
+          >
+            Have you ever looked at a stock chart and thought... 'If only I had
+            invested then...'?
+            <br />
+            <br />
+            Or wondered, How much could I have gained?
+            <br />
+            <br />
+            This tool doesn't just simulate trades — it brings your missed
+            opportunities, uncertain decisions, and future plans into a real,
+            visual experience.
+            <br />
+            <br />
+            So you can trade smarter, with clarity and confidence
+          </p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
   return (
     <div
-      className={`p-4 rounded-xl min-w-[1317px] shadow-2xl bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)] ${
+      className={`p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] ${
         theme === "dark"
-          ? "border border-[0.73px]  border-blue-500 shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)]"
-          : "bg-white"
+          ? "border border-[0.73px]  bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)]  border-blue-500 "
+          : ""
       }`}
       style={{
         borderImage: `linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%),
@@ -162,12 +152,12 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`pl-4 pr-4 py-1  w-[264px] rounded-full placeholder-white ${
-              theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-200"
+              theme === "dark" ? "bg-gray-800 text-white" : "bg-[#00000099]"
             } text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           <FiSearch
             className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
-              theme === "dark" ? "text-white" : "text-gray-600"
+              theme === "dark" ? "text-white" : "text-gray-600 text-white"
             } cursor-pointer`}
             size={20}
           />
@@ -177,11 +167,11 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
             className={`p-2 rounded-full ${
               theme === "dark"
                 ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
+                : "bg-[#3A6FF8] hover:bg-blue-300"
             } transition-colors`}
             onClick={handleDownloadCSV}
           >
-            <FiDownload size={16} />
+            <FiDownload size={16} color={"white"} />
           </button>
 
           <button
@@ -271,10 +261,10 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                   <td className="px-3 py-2 whitespace-nowrap text-sm">
                     {transaction.Timestamp.replace("T", "   ")}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-cyan-400">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-[#1459DE]">
                     {transaction.Ticker}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-sm text-green-400">
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-[#0EBC34]">
                     {transaction.Action}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap text-sm">

@@ -26,8 +26,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   const isDark = theme === "dark";
   const bgClass =
     theme === "dark"
-      ? "text-white border border-[0.73px]  border-white/10 shadow-lg shadow-[inset_0_0_2px_1px_rgba(255,255,255,0.4)] "
-      : "text-gray-800 shadow-2xl ring-1 ring-white/30 ";
+      ? "text-white border border-[0.73px]  border-white/10 shadow-lg shadow-[inset_0_0_2px_1px_rgba(255,255,255,0.4)]  bg-gradient-to-t from-white/1  to-transparent"
+      : "text-gray-800 ring-1 ring-white/30 bg-white ";
 
   useEffect(() => {
     if (region === "india") {
@@ -210,8 +210,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
 
   return (
     <div
-      className={`max-w-[726px] max-h-[354px]  mx-auto py-4 px-6 rounded-xl inset-0 
-      bg-gradient-to-t from-white/1  to-transparent
+      className={` mx-auto py-4 px-6 rounded-xl inset-0 
+      
       backdrop-blur-[1px]
       mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] ${bgClass} `}
     >
@@ -607,7 +607,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-1 mt-2 bg-blue-600 rounded-xl text-white font-medium text-base hover:bg-blue-700 transition-colors ${
+              className={`px-6 py-1 mt-2 bg-[#3A6FF8] rounded-xl text-white font-medium text-base hover:bg-blue-700 transition-colors ${
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
@@ -641,8 +641,10 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
 export default SGAICalc;
 
 const CalcLoading = () => (
-  <div className="flex justify-center h-2 items-center px-6 py-3 ">
-    <div className="animate-spin rounded-full h-2 w-2 border-b-2 dark:border-white border-gray-900"></div>
+  <div className="flex justify-center text-white h-3 items-center px-6 py-3 ">
+    <div
+      className={`animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600 `}
+    ></div>
     <h1 className="mx-2">Loading</h1>
   </div>
 );

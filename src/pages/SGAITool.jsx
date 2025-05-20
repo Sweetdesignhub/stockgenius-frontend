@@ -3,28 +3,6 @@ import SmartTradeBlueprint from "../components/SGAITool/SmartTradeBlueprint";
 // import { useTheme}
 
 function SGAITool() {
-  // Dummy data for SimulationResults
-  const [simulationData] = useState({
-    initialCash: 5000.0,
-    finalValue: 4028.45,
-    realizedPnL: 840.13,
-    unrealizedPnL: 48.61,
-    totalReturn: 15.83,
-    totalProfitLoss: 791.52,
-    currency: "Rs",
-  });
-
-  // Dummy data for IndexPerformance
-  const [indexData] = useState({
-    startDate: "2024-11-12",
-    endDate: "2024-11-12",
-    startOpen: 25094.35,
-    startClose: 24715.55,
-    endOpen: 23712.5,
-    endClose: 23902.1,
-    niftyReturn: -3.29,
-    currency: "Rs",
-  });
   return (
     <div className="relative w-full flex items-center justify-between overflow-hidden">
       {/* Left Image */}
@@ -36,10 +14,10 @@ function SGAITool() {
       />
 
       {/* Center Content */}
-      <div className="flex-1 flex justify-center items-center h-full">
-        <div className="h-full w-full mx-36 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4">
-          <SmartTradeBlueprint />
-        </div>
+      <div className="flex-1 flex justify-center items-center ">
+        {/* <div className="h-full w-full mx-36 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4"> */}
+        <SmartTradeBlueprint />
+        {/* </div> */}
       </div>
 
       {/* Right Image */}
