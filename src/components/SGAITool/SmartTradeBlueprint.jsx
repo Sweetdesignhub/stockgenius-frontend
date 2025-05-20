@@ -27,6 +27,7 @@ const SmartTradeBlueprint = () => {
   }, [theme, updateTheme]);
   const gradientBackground = "";
   const plainBackground = "bg-white text-black";
+  
   const isDark = theme === "dark";
   const bgClass =
     theme === "dark" ? `${gradientBackground} text-white` : plainBackground;

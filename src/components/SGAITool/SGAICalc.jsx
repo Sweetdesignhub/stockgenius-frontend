@@ -293,7 +293,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                     <input
                       {...field}
                       type="text"
-                      className="w-full px-3 py-1 rounded-lg bg-[#DDDDDD] text-black text-base"
+                      className="w-full px-3 py-1 border border-gray-300 rounded-lg text-black text-base"
                       placeholder="Enter initial cash"
                     />
                     <button
@@ -344,7 +344,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
-                      className="w-full px-2 py-1 rounded-lg bg-[#DDDDDD] text-black text-base border border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-2 py-1 rounded-lg text-black text-base border border-gray-300  focus:ring-blue-500 focus:border-transparent"
                       popperClassName="!z-50" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -415,7 +415,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
-                      className="w-full px-2 py-1 rounded-lg bg-[#DDDDDD] text-black text-base border border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-2 py-1 rounded-lg border border-gray-300   text-black text-base focus:ring-blue-500 focus:border-transparent"
                       popperClassName="!z-50" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -508,7 +508,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       <input
                         {...field}
                         type="text"
-                        className="w-full border-1 border-black px-3 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base"
+                        className="w-full border border-gray-300  px-3 py-1 rounded-lg  text-black text-base"
                         placeholder="00.00"
                       />
                       <button
@@ -571,7 +571,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                         {...field}
                         type="text"
                         step="0.1"
-                        className="w-full px-3 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base"
+                        className="w-full px-3 py-1 rounded-lg border border-gray-300  text-black text-base"
                         placeholder="00.00"
                       />
                       <button

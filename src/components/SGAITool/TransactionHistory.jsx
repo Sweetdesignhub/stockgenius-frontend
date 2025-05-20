@@ -124,10 +124,10 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   };
   return (
     <div
-      className={`p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] ${
+      className={`p-4 rounded-xl  shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] ${
         theme === "dark"
           ? "border border-[0.73px]  bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)]  border-blue-500 "
-          : ""
+          : " "
       }`}
       style={{
         borderImage: `linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%),
@@ -153,7 +153,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className={`pl-4 pr-4 py-1  w-[264px] rounded-full placeholder-white ${
               theme === "dark" ? "bg-gray-800 text-white" : "bg-[#00000099]"
-            } text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            } text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
           />
           <FiSearch
             className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
@@ -216,7 +216,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
           <EmptyState />
         ) : (
           <table
-            className={`min-w-full  ${
+            className={`min-w-full z-10 ${
               theme === "dark" ? "divide-gray-700" : "divide-gray-300"
             }`}
           >
