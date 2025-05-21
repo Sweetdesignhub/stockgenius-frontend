@@ -1,7 +1,7 @@
+@import "react-datepicker/dist/react-datepicker.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 body {
   background-image: url(https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9366f5b36c8d45ee957a34a655934e88);
@@ -10,6 +10,10 @@ body {
   background-repeat: no-repeat;
   background-position: center center;
   color: black;
+}
+
+.react-datepicker-popper {
+  z-index: 500 !important; /* Tailwind: z-50 */
 }
 
 .dark body {
@@ -115,7 +119,7 @@ body {
 }
 
 .bg-gradient {
-  background: linear-gradient(180deg, #CCD7FF 25%, #FFFFFF 100%);
+  background: linear-gradient(180deg, #ccd7ff 25%, #ffffff 100%);
 }
 
 .bg-white {
@@ -206,7 +210,7 @@ body {
 }
 
 .auth::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: 0;
@@ -256,15 +260,14 @@ body {
 }
 
 .react-chatbot-kit-chat-input {
-  color: #000; 
+  color: #000;
 }
-
 
 .react-chatbot-kit-chat-container {
   width: 100% !important; /* Full width */
 }
 
-.react-chatbot-kit-chat-bot-message{
+.react-chatbot-kit-chat-bot-message {
   width: 330px;
 }
 
@@ -272,7 +275,7 @@ body {
   font-family: sans-serif;
   text-align: center;
 }
-.options button{
+.options button {
   padding: 8px 15px;
   border: 1px solid #2898ec;
   border-radius: 25px;
@@ -283,7 +286,6 @@ body {
   transition: all 0.5s;
   cursor: pointer;
 }
-
 
 .option button:hover {
   box-shadow: inset 195px 0px 0px #2273c4;
@@ -373,6 +375,3 @@ body {
 .app-chatbot-button-icon {
   fill: #fff;
 }
-
-
-

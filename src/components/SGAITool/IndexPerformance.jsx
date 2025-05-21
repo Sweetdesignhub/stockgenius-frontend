@@ -1,7 +1,7 @@
 import { FiArrowDown, FiArrowUp } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 
-const IndexPerformance = ({ data }) => {
+const IndexPerformance = ({ data, currency = "" }) => {
   const {
     start_date,
     start_open,
@@ -10,7 +10,6 @@ const IndexPerformance = ({ data }) => {
     end_open,
     end_close, // problem end_close
     total_return, // problem total_return
-    currency = "Rs",
   } = data;
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -18,52 +17,53 @@ const IndexPerformance = ({ data }) => {
   const headerColor = theme === "dark" ? "text-white" : "text-black";
   const textColor = theme === "dark" ? "text-gray-300" : "text-gray-600";
 
-  const cardBaseClass = `
-    relative border border-transparent
-    bg-clip-border backdrop-blur-[18px]
-    rounded-lg py-2 px-4 font-medium shadow-lg
-  `;
-
   const fancyRedCardClass = `
     relative
+    text-white 
     border-[0.9px] border-transparent
-    text-[#FFD7D7]
     rounded-lg py-1 px-2
-    shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380]
-    backdrop-blur-[17.95px]
+   text-[clamp(0.8rem,0.8rem,2rem)]
+
+    
     overflow-hidden
-    [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)]
-    [border-image-slice:1]
-    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]
+    ${
+      isDark
+        ? "backdrop-blur-[17.95px] shadow-[inset_0px_8.97px_26.92px_0px_#FF496AB2,0px_8.97px_35.9px_0px_#AF3F5380] [border-image:linear-gradient(180deg,rgba(136,39,45,0.4)_17.19%,rgba(251,98,107,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(136,39,45,0)_-4.69%,rgba(254,189,189,0.3)_100%)] [border-image-slice:1] [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#88272D_132.95%)]"
+        : "bg-[#FF0000E5]"
+    }
+    
 `.trim();
 
   const fancyGreenCardClass = `
     relative
-    text-[#FFD7D7]
     border-[0.9px] border-transparent
-    
     text-white
     rounded-lg py-1 px-2
-    shadow-[inset_0px_8.97px_26.92px_0px_#00FF7FB2,0px_8.97px_35.9px_0px_#00640080]
-    backdrop-blur-[18px]
+    text-[clamp(0.8rem,0.8rem,2rem)]
+
+    
     overflow-hidden
-    [border-image:linear-gradient(180deg,rgba(0,100,0,0.4)_17.19%,rgba(0,255,127,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(0,100,0,0)_-4.69%,rgba(144,238,144,0.3)_100%)]
-    [border-image-slice:1]
+    ${
+      isDark
+        ? "backdrop-blur-[18px] shadow-[inset_0px_8.97px_26.92px_0px_#00FF7FB2,0px_8.97px_35.9px_0px_#00640080] [border-image:linear-gradient(180deg,rgba(0,100,0,0.4)_17.19%,rgba(0,255,127,0.77)_100%),linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),linear-gradient(180deg,rgba(0,100,0,0)_-4.69%,rgba(144,238,144,0.3)_100%)] [border-image-slice:1]"
+        : "bg-[#0EBC34E5]"
+    }
   `.trim();
 
   const fancyPurpleCardClass = `
     relative
-    text-[#FFD7FF]
+    text-white
     border-[0.9px] border-transparent
+    text-[clamp(0.8rem,0.8rem,2rem)]
+
     rounded-lg py-1 px-2
     overflow-hidden
-    [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#882776_132.95%)]
-    [border-image:linear-gradient(180deg,rgba(136,39,118,0.4)_17.19%,rgba(251,98,241,0.77)_100%),
-    linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)),
-    linear-gradient(180deg,rgba(136,39,118,0)_-4.69%,rgba(254,189,253,0.3)_100%)]
-    [border-image-slice:1]
-    shadow-[inset_0px_8.97px_26.92px_0px_#FF49F3B2,0px_8.97px_35.9px_0px_#AF3FA080]
-    backdrop-blur-[17.95px]
+    ${
+      isDark
+        ? "backdrop-blur-[17.95px] shadow-[inset_0px_8.97px_26.92px_0px_#FF49F3B2,0px_8.97px_35.9px_0px_#AF3FA080] [background:linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#882776_132.95%)] [border-image:linear-gradient(180deg,rgba(136,39,118,0.4)_17.19%,rgba(251,98,241,0.77)_100%), linear-gradient(0deg,rgba(255,255,255,0.2),rgba(255,255,255,0.2)), linear-gradient(180deg,rgba(136,39,118,0)_-4.69%,rgba(254,189,253,0.3)_100%)] [border-image-slice:1]"
+        : "bg-[#F507C2]"
+    }
+    
   `.trim();
 
   const getValueCardClass = (open, close) =>
@@ -72,14 +72,16 @@ const IndexPerformance = ({ data }) => {
 
   return (
     <div
-      className={`max-w-3xl h-full mx-auto p-6 rounded-3xl inset-0 
+      className={`max-w-3xl h-full mx-auto py-5 px-3 rounded-xl inset-0 
       bg-gradient-to-b from-white/1  to-transparent
       backdrop-blur-[1px]
-      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]  shadow-2xl  ${
-        theme === "dark" ? "bg-white/1" : "bg-white/50"
+      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]    ${
+        theme === "dark" ? "bg-white/1" : "bg-white"
       }`}
     >
-      <h2 className={`text-base md:text-xl font-bold mb-3  ${headerColor}`}>
+      <h2
+        className={`text-[clamp(1.2rem,1.2rem,2rem)] font-bold mb-3  ${headerColor}`}
+      >
         Index Performance
       </h2>
       <div
@@ -89,28 +91,30 @@ const IndexPerformance = ({ data }) => {
       <div className="space-y-4">
         {/* Start Date */}
         <div>
-          <p className={`text-lg mb-3 ${textColor}`}>
+          <p className={`text-[clamp(0.8rem,1rem,2rem)] mb-3 ${textColor}`}>
             Start Date - {start_date}
           </p>
           <div className="grid grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
-              Open - {start_open.toFixed(2)} {currency}
+              Open - {currency} {start_open.toFixed(2)}
             </div>
             <div className={getValueCardClass(start_open, start_close)}>
-              Close - {start_close.toFixed(2)} {currency}
+              Close - {currency} {start_close.toFixed(2)}
             </div>
           </div>
         </div>
 
         {/* End Date */}
         <div>
-          <p className={`text-lg mb-3 ${textColor}`}>End Date - {end_date}</p>
+          <p className={`text-[clamp(0.8rem,1rem,2rem)] mb-3 ${textColor}`}>
+            End Date - {end_date}
+          </p>
           <div className="grid grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
-              Open - {end_open.toFixed(2)} {currency}
+              Open - {currency} {end_open.toFixed(2)}
             </div>
             <div className={getValueCardClass(end_open, end_close)}>
-              Close - {end_close.toFixed(2)} {currency}
+              Close - {currency} {end_close.toFixed(2)}
             </div>
           </div>
         </div>

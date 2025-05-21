@@ -54,7 +54,7 @@ const processQueue = (error, token = null) => {
 };
 
 // Function to refresh access token
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   try {
     const response = await api.post("/api/v1/auth/refresh-token");
     return response.data;
@@ -71,7 +71,8 @@ const clearSessionAndRedirect = () => {
     redirecting = true;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     const event = new Event("sessionExpired");
     window.dispatchEvent(event);
@@ -100,16 +101,26 @@ const addAuthInterceptor = (instance) => {
         return Promise.reject(error);
       }
 
-      if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      if (
+        error.response &&
+        error.response.status === 401 &&
+        !originalRequest._retry
+      ) {
         if (!isRefreshing) {
           isRefreshing = true;
           originalRequest._retry = true;
 
           try {
             const { accessToken } = await refreshAccessToken();
-            api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-            paperTradeApi.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-            paperTradeUsaApi.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+            api.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${accessToken}`;
+            paperTradeApi.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${accessToken}`;
+            paperTradeUsaApi.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${accessToken}`;
             localStorage.setItem("accessToken", accessToken);
             processQueue(null, accessToken);
             return instance(originalRequest);

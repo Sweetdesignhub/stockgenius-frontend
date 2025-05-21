@@ -8,10 +8,10 @@ const InfoCard = () => {
 
   return (
     <div
-      className={`relative h-full rounded-xl overflow-hidden w-full mx-auto border shadow-2xl ${
+      className={`relative h-full rounded-xl text-white overflow-hidden w-full mx-auto border shadow-2xl ${
         isDark
-          ? "bg-white/5 border-white/10 text-white"
-          : "bg-white/20 text-black"
+          ? "bg-white/5 border-white/10 "
+          : "bg-[linear-gradient(90deg,#141B2D_4.98%,#202F56_23.34%,#2D4683_43.88%,#2D4683_67.48%,#22345F_81.9%,#111829_95.89%)] text-black"
       }`}
     >
       {/* Background Image Layer */}

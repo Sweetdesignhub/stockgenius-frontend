@@ -21,14 +21,17 @@ const Header = ({ onReRun, isLoading }) => {
         ) : (
           <button
             onClick={onReRun}
-            className="flex items-center px-4  text-orange-500 border rounded-2xl bg-white text-extrabold transition-colors"
+            className="flex items-center px-4 h-[38px] text-orange-500 border rounded-2xl bg-white text-extrabold transition-colors shadow-[0px_22.87px_48.6px_0px_#FF6A0030]"
           >
             <FiRefreshCw className="mr-2" />
             Re-Run
           </button>
         )}
 
-        <button className="flex items-center px-4 py-2 bg-white text-blue-500 border rounded-2xl text-extrabold hover:bg-gray-100 transition-colors">
+        <button
+          className="flex items-center px-4 py-2 h-[38px] bg-white text-blue-500 border rounded-2xl text-extrabold hover:bg-gray-100 transition-colors cursor-not-allowed shadow-[0px_22.87px_48.6px_0px_#3A6FF830]"
+          disabled
+        >
           <FiPrinter className="mr-2" />
           Print
         </button>
