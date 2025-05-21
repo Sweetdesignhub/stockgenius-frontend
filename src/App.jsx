@@ -49,7 +49,7 @@ import GroupTab from "./pages/eLearning/GroupTab.jsx";
 import SGAITool from "./pages/SGAITool";
 
 function MainApp() {
-  console.log("Azure Storage Account Name:", import.meta.env.VITE_AZURE_STORAGE_ACCOUNT_NAME);
+  // console.log("Azure Storage Account Name:", import.meta.env.VITE_AZURE_STORAGE_ACCOUNT_NAME);
 
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ function MainApp() {
   };
 
   useEffect(() => {
-    console.log("Checking");
+    // console.log("Checking");
     const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password"];
     const isResetPasswordRoute =
       location.pathname.startsWith("/reset-password");
