@@ -118,11 +118,16 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
-                  key={`${columnName}-${index}`}
+                  key={`${columnName}-${index}`}                  
                   className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "title" ? "text-[#6FD4FF]" : ""
                     }`}
                 >
-                  {fund[columnName]}
+                  {columnName === "equityAmount" && 
+                   (fund.title === "Available Balance" || 
+                    fund.title === "Receivables" || 
+                    fund.title === "Utilized Amount")
+                    ? Number(fund[columnName]).toFixed(2)
+                    : fund[columnName]}
                 </td>
               ))}
             </tr>

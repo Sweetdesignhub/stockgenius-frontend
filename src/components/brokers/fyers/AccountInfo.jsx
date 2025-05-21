@@ -39,21 +39,24 @@ function AccountInfo() {
         </div>
       </div>
       <div className='flex-1'>
-        <div className='flex justify-around'>
+        <div className='flex justify-around'>          
           <Cards
             title='Funds Available'
             value={availableFunds}
             valueColor='text-green-500'
+            isAccountInfo={true}
           />
           <Cards
             title='Holdings P&L'
             value={holdingsTotalPL}
             valueColor='text-orange-500'
+            isAccountInfo={true}
           />
           <Cards
             title='Positions P&L'
             value={positionTotalPL}
             valueColor='text-red-500'
+            isAccountInfo={true}
           />
         </div>
       </div>

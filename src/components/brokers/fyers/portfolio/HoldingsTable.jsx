@@ -122,11 +122,12 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
-                  key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                  key={`${columnName}-${index}`}                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
                     }`}
                 >
-                  {holding[columnName] || ""}
+                  {columnName === "pl" 
+                    ? Number(holding[columnName]).toFixed(2)
+                    : holding[columnName] || ""}
                 </td>
               ))}
             </tr>

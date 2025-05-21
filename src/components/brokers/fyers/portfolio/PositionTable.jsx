@@ -172,11 +172,13 @@ const PositionsTable = ({
                   <tr key={position.id || index}>
                     {selectedColumns.map((columnName) => (
                       <td
-                        key={`${columnName}-${position.id || index}`}
+                        key={`${columnName}-${position.id || index}`}                        
                         className={`px-4 py-4 whitespace-nowrap text-left font-semibold ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
                           }`}
                       >
-                        {position[columnName] || ""}
+                        {columnName === "pl" || columnName === "unrealized_profit" 
+                          ? Number(position[columnName]).toFixed(2)
+                          : position[columnName] || ""}
                       </td>
                     ))}
                   </tr>
