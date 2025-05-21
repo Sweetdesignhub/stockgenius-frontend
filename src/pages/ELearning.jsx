@@ -50,7 +50,7 @@ function ELearning() {
         alt="bear"
       />
 
-      <div className="bg-white md:min-h-[calc(100vh-1rem)] lg:h-[90vh] md:max-h-[120vh] news-table rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex flex-col gap-1 sm:gap-2 md:gap-3">
+      <div className="bg-white min-h-[105vh] md:min-h-[90vh] lg:h-[90vh] md:max-h-[120vh] news-table rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex flex-col gap-1 sm:gap-2 md:gap-3">
         {/* Header + Dropdowns with responsive layout */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 py-10 sm:py-3 border-[#FFFFFF1A]">
           <h1 className="font-semibold text-base sm:text-lg text-center sm:text-left w-full sm:w-auto mb-2 sm:mb-0">
