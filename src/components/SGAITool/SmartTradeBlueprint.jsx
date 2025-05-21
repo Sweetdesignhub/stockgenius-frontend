@@ -211,9 +211,9 @@ const SmartTradeBlueprint = () => {
 
   return (
     <div
-    // className={`rounded-2xl backdrop-blur-md w-[84%] shadow-lg py-4 px-4 ${
-    //   theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
-    // }`}
+      className={`rounded-2xl backdrop-blur-md w-[84%] shadow-lg py-4 px-4 ${
+        theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
+      }`}
     >
       {/* Your content goes here */}
       <Header onReRun={handleReRun} isLoading={isLoading} />
@@ -223,19 +223,16 @@ const SmartTradeBlueprint = () => {
       ></div>
       {expandedView === null ? (
         <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
-          {/* Left Panel - SGAI Calc */}
           <div className="lg:col-span-5 h-full">
             <SGAICalc onSimulationComplete={handleSimulationComplete} />
           </div>
 
-          {/* InfoCard - shown only before simulation */}
           {!isSimulationComplete && (
             <div className="lg:col-span-7 h-full">
               <InfoCard />
             </div>
           )}
 
-          {/* SimulationResults - shown after simulation */}
           {isSimulationComplete &&
             simulationData &&
             Object.keys(simulationData).length > 0 && (
@@ -248,7 +245,6 @@ const SmartTradeBlueprint = () => {
               </div>
             )}
 
-          {/* IndexPerformance - shown after simulation */}
           {isSimulationComplete &&
             indexData &&
             Object.keys(indexData).length > 0 && (

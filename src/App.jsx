@@ -23,7 +23,7 @@ import ResetPassword from "./components/common/ResetPassword";
 import CompleteProfile from "./pages/CompleteProfile";
 
 import { useDispatch, useSelector } from "react-redux";
-import { refreshAccessToken } from "./config.js";
+import { refreshAccessToken, BACKEND_URL } from "./config.js";
 import api from "./config";
 import { clearRegion } from "./redux/region/regionSlice.js";
 import { clearFyersAccessToken } from "./redux/brokers/fyersSlice.js";
@@ -68,42 +68,55 @@ function MainApp() {
       console.error("Error signing out:", error);
     }
   };
-  // const handleSessionExpired = () => {
-  //   setShowSessionExpired(true);
-  // };
+  const handleSessionExpired = () => {
+    setShowSessionExpired(true);
+  };
 
-  // useEffect(() => {
-  //   console.log("Checking");
-  //   const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password"];
-  //   const isResetPasswordRoute =
-  //     location.pathname.startsWith("/reset-password");
+  useEffect(() => {
+    console.log("Checking");
+    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password"];
+    const isResetPasswordRoute =
+      location.pathname.startsWith("/reset-password");
 
-  //   const shouldCheckSession =
-  //     !publicRoutes.includes(location.pathname) && !isResetPasswordRoute;
+    const shouldCheckSession =
+      !publicRoutes.includes(location.pathname) && !isResetPasswordRoute;
 
-  //   if (!shouldCheckSession) return;
+    if (!shouldCheckSession) return;
 
-  //   window.addEventListener("sessionExpired", handleSessionExpired);
+    window.addEventListener("sessionExpired", handleSessionExpired);
 
-  //   // 🔁 Call /verify-token directly to check access token validity
-  //   (async () => {
-  //     try {
-  //       const response = await api.post(
-  //         "/api/v1/auth/verify-token",
-  //         {},
-  //         { withCredentials: true }
-  //       );
-  //       console.log("Session is valid:", response.data.user);
-  //     } catch (err) {
-  //       console.log("Session is invalid or expired.", err);
-  //       handleSessionExpired(); // ⛔ Expired or missing token
-  //     }
-  //   })();
+    const verifyTokens = async () => {
+      console.log("Verifying");
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/auth/verify-token`, {
+          method: "POST",
+          credentials: "include", // ✅ Ensures cookies like HTTP-only tokens are sent
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("output from req", res.status);
+        if (res.status !== 200) {
+          console.log("Token Expired");
+          handleSessionExpired();
+        }
 
-  //   return () => {
-  //     window.removeEventListener("sessionExpired", handleSessionExpired);
-  //   };
-  // }, [location.pathname]);
+        // else {
+        //   updateUser(res.data.user);
+        // }
+      } catch (err) {
+        console.log("Token Check failed");
+        handleSessionExpired(); // token check failed or server error
+      }
+    };
+
+    verifyTokens();
+
+    // 🧼 Optional cleanup
+    return () => {
+      window.removeEventListener("sessionExpired", handleSessionExpired);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleSessionExpired = () => {
@@ -117,8 +130,6 @@ function MainApp() {
       window.removeEventListener("sessionExpired", handleSessionExpired);
     };
   }, []);
-
-  // const location = useLocation();
 
   // ✅ Hide Header on specific routes like /quiz/*
   const hideHeaderOnRoutes = ["/quiz/"];

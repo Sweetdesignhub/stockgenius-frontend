@@ -210,13 +210,16 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
 
   return (
     <div
-      className={`mx-auto py-4 px-6 rounded-xl flex flex-col justify-around items-start w-full inset-0 h-full
-      backdrop-blur-[1px]
-      mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] ${bgClass} `}
+      className={`mx-auto w-full max-w-screen-xl px-4 sm:px-6 py-4 rounded-xl 
+              flex flex-col justify-around items-start 
+              h-full inset-0 
+              backdrop-blur-[1px] 
+              mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] 
+              ${bgClass}`}
     >
-      <div className="flex justify-between items-center w-full mb-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-2 mb-2">
         <div className="flex-1">
-          <h1 className="text-[clamp(1.2rem,1.2rem,2rem)] font-bold">
+          <h1 className="text-[clamp(1.25rem,1.2vw,2rem)] font-bold leading-tight">
             SGAI - Investment Simulation Tool
           </h1>
         </div>
@@ -224,7 +227,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
         <button
           type="button"
           onClick={handleClear}
-          className="px-4 py-1 bg-white text-red-500 rounded-xl font-medium hover:bg-gray-100 transition-colors"
+          className="px-4 py-1 bg-white text-red-500 rounded-xl font-medium hover:bg-gray-100 transition-colors whitespace-nowrap"
         >
           Clear
         </button>
@@ -292,7 +295,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                     <input
                       {...field}
                       type="text"
-                      className="w-full  px-3 py-1 border border-gray-300 rounded-lg text-black text-base"
+                      className="w-full border border-gray-300  px-3 py-1 rounded-lg  text-black text-base"
+                      // className="w-full sm:max-w-[300px] px-3 py-1 border border-gray-300 rounded-lg text-black text-base"
                       placeholder="Enter initial cash"
                     />
                     <button
@@ -326,9 +330,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             )}
           </div>
 
-          {/* Date Range */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Start Date */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
             <div>
               <label className="block text-medium mt-1 mb-2">Start Date</label>
               <Controller
@@ -391,7 +393,6 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
               )}
             </div>
 
-            {/* End Date */}
             <div>
               <label className="block text-base mt-1 mb-2">End Date</label>
               <Controller
@@ -400,14 +401,6 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                 rules={{ required: "End date is required" }}
                 render={({ field }) => (
                   <div className="relative">
-                    {/* <DatePicker
-                      {...field}
-                      selected={field.value}
-                      onChange={(date) => field.onChange(date)}
-                      placeholderText="YYYY/MM/DD"
-                      dateFormat="yyyy/MM/dd"
-                      className="w-full px-2 py-1 rounded-lg  bg-[#DDDDDD] text-black text-base border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
-                    /> */}
                     <DatePicker
                       {...field}
                       selected={field.value}
@@ -415,7 +408,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"
                       className="w-full px-2 py-1 rounded-lg border border-gray-300   text-black text-base focus:ring-blue-500 focus:border-transparent"
-                      popperClassName="!z-50" // Ensures the modal appears above other elements
+                      popperClassName="!z-50 h-30" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
                         monthDate,
@@ -448,18 +441,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                         </div>
                       )}
                     />
-                    {/* <DayPicker
-                      animate
-                      mode="single"
-                      // onChange={(date) => field.onChange(date)}
-                      selectedDate={field.value}
-                      onSelect={setSelectedDate}
-                      footer={
-                        selectedDate
-                          ? `Selected: ${selectedDate.toLocaleDateString()}`
-                          : "Pick a day."
-                      }
-                    /> */}
+
                     <FiCalendar
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
                       size={20}
@@ -473,9 +455,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             </div>
           </div>
 
-          {/* Margin Values */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Margin Profit */}
             <div>
               {!errors.marginProfit && (
                 <label className="block text-base mt-1 mb-2">
@@ -536,14 +516,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                   )}
                 />
               </div>
-              {/* {errors.marginProfit && (
-                <p className="mt-1 text-red-400">
-                  {errors.marginProfit.message}
-                </p>
-              )} */}
             </div>
 
-            {/* Margin Loss */}
             <div>
               {!errors.marginLoss && (
                 <label className="block text-base mt-1 mb-2">
@@ -603,7 +577,6 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
               </div>
             </div>
           </div>
-          {/* Submit Button */}
           <div className="flex justify-center mt-4">
             <button
               type="submit"

@@ -11,7 +11,7 @@ function SGAITool() {
     }
   }, [theme, updateTheme]);
   return (
-    <div className="relative w-full flex items-center justify-between overflow-hidden">
+    <div className="relative flex items-center justify-between overflow-hidden">
       {/* Left Image */}
       <img
         loading="lazy"
@@ -21,14 +21,8 @@ function SGAITool() {
       />
 
       {/* Center Content */}
-      <div className="flex-1 flex justify-center items-center ">
-        <div
-          className={`h-full w-full mx-36 backdrop-blur-md rounded-2xl shadow-lg p-4 rounded-2xl backdrop-blur-md ${
-            theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
-          }`}
-        >
-          <SmartTradeBlueprint />
-        </div>
+      <div className="flex-1 flex justify-center items-centerz">
+        <SmartTradeBlueprint />
       </div>
 
       {/* Right Image */}
