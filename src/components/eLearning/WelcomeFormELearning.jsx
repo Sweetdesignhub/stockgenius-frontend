@@ -48,65 +48,70 @@ const handleSubmit = () => {
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col justify-between p-4 md:p-8">
-      <h1 className="text-white text-2xl md:text-4xl lg:text-6xl font-bold">
-        Master the Stock Market – One Lesson at a Time!
+  <div className="absolute inset-0 flex flex-col justify-between p-4 md:p-8">
+    {/* Responsive hero title */}
+    <h1 className="text-white text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold text-center md:text-left">
+      Master the Stock Market – One Lesson at a Time!
+    </h1>
+
+    <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 md:bottom-[-10%] w-[100%] bg-white/30 backdrop-blur-lg p-4 sm:p-6 rounded-2xl">
+      <h1 className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-left">
+        Welcome to Stock Genius Learning!
       </h1>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-7%] w-[101%] bg-white/30 backdrop-blur-lg p-6 rounded-2xl overflow-visible">
-        <h1 className="font-semibold text-lg mb-6 text-left">
-          Welcome to Stock Genius Learning!
-        </h1>
-
-        <div className="w-full flex flex-wrap md:flex-nowrap gap-4 md:gap-8 justify-center md:justify-between items-center">
-          {Object.entries(options).map(([category, values], index) => (
+      {/* Responsive grid layout */}
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-8">
+        {Object.entries(options).map(([category, values], index) => (
+          <div
+            key={index}
+            className="relative w-full"
+          >
+            <label className="block text-xs mb-2 whitespace-normal sm:whitespace-nowrap">
+              {category === "tradingExperience" &&
+                "How familiar are you with stock trading?"}
+              {category === "focusArea" && "What do you want to focus on?"}
+              {category === "learningTime" &&
+                "How much time do you want to spend learning per week?"}
+            </label>
             <div
-              key={index}
-              className="relative w-full max-w-xs sm:max-w-sm md:max-w-md"
+              className="bg-white text-black px-3 py-2 sm:py-1 rounded-lg flex justify-between items-center cursor-pointer border border-gray-300"
+              onClick={() =>
+                setOpenDropdown(openDropdown === category ? null : category)
+              }
             >
-              <label className="block text-xs mb-2 whitespace-nowrap">
-                {category === "tradingExperience" &&
-                  "How familiar are you with stock trading?"}
-                {category === "focusArea" && "What do you want to focus on?"}
-                {category === "learningTime" &&
-                  "How much time do you want to spend learning per week?"}
-              </label>
-              <div
-      className="bg-white text-black px-3 py-1 rounded-lg flex justify-between items-center cursor-pointer border border-gray-300"
-      onClick={() =>
-        setOpenDropdown(openDropdown === category ? null : category)
-      }
-    >
-      {selectedOptions[category] || "Select an option"}
-      <FaChevronDown className="text-gray-500" />
-    </div>
-
-              {openDropdown === category && (
-                <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 shadow-lg rounded-lg z-50 p-2">
-                  <div className="flex flex-wrap justify-between">
-                    {values.map((option, i) => (
-                      <div
-                        key={i}
-                        className="text-xs text-black rounded-lg flex items-center cursor-pointer py-1"
-                        onClick={() => handleSelection(category, option)}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedOptions[category] === option}
-                          className="mr-2"
-                          readOnly
-                        />
-                        {option}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <span className="text-sm sm:text-base">
+                {selectedOptions[category] || "Select an option"}
+              </span>
+              <FaChevronDown className="text-gray-500" />
             </div>
-          ))}
-        </div>
 
-        <ConfirmationModal
+            {openDropdown === category && (
+              <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 shadow-lg rounded-lg z-50 p-2">
+                <div className="flex flex-col sm:flex-row flex-wrap justify-between">
+                  {values.map((option, i) => (
+                    <div
+                      key={i}
+                      className="text-xs sm:text-sm text-black rounded-lg flex items-center cursor-pointer py-2 sm:py-1"
+                      onClick={() => handleSelection(category, option)}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedOptions[category] === option}
+                        className="mr-2"
+                        readOnly
+                      />
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Keep existing modal */}
+      <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Required Fields"
@@ -114,9 +119,10 @@ const handleSubmit = () => {
         onConfirm={() => setIsModalOpen(false)}
       />
 
-        <div className="flex justify-center mt-10">
+      {/* Responsive submit button */}
+      <div className="flex justify-center mt-6 sm:mt-8 md:mt-10">
         <button
-          className="px-6 md:px-16 py-1 rounded-xl text-white text-xs md:text-base"
+          className="w-full sm:w-auto px-4 sm:px-6 md:px-16 py-2 sm:py-1 rounded-xl text-white text-xs md:text-base"
           style={{
             background:
               "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #885627 132.95%)",
@@ -125,19 +131,19 @@ const handleSubmit = () => {
             backdropFilter: "blur(20px)",
           }}
           onClick={handleSubmit}
-        aria-label="Submit learning preferences"
-        title={
-          !areAllOptionsSelected()
-            ? "Please select all options before proceeding"
-            : "Submit learning preferences"
-        }
-      >
+          aria-label="Submit learning preferences"
+          title={
+            !areAllOptionsSelected()
+              ? "Please select all options before proceeding"
+              : "Submit learning preferences"
+          }
+        >
           Submit
         </button>
       </div>
-      </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default WelcomeFormELearning;
