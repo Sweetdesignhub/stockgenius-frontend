@@ -54,7 +54,7 @@ const handleSubmit = () => {
       Master the Stock Market – One Lesson at a Time!
     </h1>
 
-    <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 md:bottom-[-10%] w-[100%] bg-white/30 backdrop-blur-lg p-4 sm:p-6 rounded-2xl">
+    <div className="absolute  left-1/2 transform -translate-x-1/2 lg:bottom-[-10%] bottom-[-15rem]  md:bottom-[-10%] w-[100%] bg-white/30 backdrop-blur-lg p-4 sm:p-6 rounded-2xl">
       <h1 className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-left">
         Welcome to Stock Genius Learning!
       </h1>
