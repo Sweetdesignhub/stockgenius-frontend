@@ -23,7 +23,7 @@ import ResetPassword from "./components/common/ResetPassword";
 import CompleteProfile from "./pages/CompleteProfile";
 
 import { useDispatch, useSelector } from "react-redux";
-import { refreshAccessToken } from "./config.js";
+import { refreshAccessToken, BACKEND_URL } from "./config.js";
 import api from "./config";
 import { clearRegion } from "./redux/region/regionSlice.js";
 import { clearFyersAccessToken } from "./redux/brokers/fyersSlice.js";
@@ -70,69 +70,64 @@ function MainApp() {
     setShowSessionExpired(true);
   };
 
+  useEffect(() => {
+    console.log("Checking");
+    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password"];
+    const isResetPasswordRoute =
+      location.pathname.startsWith("/reset-password");
 
-  // useEffect(() => {
-  //   console.log("Checking");
-  //   const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password"];
-  //   const isResetPasswordRoute =
-  //     location.pathname.startsWith("/reset-password");
+    const shouldCheckSession =
+      !publicRoutes.includes(location.pathname) && !isResetPasswordRoute;
 
-  //   const shouldCheckSession =
-  //     !publicRoutes.includes(location.pathname) && !isResetPasswordRoute;
+    if (!shouldCheckSession) return;
 
-  //   if (!shouldCheckSession) return;
+    window.addEventListener("sessionExpired", handleSessionExpired);
 
-  //   window.addEventListener("sessionExpired", handleSessionExpired);
+    const verifyTokens = async () => {
+      console.log("Verifying");
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/auth/verify-token`, {
+          method: "POST",
+          credentials: "include", // ✅ Ensures cookies like HTTP-only tokens are sent
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("output from req", res.status);
+        if (res.status !== 200) {
+          console.log("Token Expired");
+          handleSessionExpired();
+        }
 
-  //   const verifyTokens = async () => {
-  //     console.log("Verifying");
-  //     try {
-  //       const res = await fetch(
-  //         "http://localhost:8080/api/v1/auth/verify-token",
-  //         {
-  //           method: "POST",
-  //           credentials: "include", // ✅ Ensures cookies like HTTP-only tokens are sent
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       console.log("output from req", res.status);
-  //       if (res.status !== 200) {
-  //         console.log("Token Expired");
-  //         handleSessionExpired();
-  //       }
+        // else {
+        //   updateUser(res.data.user);
+        // }
+      } catch (err) {
+        console.log("Token Check failed");
+        handleSessionExpired(); // token check failed or server error
+      }
+    };
 
-  //       // else {
-  //       //   updateUser(res.data.user);
-  //       // }
-  //     } catch (err) {
-  //       console.log("Token Check failed");
-  //       handleSessionExpired(); // token check failed or server error
-  //     }
-  //   };
+    verifyTokens();
 
-  //   verifyTokens();
+    // 🧼 Optional cleanup
+    return () => {
+      window.removeEventListener("sessionExpired", handleSessionExpired);
+    };
+  }, [location.pathname]);
 
-  //   // 🧼 Optional cleanup
-  //   return () => {
-  //     window.removeEventListener("sessionExpired", handleSessionExpired);
-  //   };
-  // }, [location.pathname]);
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setShowSessionExpired(true);
+    };
 
-  // useEffect(() => {
-  //   const handleSessionExpired = () => {
-  //     setShowSessionExpired(true);
-  //   };
+    // Listen for session expiration (if using a global event or state management)
+    window.addEventListener("sessionExpired", handleSessionExpired);
 
-  //   // Listen for session expiration (if using a global event or state management)
-  //   window.addEventListener("sessionExpired", handleSessionExpired);
-
-  //   return () => {
-  //     window.removeEventListener("sessionExpired", handleSessionExpired);
-  //   };
-  // }, []);
-
+    return () => {
+      window.removeEventListener("sessionExpired", handleSessionExpired);
+    };
+  }, []);
 
   // ✅ Hide Header on specific routes like /quiz/*
   const hideHeaderOnRoutes = ["/quiz/"];
