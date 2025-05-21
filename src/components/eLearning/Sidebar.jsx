@@ -47,28 +47,39 @@
 
 // export default Sidebar;
 
-
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { FaMedal } from "react-icons/fa";
-import { MdOutlineAutoStories, MdOutlineGroup, MdOutlineLocalLibrary } from "react-icons/md";
+import {
+  MdOutlineAutoStories,
+  MdOutlineGroup,
+  MdOutlineLocalLibrary,
+} from "react-icons/md";
 import { GoTrophy } from "react-icons/go";
 
 const Sidebar = () => {
   const tabs = [
-    { icon: <MdOutlineAutoStories />, key: "learning", path: "/e-learning/learning" },
+    {
+      icon: <MdOutlineAutoStories />,
+      key: "learning",
+      path: "/e-learning/learning",
+    },
     { icon: <FaMedal />, key: "medal", path: "/e-learning/medal" },
     { icon: <GoTrophy />, key: "trophy", path: "/e-learning/trophy" },
-    { icon: <MdOutlineLocalLibrary />, key: "library", path: "/e-learning/library" },
+    {
+      icon: <MdOutlineLocalLibrary />,
+      key: "library",
+      path: "/e-learning/library",
+    },
     { icon: <MdOutlineGroup />, key: "group", path: "/e-learning/group" },
   ];
 
-    return (
+  return (
     <div
       className={`
   relative md:sticky md:top-[2%]
   w-full md:w-[8%] md:min-w-[60px] md:max-w-[90px]
- h-16 md:h-[88vh] lg:h-[92vh] xl:h-[95vh] 2xl:h-[98vh]
+ h-16 md:h-[85vh] lg:h-[84vh]
   flex flex-row md:flex-col
   items-center
   justify-center md:justify-start
@@ -101,10 +112,10 @@ const Sidebar = () => {
              rounded-lg 
              transition-all duration-300 
              cursor-pointer ${
-              isActive
-                ? "bg-[#884427] text-white"
-                : "bg-white text-[#FF9A00] hover:bg-[#884427] hover:text-white"
-            }`
+               isActive
+                 ? "bg-[#884427] text-white"
+                 : "bg-white text-[#FF9A00] hover:bg-[#884427] hover:text-white"
+             }`
           }
         >
           {icon}
