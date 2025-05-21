@@ -63,9 +63,26 @@ const Sidebar = () => {
     { icon: <MdOutlineGroup />, key: "group", path: "/e-learning/group" },
   ];
 
-  return (
+    return (
     <div
-      className="w-[8%] h-[74vh] p-4 pt-8 flex flex-col items-center gap-8 rounded-xl backdrop-blur-xl"
+      className={`
+  relative md:sticky md:top-[2%]
+  w-full md:w-[8%] md:min-w-[60px] md:max-w-[90px]
+ h-16 md:h-[88vh] lg:h-[92vh] xl:h-[95vh] 2xl:h-[98vh]
+  flex flex-row md:flex-col
+  items-center
+  justify-center md:justify-start
+  gap-4 md:gap-[calc(3vh)] lg:gap-[calc(4vh)] xl:gap-[calc(4vh)]
+  my-2 md:my-0
+  rounded-xl
+  backdrop-blur-xl
+  px-2 md:px-4
+  py-2 md:py-[3vh]
+  bg-white/95 md:bg-white/80
+  shadow-lg
+  z-[30]
+  transition-all duration-300
+`}
       style={{
         background:
           "linear-gradient(180deg, rgba(90, 64, 46, 0) 0%, rgba(51, 36, 27, 0.1) 100%), radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 99.59%)",
@@ -78,7 +95,12 @@ const Sidebar = () => {
           key={key}
           to={path}
           className={({ isActive }) =>
-            `w-10 h-10 text-xl flex justify-center items-center rounded-lg transition-all duration-300 cursor-pointer ${
+            `w-8 h-8 sm:w-10 sm:h-10 
+             text-lg sm:text-xl 
+             flex justify-center items-center 
+             rounded-lg 
+             transition-all duration-300 
+             cursor-pointer ${
               isActive
                 ? "bg-[#884427] text-white"
                 : "bg-white text-[#FF9A00] hover:bg-[#884427] hover:text-white"

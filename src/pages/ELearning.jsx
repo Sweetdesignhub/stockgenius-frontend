@@ -36,34 +36,35 @@ function ELearning() {
   };
 
   return (
-    <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative">
-        {/* Background Images */}
-        <img
-          loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[100px] md:w-[165px]"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F87dfd2fd4eea4f378d9e578d4c5dd7d0"
-          alt="bull"
-        />
-        <img
-          loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[100px] md:w-[160px]"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9815d9f59dfd4f65b9e50d5dcbb0152c"
-          alt="bear"
-        />
+  <div className="-z-10 w-full">
+    <div className="min-h-screen px-2 sm:px-4 md:px-6 lg:px-32 relative">
+      {/* Background Images with responsive sizes */}
+      <img
+        loading="lazy"
+        className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0 w-[80px] sm:w-[100px] md:w-[135px] lg:w-[165px] transition-all duration-300"
+        src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F87dfd2fd4eea4f378d9e578d4c5dd7d0"
+        alt="bull"
+      />
+      <img
+        loading="lazy"
+        className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0 w-[80px] sm:w-[100px] md:w-[135px] lg:w-[160px] transition-all duration-300"
+        src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9815d9f59dfd4f65b9e50d5dcbb0152c"
+        alt="bear"
+      />
 
-        <div className="bg-white min-h-[85vh] md:max-h-[85vh] news-table rounded-2xl py-2 px-4 flex flex-col gap-4">
-          {/* Header + Dropdowns */}
-          <div className="flex flex-wrap md:flex-nowrap items-center justify-between border-b-2 py-2 border-[#FFFFFF1A]">
-            <h1 className="font-semibold text-lg text-center md:text-left">
-              {getHeaderTitle(location.pathname)}
-            </h1>
+      <div className="bg-white min-h-[105vh] md:min-h-[90vh] lg:min-h-[90vh] md:max-h-[120vh] news-table rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex flex-col gap-1 sm:gap-2 md:gap-3">
+        {/* Header + Dropdowns with responsive layout */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 py-10 sm:py-3 border-[#FFFFFF1A]">
+          <h1 className="font-semibold text-base sm:text-lg text-center sm:text-left w-full sm:w-auto mb-2 sm:mb-0">
+            {getHeaderTitle(location.pathname)}
+          </h1>
 
-            {/* Show dropdowns only on Learning Dashboard */}
-            {isLearningDashboard && (
-              <div className="flex gap-2 mt-2 md:mt-0">
-                {Object.entries(learningPreferences).map(([category, value], i) => (
-                  <div key={i} className="relative w-[125px]">
+          {/* Responsive dropdowns */}
+          {isLearningDashboard && (
+            <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+              {Object.entries(learningPreferences).map(([category, value], i) => (
+                <div key={i} className="relative w-full sm:w-[125px]">
+        
                     <div
                       className="px-3 py-1 rounded-2xl flex justify-between items-center cursor-pointer border text-sm bg-white"
                       style={{
@@ -108,8 +109,7 @@ function ELearning() {
 
           {/* Main Content */}
           {isWelcomePage ? (
-            <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] rounded-2xl overflow-visible">
-              {/* Video Background */}
+          <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] rounded-lg sm:rounded-xl md:rounded-2xl overflow-visible">{/* Video Background */}
               <video
                 src="https://cdn.builder.io/o/assets%2F462dcf177d254e0682506e32d9145693%2F1e0c9b2406b24921b2488132ff4030a5%2Fcompressed?apiKey=462dcf177d254e0682506e32d9145693&token=1e0c9b2406b24921b2488132ff4030a5&alt=media&optimized=true"
                 className="absolute top-0 left-0 w-full h-full object-cover rounded-2xl"
@@ -120,12 +120,12 @@ function ELearning() {
               <WelcomeFormELearning />
             </div>
           ) : (
-            <div className="flex">
-              <Sidebar />
-              <div className="flex-1 px-2">
-                <Outlet /> {/* Dynamic content via routing */}
-              </div>
+            <div className="flex flex-col md:flex-row">
+            <Sidebar />
+            <div className="flex-1 px-2 mt-4 md:mt-0">
+              <Outlet />
             </div>
+          </div>
           )}
         </div>
       </div>

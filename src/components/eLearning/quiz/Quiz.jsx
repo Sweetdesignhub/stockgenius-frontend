@@ -238,27 +238,27 @@ const Quiz = ({ questions }) => {
 
       {/* Popup */}
       {showPopup && (
-        <div className="fixed inset-0 md:right-0 md:top-1/2 flex items-center md:items-start justify-center md:justify-end p-4 md:p-0 z-50">
+        <div className="fixed inset-0 lg:right-0 lg:top-1/2 flex items-center lg:items-start justify-center lg:justify-end p-4 lg:p-0 z-50">
           <div
-            className="fixed inset-0 bg-black/50 md:hidden"
+            className="fixed inset-0 bg-black/70 lg:hidden"
             onClick={() => setShowPopup(false)}
           />
-          <div className="relative bg-[#4D4D4D1A] border border-[#623CEA] text-white py-3 md:py-4 px-4 md:px-12 rounded-xl shadow-lg max-w-[85%] md:max-w-none w-full md:w-auto">
-            <p className="mb-3 md:mb-4 font-[poppins] text-sm md:text-base">
+          <div className="relative bg-[#0F0D16] lg:bg-[#4D4D4D1A] border border-[#623CEA] text-white py-4 lg:py-4 px-6 lg:px-12 rounded-xl shadow-lg w-[90%] lg:w-auto max-w-md mx-auto lg:mx-0">
+            <p className="mb-4 font-[poppins] text-center text-base lg:text-lg leading-relaxed">
               {popupContent}
             </p>
             <div className="text-center">
               {showRetry ? (
                 <button
                   onClick={handleRetry}
-                  className="bg-[#EA3C3C] px-3 md:px-4 py-1 rounded-xl text-sm md:text-base"
+                  className="bg-[#EA3C3C] px-6 lg:px-8 py-2 rounded-xl text-base lg:text-lg hover:bg-[#d63535] transition-colors"
                 >
                   Retry
                 </button>
               ) : (
                 <button
                   onClick={handleNext}
-                  className="bg-[#2ACA42] px-3 md:px-4 py-1 rounded-xl text-sm md:text-base"
+                  className="bg-[#2ACA42] px-6 lg:px-8 py-2 rounded-xl text-base lg:text-lg hover:bg-[#25b63b] transition-colors"
                 >
                   Next
                 </button>
@@ -274,7 +274,7 @@ const Quiz = ({ questions }) => {
                 : "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F0ccfeff06de54aadacd9eb88c75d0e70"
             }
             alt={showRetry ? "Retry" : "Next"}
-            className="hidden md:block w-96 h-96 object-contain"
+            className="hidden lg:block w-96 h-96 object-contain"
           />
         </div>
       )}

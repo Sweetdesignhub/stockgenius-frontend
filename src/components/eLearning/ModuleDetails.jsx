@@ -26,6 +26,7 @@ const ModuleDetails = () => {
   const [videoIndex, setVideoIndex] = useState(0);
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [showMoreOptions, setShowMoreOptions] = useState(false);
 
   // Module data
   const modules = [
@@ -233,14 +234,16 @@ const ModuleDetails = () => {
           if (prev === 1) {
             clearInterval(countdownInterval);
             // Check if quiz exists for this module
-            const hasQuiz = ["1", "2","3","4","5"].includes(moduleId); // Only modules 1 and 2 have quizzes based on quizMap
+            const hasQuiz = ["1", "2", "3", "4", "5"].includes(moduleId); // Only modules 1 and 2 have quizzes based on quizMap
             if (hasQuiz) {
               navigate(`/quiz/module/${moduleId}`);
             } else {
               // If no quiz, go to next module or back to learning tab
               const currentIndex = modules.findIndex((m) => m.id === moduleId);
               if (currentIndex < modules.length - 1) {
-                navigate(`/e-learning/learning/${modules[currentIndex + 1].id}`);
+                navigate(
+                  `/e-learning/learning/${modules[currentIndex + 1].id}`
+                );
               } else {
                 navigate("/e-learning/learning");
               }
@@ -283,136 +286,217 @@ const ModuleDetails = () => {
     <div className="w-full flex flex-col gap-6">
       {/* Module Header & Navigation */}
       <div
-        className="py-2 px-6 rounded-xl backdrop-blur-xl flex justify-between items-center"
+        className="py-2 px-3 sm:px-6 rounded-xl backdrop-blur-xl flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-center justify-between"
         style={{
           background:
             "linear-gradient(180deg, rgba(90, 64, 46, 0.15) 0%, rgba(51, 36, 27, 0.2) 100%)",
           boxShadow: "0px 25px 50px rgba(0, 0, 0, 0.4)",
         }}
       >
-        <div>
-          <h2 className="text-md text-white font-[poppins]">{module.title}</h2>
-          <p className="text-md text-white font-[poppins]">
+        {/* Module Info */}
+        <div className="flex-1 min-w-0">
+          <h2 className="text-sm sm:text-md text-white font-[poppins] truncate">
+            {module.title}
+          </h2>
+          <p className="text-xs sm:text-md text-white font-[poppins] truncate">
             {module.description}
           </p>
         </div>
 
-        <div className="flex gap-2">
+        {/* Navigation Controls */}
+        <div className="flex gap-2 justify-end">
           <button
             onClick={() => navigate("/e-learning/learning")}
-            className="bg-white text-[#FF9400] flex items-center gap-1 px-2 py-1 rounded-lg transition-opacity"
+            className="bg-white text-[#FF9400] flex items-center gap-1 p-1 sm:px-2 sm:py-1 rounded-lg transition-opacity"
+            title="Back to Learning"
           >
-            <VscMultipleWindows />
+            <VscMultipleWindows size={16} />
           </button>
 
           <button
             onClick={goToPreviousModule}
             disabled={isFirstModule}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-opacity 
-              ${
-                isFirstModule
-                  ? "bg-gray-500 cursor-not-allowed opacity-50"
-                  : "bg-[#FF9400] hover:bg-[#e68300] text-white"
-              }
-            `}
+            className={`flex items-center gap-1 p-1 sm:px-2 sm:py-1 rounded-lg transition-opacity 
+        ${
+          isFirstModule
+            ? "bg-gray-500 cursor-not-allowed opacity-50"
+            : "bg-[#FF9400] hover:bg-[#e68300] text-white"
+        }
+      `}
+            title="Previous Module"
           >
-            <MdNavigateBefore size={18} />
+            <MdNavigateBefore size={16} />
           </button>
 
           <button
             onClick={goToNextModule}
             disabled={isLastModule}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-opacity
-              ${
-                isLastModule
-                  ? "bg-gray-500 cursor-not-allowed opacity-50"
-                  : "bg-[#FF9400] hover:bg-[#e68300] text-white"
-              }
-            `}
+            className={`flex items-center gap-1 p-1 sm:px-2 sm:py-1 rounded-lg transition-opacity
+        ${
+          isLastModule
+            ? "bg-gray-500 cursor-not-allowed opacity-50"
+            : "bg-[#FF9400] hover:bg-[#e68300] text-white"
+        }
+      `}
+            title="Next Module"
           >
-            <MdNavigateNext size={18} />
+            <MdNavigateNext size={16} />
           </button>
         </div>
       </div>
 
       {/* Video Section or Message */}
       {!hasVideos ? (
-        <div className="w-full h-[500px] flex items-center justify-center bg-black rounded-lg">
+        <div className="w-full aspect-video flex items-center justify-center bg-black/50 rounded-lg backdrop-blur">
           <p className="text-white text-lg font-semibold">
             Videos are in progress...
           </p>
         </div>
       ) : (
         <div
-          className="relative w-full rounded-lg overflow-hidden"
+          className="relative w-full aspect-video rounded-lg overflow-hidden"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <video
             ref={videoRef}
             src={currentVideo?.url}
-            className="w-full h-[510px] object-contain rounded-lg bg-black"
+            className="w-full h-full object-cover rounded-lg"
             onTimeUpdate={handleTimeUpdate}
             onEnded={goToNextVideo}
             controls={false}
-          />
-
+            playsInline
+          />{" "}
           {/* Hover Progress Bar */}
           {isHovered && (
-            <div className="absolute bottom-16 left-0 w-full h-1 bg-gray-700">
-              <div
-                className="h-full bg-[#FF9400] transition-all duration-200"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+            <>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-8 md:bottom-16 left-0 w-full px-2 md:px-6">
+                {/* Video Title */}
+                {/* <h3 className="text-white text-xs md:text-base font-medium mb-1 md:mb-2">
+                  {currentVideo?.title || "Video"}
+                </h3> */}
+                {/* Progress Bar */}
+                <div
+                  className="w-full h-0.5 md:h-1 bg-white/30 rounded-full cursor-pointer"
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const percent = x / rect.width;
+                    if (videoRef.current) {
+                      videoRef.current.currentTime =
+                        percent * videoRef.current.duration;
+                    }
+                  }}
+                >
+                  <div
+                    className="h-full bg-white rounded-full"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                {/* Timestamp */}{" "}
+                <div className="flex justify-between text-white text-[10px] md:text-xs mt-0.5 md:mt-1">
+                  <span>
+                    {videoRef.current
+                      ? `${Math.floor(
+                          videoRef.current.currentTime / 60
+                        )}:${String(
+                          Math.floor(videoRef.current.currentTime % 60)
+                        ).padStart(2, "0")}`
+                      : "0:00"}
+                  </span>
+                  <span>
+                    {videoRef.current
+                      ? `${Math.floor(videoRef.current.duration / 60)}:${String(
+                          Math.floor(videoRef.current.duration % 60)
+                        ).padStart(2, "0")}`
+                      : "0:00"}
+                  </span>
+                </div>
+              </div>
+            </>
           )}
-
           {/* Video Controls */}
           {isHovered && (
-            <div className="absolute bottom-4 left-0 w-full px-6 flex flex-col items-center">
-              <div className="flex justify-center gap-4">
+            <div className="absolute bottom-1 md:bottom-4 left-0 w-full px-1 md:px-6 flex flex-col items-center">
+              {/* Main Controls */}
+              <div className="flex justify-center items-center gap-0.5 md:gap-4 md:mb-0">
                 <button
                   onClick={goToPreviousVideo}
                   disabled={videoIndex === 0}
-                  className="text-white"
+                  className="text-white p-0.5 md:p-2"
                 >
-                  <MdNavigateBefore size={26} />
+                  <MdNavigateBefore size={14} className="md:w-6 md:h-6" />
                 </button>
-                <button onClick={skipBackward} className="text-white">
-                  <MdReplay10 size={26} />
+                <button
+                  onClick={skipBackward}
+                  className="text-white p-0.5 md:p-2"
+                >
+                  <MdReplay10 size={14} className="md:w-6 md:h-6" />
                 </button>
-                <button onClick={togglePlayPause} className="text-white">
+                <button
+                  onClick={togglePlayPause}
+                  className="text-white p-0.5 md:p-2"
+                >
                   {isPlaying ? (
-                    <MdPause size={26} />
+                    <MdPause size={14} className="md:w-6 md:h-6" />
                   ) : (
-                    <MdPlayArrow size={26} />
+                    <MdPlayArrow size={14} className="md:w-6 md:h-6" />
                   )}
                 </button>
-                <button onClick={skipForward} className="text-white">
-                  <MdForward10 size={26} />
+                <button
+                  onClick={skipForward}
+                  className="text-white p-0.5 md:p-2"
+                >
+                  <MdForward10 size={14} className="md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={goToNextVideo}
                   disabled={videoIndex === module.videos.length - 1}
-                  className="text-white"
+                  className="text-white p-0.5 md:p-2"
                 >
-                  <MdNavigateNext size={26} />
+                  <MdNavigateNext size={14} className="md:w-6 md:h-6" />
                 </button>
               </div>
 
-              <div className="absolute bottom-0 right-6 flex gap-4 items-center mb-1">
-                <button onClick={toggleMute} className="text-white">
+              {/* Right-side Controls */}
+              <div className="absolute bottom-0 right-1 md:right-6 flex gap-0.5 md:gap-4 items-center">
+                <button
+                  onClick={toggleMute}
+                  className="text-white p-0.5 md:p-1.5"
+                >
                   {isMuted ? (
-                    <MdVolumeOff size={22} />
+                    <MdVolumeOff size={12} className="md:w-5 md:h-5" />
                   ) : (
-                    <MdVolumeUp size={22} />
+                    <MdVolumeUp size={12} className="md:w-5 md:h-5" />
                   )}
+                </button>{" "}
+                <button
+                  onClick={toggleFullScreen}
+                  className="text-white p-0.5 md:p-1.5"
+                >
+                  <MdFullscreen size={12} className="md:w-5 md:h-5" />
                 </button>
-                <button onClick={toggleFullScreen} className="text-white">
-                  <MdFullscreen size={22} />
-                </button>
-                <button className="text-white">
-                  <MdMoreVert size={22} />
+                <button
+                  onClick={() => {
+                    if (videoRef.current) {
+                      // Force showing native context menu for video options
+                      const rect = videoRef.current.getBoundingClientRect();
+                      const event = new MouseEvent("contextmenu", {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window,
+                        button: 2,
+                        buttons: 2,
+                        clientX: rect.right - 50,
+                        clientY: rect.bottom - 50,
+                      });
+                      videoRef.current.dispatchEvent(event);
+                    }
+                  }}
+                  className="text-white p-0.5 md:p-1.5"
+                >
+                  <MdMoreVert size={12} className="md:w-5 md:h-5" />
                 </button>
               </div>
             </div>
