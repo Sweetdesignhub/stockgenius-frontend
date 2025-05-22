@@ -25,7 +25,7 @@ const FyersAuthButton = () => {
       });
       const { accessToken } = response.data;
       setAccessToken(accessToken);
-      console.log("Access Token:", accessToken);
+      // console.log("Access Token:", accessToken);
       navigate("/portfolio");
     } catch (error) {
       console.error("Failed to generate access token:", error);

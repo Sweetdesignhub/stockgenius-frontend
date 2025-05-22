@@ -76,13 +76,13 @@ const SignUpForm = ({
 
   const onSubmit = (data) => {
     setUserData(data);
-    console.log(data);
+    // console.log(data);
     setIsLoading(true);
 
     api
       .post("/api/v1/auth/signup", data)
       .then((response) => {
-        console.log("Signup Successful:", response.data);
+        // console.log("Signup Successful:", response.data);
         setIsLoading(false);
         onValidSubmit(2);
       })

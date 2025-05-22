@@ -91,7 +91,7 @@ export default function Profile() {
       dispatch(updateUserFailure(error.message));
     }
   };
-  console.log(currentUser);
+  // console.log(currentUser);
   const handleDeleteAccount = async () => {
     dispatch(deleteUserStart());
     try {

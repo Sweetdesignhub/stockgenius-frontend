@@ -11,10 +11,10 @@ import imgs from "../../assets/ZeroTransactionBull.jpg";
 const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useTheme(); // Get the current theme (light or dark)
-  console.log("Trans", transactions);
-  console.log("Theme is:", theme);
+  // console.log("Trans", transactions);
+  // console.log("Theme is:", theme);
   const isDark = theme === "dark";
-  console.log("idDark is:", isDark);
+  // console.log("idDark is:", isDark);
   const filteredTransactions = transactions.filter((transaction) =>
     transaction.Ticker.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -44,7 +44,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
       t.PnL_Percent,
       t.Buy_Price,
     ]);
-    console.log("rows are;", rows);
+    // console.log("rows are;", rows);
     const csvContent =
       "data:text/csv;charset=utf-8," +
       [headers, ...rows]
@@ -69,7 +69,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   };
 
   const handleMagnifyClick = () => {
-    console.log("Toggled");
+    // console.log("Toggled");
     if (onMagnifyToggle) {
       onMagnifyToggle("TransactionHistory"); // Notify parent
     }
@@ -78,7 +78,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
     const { theme } = useTheme(); // Get the current theme (light or dark)
     const isDark = theme === "dark";
 
-    console.log("Theme is:", theme);
+    // console.log("Theme is:", theme);
 
     return (
       <div className="relative ">

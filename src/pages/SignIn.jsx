@@ -278,7 +278,7 @@ function SignIn() {
       // Store selected country in local storage
       // localStorage.setItem("country", country);
     } catch (error) {
-      console.log("Error:", error)
+      // console.log("Error:", error)
       dispatch(signInFailure(error.response?.data?.message || error.message || 'An unexpected error occurred'));
       console.error('Sign-in Error:', error);
     }

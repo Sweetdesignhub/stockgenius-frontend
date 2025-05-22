@@ -210,7 +210,7 @@ function CreateIpos() {
         formData
       );
 
-      console.log("Form submitted successfully:", response.data);
+      // console.log("Form submitted successfully:", response.data);
       setStatusMessage({ type: "success", text: "IPO created successfully!" });
       // Optionally reset formData after successful submission
       setFormData({

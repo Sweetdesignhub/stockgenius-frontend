@@ -378,7 +378,7 @@ class ActionProvider {
   // works
   // Existing methods for stock-specific queries
   askForTicker = () => {
-    console.log("Inside Send To ask for ticker: ");
+    // console.log("Inside Send To ask for ticker: ");
     const message = this.createChatBotMessage(
       "Please enter the ticker symbol you'd like to get news for."
     );
@@ -391,7 +391,7 @@ class ActionProvider {
 
   // works
   fetchRelevantNews = async (ticker) => {
-    console.log("Inside Send To fetch relevant news: ", ticker);
+    // console.log("Inside Send To fetch relevant news: ", ticker);
 
     const loadingMessage = this.createChatBotMessage(
       `Fetching news for ${ticker}...`,
@@ -439,7 +439,7 @@ class ActionProvider {
 
   // Works
   fetchProfileAnalysis = async (ticker) => {
-    console.log("Inside Send To fetch Profile analysis: ", ticker);
+    // console.log("Inside Send To fetch Profile analysis: ", ticker);
 
     const loadingMessage = this.createChatBotMessage(
       `Fetching profile for ${ticker}...`,
@@ -492,7 +492,7 @@ class ActionProvider {
   };
 
   fetchHistoricalPerformance = async (ticker) => {
-    console.log("Inside Send To fetch historical: ", ticker);
+    // console.log("Inside Send To fetch historical: ", ticker);
 
     const loadingMessage = this.createChatBotMessage(
       `Fetching historical performance for ${ticker}...`,
@@ -534,7 +534,7 @@ class ActionProvider {
   };
 
   sendToBackend = async (message) => {
-    console.log("Inside Send To Backend: ");
+    // console.log("Inside Send To Backend: ");
 
     // Store userId before updating state
     this.setState((state) => ({

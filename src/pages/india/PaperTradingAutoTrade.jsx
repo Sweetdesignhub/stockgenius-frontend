@@ -198,7 +198,7 @@ const PaperTradingAutoTrade = () => {
       console.error("WebSocket error for all bots time:", error);
     };
     ws.onclose = () => {
-      console.log("WebSocket disconnected for all bots time");
+      // console.log("WebSocket disconnected for all bots time");
     };
     return () => {
       ws.close();

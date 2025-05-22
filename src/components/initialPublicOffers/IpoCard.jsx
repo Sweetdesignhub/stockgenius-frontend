@@ -14,7 +14,7 @@ function IPOCard({
   onSelect,
 }) {
 
-  console.log(ipoDate);
+  // console.log(ipoDate);
 
   let typeBackground;
   

@@ -64,7 +64,7 @@ const CompleteProfile = () => {
         `/api/v1/auth/update-google-auth/${userId}`,
         fdata
       );
-      console.log('Signup Successful:', response.data);
+      // console.log('Signup Successful:', response.data);
       setUserData(response.data);
       setStep(3);
     } catch (error) {

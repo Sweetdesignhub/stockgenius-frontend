@@ -171,7 +171,7 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
     region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
 
-    console.log("funds", funds);
+    // console.log("funds", funds);
     
 
   const { theme } = useTheme();

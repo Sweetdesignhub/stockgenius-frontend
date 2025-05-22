@@ -10,7 +10,7 @@ const SimulationResults = ({ title = "NSE", data, currency = "" }) => {
     total_pnl,
   } = data;
 
-  console.log("daat is recieved", data);
+  // console.log("daat is recieved", data);
 
   const { theme } = useTheme();
 

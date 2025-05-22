@@ -79,7 +79,7 @@ function StockLists() {
 
   const handleBuy = (row) => {
     setSelectedRow(row);
-    console.log(row);
+    // console.log(row);
     setActionType("Buy");
     setQuantity(1); // Reset quantity
     setModalOpen(true);
@@ -87,19 +87,19 @@ function StockLists() {
 
   const handleSell = (row) => {
     setSelectedRow(row);
-    console.log(row);
+    // console.log(row);
     setActionType("Sell");
     setQuantity(1); // Reset quantity
     setModalOpen(true);
   };
 
   const handleConfirm = () => {
-    console.log(
-      `${actionType} button confirmed for row:`,
-      selectedRow,
-      "Quantity:",
-      quantity
-    );
+    // console.log(
+    //   `${actionType} button confirmed for row:`,
+    //   selectedRow,
+    //   "Quantity:",
+    //   quantity
+    // );
     setModalOpen(false);
   };
 

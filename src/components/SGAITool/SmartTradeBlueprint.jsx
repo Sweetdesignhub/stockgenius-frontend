@@ -17,11 +17,11 @@ const SmartTradeBlueprint = () => {
   const themeColor = theme === "dark" ? "white" : "black";
   const region = useSelector((state) => state.region); // Get region from store
   const market = useSelector((state) => state.market); // Get region from store
-  console.log("Region is: ", market);
+  // console.log("Region is: ", market);
 
   useEffect(() => {
     if (theme === "system") {
-      console.log("Theme updatedD");
+      // console.log("Theme updatedD");
       updateTheme("dark");
     }
   }, [theme, updateTheme]);
@@ -56,26 +56,26 @@ const SmartTradeBlueprint = () => {
       setIsSimulationComplete(false);
       setTransactions([]);
     } else {
-      console.log(
-        "(Data which can be passed)Simulation completed with data:",
-        data.results
-      );
+      // console.log(
+      //   "(Data which can be passed)Simulation completed with data:",
+      //   data.results
+      // );
       const currency = data.results.currency;
       setCurrency(currency);
       // Update state with dynamic data
       if (region === "india") {
-        console.log("NSE: ", data.results);
+        // console.log("NSE: ", data.results);
         setSimulationData(data.results.nse_simulation); // Replace static simulation data
         setIndexData(data.results.index_performance);
         setTransactions(data.results.transactions);
       } else {
         if (marketTitle === "NYSE") {
-          console.log("NYSE: ", data.results.data);
+          // console.log("NYSE: ", data.results.data);
           setSimulationData(data.results.data.nyse_simulation); // Replace static simulation data
           setIndexData(data.results.data.index_performance.nyse);
           setTransactions(data.results.data.transaction_history.nyse);
         } else {
-          console.log("NASDAQ: ", data.results);
+          // console.log("NASDAQ: ", data.results);
           setSimulationData(data.results.nasdaq_simulation); // Replace static simulation data
           setIndexData(data.results.index_performance.nasdaq);
           setTransactions(data.results.transaction_history.nasdaq);
@@ -124,11 +124,11 @@ const SmartTradeBlueprint = () => {
 
           const result = response.data;
 
-          console.log("NSE: ", result);
+          // console.log("NSE: ", result);
           setSimulationData(result.data.nse_simulation); // Replace static simulation data
           setIndexData(result.data.index_performance);
           setTransactions(result.data.transaction_history);
-          console.log("REACHED HERE");
+          // console.log("REACHED HERE");
           setIsSimulationComplete(true);
           if (handleSimulationComplete) {
             handleSimulationComplete({
@@ -160,9 +160,9 @@ const SmartTradeBlueprint = () => {
           );
 
           const result = response.data;
-          console.log("result for USA is: ", result);
+          // console.log("result for USA is: ", result);
           if (marketTitle === "NYSE") {
-            console.log("NYSE: ", result);
+            // console.log("NYSE: ", result);
             setSimulationData(result.data.nyse_simulation); // Replace static simulation data
             setIndexData(result.data.index_performance.nyse);
             setTransactions(result.data.transaction_history.nyse);
@@ -178,7 +178,7 @@ const SmartTradeBlueprint = () => {
               });
             }
           } else {
-            console.log("NASDAQ: ", result);
+            // console.log("NASDAQ: ", result);
             setSimulationData(result.data.nasdaq_simulation); // Replace static simulation data
             setIndexData(result.data.index_performance.nasdaq);
             setTransactions(result.data.transaction_history.nasdaq);
@@ -206,7 +206,7 @@ const SmartTradeBlueprint = () => {
   // Handler for magnify toggle
   const handleMagnifyToggle = (componentName) => {
     setExpandedView((prev) => (prev === componentName ? null : componentName));
-    console.log("cdskc", expandedView);
+    // console.log("cdskc", expandedView);
   };
 
   return (

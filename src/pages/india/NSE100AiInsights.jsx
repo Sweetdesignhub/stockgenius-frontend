@@ -167,12 +167,12 @@ function NSE100AiInsights() {
   };
 
   const handlePlaceOrder = async () => {
-    console.log(
-      `${actionType} button confirmed for row:`,
-      selectedRow.Ticker,
-      "Quantity:",
-      quantity
-    );
+    // console.log(
+    //   `${actionType} button confirmed for row:`,
+    //   selectedRow.Ticker,
+    //   "Quantity:",
+    //   quantity
+    // );
 
     let apiUrl = "";
     let requestBody = {};
@@ -227,7 +227,7 @@ function NSE100AiInsights() {
         },
       });
 
-      console.log(response);
+      // console.log(response);
 
       // Show success message
       if (response.data && response.status === 200) {
