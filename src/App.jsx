@@ -74,7 +74,7 @@ function MainApp() {
 
   useEffect(() => {
     // console.log("Checking");
-    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password"];
+    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password","/complete-profile"];
     const isResetPasswordRoute =
       location.pathname.startsWith("/reset-password");
 
