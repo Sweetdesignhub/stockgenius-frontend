@@ -15,7 +15,7 @@ import "react-day-picker/style.css";
 const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   const region = useSelector((state) => state.region); // Get region from store
   const market = useSelector((state) => state.market); // Get region from store
-  console.log("Region is: ", market);
+  // console.log("Region is: ", market);
   const [showDateErrorModal, setShowDateErrorModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState();
 
@@ -73,7 +73,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
     }
   };
   const formatDate = (date) => {
-    console.log("Format Date: ", date);
+    // console.log("Format Date: ", date);
 
     const d = new Date(date);
     const year = d.getFullYear();
@@ -84,7 +84,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   };
   const onSubmit = async (data) => {
     setIsLoading(true);
-    console.log("(Calc Onsubmit)Region", region);
+    // console.log("(Calc Onsubmit)Region", region);
 
     const start = new Date(data.startDate);
     const end = new Date(data.endDate);
@@ -95,7 +95,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
       return;
     }
 
-    console.log("(Calc Onsubmit)Data inout ois", data);
+    // console.log("(Calc Onsubmit)Data inout ois", data);
     if (region === "india") {
       try {
         // http://20.29.48.73:8000/simulate
@@ -114,13 +114,13 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
             headers: { "Content-Type": "application/json" },
           }
         );
-        console.log("(Calc)response: ", response.data);
+        // console.log("(Calc)response: ", response.data);
         // if (!response.ok) {
         //   throw new Error("API request failed");
         // }
         const result = response.data;
         // const result = await response.data.json();
-        console.log("result is: ", result);
+        // console.log("result is: ", result);
         if (onSimulationComplete) {
           onSimulationComplete({
             formValues: {
@@ -164,7 +164,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
         // }
         const result = response.data;
         // const result = await response.json();
-        console.log("result is: ", result);
+        // console.log("result is: ", result);
         if (onSimulationComplete) {
           onSimulationComplete({
             formValues: {

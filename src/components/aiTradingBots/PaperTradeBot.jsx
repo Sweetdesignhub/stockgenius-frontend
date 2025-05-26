@@ -150,7 +150,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     };
 
     ws.onclose = () => {
-      console.log("WebSocket disconnected for bot:", botData._id);
+      // console.log("WebSocket disconnected for bot:", botData._id);
     };
 
     return () => {
@@ -315,7 +315,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
   const activateBot = async () => {
     try {
       // Always update isActive regardless of trading hours
-      console.log("Updating isActive to true...");
+      // console.log("Updating isActive to true...");
       
       await api.patch(
         `/api/v1/autotrade-bots/users/${currentUser.id}/bots/${botId}/activate`
@@ -323,7 +323,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
 
       // If it's trading hours, do additional logic
       if (isTradingHours()) {
-        console.log("Activating bot during trading hours...");
+        // console.log("Activating bot during trading hours...");
 
         const endpoint = getApiEndpoint("activate");
         const { profitPercentage, riskPercentage } = botData;
@@ -356,11 +356,11 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
           marginLossPercentage: riskPercentage,
         });
 
-        console.log("Bot fully activated during trading hours");
+        // console.log("Bot fully activated during trading hours");
       } else {
-        console.log(
-          "Bot activated outside of trading hours (only isActive updated)"
-        );
+        // console.log(
+        //   "Bot activated outside of trading hours (only isActive updated)"
+        // );
       }
 
       await fetchBots();
@@ -373,14 +373,14 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
   const deactivateBot = async () => {
     try {
       // Always update isActive regardless of trading hours
-      console.log("Updating isActive to false...");
+      // console.log("Updating isActive to false...");
       await api.patch(
         `/api/v1/autotrade-bots/users/${currentUser.id}/bots/${botId}/activate`
       );
 
       // If it's trading hours, do additional logic
       if (isTradingHours()) {
-        console.log("Deactivating bot during trading hours...");
+        // console.log("Deactivating bot during trading hours...");
 
         // Update the bot status
         await updateBot(botData._id, {
@@ -406,11 +406,11 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
         // Hit the deactivation API
         await api.post(getApiEndpoint("deactivate"));
 
-        console.log("Bot fully deactivated during trading hours");
+        // console.log("Bot fully deactivated during trading hours");
       } else {
-        console.log(
-          "Bot deactivated outside of trading hours (only isActive updated)"
-        );
+        // console.log(
+        //   "Bot deactivated outside of trading hours (only isActive updated)"
+        // );
       }
 
       await fetchBots();
@@ -433,7 +433,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     } else if (confirmAction === "delete") {
       // Deletion logic
       await deleteBot(botData._id, botData.name);
-      console.log("Bot deleted");
+      // console.log("Bot deleted");
     }
   };
 

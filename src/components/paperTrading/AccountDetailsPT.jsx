@@ -150,7 +150,7 @@ import { useUsaPaperTrading } from "../../contexts/UsaPaperTradingContext";
 function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
   const region = useSelector((state) => state.region); // Fetch user region
-  console.log(region);
+  // console.log(region);
   
 
   // ✅ Select the correct context based on region

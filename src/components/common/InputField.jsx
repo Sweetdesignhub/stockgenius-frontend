@@ -27,19 +27,6 @@ const InputField = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const getWidth = () => {
-    switch (name) {
-      case "password":
-      case "confirmPassword":
-      case "country":
-      case "state":
-        return "w-[48%]";
-      default:
-        return "w-full";
-    }
-  };
-
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -50,7 +37,7 @@ const InputField = ({
         <select
           id={name}
           {...register(name)}
-          className={`bg-slate-100 text-black p-3 rounded-md ${className}`}
+          className={`bg-slate-100 text-black p-2 rounded-sm text-xs w-full ${className}`}
         >
           {options?.map((option) => (
             <option key={option.value} value={option.value}>
@@ -67,17 +54,17 @@ const InputField = ({
             placeholder={placeholder}
             id={name}
             {...register(name)}
-            className={`bg-slate-100 text-black p-3 rounded-md w-full ${className}`}
+            className={`bg-slate-100 text-black p-2 rounded-sm text-xs w-full ${className}`}
           />
           <button
             type="button"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2"
             onClick={togglePasswordVisibility}
           >
             {showPassword ? (
-              <EyeOff className="h-5 w-5 text-gray-500" />
+              <EyeOff className="h-4 w-4 text-gray-500" />
             ) : (
-              <Eye className="h-5 w-5 text-gray-500" />
+              <Eye className="h-4 w-4 text-gray-500" />
             )}
           </button>
         </div>
@@ -89,19 +76,19 @@ const InputField = ({
           placeholder={placeholder}
           id={name}
           {...register(name)}
-          className={`bg-slate-100 text-black p-3 rounded-md ${className}`}
+          className={`bg-slate-100 text-black p-2 rounded-sm text-xs w-full ${className}`}
         />
       );
     }
   };
 
   return (
-    <div className={`flex flex-col gap-2 ${getWidth()}`}>
-      <label htmlFor={name} className="dark:text-[#FFFFFFCC]">
+    <div className="flex flex-col gap-1.5 w-full">
+      <label htmlFor={name} className="dark:text-[#FFFFFFCC] text-xs">
         {label}
       </label>
       {renderInput()}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500 text-[10px]">{error}</div>}
     </div>
   );
 };

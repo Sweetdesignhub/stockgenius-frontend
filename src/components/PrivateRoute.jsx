@@ -12,11 +12,18 @@
 
 import React from "react";
 import { useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 function PrivateRoute() {
   const { currentUser } = useSelector((state) => state.user);
-  return currentUser ? <Outlet /> : <Navigate to={"/sign-in"} />;
+  const location = useLocation();
+
+  if (!currentUser) {
+    // Redirect to the sign-in page with the attempted location
+    return <Navigate to="/sign-in" state={{ from: location }} replace />;
+  }
+
+  return <Outlet />;
 }
 
 export default PrivateRoute;

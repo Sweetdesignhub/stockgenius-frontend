@@ -300,10 +300,10 @@ function AITradingBots() {
   const handleScheduleTrade = () => {
     if (!fyersAccessToken) {
       setBrokerModalOpen(true);
-      console.log("First connect to your broker to start auto trade feature.");
+      // console.log("First connect to your broker to start auto trade feature.");
     } else {
-      console.log(fyersAccessToken);
-      console.log("Successfully connected to broker");
+      // console.log(fyersAccessToken);
+      // console.log("Successfully connected to broker");
       setAutoTradeModalOpen(true);
     }
   };
@@ -322,7 +322,7 @@ function AITradingBots() {
 
     const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
-      console.log("WebSocket connected for all bots time");
+      // console.log("WebSocket connected for all bots time");
       ws.send(
         JSON.stringify({
           type: "subscribeAllBotsTime",
@@ -342,9 +342,9 @@ function AITradingBots() {
     ws.onerror = (error) => {
       console.error("WebSocket error for all bots time:", error);
     };
-    ws.onclose = () => {
-      console.log("WebSocket disconnected for all bots time");
-    };
+    // ws.onclose = () => {
+    //   console.log("WebSocket disconnected for all bots time");
+    // };
     return () => {
       ws.close();
     };

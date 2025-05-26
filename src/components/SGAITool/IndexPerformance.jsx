@@ -13,7 +13,7 @@ const IndexPerformance = ({ data, currency = "" }) => {
   } = data;
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  console.log("Index performance: ", data);
+  // console.log("Index performance: ", data);
   const headerColor = theme === "dark" ? "text-white" : "text-black";
   const textColor = theme === "dark" ? "text-gray-300" : "text-gray-600";
 

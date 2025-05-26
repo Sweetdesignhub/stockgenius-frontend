@@ -92,11 +92,11 @@ const VerificationForm = ({
     reset();
     try {
       const response = await api.post(endpoint, postData);
-      console.log(
-        `${verificationType} Verification Successful:`,
-        response.data
-      );
-      console.log(step);
+      // console.log(
+      //   `${verificationType} Verification Successful:`,
+      //   response.data
+      // );
+      // console.log(step);
       setError(null); // Clear any existing errors on success
 
       if (step < 3) {
@@ -134,7 +134,7 @@ const VerificationForm = ({
 
   const onSubmit = (data) => {
     const otp = Object.values(data).join("");
-    console.log("Complete Verification Code:", otp);
+    // console.log("Complete Verification Code:", otp);
     handleVerification(otp);
   };
 
@@ -164,7 +164,7 @@ const VerificationForm = ({
           userData[verificationType === "email" ? "email" : "phoneNumber"],
       };
       const response = await api.post(endpoint, postData);
-      console.log(`Resent ${verificationType} OTP:`, response.data);
+      // console.log(`Resent ${verificationType} OTP:`, response.data);
       if (verificationType === "email") {
         setCanResendEmail(false);
         setEmailResendTimer(60);

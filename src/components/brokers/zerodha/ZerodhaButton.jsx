@@ -17,7 +17,7 @@ const ZerodhaButton = ({
 
   useEffect(() => {
     setTimeout(() => {
-      console.log("ZerodhaButton component mounted");
+      // console.log("ZerodhaButton component mounted");
       setLoading(false);
     }, 2000);
   }, []);
@@ -28,10 +28,10 @@ const ZerodhaButton = ({
       script.src = "https://kite.trade/integrations/js/v1/kite.js";
       script.async = true;
       script.onload = () => {
-        console.log("Zerodha script loaded");
+        // console.log("Zerodha script loaded");
 
         window.KiteConnect.ready(() => {
-          console.log("KiteConnect ready");
+          // console.log("KiteConnect ready");
           window.KiteConnect.init();
         });
       };
@@ -43,15 +43,15 @@ const ZerodhaButton = ({
     }
   }, [loading]);
 
-  console.log("Received props:", {
-    apiKey,
-    exchange,
-    tradingSymbol,
-    transactionType,
-    quantity,
-    price,
-    orderType,
-  });
+  // console.log("Received props:", {
+  //   apiKey,
+  //   exchange,
+  //   tradingSymbol,
+  //   transactionType,
+  //   quantity,
+  //   price,
+  //   orderType,
+  // });
 
   const buttonStyle =
     transactionType === "BUY"

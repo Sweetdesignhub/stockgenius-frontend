@@ -141,7 +141,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         setShowConfirmation(false);
       }
     } catch (err) {
-      console.log(err.response.data.message);
+      // console.log(err.response.data.message);
       setError("Error placing order: " + err.response.data.message);
       setShowConfirmation(false);
     } finally {

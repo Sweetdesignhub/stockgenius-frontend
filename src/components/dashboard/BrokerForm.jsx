@@ -64,15 +64,15 @@ function BrokerForm() {
 
   const generateAccessToken = async (uri) => {
     try {
-      console.log(currentUser.id);
+      // console.log(currentUser.id);
       const response = await api.post("/api/v1/fyers/generateAccessToken", {
         uri,
         userId: currentUser.id,
       });
-      console.log("response : ", response);
+      // console.log("response : ", response);
       const { accessToken } = response.data;
       setAccessToken(accessToken);
-      console.log("Access Token:", accessToken);
+      // console.log("Access Token:", accessToken);
 
       // Navigate based on localStorage country setting
       if (localStorage.getItem("country") === "india") {
@@ -88,7 +88,7 @@ function BrokerForm() {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const authCode = query.get("auth_code");
-    console.log("authcode", authCode);
+    // console.log("authcode", authCode);
     if (authCode) {
       const uri = window.location.href;
       generateAccessToken(uri);
@@ -139,7 +139,7 @@ function BrokerForm() {
           date: new Date().toISOString(),
         });
 
-        console.log("Authentication date saved for Fyers in database.");
+        // console.log("Authentication date saved for Fyers in database.");
       } catch (error) {
         console.error(
           "Failed to retrieve Fyers auth URL or save auth date:",

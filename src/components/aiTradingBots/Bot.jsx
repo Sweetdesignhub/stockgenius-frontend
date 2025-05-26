@@ -188,7 +188,7 @@ function Bot({
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log("WebSocket connected for bot:", botData._id);
+      // console.log("WebSocket connected for bot:", botData._id);
       ws.send(JSON.stringify({ type: "subscribeBotTime", botId: botData._id }));
     };
 
@@ -212,7 +212,7 @@ function Bot({
     };
 
     ws.onclose = () => {
-      console.log("WebSocket disconnected for bot:", botData._id);
+      // console.log("WebSocket disconnected for bot:", botData._id);
     };
 
     return () => {
@@ -380,7 +380,7 @@ function Bot({
         { id: botData._id, type: botData.productType },
       ]);
 
-      console.log("bot activated");
+      // console.log("bot activated");
     } catch (error) {
       console.error("Error activating bot:", error);
     }
@@ -420,7 +420,7 @@ function Bot({
         prevBots.filter((bot) => bot.id !== apiBotData._id)
       );
 
-      console.log("bot deactivated");
+      // console.log("bot deactivated");
     } catch (error) {
       console.error("Error deactivating bot:", error);
     }
@@ -454,7 +454,7 @@ function Bot({
         }
 
         if (fyersAccessToken) {
-          console.log("Updating status");
+          // console.log("Updating status");
 
           // Get the current time in "Asia/Kolkata" time zone using moment-timezone
           const now = moment.tz("Asia/Kolkata");
@@ -492,7 +492,7 @@ function Bot({
               limits: 0,
             });
 
-            console.log("Bot scheduled");
+            // console.log("Bot scheduled");
           } else if (isWithinTradingHours()) {
             await activateBot();
           }
@@ -511,7 +511,7 @@ function Bot({
     } else if (confirmAction === "delete") {
       // Deletion logic
       await deleteBot(botData._id, botData.name);
-      console.log("Bot deleted");
+      // console.log("Bot deleted");
     }
   };
 

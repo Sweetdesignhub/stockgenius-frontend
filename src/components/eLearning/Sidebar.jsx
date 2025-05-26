@@ -76,10 +76,10 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`
-  relative md:sticky md:top-[2%]
+  className={`
+  relative md:top-[2%]
   w-full md:w-[8%] md:min-w-[60px] md:max-w-[90px]
- h-16 md:h-[85vh] lg:h-[84vh]
+  h-16 md:h-[88vh] lg:h-[96vh] // Updated this line
   flex flex-row md:flex-col
   items-center
   justify-center md:justify-start

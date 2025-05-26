@@ -9,7 +9,7 @@ const useTokenExpiration = () => {
 
   useEffect(() => {
     const token = Cookies.get('access_token'); // Get the token from cookies using js-cookie
-    console.log("token : ", token);
+    // console.log("token : ", token);
 
     if (token) {
       try {

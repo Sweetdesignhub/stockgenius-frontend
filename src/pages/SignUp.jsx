@@ -68,15 +68,16 @@ const SignUp = () => {
         return null;
     }
   };
-
   return (
-    <div className='max-w-xl px-20 py-10 mb-10 mx-auto auth rounded-2xl'>
-      {renderStep()}
-      {error && (
-        <p className='text-red-500 text-center mt-5'>
-          {error}
-        </p>
-      )}
+    <div className='min-h-[100px] flex items-center justify-center px-3 sm:px-6 py-2'>
+      <div className='w-full max-w-[550px] mx-auto auth rounded-2xl px-4 sm:px-6 py-6 dark:bg-[#1a1a1a]/40 dark:backdrop-blur-md dark:border dark:border-[#ffffff1a] dark:shadow-[inset_0_1px_12px_rgba(255,255,255,0.06)] bg-white/80 backdrop-blur-sm'>
+        {renderStep()}
+        {error && (
+          <p className='text-red-500 text-center mt-4 text-sm'>
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

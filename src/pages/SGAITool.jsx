@@ -6,7 +6,7 @@ function SGAITool() {
   const { theme, updateTheme } = useTheme();
   useEffect(() => {
     if (theme === "system") {
-      console.log("Theme updatedD");
+      // console.log("Theme updatedD");
       updateTheme("dark");
     }
   }, [theme, updateTheme]);
