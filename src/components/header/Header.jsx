@@ -121,7 +121,7 @@ export default function Header() {
       { name: "Portfolio", to: `/india/portfolio`, icon: FaBagShopping },
       { name: "AI Trading Bots", to: `/india/AI-Trading-Bots`, icon: BsRobot },
       {
-        name: "IPOs",
+        name: "IPOs", 
         to: `/india/initial-public-offers`,
         icon: RiFilePaper2Fill,
       },
