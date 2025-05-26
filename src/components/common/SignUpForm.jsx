@@ -101,14 +101,12 @@ const SignUpForm = ({
   watch("country");
 
   return (
-    <div>
-      <h1 className="text-3xl text-center font-semibold my-8">Sign Up</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-        <OAuth />
-        <div className="flex items-center justify-center">
-          <div className="flex-grow border-t border-[#FFFFFF66]"></div>
-          <p className="text-[#FFFFFF] text-center mx-3">Or</p>
-          <div className="flex-grow border-t border-[#FFFFFF66]"></div>
+    <div>      <h1 className="text-2xl text-center font-semibold mb-5">Sign Up</h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <OAuth />        <div className="flex items-center justify-center my-2">
+          <div className="flex-grow border-t border-[#FFFFFF66] dark:border-[#FFFFFF66] border-gray-300"></div>
+          <p className="dark:text-[#FFFFFF] text-gray-700 text-center mx-3 text-xs">Or</p>
+          <div className="flex-grow border-t border-[#FFFFFF66] dark:border-[#FFFFFF66] border-gray-300"></div>
         </div>
         <InputField
           label="Email address"
@@ -123,8 +121,7 @@ const SignUpForm = ({
           type="text"
           register={register}
           error={errors.name?.message}
-        />
-        <div className="flex gap-4">
+        />        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <InputField
             label="Password"
             name="password"
@@ -144,13 +141,11 @@ const SignUpForm = ({
           international
           defaultCountry="IN"
           value={watch("phoneNumber")}
-          onChange={handlePhoneChange}
-          className="bg-slate-100 text-black p-3 rounded-md w-full"
+          onChange={handlePhoneChange}          className="bg-slate-100 text-black p-2 rounded-sm w-full text-sm"
         />
         {errors.phoneNumber && (
-          <div className="text-red-500">{errors.phoneNumber.message}</div>
-        )}
-        <div className="flex gap-4">
+          <div className="text-red-500 text-xs mt-1">{errors.phoneNumber.message}</div>
+        )}        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <InputField
             label="Select Country"
             name="country"
@@ -176,14 +171,12 @@ const SignUpForm = ({
             error={errors.state?.message}
           />
         </div>
-        <button
-          type="submit"
-          className="auth-btn bg-[#1A2C5C] text-white p-3 rounded-lg hover:opacity-95"
+        <button          type="submit"          className="auth-btn bg-[#1A2C5C] text-white p-1.5 rounded-lg hover:opacity-85 disabled:opacity-80 min-h-[34px] flex items-center justify-center"
         >
           Sign up
         </button>
-        <div className="mt-6 text-center">
-          <p className="dark:text-[#FFFFFF99] text-gray-500">
+        <div className="mt-3 text-center">
+          <p className="dark:text-[#FFFFFF99] text-gray-500 text-xs">
             Already have an account?{" "}
             <Link to={"/sign-in"}>
               <span className="dark:text-white text-gray-800">Sign in</span>

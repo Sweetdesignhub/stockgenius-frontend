@@ -126,6 +126,7 @@ import api from '../config';
 import { setRegion } from '../redux/region/regionSlice';
 import ConfirmationModal from '../components/common/ConfirmationModal';
 import { Eye, EyeOff } from 'lucide-react';
+import Loading from '../components/common/Loading';
 
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -221,6 +222,41 @@ function SignIn() {
       setLoad(false);
     }
   };
+  const handleGetOTP = async () => {
+    if (!selectedRegion) {
+      setIsModalOpen(true);
+      return;
+    }
+
+    if (!formData.identifier || formData.identifier.trim() === '') {
+      setIsEmptyFieldModal(true);
+      return;
+    }
+
+    try {
+      setLoad(true);
+      let submissionData = { ...formData };
+      if (isPhoneNumber) {
+        submissionData.identifier = `${selectedCountryCode}${formData.identifier}`;
+      }
+
+      const response = await api.post('/api/v1/auth/login', {
+        ...submissionData,
+        useOTP: true
+      });
+
+      // Show loading for 3 seconds before setting OTP sent
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setOtpSent(true);
+      setResendTimer(60);
+      setCanResendOTP(false);
+
+    } catch (error) {
+      dispatch(signInFailure(error.response?.data?.message || error.message || 'Failed to send OTP'));
+    } finally {
+      setLoad(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -232,17 +268,25 @@ function SignIn() {
 
     try {
       dispatch(signInStart());
-      // console.log("Form Data:", formData);
       let submissionData = { ...formData };
       if (isPhoneNumber) {
         submissionData.identifier = `${selectedCountryCode}${formData.identifier}`;
       }
       if (otpSent) {
         // Verify OTP
-        const response = await api.post('/api/v1/auth/verify-login-otp', {
-          ...submissionData,
-          otp,
-        });
+        const response = await api.post('/api/v1/auth/verify-login-otp', 
+          {
+            ...submissionData,
+            otp,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            withCredentials: true
+          }
+        );
         const data = await response.data.data;
         if (data.success === false) {
           dispatch(signInFailure(data.message));
@@ -252,15 +296,23 @@ function SignIn() {
         navigate(`/${selectedRegion}/dashboard`);
       } else {
         // Initial login attempt
-        const response = await api.post('/api/v1/auth/login', {
-          ...submissionData,
-          useOTP,
-        });
+        const response = await api.post('/api/v1/auth/login', 
+          {
+            ...submissionData,
+            useOTP,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            withCredentials: true
+          }
+        );
         const data = await response.data.data;
 
         if (useOTP) {
           setOtpSent(true);
-          // Initialize the resend timer when OTP is first sent
           setResendTimer(60);
           setCanResendOTP(false);
         } else if (data.success === false) {
@@ -272,20 +324,25 @@ function SignIn() {
         }
       }
 
-      // Successful sign-in logic
-      // const country = selectedCountry;
-
-      // Store selected country in local storage
-      // localStorage.setItem("country", country);
     } catch (error) {
-      // console.log("Error:", error)
-      dispatch(signInFailure(error.response?.data?.message || error.message || 'An unexpected error occurred'));
-      console.error('Sign-in Error:', error);
+      console.error('Sign-in Error Details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      dispatch(signInFailure(
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        'Unable to sign in. Please try again.'
+      ));
     }
   };
-
   const handleConfirm = () => {
     setIsModalOpen(false);
+  };
+
+  const handleEmptyFieldConfirm = () => {
+    setIsEmptyFieldModal(false);
   };
 
   const togglePasswordVisibility = () => {
@@ -303,162 +360,164 @@ function SignIn() {
     { code: '+91', country: 'IN' },
     // Add more country codes as needed
   ];
-
   return (
-    <div className='max-w-xl px-20 py-10 mx-auto auth rounded-2xl'>
-      <h1 className='text-3xl text-center font-semibold my-8'>Sign In</h1>
-
-      <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
-        <OAuth />
-
-        <div className='flex items-center justify-center'>
-          <div className='flex-grow border-t border-[#FFFFFF66]'></div>
-          <p className='text-[#FFFFFF] text-center mx-3'>Or</p>
-          <div className='flex-grow border-t border-[#FFFFFF66]'></div>
-        </div>
-
-        <div className='flex flex-col gap-2'>
-          <label htmlFor='identifier' className='dark:text-[#FFFFFFCC]'>
-            Email address / Phone Number
-          </label>
-          <div className='flex'>
-            {isPhoneNumber && (
-              <select
-                value={selectedCountryCode}
-                onChange={handleCountryCodeChange}
-                className='bg-slate-100 text-black p-3 rounded-l-sm'
-              >
-                {countryCodes.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.code} ({country.country})
-                  </option>
-                ))}
-              </select>
-            )}
-            <input
-              required
-              type='text'
-              placeholder='email@domain.com / Phone Number'
-              id='identifier'
-              className={`bg-slate-100 text-black p-3 ${isPhoneNumber ? 'rounded-r-sm' : 'rounded-sm'
-                } flex-grow`}
-              onChange={handleChange}
-            />
+      <div className='min-h-[100px] flex items-center justify-center mt-10 px-4 sm:px-6'>
+      <div className='w-full max-w-[400px] mx-auto auth rounded-2xl px-4 sm:px-6 py-3 dark:bg-[#1a1a1a]/40 dark:backdrop-blur-md dark:border dark:border-[#ffffff1a] dark:shadow-[inset_0_1px_12px_rgba(255,255,255,0.06)] bg-white/80 backdrop-blur-sm'>
+        <h1 className='text-2xl text-center font-semibold mb-4'>Sign In</h1><form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          <OAuth />          <div className='flex items-center justify-center my-2'>
+            <div className='flex-grow border-t border-[#FFFFFF66] dark:border-[#FFFFFF66] border-gray-300'></div>
+            <p className='dark:text-[#FFFFFF] text-gray-700 text-center mx-4 text-sm'>Or</p>
+            <div className='flex-grow border-t border-[#FFFFFF66] dark:border-[#FFFFFF66] border-gray-300'></div>
           </div>
-        </div>
 
-        {!useOTP && (
           <div className='flex flex-col gap-2'>
-            <label htmlFor='password' className='dark:text-[#FFFFFFCC]'>
-              Password
+            <label htmlFor='identifier' className='dark:text-[#FFFFFFCC] text-sm'>
+              Email address / Phone Number
             </label>
-            <div className='relative'>
+            <div className='flex'>
+              {isPhoneNumber && (
+                <select
+                  value={selectedCountryCode}
+                  onChange={handleCountryCodeChange}
+                  className='bg-slate-100 text-black p-2.5 rounded-l-sm text-sm'
+                >
+                  {countryCodes.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.code} ({country.country})
+                    </option>
+                  ))}
+                </select>
+              )}
               <input
                 required
-                type={showPassword ? 'text' : 'password'}
-                placeholder='Password'
-                id='password'
-                className='bg-slate-100 text-black p-3 rounded-sm w-full'
+                type='text'
+                placeholder='email@domain.com / Phone Number'
+                id='identifier'
+                className={`bg-slate-100 text-black p-2.5 ${isPhoneNumber ? 'rounded-r-sm' : 'rounded-sm'
+                  } flex-grow text-sm`}
                 onChange={handleChange}
               />
-              <button
-                type='button'
-                className='absolute right-3 top-1/2 transform -translate-y-1/2'
-                onClick={togglePasswordVisibility}
-              >
-                {showPassword ? (
-                  <EyeOff className='h-5 w-5 text-gray-500' />
-                ) : (
-                  <Eye className='h-5 w-5 text-gray-500' />
-                )}
-              </button>
             </div>
-          </div>
-        )}
+          </div>          {!useOTP && (
+            <div className='flex flex-col gap-2'>
+              <div className='flex justify-between items-center'>
+                <label htmlFor='password' className='dark:text-[#FFFFFFCC] text-sm'>
+                  Password
+                </label>
+                <Link to='/forgot-password' className='text-blue-500 hover:underline text-sm'>
+                  Forgot Password?
+                </Link>
+              </div>
+              <div className='relative'>
+                <input
+                  required
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder='Password'
+                  id='password'
+                  className='bg-slate-100 text-black p-2.5 rounded-sm w-full text-sm'
+                  onChange={handleChange}
+                />
+                <button
+                  type='button'
+                  className='absolute right-3 top-1/2 transform -translate-y-1/2'
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? (
+                    <EyeOff className='h-4 w-4 text-gray-500' />
+                  ) : (
+                    <Eye className='h-4 w-4 text-gray-500' />
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
 
-        {otpSent && (
-          <div className='flex flex-col gap-2'>
-            <label htmlFor='otp' className='dark:text-[#FFFFFFCC]'>
-              Enter OTP
-            </label>
-            <div className='relative'>
+          {otpSent && (
+            <div className='flex flex-col gap-2'>
+              <label htmlFor='otp' className='dark:text-[#FFFFFFCC] text-sm'>
+                Enter OTP
+              </label>
+              <div className='relative'>
+                <input
+                  required
+                  type={showOTP ? 'text' : 'password'}
+                  placeholder='Enter OTP'
+                  id='otp'
+                  className='bg-slate-100 text-black p-2.5 rounded-sm w-full text-sm'
+                  onChange={(e) => setOTP(e.target.value)}
+                />
+                <button
+                  type='button'
+                  className='absolute right-3 top-1/2 transform -translate-y-1/2'
+                  onClick={toggleOTPVisibility}
+                >
+                  {showOTP ? (
+                    <EyeOff className='h-4 w-4 text-gray-500' />
+                  ) : (
+                    <Eye className='h-4 w-4 text-gray-500' />
+                  )}
+                </button>
+              </div>
+              {/* New resend OTP section */}
+              {canResendOTP ? (
+                <button
+                  type='button'
+                  onClick={handleResendOTP}
+                  className='mt-1 text-blue-500 hover:text-blue-600 text-sm font-medium'
+                  disabled={load}
+                >
+                  Resend OTP
+                </button>
+              ) : (
+                <p className='mt-1 text-xs text-gray-500'>
+                  Resend OTP in <span className="text-[#FFFFFF] font-medium">{resendTimer}</span> seconds
+                </p>
+              )}
+            </div>
+          )}
+
+          {!otpSent && (
+            <div className='flex items-center gap-2'>
               <input
-                required
-                type={showOTP ? 'text' : 'password'}
-                placeholder='Enter OTP'
-                id='otp'
-                className='bg-slate-100 text-black p-3 rounded-sm w-full'
-                onChange={(e) => setOTP(e.target.value)}
+                type='checkbox'
+                id='useOTP'
+                checked={useOTP}
+                onChange={() => setUseOTP(!useOTP)}
               />
-              <button
-                type='button'
-                className='absolute right-3 top-1/2 transform -translate-y-1/2'
-                onClick={toggleOTPVisibility}
-              >
-                {showOTP ? (
-                  <EyeOff className='h-5 w-5 text-gray-500' />
-                ) : (
-                  <Eye className='h-5 w-5 text-gray-500' />
-                )}
-              </button>
+              <label htmlFor='useOTP' className='dark:text-[#FFFFFFCC] text-sm'>
+                Use OTP
+              </label>
             </div>
-            {/* New resend OTP section */}
-            {canResendOTP ? (
-              <button
-                type='button'
-                onClick={handleResendOTP}
-                className='mt-2 text-blue-500 hover:text-blue-600 text-sm font-medium'
-                disabled={load}
-              >
-                Resend OTP
-              </button>
-            ) : (
-              <p className='mt-2 text-sm text-gray-500'>
-                Resend OTP in <span className="text-[#FFFFFF] font-medium">{resendTimer}</span> seconds
-              </p>
-            )}
-          </div>
+          )}          <button
+              type={useOTP && !otpSent ? 'button' : 'submit'}
+              onClick={useOTP && !otpSent ? handleGetOTP : undefined}
+              className='auth-btn bg-[#1A2C5C] text-white p-2.5 rounded-lg hover:opacity-85 disabled:opacity-80 min-h-[42px] flex items-center justify-center mt-2'
+              disabled={load}
+            >
+              {load ? (
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <Loading isSignInOTP={true} />
+                </div>
+              ) : (
+                otpSent ? 'Verify OTP' : useOTP ? 'Get OTP' : 'Sign in'
+              )}
+            </button>
+        </form>        <div className='mt-4 text-center'>
+          <p className='dark:text-[#FFFFFF99] text-gray-500 text-sm'>
+            Don&apos;t have an account?{' '}
+            <Link to={'/sign-up'}>
+              <span className='dark:text-white text-gray-800'>Sign up</span>
+            </Link>
+          </p>
+        </div>
+
+        {error && (
+          <p className='text-red-500 text-center mt-4 text-sm'>
+            {error}
+          </p>
         )}
-
-        {!otpSent && (
-          <div className='flex items-center gap-2'>
-            <input
-              type='checkbox'
-              id='useOTP'
-              checked={useOTP}
-              onChange={() => setUseOTP(!useOTP)}
-            />
-            <label htmlFor='useOTP' className='dark:text-[#FFFFFFCC]'>
-              Use OTP
-            </label>
-          </div>
-        )}
-
-        <button
-          disabled={load}
-          type='submit'
-          className='auth-btn bg-[#1A2C5C] text-white p-3 rounded-lg hover:opacity-85 disabled:opacity-80'
-        >
-          {load ? 'Loading ...' : otpSent ? 'Verify OTP' : 'Sign in'}
-        </button>
-      </form>
-
-      <div className='mt-6 text-center'>
-        <p className='dark:text-[#FFFFFF99] text-gray-500'>
-          Don&apos;t have an account?{' '}
-          <Link to={'/sign-up'}>
-            <span className='dark:text-white text-gray-800'>Sign up</span>
-          </Link>
-        </p>
-        <Link to='/forgot-password' className='text-blue-500 hover:underline'>
-          Forgot Password?
-        </Link>
       </div>
-      {error && (
-        <p className='text-red-500 text-center mt-5'>
-          {error}
-        </p>
-      )}
+
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}

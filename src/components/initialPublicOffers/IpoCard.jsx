@@ -60,36 +60,28 @@ function IPOCard({
       break;
   }
 
-  return (
+ return (
     <div
       className="group rounded-md shadow-md transition-transform transform hover:scale-105 dark:hover:bg-gray-600 cursor-pointer"
       onClick={() => onSelect(company)}
     >
-      {/* Hover effects */}
-      <div className="news-table rounded-t-md flex items-center justify-between py-3 px-4 dark:group-hover:bg-transparent group-hover:bg-blue-600 group-hover:text-white">
+      {/* Top section */}
+      <div className="news-table rounded-t-md hidden sm:flex items-center justify-between py-3 px-4 dark:group-hover:bg-transparent group-hover:bg-blue-600 group-hover:text-white">
         <img className="h-10 w-12 mr-2" loading="lazy" src={logo} alt="logo" />
 
         <div className="w-[30%] mr-1">
           <h2 className="text-sm truncate">{name}</h2>
-          <p className="text-xs truncate">
-            {company}
-          </p>
+          <p className="text-xs truncate">{company}</p>
         </div>
 
         <div className="w-[30%]">
           <h2 className="text-sm">{ipoDate}</h2>
-          <p className="text-xs">
-            IPO Date
-          </p>
+          <p className="text-xs">IPO Date</p>
         </div>
 
         <div className="w-[30%]">
-          <h2 className="text-sm">
-            {listingDate}
-          </h2>
-          <p className="text-xs">
-            Listing Date
-          </p>
+          <h2 className="text-sm">{listingDate}</h2>
+          <p className="text-xs">Listing Date</p>
         </div>
 
         <div
@@ -100,36 +92,73 @@ function IPOCard({
         </div>
       </div>
 
-      <div className="px-4 py-2 table-main flex items-center justify-between">
+      {/* Mobile Top Section */}
+      <div className="news-table rounded-t-md flex sm:hidden flex-col items-center justify-between py-2 px-3 dark:group-hover:bg-transparent group-hover:bg-blue-600 group-hover:text-white">
+        <div className="flex items-center w-full mb-2">
+          <img className="h-8 w-10 mr-2" loading="lazy" src={logo} alt="logo" />
+          <div className="w-full mr-1">
+            <h2 className="text-[11px] truncate">{name}</h2>
+            <p className="text-[10px] truncate">{company}</p>
+          </div>
+        </div>
+
+        <div className="flex w-full justify-between items-center">
+          <div className="text-center mr-2">
+            <h2 className="text-[11px]">{ipoDate}</h2>
+            <p className="text-[10px]">IPO Date</p>
+          </div>
+
+          <div className="text-center mr-2">
+            <h2 className="text-[11px]">{listingDate}</h2>
+            <p className="text-[10px]">Listing Date</p>
+          </div>
+
+          <div
+            className="px-[6px] py-[2px] text-center rounded-lg"
+            style={typeBackground}
+          >
+            <h2 className="text-[#FFF7D7] text-[10px]">{type}</h2>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom section - Desktop */}
+      <div className="hidden sm:flex px-4 py-2 table-main items-center justify-between">
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold dark:text-[#F2BD0F]">
-            {sentimentScore}
-          </h2>
-          <p className="text-xs dark:text-[#F2BD0F]">
-            Sentiment Score
-          </p>
+          <h2 className="text-xs font-semibold dark:text-[#F2BD0F]">{sentimentScore}</h2>
+          <p className="text-xs dark:text-[#F2BD0F]">Sentiment Score</p>
         </div>
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold dark:text-[#0DFFB2]">
-            {decisionRate}%
-          </h2>
-          <p className="text-xs dark:text-[#0DFFB2]">
-            Decision Rate
-          </p>
+          <h2 className="text-xs font-semibold dark:text-[#0DFFB2]">{decisionRate}%</h2>
+          <p className="text-xs dark:text-[#0DFFB2]">Decision Rate</p>
         </div>
         <div className="w-1/4 text-center">
           <h2 className="text-xs font-semibold dark:text-[#F8E83A]">{priceRange}</h2>
-          <p className="text-xs dark:text-[#F8E83A]">
-            Price Range
-          </p>
+          <p className="text-xs dark:text-[#F8E83A]">Price Range</p>
         </div>
         <div className="w-1/4 text-center">
-          <h2 className="text-xs font-semibold dark:text-[#ACFF46]">
-            {minQuantity}
-          </h2>
-          <p className="text-xs dark:text-[#ACFF46]">
-            Min. Quantity
-          </p>
+          <h2 className="text-xs font-semibold dark:text-[#ACFF46]">{minQuantity}</h2>
+          <p className="text-xs dark:text-[#ACFF46]">Min. Quantity</p>
+        </div>
+      </div>
+
+      {/* Bottom section - Mobile */}
+      <div className="flex sm:hidden px-3 py-2 table-main grid grid-cols-2 gap-2">
+        <div className="text-center">
+          <h2 className="text-[11px] font-semibold dark:text-[#F2BD0F]">{sentimentScore}</h2>
+          <p className="text-[10px] dark:text-[#F2BD0F]">Sentiment Score</p>
+        </div>
+        <div className="text-center">
+          <h2 className="text-[11px] font-semibold dark:text-[#0DFFB2]">{decisionRate}%</h2>
+          <p className="text-[10px] dark:text-[#0DFFB2]">Decision Rate</p>
+        </div>
+        <div className="text-center">
+          <h2 className="text-[11px] font-semibold dark:text-[#F8E83A]">{priceRange}</h2>
+          <p className="text-[10px] dark:text-[#F8E83A]">Price Range</p>
+        </div>
+        <div className="text-center">
+          <h2 className="text-[11px] font-semibold dark:text-[#ACFF46]">{minQuantity}</h2>
+          <p className="text-[10px] dark:text-[#ACFF46]">Min. Quantity</p>
         </div>
       </div>
     </div>

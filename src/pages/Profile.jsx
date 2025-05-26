@@ -107,81 +107,100 @@ export default function Profile() {
   };
 
   return (
-    <div className='max-w-xl px-20 py-10 mx-auto auth rounded-2xl'>
-      <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <input
-          type='file'
-          ref={fileRef}
-          hidden
-          accept='image/*'
-          onChange={(e) => setImage(e.target.files[0])}
-        />
-        <img
-          src={formData.avatar || currentUser.avatar}
-          alt='profile'
-          className='h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2'
-          onClick={() => fileRef.current.click()}
-        />
-        <p className='text-sm self-center'>
-          {imageError ? (
-            <span className='text-red-700'>
-              Error uploading image (file size must be less than 2 MB)
-            </span>
-          ) : imagePercent > 0 && imagePercent < 100 ? (
-            <span className='text-slate-700'>{`Uploading: ${imagePercent} %`}</span>
-          ) : imagePercent === 100 ? (
-            <span className='text-green-700'>Image uploaded successfully</span>
-          ) : (
-            ''
-          )}
-        </p>
-        <input
-          defaultValue={currentUser.name}
-          type='text'
-          id='name'
-          placeholder='Full Name'
-          className='bg-slate-100 rounded-lg p-3 text-black'
-          onChange={handleChange}
-        />
-        <input
-          defaultValue={currentUser.email}
-          type='email'
-          id='email'
-          placeholder='Email'
-          className='bg-slate-100 rounded-lg p-3 text-black'
-          onChange={handleChange}
-        />
-        <input
-          type='password'
-          id='password'
-          placeholder='Password'
-          className='bg-slate-100 rounded-lg p-3 text-black'
-          onChange={handleChange}
-        />
-        <button
-          type='submit'
-          className='bg-[#1A2C5C] auth-btn text-white p-3 rounded-lg  hover:opacity-95 disabled:opacity-80'
-          disabled={loading}
-        >
-          {loading ? 'Loading...' : 'Update'}
-        </button>
-      </form>
-      <div className='flex justify-between mt-5'>
-        {/* <span
-          onClick={handleDeleteAccount}
-          className="text-red-700 cursor-pointer"
-        >
-          Delete Account
-        </span> */}
-        {/* <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
-          Sign out
-        </span> */}
+    <div className='min-h-[100px] flex items-center justify-center mt-10 px-4 sm:px-6'>
+      <div className='w-full max-w-[400px] mx-auto auth rounded-2xl px-4 sm:px-6 py-3 dark:bg-[#1a1a1a]/40 dark:backdrop-blur-md dark:border dark:border-[#ffffff1a] dark:shadow-[inset_0_1px_12px_rgba(255,255,255,0.06)] bg-white/80 backdrop-blur-sm'>
+        <h1 className='text-2xl text-center font-semibold mb-4'>Profile</h1>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+          <input
+            type='file'
+            ref={fileRef}
+            hidden
+            accept='image/*'
+            onChange={(e) => setImage(e.target.files[0])}
+          />
+          <div className="flex flex-col items-center gap-2">
+            <img
+              src={formData.avatar || currentUser.avatar}
+              alt='profile'
+              className='h-20 w-20 cursor-pointer rounded-full object-cover'
+              onClick={() => fileRef.current.click()}
+            />
+            <p className='text-xs text-center'>
+              {imageError ? (
+                <span className='text-red-500'>
+                  Error uploading image (file size must be less than 2 MB)
+                </span>
+              ) : imagePercent > 0 && imagePercent < 100 ? (
+                <span className='text-slate-400'>{`Uploading: ${imagePercent} %`}</span>
+              ) : imagePercent === 100 ? (
+                <span className='text-green-500'>Image uploaded successfully</span>
+              ) : (
+                ''
+              )}
+            </p>
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <label htmlFor='name' className='dark:text-[#FFFFFFCC] text-sm'>
+              Full Name
+            </label>
+            <input
+              defaultValue={currentUser.name}
+              type='text'
+              id='name'
+              placeholder='Full Name'
+              className='bg-slate-100 text-black p-2.5 rounded-sm w-full text-sm'
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <label htmlFor='email' className='dark:text-[#FFFFFFCC] text-sm'>
+              Email
+            </label>
+            <input
+              defaultValue={currentUser.email}
+              type='email'
+              id='email'
+              placeholder='Email'
+              className='bg-slate-100 text-black p-2.5 rounded-sm w-full text-sm'
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <label htmlFor='password' className='dark:text-[#FFFFFFCC] text-sm'>
+              Password
+            </label>
+            <input
+              type='password'
+              id='password'
+              placeholder='Password'
+              className='bg-slate-100 text-black p-2.5 rounded-sm w-full text-sm'
+              onChange={handleChange}
+            />
+          </div>
+
+          <button
+            type='submit'
+            className='auth-btn bg-[#1A2C5C] text-white p-2.5 rounded-lg hover:opacity-85 disabled:opacity-80 min-h-[42px] flex items-center justify-center mt-2'
+            disabled={loading}
+          >
+            {loading ? 'Loading...' : 'Update'}
+          </button>
+        </form>
+
+        {error && (
+          <p className='text-red-500 text-center mt-4 text-sm'>
+            Something went wrong!
+          </p>
+        )}
+        {updateSuccess && (
+          <p className='text-green-500 text-center mt-4 text-sm'>
+            User is updated successfully!
+          </p>
+        )}
       </div>
-      <p className='text-red-700 mt-5'>{error && 'Something went wrong!'}</p>
-      <p className='text-green-700 mt-5 text-center'>
-        {updateSuccess && 'User is updated successfully!'}
-      </p>
     </div>
   );
 }

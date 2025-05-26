@@ -149,69 +149,52 @@ const PositionsTable = ({
     );
   }
 
-  return (
+   return (
     <>
-      <div className="h-[55vh] overflow-auto relative">
-        <div className="flex">
-          <div className="flex-grow overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-transparent sticky top-0 z-10">
-                <tr>
-                  {selectedColumns.map((columnName) => (
-                    <th
-                      key={columnName}
-                      className="px-4 py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left whitespace-nowrap"
+      <div className="h-[55vh] relative">
+        <table className="w-full border-collapse">
+          <thead className="bg-transparent sticky top-0 z-10">
+            <tr>
+              {selectedColumns.map((columnName) => (
+                <th
+                  key={columnName}
+                  className="px-4 py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left whitespace-nowrap"
+                >
+                  {columnName}
+                </th>
+              ))}
+              <th className="w-16"></th> {/* Add header for action column */}
+            </tr>
+          </thead>
+          <tbody className="overflow-y-auto">
+            {positionsData.map((position, index) => (
+              <tr key={position.id || index}>
+                {selectedColumns.map((columnName) => (
+                  <td
+                    key={`${columnName}-${position.id || index}`}
+                    className={`px-4 py-4 whitespace-nowrap text-left font-semibold ${
+                      columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                    }`}
+                  >
+                    {columnName === "pl" || columnName === "unrealized_profit" || columnName === "realized_profit" || columnName === "buyAvg"|| columnName === "sellAvg"
+                      ? Number(position[columnName]).toFixed(2)
+                      : position[columnName] || ""}
+                  </td>
+                ))}
+                <td className="px-4 py-4 w-16">
+                  <div className="flex justify-center py-0">
+                    <button
+                      onClick={(e) => handleExitPosition(e, position)}
+                      className="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
                     >
-                      {columnName}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {positionsData.map((position, index) => (
-                  <tr key={position.id || index}>
-                    {selectedColumns.map((columnName) => (
-                      <td
-                        key={`${columnName}-${position.id || index}`}                        
-                        className={`px-4 py-4 whitespace-nowrap text-left font-semibold ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
-                          }`}
-                      >
-                        {columnName === "pl" || columnName === "unrealized_profit" 
-                          ? Number(position[columnName]).toFixed(2)
-                          : position[columnName] || ""}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="w-16 flex-shrink-0 sticky right-0 bg-transparent">
-            <table className="w-full h-full border-collapse">
-              <thead className="bg-transparent sticky top-0 z-10">
-                <tr>
-                  <th className="py-5"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {positionsData.map((position, index) => (
-                  <tr key={position.id || index} className="h-1">
-                    <td className="px-4 py-4">
-                      <div className="flex justify-center py-0">
-                        <button
-                          onClick={(e) => handleExitPosition(e, position)}
-                          className="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
-                        >
-                          <X className="w-4 h-4 text-red-600 dark:text-white" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                      <X className="w-4 h-4 text-red-600 dark:text-white" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <YesNoConfirmationModal
         isOpen={isModalOpen}

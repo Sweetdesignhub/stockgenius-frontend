@@ -123,21 +123,21 @@ const IPOsAdminPanel = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-y-scroll">
-        <div className="news-table w-full p-3 rounded-xl">
+      <div className="overflow-y-auto scrollbar-hide">
+        <div className="news-table w-full p-2 sm:p-3 rounded-xl">
           <div className="border-b pb-2 dark:border-[#FFFFFF1A] border-[]">
-            <h1 className="dark:text-[#FFFFFF] font-[poppins] font-semibold text-lg">
+            <h1 className="dark:text-[#FFFFFF] font-[poppins] font-semibold text-base sm:text-lg">
               IPOs Admin Panel
             </h1>
           </div>
 
-          <div className="p-2  rounded-lg mt-2 max-h-64 overflow-y-scroll">
+          <div className="p-2 rounded-lg mt-2 max-h-[calc(100vh-15rem)] scrollbar-hide overflow-y-auto">
             {/* First Tab - Initial Fields */}
             {activeTab === "first" && (
-              <div>
+              <div className="space-y-2 sm:space-y-4">
                 {/* First Row */}
-                <div className="flex space-x-2">
-                  <div className="w-1/4">
+                <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       required={true}
                       label="Logo"
@@ -145,9 +145,10 @@ const IPOsAdminPanel = ({
                       placeholder="Upload company logo"
                       value={formData.logo}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       required={true}
                       label="IPO Name"
@@ -155,11 +156,12 @@ const IPOsAdminPanel = ({
                       placeholder="Enter IPO name"
                       value={formData.name}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <label
-                      className="block dark:text-white text-black text-xs mb-2"
+                      className="block dark:text-white text-black text-[10px] sm:text-xs mb-1 sm:mb-2"
                       htmlFor="category"
                     >
                       Category <span className="text-red-500 ml-1">*</span>
@@ -169,7 +171,7 @@ const IPOsAdminPanel = ({
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="shadow appearance-none text-sm border rounded w-full py-1 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none text-xs sm:text-sm border rounded w-full py-1 px-2 sm:px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     >
                       <option value="" disabled>
                         Select category
@@ -179,8 +181,8 @@ const IPOsAdminPanel = ({
                       <option value="PAST">Past</option>
                     </select>
                   </div>
-                  <div className="w-1/4">
-                    <label className="block dark:text-white text-black text-xs mb-2">
+                  <div className="w-full sm:w-1/4">
+                    <label className="block dark:text-white text-black text-[10px] sm:text-xs mb-1 sm:mb-2">
                       Exchange Type <span className="text-red-500 ml-1">*</span>
                     </label>
                     <select
@@ -188,7 +190,7 @@ const IPOsAdminPanel = ({
                       name="exchangeType"
                       value={formData.exchangeType}
                       onChange={handleChange}
-                      className="shadow text-sm appearance-none border rounded w-full py-1 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow text-xs sm:text-sm appearance-none border rounded w-full py-1 px-2 sm:px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     >
                       <option value="" disabled>
                         Select type
@@ -201,8 +203,8 @@ const IPOsAdminPanel = ({
                 </div>
 
                 {/* Second Row */}
-                <div className="flex space-x-2">
-                  <div className="w-1/4">
+                <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="Company Name"
                       name="company"
@@ -210,104 +212,115 @@ const IPOsAdminPanel = ({
                       value={formData.company}
                       onChange={handleChange}
                       required={true}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="Listing Date"
                       name="listingDate"
                       type="date"
                       value={formData.listingDate}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="IPO Start Date"
                       name="ipoStartDate"
                       type="date"
                       value={formData.ipoStartDate}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="IPO End Date"
                       name="ipoEndDate"
                       type="date"
                       value={formData.ipoEndDate}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                 </div>
 
                 {/* Third Row */}
-                <div className="flex space-x-2">
-                  <div className="w-1/4">
+                <div className="grid grid-cols-2 sm:flex sm:flex-row gap-2 sm:space-x-2">
+                  <div className="w-full sm:w-1/4">
                     <Input
-                      label="Sentiment Score"
+                      label="Sentiment"
                       name="sentimentScore"
-                      placeholder="Enter sentiment score"
+                      placeholder="Enter sentiment"
                       value={formData.sentimentScore}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="Decision Rate"
                       name="decisionRate"
                       placeholder="Enter decision rate"
                       value={formData.decisionRate}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
-                      label="Price Start Range"
+                      label="Start Range"
                       name="priceStartRange"
-                      placeholder="Enter price start range"
+                      placeholder="Enter start range"
                       value={formData.priceStartRange}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
-                      label="Price End Range"
+                      label="End Range"
                       name="priceEndRange"
-                      placeholder="Enter price end range"
+                      placeholder="Enter end range"
                       value={formData.priceEndRange}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                 </div>
 
                 {/* Fourth Row */}
-                <div className="flex space-x-2">
-                  <div className="w-1/4">
+                <div className="grid grid-cols-2 sm:flex sm:flex-row gap-2 sm:space-x-2">
+                  <div className="w-full sm:w-1/4">
                     <Input
-                      label="Basis of Allotment"
+                      label="Allotment"
                       name="basisOfAllotment"
                       type="date"
                       value={formData.basisOfAllotment}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
-                      label="Initiation of Refunds"
+                      label="Refunds"
                       name="initiationOfRefunds"
                       type="date"
                       value={formData.initiationOfRefunds}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="Credit Shares"
                       name="creditShares"
                       type="date"
                       value={formData.creditShares}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                 </div>
@@ -337,9 +350,9 @@ const IPOsAdminPanel = ({
 
             {/* Second Tab - New Fields */}
             {activeTab === "second" && (
-              <div className="">
-                <div className="flex space-x-2">
-                  <div className="w-3/4">
+              <div className="space-y-2 sm:space-y-4">
+                <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+                  <div className="w-full sm:w-3/4">
                     <Input
                       label="Company Description"
                       name="companyDescription"
@@ -347,24 +360,26 @@ const IPOsAdminPanel = ({
                       value={formData.companyDescription}
                       onChange={handleChange}
                       required={true}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
-                  <div className="w-1/4">
+                  <div className="w-full sm:w-1/4">
                     <Input
                       label="Min Quantity"
                       name="minQuantity"
-                      placeholder="Enter minimum quantity"
+                      placeholder="Enter min quantity"
                       value={formData.minQuantity}
                       onChange={handleChange}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-4">
                   {/* Key Objectives Section */}
-                  <div className="mb-2">
-                    <div className="flex items-center gap-2 justify-between">
-                      <h3 className="text-xs p-1">Key Objectives</h3>
+                  <div>
+                    <div className="flex items-center gap-2 justify-between mb-2">
+                      <h3 className="text-[10px] sm:text-xs p-1">Key Objectives</h3>
                       <button
                         type="button"
                         onClick={handleAddKeyObjective}
@@ -377,7 +392,7 @@ const IPOsAdminPanel = ({
                     {keyObjectives.map((objective, index) => (
                       <div
                         key={index}
-                        className="flex space-x-2 items-baseline"
+                        className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-baseline mb-2"
                       >
                         <div className="flex-1">
                           <Input
@@ -410,9 +425,9 @@ const IPOsAdminPanel = ({
                   </div>
 
                   {/* Advantages Section */}
-                  <div className="mb-2">
-                    <div className="flex items-center gap-2 justify-between">
-                      <h3 className="text-xs p-1">Advantages</h3>
+                  <div>
+                    <div className="flex items-center gap-2 justify-between mb-2">
+                      <h3 className="text-[10px] sm:text-xs p-1">Advantages</h3>
                       <button
                         type="button"
                         onClick={handleAddAdvantage}
@@ -425,7 +440,7 @@ const IPOsAdminPanel = ({
                     {advantages.map((advantage, index) => (
                       <div
                         key={index}
-                        className="flex space-x-2 items-baseline"
+                        className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-baseline mb-2"
                       >
                         <div className="flex-1">
                           <Input
@@ -458,9 +473,9 @@ const IPOsAdminPanel = ({
                   </div>
 
                   {/* Disadvantages Section */}
-                  <div className="">
-                    <div className="flex items-center gap-2 justify-between">
-                      <h3 className="text-xs p-1">Disadvantages</h3>
+                  <div>
+                    <div className="flex items-center gap-2 justify-between mb-2">
+                      <h3 className="text-[10px] sm:text-xs p-1">Disadvantages</h3>
                       <button
                         type="button"
                         onClick={handleAddDisadvantage}
@@ -473,7 +488,7 @@ const IPOsAdminPanel = ({
                     {disadvantages.map((disadvantage, index) => (
                       <div
                         key={index}
-                        className="flex space-x-2 items-baseline"
+                        className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 items-baseline mb-2"
                       >
                         <div className="flex-1">
                           <Input

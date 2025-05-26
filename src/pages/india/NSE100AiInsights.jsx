@@ -330,14 +330,14 @@ function NSE100AiInsights() {
           <h1 className="font-semibold text-xl mb-4 lg:mb-0 lg:mr-4">
             NSE 100 AI Insights
           </h1>
-          <div>
+          <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
             <input
               type="text"
               name="roiFilter"
               value={roiFilter}
               onChange={handleFilterChange}
               placeholder="Filter by ROI"
-              className="border p-1 rounded text-black"
+              className="border p-1 rounded text-black w-full sm:w-auto"
             />
             <input
               type="text"
@@ -345,38 +345,37 @@ function NSE100AiInsights() {
               value={companyFilter}
               onChange={handleFilterChange}
               placeholder="Filter by Company"
-              className="border p-1 rounded ml-2 text-black"
+              className="border p-1 rounded text-black w-full sm:w-auto"
             />
           </div>
-          <div className="flex items-center">
+          <div className="flex mt-5 sm:mt-5 items-center">
             <div className="mr-2 flex items-center">
               <h1 className="text-sm font-bold">At Close : &nbsp;</h1>
               <p className="text-xs font-semibold">{lastUpdated}</p>
             </div>
-            <div class="relative group">
+            <div className="relative group">
               <button
                 onClick={downloadExcel}
-                class="px-2 py-1 rounded-lg border border-gray-500"
+                className="px-2 py-1 rounded-lg border border-gray-500"
               >
                 <img
-                  class="h-6 w-6"
+                  className="h-6 w-6"
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
                   alt="Download excel"
                 />
               </button>
-              <span class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Download excel
               </span>
             </div>
           </div>
         </div>
-
-        <div className="p-4 flex news-table h-[80vh] overflow-scroll rounded-2xl">
-          {/* First Table */}
-          <div className="lg:max-w-[88%] max-w-[75%]">
-            <div className="overflow-x-auto">
-              <table className="table-auto w-full bg-transparent">
+        <div className="p-2 sm:p-4 flex news-table h-[80vh] overflow-y-auto overflow-x-hidden rounded-2xl scrollbar-hide">
+  {/* First Table */}
+  <div className="lg:max-w-[88%] max-w-[75%]">
+    <div className="overflow-x-auto scrollbar-hide">
+      <table className="table-auto w-full bg-transparent">
                 {/* Table header */}
                 <thead>
                   <tr>
@@ -385,48 +384,42 @@ function NSE100AiInsights() {
                         index !== 4 && (
                           <th
                             key={index}
-                            className="w-full py-3 px-2 text-left text-xs font-medium tracking-wider cursor-pointer"
+                            className="w-full py-1 sm:py-3 px-1 sm:px-2 text-left text-[10px] sm:text-xs font-medium tracking-wider cursor-pointer"
                             onClick={
                               column.split(" ")[0] === "ROI"
                                 ? handleSort
                                 : undefined
                             }
                           >
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                width: "max-content",
-                              }}
-                            >
+                            <div className="flex items-center w-max">
                               {column.split(" ")[0]}
                               {column.split(" ")[0] === "ROI" && (
-                                <span className="ml-1">
+                                <span className="ml-0.5 sm:ml-1">
                                   {sortOrder === "desc" ? (
                                     <svg
                                       viewBox="0 0 24 24"
-                                      width="16"
-                                      height="16"
+                                      width="12"
+                                      height="12"
+                                      className="sm:w-4 sm:h-4"
                                       stroke="currentColor"
                                       strokeWidth="2"
                                       fill="none"
                                       strokeLinecap="round"
                                       strokeLinejoin="round"
-                                      className="mx-2"
                                     >
                                       <polyline points="18 15 12 9 6 15"></polyline>
                                     </svg>
                                   ) : (
                                     <svg
                                       viewBox="0 0 24 24"
-                                      width="16"
-                                      height="16"
+                                      width="12"
+                                      height="12"
+                                      className="sm:w-4 sm:h-4"
                                       stroke="currentColor"
                                       strokeWidth="2"
                                       fill="none"
                                       strokeLinecap="round"
                                       strokeLinejoin="round"
-                                      className="mx-2"
                                     >
                                       <polyline points="6 9 12 15 18 9"></polyline>
                                     </svg>
@@ -449,7 +442,7 @@ function NSE100AiInsights() {
                             colIndex !== 4 && (
                               <td
                                 key={colIndex}
-                                className={`h-20 w-full min-w-24 capitalize px-2 whitespace-nowrap ${
+                                className={`h-12 sm:h-20 w-full min-w-16 sm:min-w-24 capitalize px-1 sm:px-2 text-[10px] sm:text-sm whitespace-nowrap ${
                                   colIndex === 1
                                     ? "text-[#4882F3]"
                                     : colIndex === 2
@@ -471,7 +464,7 @@ function NSE100AiInsights() {
                     <tr>
                       <td
                         colSpan={Object.keys(data[0] || {}).length}
-                        className="text-center py-10"
+                        className="text-center py-4 sm:py-10"
                       >
                         <NotAvailable dynamicText="No data to display." />
                       </td>
@@ -481,38 +474,31 @@ function NSE100AiInsights() {
               </table>
             </div>
           </div>
+
+          {/* Second Table */}
           <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
-            {/* Second Table */}
-            <div className="overflow-x-auto">
-              <div className="overflow-y-auto h-full">
-                <table className="table-auto border-collapse w-full bg-transparent">
-                  {/* Table header */}
+    <div className="overflow-x-auto scrollbar-hide">
+      <div className="overflow-y-auto h-full scrollbar-hide">
+        <table className="table-auto border-collapse w-full bg-transparent">
                   <thead>
                     <tr>
                       {decision.map((column, index) => (
                         <th
                           key={index}
-                          className="w-full py-3 px-2 text-left text-xs font-medium tracking-wider cursor-pointer"
+                          className="w-full py-1 sm:py-3 px-1 sm:px-2 text-left text-[10px] sm:text-xs font-medium tracking-wider cursor-pointer"
                           onClick={column === "ROI" ? handleSort : undefined}
                         >
                           {column.split(" ")[0]}
-                          {column === "ROI" && (
-                            <span className="ml-1">
-                              {sortOrder === "desc" ? "▼" : "▲"}
-                            </span>
-                          )}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  {/* Table body */}
                   <tbody>
                     {filteredData.map((row, rowIndex) => (
                       <tr key={rowIndex}>
                         {decision.map((column, colIndex) => {
-                          if (column !== "ReinforcedDecision") return null; // Only render this column
-
-                          const cellValue = row[column] || ""; // Default to empty string to prevent errors
+                          if (column !== "ReinforcedDecision") return null;
+                          const cellValue = row[column] || "";
                           const isSell =
                             typeof cellValue === "string" &&
                             cellValue.toLowerCase() === "sell";
@@ -523,12 +509,12 @@ function NSE100AiInsights() {
                           return (
                             <td
                               key={colIndex}
-                              className="h-20 capitalize px-2 text-center whitespace-nowrap"
+                              className="h-12 sm:h-20 capitalize px-1 sm:px-2 text-center whitespace-nowrap"
                             >
                               {isBuy && (
                                 <button
                                   onClick={() => handleBuy(row)}
-                                  className="text-xs font-semibold font[poppins] px-2 py-1 rounded-xl text-center border border-[#0EBC34] bg-[#0EBC34] text-[#FFFFFF] dark:border-[#14AE5C] dark:bg-[#14AE5C1A] dark:text-[#7EF36B]"
+                                  className="text-[10px] sm:text-xs font-semibold font[poppins] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-center border border-[#0EBC34] bg-[#0EBC34] text-[#FFFFFF] dark:border-[#14AE5C] dark:bg-[#14AE5C1A] dark:text-[#7EF36B]"
                                 >
                                   Buy
                                 </button>
@@ -536,7 +522,7 @@ function NSE100AiInsights() {
                               {isSell && (
                                 <button
                                   onClick={() => handleSell(row)}
-                                  className="text-xs font-semibold font[poppins] px-2 py-1 rounded-xl text-center border border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
+                                  className="text-[10px] sm:text-xs font-semibold font[poppins] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-center border border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
                                 >
                                   Sell
                                 </button>
