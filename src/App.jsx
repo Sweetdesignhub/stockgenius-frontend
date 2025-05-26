@@ -167,7 +167,7 @@ function MainApp() {
               <Route path="group" element={<GroupTab />} />
             </Route>
             <Route path="/quiz/module/:moduleId" element={<QuizPage />} />
-            <Route path="/sgai-tool" element={<SGAITool />} />
+            <Route path="/backtesting-tool" element={<SGAITool />} />
             {/* sgai-tool */}
             {/* India routes */}
             <Route path="/india/dashboard" element={<IndiaDashboard />} />
