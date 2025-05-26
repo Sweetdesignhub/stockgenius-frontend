@@ -173,7 +173,7 @@ function BankNifty() {
       "Quantity:",
       quantity
     );
-
+    console.log("Hitting Fyers", fyersAccessToken);
     let apiUrl = "";
     let requestBody = {};
 

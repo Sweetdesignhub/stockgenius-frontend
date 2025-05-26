@@ -131,6 +131,7 @@ const IndiaDashboard = () => {
 
     let apiUrl = "";
     let requestBody = {};
+    console.log("Hitting Fyers", fyersAccessToken);
 
     // Build request based on selected broker
     if (fyersAccessToken) {

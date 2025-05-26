@@ -104,6 +104,7 @@ function UsaDashboard() {
       "Quantity:",
       quantity
     );
+    console.log("Hitting Fyers", fyersAccessToken);
     setModalOpen(false);
   };
 
