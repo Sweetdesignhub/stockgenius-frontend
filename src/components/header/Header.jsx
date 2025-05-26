@@ -126,7 +126,7 @@ export default function Header() {
         icon: RiFilePaper2Fill,
       },
       { name: "Paper Trading", to: `/india/paper-trading`, icon: FaListAlt },
-      { name: "SGAI Tool", to: `/sgai-tool`, icon: BsTools },
+      { name: "Backtesting Tool", to: `/backtesting-tool`, icon: BsTools },
     ];
   } else if (region === "usa") {
     navigation = [
@@ -134,7 +134,7 @@ export default function Header() {
       { name: "Stock Lists", to: `/usa/stock-lists`, icon: FaNewspaper },
       { name: "Portfolio", to: `/usa/portfolio`, icon: FaBagShopping },
       { name: "Paper Trading", to: `/usa/paper-trading`, icon: FaListAlt },
-      { name: "SGAI Tool", to: `/sgai-tool`, icon: BsTools },
+      { name: "Backtesting Tool", to: `/backtesting-tool`, icon: BsTools },
     ];
   }
 
