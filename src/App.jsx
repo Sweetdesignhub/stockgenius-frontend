@@ -155,6 +155,7 @@ function MainApp() {
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="complete-profile" element={<CompleteProfile />} />
           </Route>
 
           {/* Public route */}
@@ -162,7 +163,6 @@ function MainApp() {
 
           {/* Protected routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="complete-profile" element={<CompleteProfile />} />
             {/* common route */}
 
             <Route path="/e-learning" element={<ELearning />}>
