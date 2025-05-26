@@ -6,9 +6,10 @@ import React, {
   useCallback,
 } from "react";
 import { useSelector } from "react-redux";
-import api, { paperTradeApi } from "../config";
+import api, { paperTradeApi, paperTradeSocket } from "../config";
 
 const PaperTradingContext = createContext();
+
 
 export function PaperTradingProvider({ children }) {
   const [funds, setFunds] = useState({});
@@ -26,6 +27,28 @@ export function PaperTradingProvider({ children }) {
   const [investedAmount, setInvestedAmount] = useState(0);
 
   const { currentUser } = useSelector((state) => state.user);
+
+
+  useEffect(() => {
+  if (!currentUser?.id) return;
+
+  // ✅ Listener for real-time price updates
+    const handleStockUpdate = (data) => {
+    console.log("Getting the Update: ", data);
+    const { ticker, price } = data;
+    setRealtimePrices((prevPrices) => ({
+      ...prevPrices,
+      [ticker]: price,
+    }));
+  };
+
+  paperTradeSocket.on("stock-update", handleStockUpdate);
+
+  return () => {
+    paperTradeSocket.off("stock-update", handleStockUpdate);
+  };
+}, [currentUser?.id]);
+
 
   // ✅ Fetch Real-time Prices for Stocks
   const fetchRealtimePrices = useCallback(async (symbols) => {
@@ -142,8 +165,10 @@ export function PaperTradingProvider({ children }) {
       const uniqueSymbols = [...new Set([...positionSymbols, ...holdingSymbols])];
   
       if (uniqueSymbols.length > 0) {
-        const prices = await fetchRealtimePrices(uniqueSymbols);
-        calculateProfits(prices, positionsArray, holdingsArray);
+        // const prices = await fetchRealtimePrices(uniqueSymbols);
+        // calculateProfits(prices, positionsArray, holdingsArray);
+        calculateProfits(realtimePrices, positionsArray, holdingsArray);
+
       } else {
         calculateProfits({}, positionsArray, holdingsArray);
       }

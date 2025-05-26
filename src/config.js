@@ -1,4 +1,5 @@
 import axios from "axios";
+import { io } from "socket.io-client";
 
 // Define backend URLs based on environment
 export const BACKEND_URL =
@@ -21,6 +22,13 @@ const api = axios.create({
   baseURL: BACKEND_URL,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
+});
+
+
+// Initialize socket connection
+const paperTradeSocket = io(PAPER_TRADE_URL, {
+  transports: ["websocket", "polling"], // Optional: makes fallback explicit
+  withCredentials: false, // No auth token needed
 });
 
 // Create Axios instance for paper trading (India)
@@ -155,4 +163,4 @@ addAuthInterceptor(paperTradeUsaApi);
 
 // Export all instances
 export default api;
-export { paperTradeApi, paperTradeUsaApi };
+export { paperTradeApi, paperTradeUsaApi, paperTradeSocket };
