@@ -125,7 +125,7 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
                   key={`${columnName}-${index}`}                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
                     }`}
                 >
-                  {columnName === "pl" 
+                  {columnName === "pl" || columnName === "marketVal"
                     ? Number(holding[columnName]).toFixed(2)
                     : holding[columnName] || ""}
                 </td>

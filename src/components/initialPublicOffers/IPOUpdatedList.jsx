@@ -41,10 +41,8 @@ function IPOUpdatedList({
 
   const renderCell = useCallback(
     (columnName, ipo, isEditing) => {
-      const value = isEditing ? editableValues[columnName] : ipo[columnName];
-
-      if (columnName === "logo") {
-        return <img src={value} alt="Company Logo" className="w-12 h-10" />;
+      const value = isEditing ? editableValues[columnName] : ipo[columnName];      if (columnName === "logo") {
+        return <img src={value} alt="Company Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />;
       } else if (
         columnName === "sentimentScore" &&
         typeof value === "object" &&
@@ -307,25 +305,24 @@ function IPOUpdatedList({
   }
 
   return (
-    <div>
-      <div className="pb-3 px-6 border-collapse border-b  dark:border-[#FFFFFF1A] flex justify-between">
-        <h1 className="dark:text-[#FFFFFF] font-[poppins] font-semibold text-lg">
+    <div>      <div className="pb-2 sm:pb-3 px-3 sm:px-6 border-collapse border-b dark:border-[#FFFFFF1A] flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+        <h1 className="dark:text-[#FFFFFF] font-[poppins] font-semibold text-base sm:text-lg">
           IPOs Updated List
         </h1>
         <button
           onClick={() => setIsRecommendedView(!isRecommendedView)}
-          className="text-[#FFFFFF]  text-lg bg-[#3A6FF8] px-5 rounded-lg cursor-pointer"
+          className="text-[#FFFFFF] text-sm sm:text-base bg-[#3A6FF8] px-3 sm:px-5 py-1 rounded-lg cursor-pointer w-full sm:w-auto"
         >
           {isRecommendedView ? "IPO Data" : "Recommended IPOs"}
         </button>
       </div>
 
       {isRecommendedView ? (
-        <div className="overflow-scroll max-h-64 py-1">
+        <div className="overflow-scroll max-h-64 py-1 px-3 sm:px-0 scrollbar-hide">
           {ipoRecommendedData.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {ipoRecommendedData.map((card, index) => (
-                <div className="flex-shrink-0 w-[calc(20%-8px)]" key={index}>
+                <div className="flex-shrink-0 w-full sm:w-[calc(50%-8px)] md:w-[calc(33.33%-8px)] lg:w-[calc(25%-8px)] xl:w-[calc(20%-8px)]" key={index}>
                   <SuggestionCard
                     cardId={card._id}
                     logo={card.logo}
@@ -340,16 +337,15 @@ function IPOUpdatedList({
               ))}
             </div>
           ) : (
-            <div className="text-center w-96 p-4 text-gray-500">
+            <div className="text-center p-4 text-gray-500">
               No suggestion available.
             </div>
           )}
         </div>
-      ) : (
-        <div className="overflow-scroll max-h-64 py-1">
+      ): (        <div className="overflow-auto max-h-64 py-1 scrollbar-hide">
           {editableIpo ? (
             <div className="py-2 px-6 rounded-lg">
-              <form className="overflow-scroll max-h-56 w-full">
+              <form className="overflow-scroll scrollbar-hide max-h-56 w-full scrollbar-hide">
                 {/* Company Name */}
                 <div className="mb-4">
                   <h1 className="text-xl font-semibold uppercase">
@@ -555,17 +551,16 @@ function IPOUpdatedList({
                 <MdKeyboardArrowRight size={25} className="rotate-180" />
               </button>
             </div>
-          ) : (
-            <div className="flex">
+          ) : (            <div className="flex">
               {/* Main Table for Data */}
-              <div className="w-[88%] overflow-scroll">
-                <table className="w-full">
+              <div className="w-[88%] overflow-x-auto scrollbar-hide">
+                <table className="w-full min-w-[640px]">
                   <thead>
                     <tr>
                       {columns.map((columnName, index) => (
                         <th
                           key={columnName}
-                          className="px-4 capitalize whitespace-nowrap py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
+                          className="px-2 sm:px-4 capitalize whitespace-nowrap py-2 font-[poppins] text-xs sm:text-sm font-normal dark:text-[#FFFFFF99] text-left"
                         >
                           {columnName}
                         </th>
@@ -616,9 +611,7 @@ function IPOUpdatedList({
                     )}
                   </tbody>
                 </table>
-              </div>
-
-              {/* Actions Column */}
+              </div>              {/* Actions Column */}
               <div className="w-[12%] sticky right-0">
                 <table className="w-full border-collapse border-t pb-3 border-[#FFFFFF1A]">
                   <thead>
@@ -631,8 +624,7 @@ function IPOUpdatedList({
                   <tbody>
                     {ipoData.length > 0 ? (
                       ipoData.map((ipo, index) => (
-                        <tr key={index}>
-                          <td className="px-4 h-12 py-1 text-sm font-semibold flex justify-between items-center gap-3">
+                        <tr key={index}>                          <td className="px-4 h-12 py-1 text-sm font-semibold flex justify-between items-center gap-3">
                             <div className="flex items-center">
                               <button
                                 onClick={() => handleEditClickTable(ipo)}

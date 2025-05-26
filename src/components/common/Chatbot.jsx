@@ -107,7 +107,7 @@ const ChatbotComponent = () => {
   // usersId = auth?.currentUser?.id;
 
   // const chatbotConfig = config(usersId);
-  console.log("Inside Chatbot");
+  // console.log("Inside Chatbot");
   const [isOpen, setIsOpen] = useState(false);
   const [usersId, setUsersId] = useState("");
 

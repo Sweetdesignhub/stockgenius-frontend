@@ -166,7 +166,7 @@ function AiDrivenListUsa() {
   };
 
   const handleModalSubmit = (orderData) => {
-    console.log("Order placed:", orderData);
+    // console.log("Order placed:", orderData);
     setModalOpen(false);
   };
 

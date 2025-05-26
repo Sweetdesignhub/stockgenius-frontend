@@ -17,7 +17,7 @@ const MotilalOswalButton = ({
 
   useEffect(() => {
     setTimeout(() => {
-      console.log("MotilalOswalButton component mounted");
+      // console.log("MotilalOswalButton component mounted");
       setLoading(false);
     }, 2000);
   }, []);
@@ -58,15 +58,15 @@ const MotilalOswalButton = ({
     buttonId,
   ]);
 
-  console.log("Received props:", {
-    apiKey,
-    symbol,
-    product,
-    quantity,
-    price,
-    orderType,
-    transactionType,
-  });
+  // console.log("Received props:", {
+  //   apiKey,
+  //   symbol,
+  //   product,
+  //   quantity,
+  //   price,
+  //   orderType,
+  //   transactionType,
+  // });
 
   const buttonStyle =
     transactionType === "BUY"

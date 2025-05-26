@@ -72,7 +72,7 @@ function LearningTab() {
              "0px 30px 60px rgba(0, 0, 0, 0.4), 0px 15px 30px rgba(0, 0, 0, 0.2), 0px 0px 100px 0px #FFD9A640 inset",
          }}
        >
-         <h1 className="text-white text-2xl font-semibold">
+         <h1 className="text-heading text-white text-2xl font-semibold">
            Learn Stocks the Fun Way – Gamified, Interactive & Real!
          </h1>
          <p className="text-md text-[#FF9A00]">

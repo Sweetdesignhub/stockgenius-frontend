@@ -186,7 +186,7 @@ const FyersButton = ({
 
   useEffect(() => {
     setTimeout(() => {
-      console.log("FyersButton component mounted");
+      // console.log("FyersButton component mounted");
       setLoading(false);
     }, 2000);
   }, []);
@@ -227,15 +227,15 @@ const FyersButton = ({
     buttonId,
   ]);
 
-  console.log("Received props:", {
-    apiKey,
-    symbol,
-    product,
-    quantity,
-    price,
-    orderType,
-    transactionType,
-  });
+  // console.log("Received props:", {
+  //   apiKey,
+  //   symbol,
+  //   product,
+  //   quantity,
+  //   price,
+  //   orderType,
+  //   transactionType,
+  // });
 
   const buttonStyle =
     transactionType === "BUY"

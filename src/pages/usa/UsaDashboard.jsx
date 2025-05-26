@@ -68,11 +68,11 @@ function UsaDashboard() {
 
   // Handle buy and sell actions
   const handleBuy = (row) => {
-    console.log("buy", row);
+    // console.log("buy", row);
   };
 
   const handleSell = (row) => {
-    console.log("sell", row);
+    // console.log("sell", row);
   };
 
   // Close modal
@@ -98,12 +98,12 @@ function UsaDashboard() {
 
   // Handle confirm action in the modal
   const handleConfirm = () => {
-    console.log(
-      `${actionType} button confirmed for row:`,
-      selectedRow,
-      "Quantity:",
-      quantity
-    );
+    // console.log(
+    //   `${actionType} button confirmed for row:`,
+    //   selectedRow,
+    //   "Quantity:",
+    //   quantity
+    // );
     setModalOpen(false);
   };
 

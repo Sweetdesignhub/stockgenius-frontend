@@ -295,10 +295,10 @@ const ModuleDetails = () => {
       >
         {/* Module Info */}
         <div className="flex-1 min-w-0">
-          <h2 className="text-sm sm:text-md text-white font-[poppins] truncate">
+          <h2 className="module-title text-sm sm:text-md text-white font-[poppins] truncate">
             {module.title}
           </h2>
-          <p className="text-xs sm:text-md text-white font-[poppins] truncate">
+          <p className="module-description text-xs sm:text-md text-white font-[poppins] truncate">
             {module.description}
           </p>
         </div>

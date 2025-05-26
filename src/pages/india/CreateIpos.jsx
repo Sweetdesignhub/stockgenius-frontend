@@ -1,16 +1,3 @@
-/**
- * File: CreateIpos
- * Description: This component is part of the IPO management section of the platform. It allows users to create new IPOs by filling out a form with various IPO-related details such as name, category, start and end dates, price range, company information, and more.
- * The form is divided into two tabs, with the first tab collecting general IPO details and the second tab gathering additional information about the IPO's objectives, advantages, and disadvantages.
- *
- * Developed by: Arshdeep Singh
- * Developed on: 2024-11-14
- *
- * Updated by: [Name]
- * Updated on: [Update date]
- * - Update description: Brief description of what was updated or fixed
- */
-
 import React, { useEffect, useState } from "react";
 import RecommendationIPOs from "../../components/initialPublicOffers/RecommendationIPOs";
 import IPOsAdminPanel from "../../components/initialPublicOffers/IPOsAdminPanel";
@@ -51,8 +38,6 @@ function CreateIpos() {
     disadvantages: [{ title: "", description: "" }],
   });
 
-  // console.log(formData);
-
   const [activeTab, setActiveTab] = useState("first");
   const { theme } = useTheme();
 
@@ -72,7 +57,6 @@ function CreateIpos() {
   const containerStyle =
     theme === "dark" ? darkThemeStyle : { backgroundColor: "#FFFFFF" };
 
-  // Handle field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -121,16 +105,6 @@ function CreateIpos() {
       "category",
       "exchangeType",
       "company",
-      // "listingDate",
-      // "ipoStartDate",
-      // "ipoEndDate",
-      // "sentimentScore",
-      // "decisionRate",
-      // "priceStartRange",
-      // "priceEndRange",
-      // "basisOfAllotment",
-      // "initiationOfRefunds",
-      // "creditShares",
     ];
     return requiredFields.every((field) => formData[field]);
   };
@@ -203,14 +177,13 @@ function CreateIpos() {
     if (!formData.userId) {
       setFormData((prevData) => ({ ...prevData, userId: currentUser?.id }));
     }
-
     try {
       const response = await api.post(
         `/api/v1/IPOs/create-ipo/${currentUser.id}`,
         formData
       );
 
-      console.log("Form submitted successfully:", response.data);
+      // console.log("Form submitted successfully:", response.data);
       setStatusMessage({ type: "success", text: "IPO created successfully!" });
       // Optionally reset formData after successful submission
       setFormData({
@@ -236,9 +209,7 @@ function CreateIpos() {
         advantages: [{ title: "", description: "" }],
         disadvantages: [{ title: "", description: "" }],
       });
-
       setActiveTab("first");
-
       fetchData();
     } catch (error) {
       setStatusMessage({
@@ -250,27 +221,30 @@ function CreateIpos() {
   };
 
   return (
-    <div className="min-h-screen lg:px-32 px-4 py-6 relative">
+    <div className="min-h-screen px-2 sm:px-4 lg:px-32 py-2 sm:py-4 lg:py-6 relative">
+      {/* Background images with responsive positioning */}
       <img
         loading="lazy"
-        className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"
+        className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0 w-1/4 md:w-auto hidden md:block"
         src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F6e45c8cb7d324c3fba73ef975dbfec87"
         alt="bull"
       />
       <img
         loading="lazy"
-        className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0"
+        className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0 w-1/4 md:w-auto hidden md:block"
         src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F4fb1f7b4c9434cd8ab2b4f76469e60ab"
         alt="bear"
       />
 
+      {/* Main content container */}
       <div
         className={`${
           theme === "dark" ? "news-table" : "bg-[#F2F5FF]"
-        } min-h-[86vh] max-h-[86vh] p-4 rounded-2xl`}
+        } min-h-[calc(100vh-2rem)] p-2 sm:p-3 md:p-4 rounded-xl md:rounded-2xl flex flex-col`}
       >
-        <div className="flex gap-4 h-[40%] mb-6">
-          <div className="w-3/4 overflow-scroll">
+        {/* Responsive layout for admin panel and recommendations */}
+        <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 mb-2 sm:mb-4 lg:mb-6">
+          <div className="w-full lg:w-3/4">
             <IPOsAdminPanel
               statusMessage={statusMessage}
               formData={formData}
@@ -280,17 +254,18 @@ function CreateIpos() {
               handleNext={handleNext}
               handleBack={handleBack}
               handleSubmit={handleSubmit}
-              isNextDisabled={!isFirstTabComplete()} // Disable Next if first tab is incomplete
+              isNextDisabled={!isFirstTabComplete()}
             />
           </div>
-          <div className="w-1/4">
+          <div className="w-full lg:w-1/4 mt-2 lg:mt-0">
             <RecommendationIPOs />
           </div>
         </div>
 
+        {/* IPO Updated List Table */}
         <div
           style={containerStyle}
-          className="h-[60%] min-h-80 max-h-80 rounded-lg p-2"
+          className="flex-1 rounded-lg p-1 sm:p-2 lg:p-4 overflow-hidden"
         >
           <IPOUpdatedList
             setIpoRecommendedData={setIpoRecommendedData}

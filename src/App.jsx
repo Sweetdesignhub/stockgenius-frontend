@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate, Outlet, useNavigate } from "react-router-dom";
 import "./App.css";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute.jsx";
@@ -47,6 +47,20 @@ import TrophyTab from "./pages/eLearning/TrophyTab.jsx";
 import LibraryTab from "./pages/eLearning/LibraryTab.jsx";
 import GroupTab from "./pages/eLearning/GroupTab.jsx";
 import SGAITool from "./pages/SGAITool";
+
+// Add AuthRoute at the top of the file after other imports
+const AuthRoute = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  if (currentUser) {
+    const region = localStorage.getItem('region') || 'india';
+    return <Navigate to={`/${region}/dashboard`} replace state={{ from: location }} />;
+  }
+
+  return <Outlet />;
+};
 
 function MainApp() {
   // console.log("Azure Storage Account Name:", import.meta.env.VITE_AZURE_STORAGE_ACCOUNT_NAME);
@@ -146,12 +160,19 @@ function MainApp() {
       {!shouldHideHeader && <Header />}
       <div className="flex-grow">
         <Routes>
+          {/* Auth routes - these should be first to ensure they take precedence */}
+          <Route element={<AuthRoute />}>
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="complete-profile" element={<CompleteProfile />} />
+          </Route>
+
+          {/* Public route */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="complete-profile" element={<CompleteProfile />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+          {/* Protected routes */}
           <Route element={<PrivateRoute />}>
             {/* common route */}
 

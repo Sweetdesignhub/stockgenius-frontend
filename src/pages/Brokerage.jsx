@@ -8,7 +8,7 @@ const Brokerage = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [brokerDetails, setBrokerDetails] = useState(null);
 
-  console.log(brokerDetails);
+  // console.log(brokerDetails);
 
   useEffect(() => {
     if (currentUser) {
@@ -44,11 +44,11 @@ const Brokerage = () => {
   // };
 
   const handleDelete = async (id) => {
-    console.log("hanlde delete");
+    // console.log("hanlde delete");
   };
 
   const handleConnect = async () => {
-    console.log("clicked handle click");
+    // console.log("clicked handle click");
   };
 
   return (

@@ -125,7 +125,11 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
                   {columnName === "equityAmount" && 
                    (fund.title === "Available Balance" || 
                     fund.title === "Receivables" || 
-                    fund.title === "Utilized Amount")
+                    fund.title === "Utilized Amount"||
+                  fund.title === "Total Balance" ||
+                fund.title === "Clear Balance"||
+              fund.title === "Realized Profit and Loss"||
+            fund.title === "Utilized Amount")
                     ? Number(fund[columnName]).toFixed(2)
                     : fund[columnName]}
                 </td>

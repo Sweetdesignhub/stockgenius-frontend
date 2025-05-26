@@ -143,85 +143,90 @@ function InitialPublicOffers() {
           <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-start lg:gap-4">
             {/* Left Side (100% for mobile, 45% for desktop) */}
             <div className="w-full lg:w-[45%]">
-              <div className="flex justify-between items-center border-b border-[#FFFFFF1A] pb-4">
-                <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4">
-                  Initial Public Offers (IPOs)
-                </h1>
+              <div className="flex flex-col sm:flex-row items-center justify-between border-b border-[#FFFFFF1A] pb-2 sm:pb-4">
+  <h1 className="font-semibold text-base sm:text-lg mb-2 sm:mb-0">
+    Initial Public Offers (IPOs)
+  </h1>
 
-                <div className="flex ">
-                  {currentUser.isAdmin && currentUser.role === "admin" && (
-                    <Link to={"/india/admin-create-ipos"} className="mr-3">
-                      <button className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                        Create Ipos [Admin]
-                      </button>
-                    </Link>
-                  )}
+  <div className="flex items-center space-x-2">
+    {currentUser.isAdmin && currentUser.role === "admin" && (
+      <Link to={"/india/admin-create-ipos"} className="flex-shrink-0">
+          <button className="inline-flex justify-center items-center gap-x-1 rounded-lg sm:rounded-xl bg-white px-3 py-1 text-xs sm:text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+            <span className="whitespace-nowrap">Create Ipos [Admin]</span>
+          </button>
+        </Link>
+    )}
 
-                  {/* Dropdown Menu */}
-                  <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-xl bg-white px-3 py-1 text-sm font-semibold text-[#3A6FF8] shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                        {selectedOption}
-                        <ChevronDownIcon
-                          aria-hidden="true"
-                          className="-mr-1 h-5 w-5 text-gray-400"
-                        />
-                      </MenuButton>
-                    </div>
+    {/* Dropdown Menu */}
+    <Menu as="div" className="relative">
+      <MenuButton className="inline-flex justify-center items-center gap-x-1 rounded-lg sm:rounded-xl bg-white px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium text-[#3A6FF8] shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        {selectedOption}
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+        />
+      </MenuButton>
 
-                    <MenuItems className="absolute right-0 z-10 mt-2 w-36 origin-top-right  rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
-                      <div className="py-1">
-                        {options.map((option) => (
-                          <MenuItem
-                            key={option}
-                            onClick={() => setSelectedOption(option)}
-                          >
-                            <div
-                              className={`block px-4 py-2 text-sm text-[#3A6FF8] hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
-                                selectedOption === option ? "bg-gray-100" : ""
-                              }`}
-                            >
-                              {option}
-                            </div>
-                          </MenuItem>
-                        ))}
-                      </div>
-                    </MenuItems>
-                  </Menu>
-                </div>
+      <MenuItems className="absolute right-0 z-10 mt-1 w-28 sm:w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none">
+        <div className="py-0.5 sm:py-1">
+          {options.map((option) => (
+            <MenuItem
+              key={option}
+              onClick={() => setSelectedOption(option)}
+            >
+              <div
+                className={`block px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-[#3A6FF8] hover:bg-gray-100 hover:text-gray-900 cursor-pointer ${
+                  selectedOption === option ? "bg-gray-100" : ""
+                }`}
+              >
+                {option}
               </div>
+            </MenuItem>
+          ))}
+        </div>
+      </MenuItems>
+    </Menu>
+  </div>
+</div>
 
               {/* Ongoing, Upcoming, Past Selection */}
-              <div className="flex justify-between items-center pt-4">
-                <div className="flex justify-center items-center">
-                  {categories.map((category) => (
-                    <div
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className="flex items-center mr-4 cursor-pointer"
-                    >
-                      <div
-                        className={`p-1 rounded-md ${
-                          selectedCategory === category
-                            ? "bg-blue-500"
-                            : "bg-gray-300"
-                        }`}
-                      >
-                        <BsStopwatchFill className="text-white" size={22} />
-                      </div>
-                      <h2 className="ml-2 font-[poppins]">{category}</h2>
-                    </div>
-                  ))}
-                </div>
 
-                {/* Information Icon */}
-                <div>
-                  <IoMdInformationCircle className="text-gray-500" size={30} />
-                </div>
-              </div>
+<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-2 sm:pt-4 w-full">
+  <div className="flex justify-between items-center w-full">
+    <div className="grid grid-cols-3 sm:flex sm:flex-row gap-2 sm:gap-4">
+      {categories.map((category) => (
+        <div
+          key={category}
+          onClick={() => setSelectedCategory(category)}
+          className={`flex items-center justify-center sm:justify-start cursor-pointer transition-colors duration-200 ${
+            selectedCategory === category ? 'opacity-100' : 'opacity-70 hover:opacity-100'
+          }`}
+        >
+          <div
+            className={`p-1 sm:p-1.5 rounded-md ${
+              selectedCategory === category
+                ? "bg-blue-500"
+                : "bg-gray-300"
+            }`}
+          >
+            <BsStopwatchFill className="text-white" size={12} />
+          </div>
+          <h2 className="ml-1 sm:ml-2 font-[poppins] text-[10px] sm:text-xs whitespace-nowrap">
+            {category}
+          </h2>
+        </div>
+      ))}
+    </div>
+
+    {/* Information Icon - Now visible on mobile */}
+    <div className="flex items-center ml-2 sm:ml-4">
+      <IoMdInformationCircle className="text-gray-500" size={16} />
+    </div>
+  </div>
+</div>
 
               {/* Render filtered IPO Cards */}
-              <div className="pt-4 mt-2 overflow-y-scroll overflow-x-hidden min-h-[70vh] max-h-[70vh] rounded-lg">
+              <div className="pt-4 mt-2 overflow-y-scroll scrollbar-hide overflow-x-hidden min-h-[70vh] max-h-[70vh] rounded-lg">
                 {filteredIpoData.length > 0 ? (
                   filteredIpoData.map((ipo) => (
                     <IPOCard
@@ -263,7 +268,7 @@ function InitialPublicOffers() {
 
             {/* Right Side (100% for mobile, 55% for desktop) */}
             <div className="w-full lg:w-[55%] p-1 flex flex-col h-full mt-6 lg:mt-0">
-              <div className="h-[10%] overflow-x-auto flex space-x-2 py-1">
+              <div className="h-[10%] overflow-x-auto flex space-x-2 py-1 scrollbar-hide">
                 {suggestionCardsData.length > 0 ? (
                   suggestionCardsData.map((card, index) => (
                     <div className="flex-shrink-0" key={index}>
