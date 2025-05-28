@@ -223,7 +223,7 @@ const IndiaDashboard = () => {
   const topLosersColumns = Object.keys(losersData[0] || {});
 
   return (
-    <div className="min-h-screen lg:px-32 p-4 relative">
+    <div className="min-h-fit lg:px-32 p-4 relative">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
@@ -238,7 +238,7 @@ const IndiaDashboard = () => {
       />
 
       <div className="bg-white table-main rounded-2xl">
-        <div className="py-5 px-5 flex flex-col overflow-auto rounded-2xl">
+        <div className="h-[82vh] overflow-y-auto overflow-x-hidden py-5 px-5 flex flex-col overflow-auto rounded-2xl">
           <div className="flex-1 flex flex-col lg:flex-row gap-6">
             <Table
               title="Top Gainers"

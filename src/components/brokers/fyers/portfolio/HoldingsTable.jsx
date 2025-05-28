@@ -103,14 +103,14 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
   // columnNames = ["symbol", ...columnNames.filter((col) => col !== "symbol")];
 
   return (
-    <div className="h-[55vh] overflow-auto">
+    <div className="h-[44vh] overflow-auto scrollbar-hide">
       <table className="w-full border-collapse">
         <thead>
           <tr>
             {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
-                className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
+                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm font-[poppins] font-normal dark:text-[#FFFFFF99] text-left capitalize whitespace-nowrap overflow-hidden"
               >
                 {columnName}
               </th>
@@ -122,8 +122,10 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
-                  key={`${columnName}-${index}`}                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
-                    }`}
+                  key={`${columnName}-${index}`}
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap overflow-hidden font-semibold ${
+                    columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                  }`}
                 >
                   {columnName === "pl" || columnName === "marketVal"
                     ? Number(holding[columnName]).toFixed(2)

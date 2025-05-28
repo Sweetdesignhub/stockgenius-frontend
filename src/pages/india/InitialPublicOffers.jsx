@@ -120,7 +120,7 @@ function InitialPublicOffers() {
   };
 
   return (
-    <div className="min-h-screen lg:px-32 px-4 py-6 relative">
+    <div className="min-h-fit p-4 lg:px-32 relative py-6 relative">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"

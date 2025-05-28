@@ -75,7 +75,7 @@ function LearningTab() {
          <h1 className="text-heading text-white text-2xl font-semibold">
            Learn Stocks the Fun Way – Gamified, Interactive & Real!
          </h1>
-         <p className="text-md text-[#FF9A00]">
+         <p className="text-md text-[#FF9A00] ">
            Master stock trading with step-by-step lessons, live simulations & AI-powered coaching
          </p>
        </div>

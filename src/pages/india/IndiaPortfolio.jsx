@@ -78,23 +78,25 @@ function IndiaPortfolio() {
   };
 
   return (
-    <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative">
+    <div className="relative w-full">
+      <div className="min-h-fit p-2 sm:p-4 lg:px-8 xl:px-16 2xl:px-32 relative">
+        {/* Bull image - hidden on small screens */}
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0 w-[100px] sm:w-[120px] lg:w-[165px] hidden sm:block"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
           alt="bull"
         />
+        {/* Bear image - hidden on small screens */}
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0 w-[100px] sm:w-[120px] lg:w-[160px] hidden sm:block"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
           alt="bear"
         />
-
-        <div className="bg-white min-h-[85vh] news-table rounded-2xl">
-          <div className="py-5 px-5 flex flex-col rounded-2xl">
+        
+        <div className="bg-white min-h-[75vh] sm:min-h-[85vh] md:min-h-[75vh] lg:min-h-[65vh] xl:min-h-[60vh] 2xl:min-h-[50vh] 4xl:min-h-[40vh] news-table rounded-2xl">
+          <div className="py-2 sm:py-3 md:py-4 lg:py-5 px-2 sm:px-3 md:px-4 lg:px-5 flex flex-col rounded-2xl">
             {renderContent()}
           </div>
         </div>

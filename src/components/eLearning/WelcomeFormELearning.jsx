@@ -52,15 +52,13 @@ const handleSubmit = () => {
     {/* Responsive hero title */}
     <h1 className="text-white text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold text-center md:text-left">
       Master the Stock Market – One Lesson at a Time!
-    </h1>
-
-    <div className="absolute  left-1/2 transform -translate-x-1/2 lg:bottom-[-10%] bottom-[-15rem]  md:bottom-[-10%] w-[100%] bg-white/30 backdrop-blur-lg p-4 sm:p-6 rounded-2xl">
+    </h1>    <div className="absolute left-1/2 transform -translate-x-1/2 lg:bottom-[-1%] bottom-[-15rem] md:bottom-[-10%] w-[100%] bg-white/30 backdrop-blur-lg p-4 sm:p-6 lg:p-8 rounded-2xl">
       <h1 className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-left">
         Welcome to Stock Genius Learning!
       </h1>
 
       {/* Responsive grid layout */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-8">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {Object.entries(options).map(([category, values], index) => (
           <div
             key={index}

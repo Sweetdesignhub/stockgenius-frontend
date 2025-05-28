@@ -90,9 +90,8 @@ function LandingPage() {
       generateAccessToken(uri);
     }
   }, []);
-
   return (
-    <div className='min-h-[91vh] pt-6'>
+    <div className='min-h-[91vh] lg:min-h-[72vh] pt-6'>
       {isLoading && (
         <div className='fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50'>
           <Loading />

@@ -34,8 +34,7 @@ function ELearning() {
   };
 
   return (
-  <div className="-z-10 w-full">
-    <div className="min-h-screen px-2 sm:px-4 md:px-6 lg:px-32 relative">
+  <div className="-z-10 w-full">    <div className="min-h-[77vh] px-2 sm:px-4 md:px-6 lg:px-5 xl:px-32 relative">
       {/* Background Images with responsive sizes */}
       <img
         loading="lazy"
@@ -50,7 +49,7 @@ function ELearning() {
         alt="bear"
       />
 
-       <div className="bg-white min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-3rem)] lg:min-h-[calc(100vh-4rem)] news-table rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex flex-col gap-1 sm:gap-2 md:gap-3">
+       <div className="bg-white min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-3rem)] lg:min-h-[77vh] news-table rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 flex flex-col gap-1 sm:gap-2 md:gap-3">
         {/* Header + Dropdowns with responsive layout */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 py-10 sm:py-3 border-[#FFFFFF1A]">
           <h1 className="font-semibold text-base sm:text-lg text-center sm:text-left w-full sm:w-auto mb-2 sm:mb-0">

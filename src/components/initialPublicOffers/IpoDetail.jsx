@@ -25,7 +25,7 @@ const IPODetail = ({ theme, ipoData, formatDate }) => {
   }
 
   return (
-    <div className="news-table min-h-[70vh] overflow-y-scroll scrollbar-hide overflow-x-hidden max-h-[70vh] rounded-xl p-2">
+    <div className="news-table min-h-[65vh] lg:h-overflow-y-scroll scrollbar-hide overflow-x-hidden max-h-[65vh] rounded-xl p-1.5">
       <div className="mb-3">
         <p className="text-[8px] dark:text-[#FFFFFFB2] text-black">
           Note : Allotment will take place on the listing date after the IPO Bid. After the listing date, the stocks

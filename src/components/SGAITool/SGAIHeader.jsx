@@ -44,7 +44,7 @@ const Header = ({ onReRun, isLoading }) => {
     //     </button> */}
     //   </div>
     // </div>
-    <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center font-poppins">
+    <div className="flex flex-col md:flex-row justify-between gap-2 md:items-center font-poppins">
       {/* Title Section */}
       <div>
         <h1 className="text-lg sm:text-xl md:text-2xl font-bold">

@@ -100,28 +100,29 @@ const OrdersTable = ({ selectedColumns, setColumnNames }) => {
   // );
 
   return (
-    <div className="h-[55vh] overflow-auto">
-      <table className="min-w-full border-collapse">
+    <div className="h-[44vh] overflow-auto scrollbar-hide">
+      <table className="w-full border-collapse">
         <thead>
           <tr>
             {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
-                className="px-4 whitespace-nowrap capitalize py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
+                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left"
               >
                 {columnName}
               </th>
             ))}
           </tr>
         </thead>
-
         <tbody>
           {ordersData.map((order, index) => (
-            <tr key={index} className="text-center">
+            <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className="px-4 whitespace-nowrap text-left font-semibold py-4"
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold ${
+                    columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                  }`}
                 >
                   {order[columnName]}
                 </td>

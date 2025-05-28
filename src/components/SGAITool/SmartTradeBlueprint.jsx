@@ -208,10 +208,8 @@ const SmartTradeBlueprint = () => {
     setExpandedView((prev) => (prev === componentName ? null : componentName));
     // console.log("cdskc", expandedView);
   };
-
   return (
-    <div
-      className={`rounded-2xl backdrop-blur-md w-[84%] shadow-lg py-4 px-4 ${
+    <div      className={`rounded-2xl backdrop-blur-md w-[98%] sm:w-[96%] md:w-[94%] lg:w-[92%] xl:w-[90%] 2xl:w-[88%] mx-auto shadow-lg py-3 px-2 sm:px-3 overflow-hidden ${
         theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
       }`}
     >
@@ -220,15 +218,11 @@ const SmartTradeBlueprint = () => {
 
       <div
         className={`h-px my-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
-      ></div>
-      {expandedView === null ? (
-        <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-4 mt-4 ">
-          <div className="lg:col-span-5 h-full">
+      ></div>      {expandedView === null ? (        <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-1 sm:gap-2 mt-3 overflow-hidden">
+          <div className="lg:col-span-5 h-full w-full">
             <SGAICalc onSimulationComplete={handleSimulationComplete} />
-          </div>
-
-          {!isSimulationComplete && (
-            <div className="lg:col-span-7 h-full">
+          </div>{!isSimulationComplete && (
+            <div className="lg:col-span-7 h-full w-full">
               <InfoCard />
             </div>
           )}

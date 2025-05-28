@@ -407,7 +407,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
 
   return (
     <div
-      className={`p-2 sm:p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] max-w-[350px] sm:max-w-none w-full ${
+      className={`p-2 sm:p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] max-w-[290px] lg:max-w-[350vh] md:max-w-[110vh] sm:max-w-none w-full ${
         theme === "dark"
           ? "border border-[0.73px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)] border-blue-500"
           : filteredTransactions.length !== 0

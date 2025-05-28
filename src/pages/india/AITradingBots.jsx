@@ -70,14 +70,13 @@ function Cards({ title, value }) {
       : {
           backgroundColor: "white",
         };
-
   return (
     <div
-      className="border-[0.1px] rounded-xl py-4 px-1 flex flex-col justify-center"
+      className="border-[0.1px] rounded-xl py-1 px-1 flex flex-col justify-center h-[60px] lg:h-[50px]"
       style={backgroundStyle}
     >
-      <h1 className="text-sm text-end">{title}</h1>
-      <h1 className="font-bold text-lg text-end text-[#37DD1C]">{value}</h1>
+      <h1 className="text-xs lg:text-[10px] text-end whitespace-nowrap">{title}</h1>
+      <h1 className="font-bold text-sm lg:text-xs text-end text-[#37DD1C] whitespace-nowrap">{value}</h1>
     </div>
   );
 }
@@ -468,7 +467,7 @@ function AITradingBots() {
 
   return (
     <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative">
+      <div className="min-h-fit p-4 lg:px-32 relative">
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
@@ -483,15 +482,14 @@ function AITradingBots() {
         />
 
         <div
-          className={`lg:min-h-[85vh] news-table rounded-2xl ${
+          className={`news-table rounded-2xl ${
             isAITradingPage ? "bg-gradient" : "bg-white"
           }`}
-        >
-          <div className="flex flex-col lg:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
-            <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
+        >          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
+            <h2 className="font-semibold text-xl text-center md:text-left mb-4 md:mb-0">
               AI Trading Bots
             </h2>
-            <div className="flex flex-col sm:flex-row sm:items-center w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center w-full md:w-auto">
               <button
                 className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
                 onClick={handleScheduleTrade}
@@ -501,16 +499,15 @@ function AITradingBots() {
             </div>
           </div>
 
-          <div className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-8 gap-2">
+          <div className="p-4">            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-2 xl:gap-2 lg:gap-1">
               {calculateCardData.map((card, index) => (
                 <Cards key={index} title={card.title} value={card.value} />
               ))}
             </div>
           </div>
 
-          <div className="p-4 overflow-scroll max-h-[60vh]">
-            <div className="flex flex-col gap-10">
+          <div className="p-4 overflow-scroll scrollbar-hide max-h-[60vh]">
+            <div className="flex flex-col gap-4">
               {isInitialLoading ? ( // Only show loading on initial fetch
                 <div className="w-full flex justify-center items-center min-h-[200px]">
                   <Loading />

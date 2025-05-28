@@ -241,7 +241,8 @@ function AiDrivenList() {
             : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
-        height: "calc(100vh - 390px)",
+        height: "calc(100vh - 100px)",
+        overflow: "hidden",
       }}
     >
       {/* Header Section */}
@@ -349,18 +350,17 @@ function AiDrivenList() {
       </div>
 
       {/* Table Section with max height */}
-      <div
-        className="flex-grow overflow-auto"
-        style={{ maxHeight: "calc(100% - 60px)" }}
-      >
+      <div className="flex-grow overflow-hidden">
         {isLoading ? (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
             <Loading />
           </div>
         ) : filteredData.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div className="h-full overflow-auto">
             <table className="w-full text-sm text-left text-black bg-transparent dark:text-white">
-              <thead>{renderTableHeaders()}</thead>
+              <thead className="top-0 z-10">
+                {renderTableHeaders()}
+              </thead>
               <tbody>{renderTableRows()}</tbody>
             </table>
           </div>
