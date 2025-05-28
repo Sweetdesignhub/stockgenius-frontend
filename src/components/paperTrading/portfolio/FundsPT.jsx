@@ -218,13 +218,13 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
     }
   }, [fundsData, setColumnNames]);
 
-  if (loading) {
-    return (
-      <div className="flex h-40 items-center justify-center p-4">
-        <Loading />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-40 items-center justify-center p-4">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return <div className="text-center p-4 text-red-500">{error}</div>;

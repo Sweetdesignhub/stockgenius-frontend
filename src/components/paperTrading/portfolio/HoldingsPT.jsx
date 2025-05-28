@@ -236,6 +236,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
   const { holdings, loading, realtimePrices } = tradingContext;
+  console.log("Realt time prices: ", realtimePrices);
   const { theme } = useTheme();
 
   const getBackgroundStyle = () => (theme === "light" ? "#ffffff" : "#402788");
@@ -295,13 +296,13 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
     return { pnl, pnlPercentage };
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-40 items-center justify-center p-4">
-        <Loading />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-40 items-center justify-center p-4">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   if (!holdings || holdings.length === 0) {
     return <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />;
@@ -338,8 +339,12 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
           </thead>
           <tbody>
             {holdings.map((holding, index) => {
-              const realTimePrice = realtimePrices[holding.stockSymbol];
+              const tickerString = holding.stockSymbol + ".NS";
+              const realTimePrice = realtimePrices[tickerString];
               const updatedLtp = realTimePrice || holding.ltp;
+              if (!updatedLtp) {
+                console.log("Updated LTP: ", tickerString);
+              }
               const { pnl, pnlPercentage } = calculatePnL(holding, updatedLtp);
 
               const totalInvested = holding.investedValue;

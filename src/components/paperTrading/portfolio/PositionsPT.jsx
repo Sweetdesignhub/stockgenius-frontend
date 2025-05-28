@@ -348,13 +348,13 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
     return theme === "light" ? "#ffffff" : "#402788";
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-40 items-center justify-center p-4">
-        <Loading />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-40 items-center justify-center p-4">
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
 
   if (!positions || positions.length === 0) {
     return <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />;
@@ -396,8 +396,16 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
           </thead>
           <tbody>
             {positions.map((position, index) => {
-              const realTimePrice = realtimePrices[position.stockSymbol];
+              const tickerString = position.stockSymbol + ".NS";
+              const realTimePrice = realtimePrices[tickerString];
               const updatedLtp = realTimePrice || position.ltp;
+              if (!updatedLtp) {
+                console.log("Updated LTP: ", tickerString);
+              }
+              // const realTimePrice = realtimePrices[position.stockSymbol];
+              // console.log("Realtime price not found", realTimePrice);
+              // const updatedLtp = realTimePrice || position.ltp;
+              // if (!realTimePrice)
               const { pnl, pnlPercentage } = calculatePnL(position, updatedLtp);
               const totalInvested = position.quantity * position.avgPrice;
               const currentValue = updatedLtp * position.quantity;

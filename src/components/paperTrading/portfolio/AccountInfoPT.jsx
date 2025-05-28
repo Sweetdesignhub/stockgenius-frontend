@@ -115,7 +115,7 @@ function AccountInfoPT() {
     };
   };
 
-  if (loading) return <div>Loading account information...</div>;
+  // if (loading) return <div>Loading account information...</div>;
 
   return (
     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">
