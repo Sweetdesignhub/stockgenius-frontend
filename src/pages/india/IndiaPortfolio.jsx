@@ -79,7 +79,7 @@ function IndiaPortfolio() {
 
   return (
     <div className="relative w-full">
-      <div className="min-h-fit p-2 sm:p-4 lg:px-8 xl:px-16 2xl:px-32 relative">
+      <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
         {/* Bull image - hidden on small screens */}
         <img
           loading="lazy"

@@ -174,10 +174,8 @@ function StockLists() {
     .slice(0, firstTableColumns.length - 1)
     .filter((_, index) => index !== 4);
   const secondTableColumns = Object.keys(data[0] || {});
-  const decision = secondTableColumns.slice(secondTableColumns.length - 1);
-
-  return (
-    <div className="min-h-screen lg:px-32 p-4 relative">
+  const decision = secondTableColumns.slice(secondTableColumns.length - 1);  return (
+    <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"
@@ -192,15 +190,14 @@ function StockLists() {
       />
 
       <div className="bg-white p-4 table-main rounded-2xl">
-        {/* <div className="p-4">{renderMarketTitle()}</div> */}
-        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
-          <h1 className="font-semibold text-xl mb-4 lg:mb-0 lg:mr-4">
+        {/* <div className="p-4">{renderMarketTitle()}</div> */}        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
+          <h1 className="font-semibold text-xl xl:text-xl lg:text-base mb-4 lg:mb-0 lg:mr-2 xl:mr-4">
             {renderMarketTitle()}
           </h1>
-          <div className="flex items-center">
+          <div className="flex mt-5 sm:mt-5 lg:mt-0 items-center lg:gap-2 xl:gap-4">
             <div className="mr-2 flex items-center">
-              <h1 className="text-sm font-bold">At Close : &nbsp;</h1>
-              <p className="text-xs font-semibold">{lastUpdated}</p>
+              <h1 className="text-sm xl:text-sm lg:text-xs font-bold">At Close : &nbsp;</h1>
+              <p className="text-xs xl:text-xs lg:text-[10px] font-semibold">{lastUpdated}</p>
             </div>
             <div className="relative group">
               <button
@@ -208,7 +205,7 @@ function StockLists() {
                 className="px-2 py-1 rounded-lg border border-gray-500"
               >
                 <img
-                  className="h-6 w-6"
+                  className="h-6 w-6 xl:h-6 xl:w-6 lg:h-5 lg:w-5"
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
                   alt="Download excel"
@@ -219,18 +216,17 @@ function StockLists() {
               </span>
             </div>
           </div>
-        </div>
-        <div className="p-4 flex news-table h-[80vh] overflow-scroll rounded-2xl">
+        </div>        <div className="p-2 sm:p-4 flex news-table h-[69vh] overflow-y-auto overflow-x-hidden rounded-2xl scrollbar-hide">
           {/* First Table */}
           <div className="lg:max-w-[88%] max-w-[75%]">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-hide">
               <table className="table-auto w-full bg-transparent">
                 <thead>
                   <tr>
                     {dataTable.map((column, index) => (
                       <th
                         key={index}
-                        className="w-full py-3 px-2 text-left text-xs font-medium tracking-wider"
+                        className="w-full py-1 sm:py-3 px-1 sm:px-2 text-left text-[10px] sm:text-xs font-medium tracking-wider"
                       >
                         {column.split(" ")[0]}
                       </th>
@@ -241,10 +237,9 @@ function StockLists() {
                 <tbody>
                   {data.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      {dataTable.map((column, colIndex) => (
-                        <td
+                      {dataTable.map((column, colIndex) => (                        <td
                           key={colIndex}
-                          className={`h-20 w-full min-w-24 capitalize px-2 whitespace-nowrap ${
+                          className={`h-12 sm:h-20 w-full min-w-16 sm:min-w-24 capitalize px-1 sm:px-2 text-[10px] sm:text-sm whitespace-nowrap ${
                             colIndex === 1
                               ? "text-[#4882F3]"
                               : colIndex === 2
@@ -271,11 +266,10 @@ function StockLists() {
                 </tbody>
               </table>
             </div>
-          </div>
-          <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
+          </div>          <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
             {/* Second Table */}
-            <div className="overflow-x-auto">
-              <div className="overflow-y-auto h-full">
+            <div className="overflow-x-auto scrollbar-hide">
+              <div className="overflow-y-auto h-full scrollbar-hide">
                 <table className="table-auto border-collapse w-full bg-transparent">
                   {/* Table header */}
                   <thead>
@@ -283,7 +277,7 @@ function StockLists() {
                       {decision.map((column, index) => (
                         <th
                           key={index}
-                          className="w-full px-2 text-center py-3 text-xs font-medium tracking-wider"
+                          className="w-full py-1 sm:py-3 px-1 sm:px-2 text-left text-[10px] sm:text-xs font-medium tracking-wider"
                         >
                           {column}
                         </th>
@@ -301,13 +295,12 @@ function StockLists() {
 
                           return (
                             <td
-                              key={colIndex}
-                              className="h-20 capitalize px-2 text-center whitespace-nowrap"
+                              key={colIndex}                              className="h-12 sm:h-20 capitalize px-1 sm:px-2 text-center whitespace-nowrap"
                             >
                               {isBuy && (
                                 <button
                                   onClick={() => handleBuy(row)}
-                                  className="text-xs font-semibold font[poppins] px-2 py-1 rounded-xl text-center border border-[#0EBC34] bg-[#0EBC34] text-[#FFFFFF] dark:border-[#14AE5C] dark:bg-[#14AE5C1A] dark:text-[#7EF36B]"
+                                  className="text-[10px] sm:text-xs font-semibold font[poppins] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-center border border-[#0EBC34] bg-[#0EBC34] text-[#FFFFFF] dark:border-[#14AE5C] dark:bg-[#14AE5C1A] dark:text-[#7EF36B]"
                                 >
                                   {cellValue}
                                 </button>
@@ -315,7 +308,7 @@ function StockLists() {
                               {isSell && (
                                 <button
                                   onClick={() => handleSell(row)}
-                                  className="text-xs font-semibold font[poppins] px-2 py-1 rounded-xl text-center border border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
+                                  className="text-[10px] sm:text-xs font-semibold font[poppins] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-center border border-[#FF0000] bg-[#FF0000] text-[#FFFFFF] dark:border-[#AE1414] dark:bg-[#AE14141A] dark:text-[#F36B6B]"
                                 >
                                   {cellValue}
                                 </button>

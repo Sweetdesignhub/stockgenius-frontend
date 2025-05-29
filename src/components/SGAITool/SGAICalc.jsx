@@ -237,40 +237,11 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
       <form onSubmit={handleSubmit(onSubmit)} className=" w-full">
         <div className="h-full">
           {/* Initial Cash */}
-          <div className="">
-            <div className="flex justify-between items-center w-full mb-2">              <label className="text-sm">Initial Cash</label>
-              <RadioGroup value={currency} onChange={() => {}} className="flex">
-                <RadioGroup.Option value="₹" disabled>
-                  {({ checked }) => (
-                    <span
-                      className={`w-5 h-7 flex items-center justify-center rounded-full transition-colors duration-200 ${
-                        checked
-                          ? "bg-blue-600 text-white"
-                          : isDark
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-300 text-black"
-                      } opacity-50 cursor-not-allowed`}
-                    >
-                      ₹
-                    </span>
-                  )}
-                </RadioGroup.Option>
-                <RadioGroup.Option value="$" className="ml-2" disabled>
-                  {({ checked }) => (
-                    <span
-                      className={`w-6 h-8 flex items-center justify-center rounded-full transition-colors duration-200 ${
-                        checked
-                          ? "bg-blue-600 text-white"
-                          : isDark
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-300 text-black"
-                      } opacity-100 cursor-not-allowed`}
-                    >
-                      $
-                    </span>
-                  )}
-                </RadioGroup.Option>
-              </RadioGroup>
+          <div className="">            <div className="flex justify-between items-center w-full mb-2">
+              <label className="text-sm">Initial Cash</label>
+              <span className={`flex items-center justify-center rounded-full transition-colors duration-200 ${isDark ? "text-white" : "text-black"} bg-blue-600 text-white ${region === "india" ? "w-5 h-7" : "w-6 h-8"}`}>
+                {region === "india" ? "₹" : "$"}
+              </span>
             </div>
             <div className="relative">
               <Controller

@@ -156,32 +156,33 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
 
   return (
     <div
-      className="h-[55vh] overflow-auto"
+      className="h-[55vh] scrollbar-hide overflow-auto p-4"
       style={{
         background: theme === "light" ? "#ffffff" : "#402788",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
       }}
     >
-      <table className="w-full border-collapse">
+      <table className="w-full border-collapse min-w-[800px]">
         <thead>
           <tr>
             {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
-                className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
+                className="px-6 capitalize whitespace-nowrap overflow-hidden py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left max-[320px]:px-2 max-[320px]:py-1 max-[320px]:text-xs"
               >
                 {columnName === "orderTime" ? "Order Time (IST)" : columnName}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>          {sortedOrders.map((order, index) => (
-            <tr key={index}>
+        <tbody>          
+          {sortedOrders.map((order, index) => (
+            <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
+                  className={`px-6 whitespace-nowrap overflow-hidden font-semibold py-5 max-[320px]:px-2 max-[320px]:py-2 max-[320px]:text-xs ${
                     columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
                   }`}
                 >

@@ -233,7 +233,7 @@ function AiDrivenList() {
 
   return (
     <div
-      className="p-3 rounded-lg flex flex-col h-full relative"
+      className="p-3 rounded-lg flex flex-col max-h-[400px] md:max-h-[410px] lg:max-h-[395px] relative"
       style={{
         background:
           theme === "light"
@@ -241,44 +241,47 @@ function AiDrivenList() {
             : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
-        height: "calc(100vh - 100px)",
         overflow: "hidden",
       }}
     >
       {/* Header Section */}
-      <div className="flex-shrink-0 justify-between flex flex-col sm:flex-row items-center border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A]">
-        <h1 className="text-black font-semibold text-md dark:text-white mb-2 sm:mb-0">
+      <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between lg:grid lg:grid-cols-12 border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A] gap-3 md:gap-2">
+        <h1 className="text-black font-semibold text-md dark:text-white lg:col-span-3">
           AIDrivenList
         </h1>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-black dark:text-white font-semibold text-sm border rounded-xl px-2 py-[1px] w-full sm:w-auto"
-          />
-        </div>
+        
+        {/* Search and Options Container */}
+        <div className="flex items-center gap-3 md:gap-2 lg:col-span-9 lg:justify-between">
+          {/* Search Input - Centered in laptop view */}
+          <div className="lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent text-black dark:text-white font-semibold text-xs md:text-sm border rounded-full px-2 py-[1px] w-[100px] md:w-[120px] lg:w-[180px]"
+            />
+          </div>
 
-        <div className="flex items-center gap-4 mt-2 sm:mt-0">
-          <div className="flex items-center gap-2">
+          {/* Filter Options - Right aligned in laptop view */}
+          <div className="flex items-center gap-1 md:gap-1.5 lg:ml-auto">
             <button
               onClick={() => handlePredictionFilter("all")}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 predictionFilter === "all"
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
               } hover:bg-[#FFFFFF1A]`}
             >
               <Infinity
-                className={`w-5 h-5 ${
+                className={`w-4 h-4 md:w-5 md:h-5 ${
                   predictionFilter === "all" ? "text-white" : "text-[#3A6FF8]"
                 }`}
               />
             </button>
             <button
               onClick={() => handlePredictionFilter("buy")}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 predictionFilter === "buy"
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
@@ -288,7 +291,7 @@ function AiDrivenList() {
             </button>
             <button
               onClick={() => handlePredictionFilter("sell")}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 predictionFilter === "sell"
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
@@ -302,7 +305,7 @@ function AiDrivenList() {
             <button
               ref={filterButtonRef}
               onClick={() => setShowFilter(!showFilter)}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 showFilter
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"

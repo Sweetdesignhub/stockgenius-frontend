@@ -11,27 +11,25 @@ function SGAITool() {
     }
   }, [theme, updateTheme]);
   return (
-    <div className="relative flex items-center justify-between overflow-hidden">
-      {/* Left Image */}
-      <img
-        loading="lazy"
-        className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0 w-[165px]"
-        src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
-        alt="bull"
-      />
+    <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
+        <img
+          loading="lazy"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
+          alt="Bull"
+        />
 
       {/* Center Content */}
       <div className="flex-1 flex justify-center items-centerz">
         <SmartTradeBlueprint />
       </div>
 
-      {/* Right Image */}
       <img
-        loading="lazy"
-        className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0 w-[160px]"
-        src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
-        alt="bear"
-      />
+          loading="lazy"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
+          alt="Bear"
+        />
     </div>
 
     // <div className=" flex items-center justify-center">

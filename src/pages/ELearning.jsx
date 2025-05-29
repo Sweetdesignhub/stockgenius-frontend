@@ -34,7 +34,7 @@ function ELearning() {
   };
 
   return (
-  <div className="-z-10 w-full">    <div className="min-h-[77vh] px-2 sm:px-4 md:px-6 lg:px-5 xl:px-32 relative">
+  <div className="-z-10 w-full">    <div className="min-h-screen lg:px-32 p-4 relative">
       {/* Background Images with responsive sizes */}
       <img
         loading="lazy"

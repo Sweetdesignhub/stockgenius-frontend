@@ -156,11 +156,11 @@ function DailyUpdates() {
         <StockCard {...stockData.highSentiment} title="High Sentiment Stock" />
         <StockCard {...stockData.lowRisk} title="Low Risk Option" />
       </div>      <div
-        className="h-[300px] lg:h-[250px] xl:h-[300px] 2xl:h-[400px] dark:bg-[#1a1f2e] rounded-lg p-2 dark:text-white scrollbar-hide"
+        className="h-[265px] lg:h-[180px] xl:h-[265px] 2xl:h-[250px] dark:bg-[#1a1f2e] rounded-lg p-2 dark:text-white scrollbar-hide"
         style={{
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           borderRadius: "12px",
-        }}>        <h2 className="text-md font-semibold mb-1">News and Events</h2>        <div className="h-[calc(100%-2rem)] overflow-y-auto rounded-lg"><ul className="space-y-0.5 p-1">
+        }}><h2 className="text-md font-semibold mb-1">News and Events</h2>        <div className="h-[calc(100%-2rem)] overflow-y-auto rounded-lg"><ul className="space-y-0.5 p-1">
             {newsHeadlines.map((news, index) => (
               <li
                 key={index}
