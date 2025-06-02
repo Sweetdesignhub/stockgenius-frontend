@@ -47,7 +47,8 @@ function StockLists() {
     setError(null);
     try {
       const { containerName, fileName } = getBucketAndFileName();
-      if (!containerName || !fileName) throw new Error("Invalid market selection");
+      if (!containerName || !fileName)
+        throw new Error("Invalid market selection");
 
       const fileData = await fetchFile(containerName, fileName);
       const jsonData = parseExcel(fileData);

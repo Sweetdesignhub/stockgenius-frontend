@@ -27,6 +27,7 @@ import { MdDashboard } from "react-icons/md";
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaNewspaper, FaAngleDown } from "react-icons/fa";
 import { GiGraduateCap } from "react-icons/gi";
+import { AiOutlineCaretDown, AiOutlineCaretUp } from "react-icons/ai"; // For submenu arrow
 import { BsBank2 } from "react-icons/bs";
 import { BsRobot, BsTools } from "react-icons/bs";
 import { FaBagShopping } from "react-icons/fa6";
@@ -49,11 +50,19 @@ export default function Header() {
   const market = useSelector((state) => state.market);
   const region = useSelector((state) => state.region);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isMobileStockListOpen, setIsMobileStockListOpen] = useState(false); // New state
   const location = useLocation();
   const [isHovered, setIsHovered] = useState(false);
   let hoverTimeout;
 
   // console.log(currentUser);
+
+
+  // const handleMouseEnter = (index) => setHoveredIndex(index);
+  // const handleMouseLeave = () => setHoveredIndex(null);
+
 
   const dispatch = useDispatch();
 
@@ -66,6 +75,13 @@ export default function Header() {
     hoverTimeout = setTimeout(() => setIsHovered(false), 300); // delay in ms
   };
 
+  const toggleMobileDropdown = (index) => {
+    setMobileDropdownOpen((prev) => (prev === index ? null : index));
+  };
+
+  const toggleMobileStockList = () => {
+    setIsMobileStockListOpen(!isMobileStockListOpen);
+  };
   const isMarketDropdownVisible =
     location.pathname === "/usa/dashboard" ||
     location.pathname === "/usa/portfolio" ||
@@ -357,7 +373,6 @@ export default function Header() {
                   {item.name}
                 </NavLink>
 
-                {/* Dropdown for items with submenu */}
                 {item.submenu && isHovered && (
                   <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-white shadow-lg rounded-md mt-1 py-1 z-10 min-w-[180px]">
                     {item.submenu.map((subItem) => (
@@ -559,15 +574,55 @@ export default function Header() {
               {currentUser ? (
                 <div className="space-y-2 py-6">
                   {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.to}
-                      className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
-                      onClick={handleMenuClose}
-                    >
-                      <item.icon className="h-5 w-5" aria-hidden="true" />
-                      {item.name}
-                    </Link>
+                    <div key={item.name}>
+                      {item.submenu ? (
+                        <div>
+                      <button
+                        onClick={() => {
+                          if (item.name === "StockList") {
+                            setIsMobileStockListOpen(!isMobileStockListOpen);
+                          }
+                        }}
+                        className="-mx-3 flex items-center justify-between rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900 w-full"
+                      >
+                        <div className="flex items-center gap-2">
+                          <item.icon className="h-5 w-5" aria-hidden="true" />
+                          {item.name}
+                        </div>
+                        {item.name === "StockList" && (
+                          isMobileStockListOpen ? (
+                            <AiOutlineCaretUp className="h-5 w-5" aria-hidden="true" />
+                          ) : (
+                            <AiOutlineCaretDown className="h-5 w-5" aria-hidden="true" />
+                          )
+                        )}
+                      </button>
+                      {item.name === "StockList" && isMobileStockListOpen && (
+                        <div className="mt-2 pl-4">
+                          {item.submenu.map((subItem) => (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.to}
+                              className="-mx-3 block rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
+                              onClick={handleMenuClose}
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                      ) : (
+                        <Link
+                          to={item.to}
+                          className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
+                          onClick={handleMenuClose}
+                        >
+                          <item.icon className="h-5 w-5" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      )}
+                    </div>
                   ))}
                 </div>
               ) : (

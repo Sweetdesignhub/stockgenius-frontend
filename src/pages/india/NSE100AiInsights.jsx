@@ -174,6 +174,8 @@ function NSE100AiInsights() {
     //   quantity
     // );
 
+    console.log("Hitting Fyers", fyersAccessToken);
+
     let apiUrl = "";
     let requestBody = {};
 
