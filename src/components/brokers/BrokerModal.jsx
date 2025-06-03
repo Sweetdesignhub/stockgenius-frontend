@@ -245,7 +245,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
                 />
               </div>
             )}
-            {selectedOption === 'Motilal Oswal' && (
+            {/* {selectedOption === 'Motilal Oswal' && (
               <div className='mr-3'>
                 <img
                   loading='lazy'
@@ -253,7 +253,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
                   alt='Motilal Oswal'
                 />
               </div>
-            )}
+            )} */}
           </div>
           <button
             onClick={handleAuthenticate}

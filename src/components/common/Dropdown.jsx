@@ -68,7 +68,7 @@ export default function Dropdown({ selectedOption, handleOptionSelect }) {
                 </button>
               )}
             </MenuItem>
-            <MenuItem>
+            {/* <MenuItem>
               {({ active }) => (
                 <button
                   type="button"
@@ -80,7 +80,7 @@ export default function Dropdown({ selectedOption, handleOptionSelect }) {
                   Motilal Oswal
                 </button>
               )}
-            </MenuItem>
+            </MenuItem> */}
           </div>
         </MenuItems>
       </Transition>

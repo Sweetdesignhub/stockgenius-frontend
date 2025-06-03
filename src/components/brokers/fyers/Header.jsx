@@ -27,14 +27,14 @@ function Header() {
               alt="Zerodha"
             />
           )}
-          {selectedOption === "Motilal Oswal" && (
+          {/* {selectedOption === "Motilal Oswal" && (
             <img
               className="h-10"
               loading="lazy"
               src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fe9a3e857c17e41ceac69d3e2acc20695"
               alt="Motilal Oswal"
             />
-          )}
+          )} */}
         </div>
       </div>
       <div></div>
