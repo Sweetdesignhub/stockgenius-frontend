@@ -21,6 +21,9 @@ import { useData } from "../../contexts/FyersDataContext";
 
 function IndiaPortfolio() {
   const fyersAccessToken = useSelector((state) => state.fyers);
+  // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZDoxIiwiZDoyIiwieDowIiwieDoxIiwieDoyIl0sImF0X2hhc2giOiJnQUFBQUFCb05wMUZyay01NlJiaWI4cTNPVktXOUdSQVJYVU1MaWlfT1lCbTFKamZHTWNCRllDTnNZMmpiNXlJam05SmpWVjA5SXdoUlNsT1kzZV9HUi1RRjEyaWoxV0t5T1Z4bUk5bnJFa0VpdEV4ejNsb3BQQT0iLCJkaXNwbGF5X25hbWUiOiIiLCJvbXMiOiJLMSIsImhzbV9rZXkiOiI0OTBjMjEwNjUzZmVhNzQxYzJiYmJiNzVmMWY2MGUwOTIyNjk0OTNmY2Y4N2U0MTQ5YWY3Y2U5NCIsImlzRGRwaUVuYWJsZWQiOiJZIiwiaXNNdGZFbmFibGVkIjoiTiIsImZ5X2lkIjoiWVUwMTU4NSIsImFwcFR5cGUiOjEwMiwiZXhwIjoxNzQ4NDc4NjAwLCJpYXQiOjE3NDg0MDk2NjksImlzcyI6ImFwaS5meWVycy5pbiIsIm5iZiI6MTc0ODQwOTY2OSwic3ViIjoiYWNjZXNzX3Rva2VuIn0.1osHTuYYJ4k720Gv2ITpJLW__YNib2gGVDV2hUCWt_E"
+  // console.log("inside india portfolio", fyersAccessToken);
+  // 
   const [brokerModalOpen, setBrokerModalOpen] = useState(!fyersAccessToken);
   const { profile, holdings, funds, positions, trades, orders, loading } =
     useData();
@@ -28,7 +31,6 @@ function IndiaPortfolio() {
 
   useEffect(() => {
     if (
-      !loading &&
       profile &&
       holdings &&
       funds &&

@@ -57,7 +57,7 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
 
   const { funds = { fund_limit: [{}] }, loading } = useData();
   const fundsData = funds.fund_limit || [];
-
+  console.log("Fund Data", fundsData);
   useEffect(() => {
     if (fundsData.length > 0) {
       const excludedColumns = [];
@@ -118,14 +118,17 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
             <tr key={index}>
               {selectedColumns.map((columnName) => (
                 <td
-                  key={`${columnName}-${index}`}                  
+                  key={`${columnName}-${index}`}
                   className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "title" ? "text-[#6FD4FF]" : ""
                     }`}
                 >
-                  {columnName === "equityAmount" && 
-                   (fund.title === "Available Balance" || 
-                    fund.title === "Receivables" || 
-                    fund.title === "Utilized Amount")
+                  {columnName === "equityAmount" &&
+                    (fund.title === "Available Balance" ||
+                      fund.title === "Receivables" ||
+                      fund.title === "Utilized Amount" ||
+                      fund.title === "Total Balance" ||
+                      fund.title === "Clear Balance" ||
+                      fund.title === "Realized Profit and Loss")
                     ? Number(fund[columnName]).toFixed(2)
                     : fund[columnName]}
                 </td>

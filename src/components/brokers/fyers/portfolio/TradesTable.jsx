@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Loading from "../../../common/Loading";
 //import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
@@ -58,8 +58,10 @@ const TradesTable = ({ selectedColumns, setColumnNames }) => {
   //   return () => clearInterval(interval); // Cleanup interval on component unmount
   // }, []);
 
-  const { trades = { tradeBook: [] }, loading } = useData();
-  const tradesData = trades.tradeBook || [];
+  const { trades = [], loading } = useData();
+  const tradesData = trades || [];
+  console.log("Trades Table Data", tradesData);
+  const prevColumnNames = useRef([]);
 
   useEffect(() => {
     if (tradesData.length > 0) {
@@ -68,11 +70,29 @@ const TradesTable = ({ selectedColumns, setColumnNames }) => {
         (columnName) => !excludedColumns.includes(columnName)
       );
 
-      setColumnNames(allColumnNames);
-    } else {
+      // Only update if columns actually changed
+      if (JSON.stringify(allColumnNames) !== JSON.stringify(prevColumnNames.current)) {
+        setColumnNames(allColumnNames);
+        prevColumnNames.current = allColumnNames;
+      }
+    } else if (prevColumnNames.current.length > 0) {
       setColumnNames([]);
+      prevColumnNames.current = [];
     }
   }, [tradesData, setColumnNames]);
+
+  // useEffect(() => {
+  //   if (tradesData.length > 0) {
+  //     const excludedColumns = [];
+  //     const allColumnNames = Object.keys(tradesData[0] || {}).filter(
+  //       (columnName) => !excludedColumns.includes(columnName)
+  //     );
+
+  //     setColumnNames(allColumnNames);
+  //   } else {
+  //     setColumnNames([]);
+  //   }
+  // }, [tradesData, setColumnNames]);
 
   if (loading) {
     return (

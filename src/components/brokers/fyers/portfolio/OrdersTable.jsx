@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Loading from "../../../common/Loading";
 //import api from "../../../../config.js";
 import NotAvailable from "../../../common/NotAvailable.jsx";
@@ -11,8 +11,13 @@ const OrdersTable = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
   // const { currentUser } = useSelector((state) => state.user);
 
-  const { orders = { orderBook: [] }, loading } = useData();
-  const ordersData = orders.orderBook || [];
+
+  // console.log("Inside Orders");
+
+
+  const { orders = [], loading } = useData();
+  const ordersData = orders || [];
+  const prevColumnNames = useRef([]);
 
   // const getOrdersData = async () => {
   //   try {
@@ -63,15 +68,32 @@ const OrdersTable = ({ selectedColumns, setColumnNames }) => {
 
   useEffect(() => {
     if (ordersData.length > 0) {
-      const excludedColumns = ["ch", "chp"]; // Added ch and chp to excluded columns
+      const excludedColumns = ["ch", "chp"];
       const allColumnNames = Object.keys(ordersData[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
-      setColumnNames(allColumnNames);
-    } else {
+
+      if (JSON.stringify(allColumnNames) !== JSON.stringify(prevColumnNames.current)) {
+        setColumnNames(allColumnNames);
+        prevColumnNames.current = allColumnNames;
+      }
+    } else if (prevColumnNames.current.length > 0) {
       setColumnNames([]);
+      prevColumnNames.current = [];
     }
   }, [ordersData, setColumnNames]);
+
+  // useEffect(() => {
+  //   if (ordersData.length > 0) {
+  //     const excludedColumns = ["ch", "chp"]; // Added ch and chp to excluded columns
+  //     const allColumnNames = Object.keys(ordersData[0] || {}).filter(
+  //       (columnName) => !excludedColumns.includes(columnName)
+  //     );
+  //     setColumnNames(allColumnNames);
+  //   } else {
+  //     setColumnNames([]);
+  //   }
+  // }, [ordersData, setColumnNames]);
 
   if (loading) {
     return (

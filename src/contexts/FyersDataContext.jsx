@@ -8,70 +8,289 @@
  * Updated by: [Name]
  * Updated on: [Update date]
  * - Update description: Brief description of what was updated or fixed
- */
+*/
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
-import api from "../config";
+import api, { BACKEND_URL } from "../config";
 
 const FyersDataContext = createContext();
 
 export function DataProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [holdings, setHoldings] = useState([]);
-  const [funds, setFunds] = useState([]);
-  const [positions, setPositions] = useState([]);
+  const [funds, setFunds] = useState({});
+  const [positions, setPositions] = useState({});
   const [trades, setTrades] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { currentUser } = useSelector((state) => state.user);
+  const currentUserIdRef = useRef(currentUser?.id);
+  const socketRef = useRef(null);
 
-  const fetchData = async () => {
+  // Stable reference to fetchData - only recreate when userId actually changes
+  const fetchData = useCallback(async ({ initial = false } = {}) => {
     try {
-      //instead of fetching from localstorage fetch from db
       const fyersAccessToken = localStorage.getItem("fyers_access_token");
+      const userId = currentUserIdRef.current;
 
-      if (currentUser && fyersAccessToken) {
+      if (userId && fyersAccessToken) {
         const headers = { Authorization: `Bearer ${fyersAccessToken}` };
         const response = await api.get(
-          `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
+          `/api/v1/fyers/fetchAllFyersUserDetails/${userId}`,
           { headers }
         );
-        const data = response.data[0];
 
-        setProfile(data.profile);
+        const data = response.data[0] || {};
+        console.log("Data from the initial fetch", data);
+        setProfile(data.profile || null);
         setFunds(data.funds || {});
         setHoldings(data.holdings || []);
-        setPositions(data.positions || {});
-        setTrades(data.trades || []);
-        setOrders(data.orders || []);
+        
+        if (initial) {
+          setOrders(Array.isArray(data.orders.orderBook) ? data.orders.orderBook : []);
+          setTrades(Array.isArray(data.trades.tradeBook) ? data.trades.tradeBook : []);
+          console.log("initial fetch positions are:", data.positions.netPositions);
+          setPositions(data.positions.netPositions || []);
+        }
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, []); // No dependencies - use ref for userId
 
+  // Update ref when currentUser changes
   useEffect(() => {
-    const fetchAllData = async () => {
-      await fetchData();
-      setLoading(false);
+    currentUserIdRef.current = currentUser?.id;
+  }, [currentUser?.id]);
+
+  const updateOrders = useCallback((newOrder) => {
+    console.log("WebSocket update:  Order received:", newOrder);
+    if (!newOrder || typeof newOrder !== 'object') return;
+
+    setOrders(prev => {
+      // Create a Set of existing IDs for faster lookup
+      const existingIds = new Set(
+        prev.flatMap(order => [
+          order.id,
+          order.orderTag
+        ].filter(Boolean))
+      );
+
+      const newId = newOrder.id || newOrder.orderTag;
+      if (!newId || existingIds.has(newId)) {
+        console.log("Duplicate detected - ignoring");
+        return prev;
+      }
+
+      console.log("Adding new order");
+      return [...prev, newOrder];
+    });
+  }, []);
+
+  const updateTrades = useCallback((newTrade) => {
+    console.log("WebSocket update: Current Position", trades);
+
+    console.log("WebSocket update:  Trade received:", newTrade);
+    if (!newTrade || typeof newTrade !== 'object') return;
+
+    setTrades(prev => {
+      // Create a Set of existing trade identifiers
+      const existingIdentifiers = new Set(
+        prev.flatMap(trade => [
+          trade.id,
+        ].filter(Boolean)) // Remove undefined/null values
+      );
+
+      // Check if trade exists using all possible identifiers
+      const tradeExists = [
+        newTrade.id,
+      ].some(id => id && existingIdentifiers.has(id));
+
+      if (tradeExists) {
+        console.log("Duplicate trade detected - ignoring");
+        return prev;
+      }
+
+      console.log("Adding new trade");
+      return [...prev, newTrade];
+    });
+  }, []);
+  const updatePositions = useCallback((newPosition) => {
+    console.log("WebSocket update: Current Position", positions);
+    console.log("WebSocket update: New Position", newPosition);
+
+    // Validate the incoming position
+    if (!newPosition || typeof newPosition !== 'object' || Array.isArray(newPosition)) {
+      console.warn("Invalid position format received");
+      return;
+    }
+
+    setPositions(prev => {
+      if (!Array.isArray(prev)) return [newPosition];
+
+      const index = prev.findIndex(pos => pos.symbol === newPosition.symbol);
+
+      if (index !== -1) {
+        // Update existing position
+        const updated = [...prev];
+        updated[index] = newPosition;
+        return updated;
+      } else {
+        // Append new position
+        return [...prev, newPosition];
+      }
+    });
+  }, []);
+
+
+  // const updatePositions = useCallback((newPosition) => {
+  //   console.log("WebSocket update: Current Position", positions);
+
+  //   console.log("WebSocket update: New Position", newPosition);
+
+  //   // Validate the incoming position
+  //   if (!newPosition || typeof newPosition !== 'object' || Array.isArray(newPosition)) {
+  //     console.warn("Invalid position format received");
+  //     return;
+  //   }
+
+  //   setPositions(prev => {
+  //     // If previous state is an array (legacy format), convert to object
+  //     if (Array.isArray(prev)) {
+  //       console.warn("Converting legacy array positions to object format");
+  //       const positionMap = {};
+  //       prev.forEach(pos => {
+  //         const key = pos.symbol || pos.id;
+  //         if (key) positionMap[key] = pos;
+  //       });
+  //       return {
+  //         ...positionMap,
+  //         [newPosition.symbol]: newPosition
+  //       };
+  //     }
+
+  //     // Normal case - merge with existing positions object
+  //     return {
+  //       ...(prev || {}),
+  //       [newPosition.symbol]: newPosition
+  //     };
+  //   });
+  // }, []);
+  
+  // WebSocket management with cleanup
+  useEffect(() => {
+    let isMounted = true;
+
+    const initWebSocket = () => {
+      const userId = currentUserIdRef.current;
+      if (!userId) return;
+
+      // Close existing connection if any
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+
+      const wsUrl = `${BACKEND_URL.replace(/^http/, "ws")}?userId=${encodeURIComponent(userId)}`;
+      const socket = new WebSocket(wsUrl);
+      socketRef.current = socket;
+
+      socket.onopen = () => {
+        console.log("✅ Connected to backend via WebSocket");
+      };
+
+      socket.onmessage = (event) => {
+        if (!isMounted) return;
+
+        try {
+          const data = JSON.parse(event.data);
+          console.log("📨 WebSocket update:", data);
+          
+          fetchData({ initial: false });
+
+          switch (data.type) {
+            case `fyers-orders-new-update:${userId}`:
+              console.log("Postionss", data.payload);
+              updateOrders(data.payload);
+              break;
+            case `fyers-trades-new-update:${userId}`:
+              console.log("Postionss", data.payload);
+              updateTrades(data.payload);
+              break;
+            case `fyers-positions-new-update:${userId}`:
+              console.log("Postionss", data.payload);
+              updatePositions(data.payload);
+              break;
+            default:
+              console.warn("Unknown WebSocket event type:", data.type);
+          }
+        } catch (err) {
+          console.error("❌ Failed to parse WebSocket message", err);
+        }
+      };
+
+      socket.onerror = (err) => {
+        console.error("WebSocket error:", err);
+      };
+
+      socket.onclose = (event) => {
+        console.log("🔌 WebSocket connection closed", event.code, event.reason);
+
+        // Attempt to reconnect after a delay if not intentionally closed
+        if (isMounted && event.code !== 1000 && currentUserIdRef.current) {
+          console.log("🔄 Attempting to reconnect WebSocket in 3 seconds...");
+          setTimeout(() => {
+            if (isMounted && currentUserIdRef.current) {
+              initWebSocket();
+            }
+          }, 3000);
+        }
+      };
     };
 
-    fetchAllData();
+    const init = async () => {
+      if (currentUserIdRef.current) {
+        await fetchData({ initial: true });
+        if (isMounted) {
+          setLoading(false);
+          initWebSocket();
+        }
+      } else {
+        setLoading(false);
+      }
+    };
 
-    const dataInterval = setInterval(() => {
-      fetchData();
-    }, 5000);
+    init();
 
     return () => {
-      clearInterval(dataInterval);
+      isMounted = false;
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
     };
-  }, []);
+  }, [currentUser?.id, fetchData, updateOrders, updateTrades, updatePositions]);
+
+  // Manual refresh function
+  const refreshData = useCallback(() => {
+    // console.log("Refresh function hit");
+    return fetchData({ initial: false });
+  }, [fetchData]);
 
   return (
     <FyersDataContext.Provider
-      value={{ profile, holdings, funds, positions, trades, orders, loading }}
+      value={{
+        profile,
+        holdings,
+        funds,
+        positions,
+        trades,
+        orders,
+        loading: false,
+        refreshData // Expose manual refresh
+      }}
     >
       {children}
     </FyersDataContext.Provider>
@@ -79,5 +298,138 @@ export function DataProvider({ children }) {
 }
 
 export function useData() {
-  return useContext(FyersDataContext);
+  const context = useContext(FyersDataContext);
+  if (!context) {
+    throw new Error('useData must be used within a DataProvider');
+  }
+  return context;
 }
+
+// import React, { createContext, useContext, useEffect, useState } from "react";
+// import { useSelector } from "react-redux";
+// import api, { BACKEND_URL }  from "../config";
+// // { mainBackendSocket } 
+
+// const FyersDataContext = createContext();
+
+// export function DataProvider({ children }) {
+//   const [profile, setProfile] = useState(null);
+//   const [holdings, setHoldings] = useState([]);
+//   const [funds, setFunds] = useState([]);
+//   const [positions, setPositions] = useState([]);
+//   const [trades, setTrades] = useState([]);
+//   const [orders, setOrders] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   const { currentUser } = useSelector((state) => state.user);
+
+//   useEffect(() => {
+//     if (!currentUser?.id) return;
+    
+//     const wsUrl = `${BACKEND_URL.replace(/^http/, "ws")}?userId=${encodeURIComponent(currentUser.id)}`;
+
+//     const socket = new WebSocket(wsUrl);
+
+//     console.log("Scoket is:", socket);
+//     socket.onopen = () => {
+//       console.log("✅ Connected to backend via native WebSocket");
+//       socket.send(JSON.stringify({ message: "hi from frontend" }));
+//     };
+
+//     socket.onmessage = (event) => {
+//       try {
+//         const data = JSON.parse(event.data);
+//         console.log("📨 Message from server:", data);
+
+//         // You can inspect a `type` property to dispatch accordingly
+//         switch (data.type) {
+//           case "fyers-trades-new-update":
+//           case "fyers-orders-new-update":
+//           case "fyers-positions-new-update":
+//             handleSocketUpdate(data.payload); // Assuming server sends `{ type, payload }`
+//             break;
+//           default:
+//             console.warn("Unknown WS event type:", data.type);
+//         }
+//       } catch (err) {
+//         console.error("❌ Failed to parse WS message", err);
+//       }
+//     };
+
+//     socket.onerror = (err) => {
+//       console.error("WebSocket error:", err);
+//     };
+
+//     socket.onclose = () => {
+//       console.log("🔌 WebSocket connection closed");
+//     };
+
+//     const handleSocketUpdate = (data) => {
+//       console.log("🆕 Fyers Socket Update:", data);
+//       if (!data || typeof data !== "object") return;
+//       // Handle or set state here
+//     };
+
+//     return () => {
+//       socket.close();
+//     };
+//   }, [currentUser?.id]);
+
+
+//   const fetchData = async () => {
+//     try {
+//       //instead of fetching from localstorage fetch from db
+//       const fyersAccessToken = localStorage.getItem("fyers_access_token");
+//         // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZDoxIiwiZDoyIiwieDowIiwieDoxIiwieDoyIl0sImF0X2hhc2giOiJnQUFBQUFCb05wMUZyay01NlJiaWI4cTNPVktXOUdSQVJYVU1MaWlfT1lCbTFKamZHTWNCRllDTnNZMmpiNXlJam05SmpWVjA5SXdoUlNsT1kzZV9HUi1RRjEyaWoxV0t5T1Z4bUk5bnJFa0VpdEV4ejNsb3BQQT0iLCJkaXNwbGF5X25hbWUiOiIiLCJvbXMiOiJLMSIsImhzbV9rZXkiOiI0OTBjMjEwNjUzZmVhNzQxYzJiYmJiNzVmMWY2MGUwOTIyNjk0OTNmY2Y4N2U0MTQ5YWY3Y2U5NCIsImlzRGRwaUVuYWJsZWQiOiJZIiwiaXNNdGZFbmFibGVkIjoiTiIsImZ5X2lkIjoiWVUwMTU4NSIsImFwcFR5cGUiOjEwMiwiZXhwIjoxNzQ4NDc4NjAwLCJpYXQiOjE3NDg0MDk2NjksImlzcyI6ImFwaS5meWVycy5pbiIsIm5iZiI6MTc0ODQwOTY2OSwic3ViIjoiYWNjZXNzX3Rva2VuIn0.1osHTuYYJ4k720Gv2ITpJLW__YNib2gGVDV2hUCWt_E"
+        
+
+//       if (currentUser && fyersAccessToken) {
+//         console.log("Trying to fetch the values from fyers");
+//         const headers = { Authorization: `Bearer ${fyersAccessToken}` };
+//         const response = await api.get(
+//           `/api/v1/fyers/fetchAllFyersUserDetails/${currentUser.id}`,
+//           { headers }
+//         );
+//         const data = response.data[0];
+
+//         setProfile(data.profile);
+//         setFunds(data.funds || {});
+//         setHoldings(data.holdings || []);
+//         setPositions(data.positions || {});
+//         setTrades(data.trades || []);
+//         setOrders(data.orders || []);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching data:", error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchAllData = async () => {
+//       await fetchData();
+//       setLoading(false);
+//     };
+
+//     fetchAllData();
+
+//     const dataInterval = setInterval(() => {
+//       fetchData();
+//     }, 5000);
+
+//     return () => {
+//       clearInterval(dataInterval);
+//     };
+//   }, []);
+
+//   return (
+//     <FyersDataContext.Provider
+//       value={{ profile, holdings, funds, positions, trades, orders, loading }}
+//     >
+//       {children}
+//     </FyersDataContext.Provider>
+//   );
+// }
+
+// export function useData() {
+//   return useContext(FyersDataContext);
+// }

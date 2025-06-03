@@ -167,7 +167,7 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
   const region = useSelector((state) => state.region); // Fetch selected region
 
   // ✅ Dynamically select the correct trading context
-  const { funds = [], investedAmount, loading } =
+  const { funds = [], loading } =
     region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
 
@@ -203,12 +203,12 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
       {
         id: 4,
         title: "Invested Amount",
-        equityAmount: (investedAmount || 0).toFixed(2),
+        equityAmount: (funds.investedAmount || 0).toFixed(2),
         commodityAmount: 0,
         _id: "6777c6d0364dcb9e52cfec9a",
       },
     ];
-  }, [funds, investedAmount]);
+  }, [funds]);
 
   useEffect(() => {
     if (fundsData.length > 0) {

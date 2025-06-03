@@ -25,11 +25,17 @@ const api = axios.create({
 });
 
 
-// Initialize socket connection
-const paperTradeSocket = io(PAPER_TRADE_URL, {
-  transports: ["websocket", "polling"], // Optional: makes fallback explicit
-  withCredentials: false, // No auth token needed
-});
+// // Initialize socket connection
+// const paperTradeSocket = io(PAPER_TRADE_URL, {
+//   transports: ["websocket", "polling"], // Optional: makes fallback explicit
+//   withCredentials: false, // No auth token needed
+// });
+
+// // Initialize socket connection
+// const mainBackendSocket = new WebSocket(`${BACKEND_URL.replace(/^http/, 'ws')}`);
+
+// mainBackendSocket.emit("test-message", { message: "hi from frontend" });
+
 
 // Create Axios instance for paper trading (India)
 const paperTradeApi = axios.create({
@@ -163,4 +169,5 @@ addAuthInterceptor(paperTradeUsaApi);
 
 // Export all instances
 export default api;
-export { paperTradeApi, paperTradeUsaApi, paperTradeSocket };
+export { paperTradeApi, paperTradeUsaApi,  }; // mainBackendSocket paperTradeSocket
+ 

@@ -251,17 +251,17 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const getColumnNames = useMemo(() => {
     return holdings?.length
       ? [
-          "stockSymbol",
-          "quantity",
-          "averagePrice",
-          "ltp",
-          "pnl",
-          "pnlPercentage",
-          "totalInvested",
-          "currentValue",
-          "exchange",
-          "actions",
-        ]
+        "stockSymbol",
+        "quantity",
+        "averagePrice",
+        "ltp",
+        "pnl",
+        "pnlPercentage",
+        "totalInvested",
+        "currentValue",
+        "exchange",
+        "actions",
+      ]
       : [];
   }, [holdings]);
 
@@ -324,9 +324,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <th
                   key={columnName}
-                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
-                    columnName === "actions" ? "sticky right-0" : ""
-                  }`}
+                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${columnName === "actions" ? "sticky right-0" : ""
+                    }`}
                   style={{
                     background: columnName === "actions" ? getBackgroundStyle() : "none",
                     zIndex: columnName === "actions" ? 2 : 1,
@@ -341,10 +340,11 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
             {holdings.map((holding, index) => {
               const tickerString = holding.stockSymbol + ".NS";
               const realTimePrice = realtimePrices[tickerString];
-              const updatedLtp = realTimePrice || holding.ltp;
-              if (!updatedLtp) {
-                console.log("Updated LTP: ", tickerString);
+
+              if (realTimePrice === undefined) {
+                console.warn(`⚠️ Ticker not found in realtimePrices: ${tickerString}`);
               }
+              const updatedLtp = realTimePrice || holding.ltp;
               const { pnl, pnlPercentage } = calculatePnL(holding, updatedLtp);
 
               const totalInvested = holding.investedValue;
@@ -367,9 +367,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                           <button
                             onClick={() => handleExitClick(holding)}
                             disabled={isExiting}
-                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
-                            } text-white`}
+                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+                              } text-white`}
                           >
                             <X size={16} />
                           </button>
@@ -383,7 +382,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                     if (columnName === "stockSymbol") {
                       className += " text-[#6FD4FF]";
                     } else if (columnName === "ltp") {
-                      content = updatedLtp.toFixed(2);
+                      content = updatedLtp?.toFixed(2) || "NaN";
                     } else if (columnName === "pnl") {
                       content = pnl.toFixed(2);
                       className += pnl >= 0 ? " text-green-500" : " text-red-500";

@@ -151,7 +151,7 @@ function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
   const region = useSelector((state) => state.region); // Fetch user region
   console.log(region);
-  
+
 
   // ✅ Select the correct context based on region
   const {
@@ -201,7 +201,7 @@ function AccountDetailsPT({ userId }) {
 
   }, [region]);
 
-  if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>Loading...</div>;
 
   return (
     <div className="news-table rounded-xl pb-3 px-2 flex flex-col gap-4">
@@ -216,7 +216,7 @@ function AccountDetailsPT({ userId }) {
         {[
           {
             title: "Invested Amount",
-            value: investedAmount,
+            value: investedAmount.toFixed(2),
             valueColor: "text-[#DEB215]",
             bgColor: "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
           },

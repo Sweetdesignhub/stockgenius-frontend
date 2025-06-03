@@ -145,10 +145,12 @@ const BrokerModal = ({ isOpen, onClose }) => {
       await Promise.all([
         api.post(`/api/v1/fyers/fetchProfileAndSave/${userId}`, { accessToken: token }),
         api.post(`/api/v1/fyers/fetchFundsAndSave/${userId}`, { accessToken: token }),
-        api.post(`/api/v1/fyers/fetchOrdersAndSave/${userId}`, { accessToken: token }),
+        api.post(`/api/v1/fyers/fetchOrderPositionTradesWebSocket/${userId}`, { accessToken: token }),
+        
+        // api.post(`/api/v1/fyers/fetchOrdersAndSave/${userId}`, { accessToken: token }),
         api.post(`/api/v1/fyers/fetchHoldingsAndSave/${userId}`, { accessToken: token }),
-        api.post(`/api/v1/fyers/fetchPositionsAndSave/${userId}`, { accessToken: token }),
-        api.post(`/api/v1/fyers/fetchTradesAndSave/${userId}`, { accessToken: token }),
+        // api.post(`/api/v1/fyers/fetchPositionsAndSave/${userId}`, { accessToken: token }),
+        // api.post(`/api/v1/fyers/fetchTradesAndSave/${userId}`, { accessToken: token }),
       ]);
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -174,6 +176,7 @@ const BrokerModal = ({ isOpen, onClose }) => {
 
   const startFetchingData = () => {
     const token = localStorage.getItem("fyers_access_token");
+      // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZDoxIiwiZDoyIiwieDowIiwieDoxIiwieDoyIl0sImF0X2hhc2giOiJnQUFBQUFCb05wMUZyay01NlJiaWI4cTNPVktXOUdSQVJYVU1MaWlfT1lCbTFKamZHTWNCRllDTnNZMmpiNXlJam05SmpWVjA5SXdoUlNsT1kzZV9HUi1RRjEyaWoxV0t5T1Z4bUk5bnJFa0VpdEV4ejNsb3BQQT0iLCJkaXNwbGF5X25hbWUiOiIiLCJvbXMiOiJLMSIsImhzbV9rZXkiOiI0OTBjMjEwNjUzZmVhNzQxYzJiYmJiNzVmMWY2MGUwOTIyNjk0OTNmY2Y4N2U0MTQ5YWY3Y2U5NCIsImlzRGRwaUVuYWJsZWQiOiJZIiwiaXNNdGZFbmFibGVkIjoiTiIsImZ5X2lkIjoiWVUwMTU4NSIsImFwcFR5cGUiOjEwMiwiZXhwIjoxNzQ4NDc4NjAwLCJpYXQiOjE3NDg0MDk2NjksImlzcyI6ImFwaS5meWVycy5pbiIsIm5iZiI6MTc0ODQwOTY2OSwic3ViIjoiYWNjZXNzX3Rva2VuIn0.1osHTuYYJ4k720Gv2ITpJLW__YNib2gGVDV2hUCWt_E"
     if (isTradingHours()) {
       fetchData(token);
       fetchIntervalRef.current = setInterval(() => fetchData(token), 8000);

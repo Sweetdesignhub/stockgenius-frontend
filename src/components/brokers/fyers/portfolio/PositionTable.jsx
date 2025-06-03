@@ -17,8 +17,8 @@ const PositionsTable = ({
   const { currentUser } = useSelector((state) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [positionToExit, setPositionToExit] = useState(null);
-  const { positions = { netPositions: [] }, loading } = useData();
-  const positionsData = positions.netPositions || [];
+  const { positions, loading } = useData();
+  const positionsData = positions || [];
 
   // const getPositionsData = async () => {
   //   try {
@@ -172,11 +172,11 @@ const PositionsTable = ({
                   <tr key={position.id || index}>
                     {selectedColumns.map((columnName) => (
                       <td
-                        key={`${columnName}-${position.id || index}`}                        
+                        key={`${columnName}-${position.id || index}`}
                         className={`px-4 py-4 whitespace-nowrap text-left font-semibold ${columnName === "symbol" ? "text-[#6FD4FF]" : ""
                           }`}
                       >
-                        {columnName === "pl" || columnName === "unrealized_profit" 
+                        {columnName === "pl" || columnName === "unrealized_profit"
                           ? Number(position[columnName]).toFixed(2)
                           : position[columnName] || ""}
                       </td>

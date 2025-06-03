@@ -132,7 +132,7 @@ function AccountInfoPT() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
           <Cards
             title="Invested Amount"
-            value={investedAmount}
+            value={investedAmount.toFixed(2)}
             valueColor="text-[#DEB215]"
             bgColor="bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]"
           />

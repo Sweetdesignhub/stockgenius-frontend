@@ -78,8 +78,9 @@ function AiDrivenList() {
             };
           });
         }
-
+        console.log("Formatted Data:", formattedData);
         const sortedData = formattedData.sort((a, b) => b.roi - a.roi);
+
         setTableData(sortedData);
       } catch (error) {
         console.error("Error fetching or parsing file:", error);
@@ -122,6 +123,8 @@ function AiDrivenList() {
 
     return matchesSearch && matchesPrediction;
   });
+
+  // console.log("AI DRIVEN tableData" , tableData);
 
   const handlePredictionFilter = (filter) => {
     setPredictionFilter(filter);
