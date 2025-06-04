@@ -100,22 +100,21 @@ export function PaperTradingProvider({ children }) {
 
     // Real-time update handlers
     socket.on(`newOrder:${currentUser.id}`, (newOrder) => {
-      console.log("New Order Recieved from newOrder: ", newOrder);
+      // console.log("New Order Recieved from newOrder: ", newOrder);
       setOrders(newOrder.orders);
       // setOrders(prev => updateOrAddItem(prev, newOrder));
     });
 
     socket.on(`newTrade:${currentUser.id}`, (newTradeDoc) => {
+
       setTrades(prev => newTradeDoc.trades || prev);
     });
 
     socket.on(`newPosition:${currentUser.id}`, (newPosition) => {
-      console.log("New Position Recieved from newPosition: ", newPosition.netPositions[0]);
-      setPositions(prev => updateOrAddItem(prev, newPosition.netPositions[0]));
+      setPositions(newPosition.netPositions);
     });
-
     socket.on(`newHolding:${currentUser.id}`, (newHolding) => {
-      console.log("New Holding Recieved from newHolding: ", newHolding);
+      // console.log("New Holding Recieved from newHolding: ", newHolding);
       setHoldings(newHolding.holdings);
     });
 

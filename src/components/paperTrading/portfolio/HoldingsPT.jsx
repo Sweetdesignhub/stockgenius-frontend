@@ -236,7 +236,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
   const { holdings, loading, realtimePrices } = tradingContext;
-  console.log("Realt time prices: ", realtimePrices);
+  // console.log("Realt time prices: ", realtimePrices);
   const { theme } = useTheme();
 
   const getBackgroundStyle = () => (theme === "light" ? "#ffffff" : "#402788");

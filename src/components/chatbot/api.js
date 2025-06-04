@@ -12,7 +12,12 @@ const endpoints = {
 // Generic API call function
 export const fetchTickerData = async (endpoint, ticker) => {
   try {
+
+    console.log("Endpoint is", endpoint);
+    
     const response = await axios.post(endpoint, { ticker });
+    
+    console.log("Response is", response);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

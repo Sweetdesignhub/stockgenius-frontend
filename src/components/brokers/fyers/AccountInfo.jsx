@@ -7,13 +7,13 @@ function AccountInfo() {
     profile = {},
     holdings = {},
     funds = { fund_limit: [{}] },
-    positions = { overall: {} },
+    positions = {},
     loading,
   } = useData();
 
   const holdingsTotalPL = holdings?.overall?.total_pl?.toFixed(2) || "0.00";
-  console.log("Positions in P&L:", positions[0].pl);
-  const positionTotalPL = positions?.[0].pl?.toFixed(2) || "0.00";
+  // console.log("Positions in P&L:", positions[0].pl);
+  const positionTotalPL = positions?.[0]?.pl?.toFixed(2) || "0.00";
   const availableFunds =
     funds?.fund_limit?.[9]?.equityAmount?.toFixed(2) || "0.00";
 

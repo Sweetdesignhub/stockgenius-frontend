@@ -268,8 +268,10 @@ body {
 }
 
 .react-chatbot-kit-chat-bot-message {
-  width: 330px;
+  width: 430px;
+text-align: left;
 }
+
 
 .App {
   font-family: sans-serif;
@@ -303,7 +305,7 @@ body {
   justify-content: center;
 }
 .column-left {
-  text-align: right;
+  text-align: left;
 }
 .column-right {
   text-align: left;

@@ -74,7 +74,7 @@ function MainApp() {
 
   useEffect(() => {
     // console.log("Checking");
-    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password","/complete-profile"];
+    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password", "/complete-profile"];
     const isResetPasswordRoute =
       location.pathname.startsWith("/reset-password");
 
@@ -222,6 +222,11 @@ function MainApp() {
         onSignOut={handleSignOut}
       />
 
+      {/* Loading for PaperTrading
+          Orders.controller.js-> fetch ticker by database(fetchStockPrice)
+          Fetch the Positions(done) 
+          Positions PNL
+       */}
       {/* Conditionally render the chatbot */}
       {/* {chatbotPages.includes(location.pathname) && <ChatbotComponent />} */}
       {/* <ChatbotComponent /> */}

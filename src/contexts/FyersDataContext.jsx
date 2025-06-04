@@ -216,7 +216,8 @@ export function DataProvider({ children }) {
               updateOrders(data.payload);
               break;
             case `fyers-trades-new-update:${userId}`:
-              console.log("Postionss", data.payload);
+              console.log("Current Trades", trades);
+              console.log("Tradess", data.payload);
               updateTrades(data.payload);
               break;
             case `fyers-positions-new-update:${userId}`:
