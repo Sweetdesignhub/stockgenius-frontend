@@ -95,7 +95,7 @@ function IndiaPortfolio() {
           alt="bear"
         />
         
-        <div className="bg-white min-h-[75vh] sm:min-h-[85vh] md:min-h-[75vh] lg:min-h-[65vh] xl:min-h-[60vh] 2xl:min-h-[50vh] 4xl:min-h-[40vh] news-table rounded-2xl">
+        <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10 min-h-[80vh] sm:min-h-[80vh] md:min-h-[80vh] lg:min-h-[85vh] xl:min-h-[85vh] 2xl:min-h-[85vh] 4xl:min-h-[40vh] news-table rounded-2xl">
           <div className="py-2 sm:py-3 md:py-4 lg:py-5 px-2 sm:px-3 md:px-4 lg:px-5 flex flex-col rounded-2xl">
             {renderContent()}
           </div>

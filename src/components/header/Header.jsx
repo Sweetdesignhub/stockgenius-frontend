@@ -51,6 +51,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const [isHovered, setIsHovered] = useState(false);
+  const [isMarketDropdownVisible, setIsMarketDropdownVisible] = useState(true);
   let hoverTimeout;
 
   // console.log(currentUser);
@@ -60,23 +61,18 @@ export default function Header() {
   const handleMouseEnter = () => {
     clearTimeout(hoverTimeout);
     setIsHovered(true);
+  };  const handleMouseLeave = () => {
+    hoverTimeout = setTimeout(() => setIsHovered(false), 800); // increased delay for better user experience
   };
-
-  const handleMouseLeave = () => {
-    hoverTimeout = setTimeout(() => setIsHovered(false), 300); // delay in ms
-  };
-
-  const isMarketDropdownVisible =
-    location.pathname === "/usa/dashboard" ||
-    location.pathname === "/usa/portfolio" ||
-    location.pathname === "/usa/paper-trading/portfolio" ||
-    location.pathname === "/usa/stock-lists" ||
-    location.pathname === "/usa/paper-trading";
 
   useEffect(() => {
     if (region) {
       localStorage.setItem("region", region);
     }
+  }, [region]);
+
+  useEffect(() => {
+    setIsMarketDropdownVisible(region === "usa");
   }, [region]);
 
   const handleRegionChange = (selectedOption) => {
@@ -274,9 +270,9 @@ export default function Header() {
   // console.log(currentUser);
 
   return (
-    <header>
+    <header className="w-full   border-gray-200">
       <nav
-        className="flex items-center justify-between p-6 lg:px-3 xl:px-4"
+        className="mx-auto flex items-center justify-between p-4 lg:px-8"
         aria-label="Global"
       >
         <div className="flex items-center">
@@ -305,17 +301,35 @@ export default function Header() {
                       }}
                     /> */}
                   </div>
-                ) : region === "usa" && isMarketDropdownVisible ? (
-                  <div className="flex items-center bg-white rounded-xl">
-                    <Select
-                      options={marketOptions}
-                      onChange={handleMarketChangeMobile}
-                      value={marketOptions.find(
-                        (option) => option.value === market
-                      )}
-                      classNamePrefix="react-select"
-                      styles={marketCustomStyles}
+                ) : region === "usa" ? (
+                  <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
+                    <Flag
+                      code="US"
+                      style={{
+                        marginRight: "5px",
+                        width: "35px",
+                        height: "25px",
+                        "@media (max-width: 1024px)": {
+                          width: "25px",
+                          height: "18px",
+                        }
+                      }}
                     />
+                    {isMarketDropdownVisible && (
+                      <div>
+                        <select
+                          onChange={handleMarketChange}
+                          value={market}
+                          className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
+                        >
+                          <option value="" disabled>
+                            Market
+                          </option>
+                          <option value="NYSE">NYSE</option>
+                          <option value="NASDAQ">NASDAQ</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   ""
@@ -355,16 +369,13 @@ export default function Header() {
                 >
                   <item.icon className="h-5 w-5 xl:h-5 xl:w-5 lg:h-3.5 lg:w-3.5" aria-hidden="true" />
                   {item.name}
-                </NavLink>
-
-                {/* Dropdown for items with submenu */}
-                {item.submenu && isHovered && (
-                  <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-white shadow-lg rounded-md mt-1 py-1 z-10 min-w-[180px]">
-                    {item.submenu.map((subItem) => (
-                      <NavLink
+                </NavLink>                {/* Dropdown for items with submenu */}                {item.submenu && isHovered && (
+                  <div className="absolute top-[calc(100%-2px)] left-0 hidden group-hover:flex flex-col bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 z-10 min-w-[180px] backdrop-blur-md border border-gray-200 dark:border-gray-700">
+                    {item.submenu.map((subItem) => (                      <NavLink
                         key={subItem.name}
                         to={subItem.to}
-                        className="px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 whitespace-nowrap"
+                        onClick={() => setIsHovered(false)}
+                        className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 whitespace-nowrap transition-colors duration-150 hover:bg-[#3A6FF8] hover:text-white"
                       >
                         {subItem.name}
                       </NavLink>
@@ -400,7 +411,7 @@ export default function Header() {
                             }}
                           />
                         </div>
-                      ) : region === "usa" && isMarketDropdownVisible ? (
+                      ) : region === "usa" ? (
                         <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
                           <Flag
                             code="US"
@@ -414,19 +425,21 @@ export default function Header() {
                               }
                             }}
                           />
-                          <div>
-                            <select
-                              onChange={handleMarketChange}
-                              value={market}
-                              className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
-                            >
-                              <option value="" disabled>
-                                Market
-                              </option>
-                              <option value="NYSE">NYSE</option>
-                              <option value="NASDAQ">NASDAQ</option>
-                            </select>
-                          </div>
+                          {isMarketDropdownVisible && (
+                            <div>
+                              <select
+                                onChange={handleMarketChange}
+                                value={market}
+                                className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
+                              >
+                                <option value="" disabled>
+                                  Market
+                                </option>
+                                <option value="NYSE">NYSE</option>
+                                <option value="NASDAQ">NASDAQ</option>
+                              </select>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         ""

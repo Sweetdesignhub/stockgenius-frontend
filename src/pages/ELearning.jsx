@@ -34,7 +34,7 @@ function ELearning() {
   };
 
   return (
-  <div className="-z-10 w-full">    <div className="min-h-screen lg:px-32 p-4 relative">
+  <div className="-z-10 w-full">    <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
       {/* Background Images with responsive sizes */}
       <img
         loading="lazy"

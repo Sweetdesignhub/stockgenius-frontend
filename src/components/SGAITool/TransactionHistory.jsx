@@ -368,10 +368,10 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
     const { theme } = useTheme();
     const isDark = theme === "dark";
 
-    return (
-      <div className="relative text-[10px] sm:text-sm md:text-base lg:text-lg">
+  return (
+      <div className="relative text-[10px] sm:text-sm md:text-base lg:text-lg h-[400px]">
         <div
-          className="relative w-full h-64 sm:h-80 rounded-lg"
+          className="relative w-full h-full rounded-lg"
           style={{
             zIndex: -1,
             backgroundImage: `url(${imgs})`,
@@ -404,10 +404,9 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
       </div>
     );
   };
-
   return (
     <div
-      className={`p-2 sm:p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] max-w-[290px] lg:max-w-[350vh] md:max-w-[110vh] sm:max-w-none w-full ${
+      className={`p-2 sm:p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] w-full min-h-[360px]  ${
         theme === "dark"
           ? "border border-[0.73px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)] border-blue-500"
           : filteredTransactions.length !== 0
@@ -420,147 +419,156 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
                    linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)`,
         borderImageSlice: 1,
       }}
-    >
-      <div className="flex flex-col p-2 sm:flex-row sm:justify-between sm:items-center mb-4 space-y-3 sm:space-y-0">
-        <h2
-          className={`text-lg sm:text-xl font-bold ${
-            theme === "dark" ? "text-white" : "text-gray-900"
-          }`}
-        >
-          Transaction History
-        </h2>
-        <div className="relative w-full sm:w-[264px]">
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`pl-4 pr-4 py-1 w-full sm:w-[264px] rounded-full placeholder-white text-[#fdfdfd] ${
-              theme === "dark" ? "bg-gray-800 text-white" : "bg-[#00000099]"
-            } text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
-          />
-          <FiSearch
-            className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
-              theme === "dark" ? "text-white" : "text-gray-600 text-white"
-            } cursor-pointer`}
-            size={20}
-          />
+    >      {/* Header Section */}      <div className="flex flex-col p-2 sm:flex-row sm:items-center mb-4 space-y-4 sm:space-y-0">
+        {/* Left: Title */}
+        <div className="sm:w-1/4">
+          <h2
+            className={`text-lg sm:text-xl font-bold text-center sm:text-left ${
+              theme === "dark" ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Transaction History
+          </h2>
         </div>
-        <div className="flex items-center space-x-2">
-          <button
-            className={`p-2 rounded-full ${
-              theme === "dark"
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-[#3A6FF8] hover:bg-blue-300"
-            } transition-colors`}
-            onClick={handleDownloadCSV}
-            disabled={transactions.length === 0}
-          >
-            <FiDownload size={16} color="white" />
-          </button>
-          <button
-            className={`p-2 rounded-full ${
-              theme === "dark"
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-            onClick={handleMagnifyClick}
-          >
-            <CgMaximizeAlt size={16} />
-          </button>
-          <button
-            className={`p-2 rounded-full ${
-              theme === "dark"
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-200 hover:bg-gray-300"
-            } transition-colors`}
-          >
-            <IoFilter size={16} />
-          </button>
+
+        {/* Center: Search Bar */}
+        <div className="sm:flex-1 flex justify-center">
+          <div className="relative w-full max-w-[300px] sm:w-[264px]">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`pl-4 pr-10 py-2 w-full rounded-full placeholder-white text-[#fdfdfd] text-sm
+                ${theme === "dark" 
+                  ? "bg-black/60 border-[0.89px] border-white/10 backdrop-blur-[20px]" 
+                  : "bg-[#00000099]"
+                }
+                shadow-[0px_10px_10px_0px_rgba(0,0,0,0.1),0px_4px_4px_0px_rgba(0,0,0,0.05),0px_1px_0px_0px_rgba(0,0,0,0.05)]
+                focus:outline-none focus:border-white/20`}
+            />
+            <FiSearch
+              className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
+                theme === "dark" ? "text-white/60" : "text-gray-600 text-white"
+              } cursor-pointer`}              size={20}
+            />
+          </div>
+        </div>
+
+        {/* Right: Action Buttons */}
+        <div className="sm:w-1/4 flex justify-center sm:justify-end">
+          <div className="flex items-center gap-3">
+            <button
+              className={`p-2 rounded-full ${
+                theme === "dark"
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-[#3A6FF8] hover:bg-blue-300"
+              } transition-colors`}
+              onClick={handleDownloadCSV}
+              disabled={transactions.length === 0}
+            >
+              <FiDownload size={16} color="white" />
+            </button>
+            <button
+              className={`p-2 rounded-full ${
+                theme === "dark"
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-gray-200 hover:bg-gray-300"
+              } transition-colors`}
+              onClick={handleMagnifyClick}
+            >
+              <CgMaximizeAlt size={16} />
+            </button>
+            <button
+              className={`p-2 rounded-full ${
+                theme === "dark"
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-gray-200 hover:bg-gray-300"
+              } transition-colors`}
+            >
+              <IoFilter size={16} />
+            </button>
+          </div>
         </div>
       </div>
+
       <div
-        className={`h-px w-full mb-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
+        className={`h-100px w-full mb-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
       ></div>
-      <div
-        className={`overflow-x-auto ${
-          isExpanded
-            ? filteredTransactions.length >= 20
-              ? "max-h-[800px] sm:max-h-[800px] overflow-y-auto"
-              : ""
-            : filteredTransactions.length >= 10
-            ? "max-h-[400px] sm:max-h-[400px] overflow-y-auto"
-            : ""
-        }`}
-      >
+      
+      <div className="min-h-[40vh] lg:min-h-[50vh]  relative">
         {filteredTransactions.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="w-full overflow-x-auto">
-            <table className="min-w-full text-xs">
-              <thead>
-                <tr className="text-[10px] sm:text-xs md:text-sm">
-                  {[
-                    "Timestamp",
-                    "Ticker",
-                    "Action",
-                    "Price",
-                    "Qty",
-                    "Cash_Balance",
-                    "PnL_Percent",
-                    "Buy_Price",
-                  ].map((title, i) => (
-                    <th
-                      key={title}
-                      className={`px-0.5 sm:px-3 py-1 sm:py-2 text-left font-medium tracking-wide whitespace-nowrap
-                        ${theme === "dark" ? "text-gray-400" : "text-gray-600"}
-                      `}
-                    >
-                      {title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody
-                className={` ${
-                  theme === "dark" ? "divide-gray-700" : "divide-gray-300"
-                }`}
-              >
-                {filteredTransactions.map((transaction) => (
-                  <tr
-                    key={transaction.timestamp}
-                    className={`hover:${
-                      theme === "dark" ? "bg-gray-700" : "bg-gray-100"
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="h-full overflow-y-auto">
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-xs">
+                  <thead>
+                    <tr className="text-[10px] sm:text-xs md:text-sm">
+                      {[
+                        "Timestamp",
+                        "Ticker",
+                        "Action",
+                        "Price",
+                        "Qty",
+                        "Cash_Balance",
+                        "PnL_Percent",
+                        "Buy_Price",
+                      ].map((title, i) => (
+                        <th
+                          key={title}
+                          className={`px-0.5 sm:px-3 py-1 sm:py-2 text-left font-medium tracking-wide whitespace-nowrap
+                            ${theme === "dark" ? "text-gray-400" : "text-gray-600"}
+                          `}
+                        >
+                          {title}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody
+                    className={` ${
+                      theme === "dark" ? "divide-gray-700" : "divide-gray-300"
                     }`}
                   >
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
-                      {transaction.Timestamp.replace("T", " ")}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm text-[#1459DE]">
-                      {transaction.Ticker}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm text-[#0EBC34]">
-                      {transaction.Action}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
-                      {Number(transaction.Price).toFixed(2)}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
-                      {transaction.Qty}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
-                      {Number(transaction.Cash_Balance).toFixed(2)}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
-                      {Number(transaction.PnL_Percent).toFixed(2)}
-                    </td>
-                    <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
-                      {Number(transaction.Buy_Price).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    {filteredTransactions.map((transaction) => (
+                      <tr
+                        key={transaction.timestamp}
+                        className={`hover:${
+                          theme === "dark" ? "bg-gray-700" : "bg-gray-100"
+                        }`}
+                      >
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
+                          {transaction.Timestamp.replace("T", " ")}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm text-[#1459DE]">
+                          {transaction.Ticker}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm text-[#0EBC34]">
+                          {transaction.Action}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
+                          {Number(transaction.Price).toFixed(2)}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
+                          {transaction.Qty}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
+                          {Number(transaction.Cash_Balance).toFixed(2)}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
+                          {Number(transaction.PnL_Percent).toFixed(2)}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-xs sm:text-sm">
+                          {Number(transaction.Buy_Price).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>

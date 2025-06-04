@@ -163,22 +163,22 @@ function DailyUpdates() {
         }}><h2 className="text-md font-semibold mb-1">News and Events</h2>        <div className="h-[calc(100%-2rem)] overflow-y-auto rounded-lg"><ul className="space-y-0.5 p-1">
             {newsHeadlines.map((news, index) => (
               <li
-                key={index}
-                className="group flex items-center justify-between hover:bg-gray-800 rounded-lg py-1 px-2 transition-colors duration-200 cursor-pointer"
-              >
-                <a
-                  href={news["Reference link"]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="dark:text-gray-100 text-sm flex-grow"
-                >
-                  {news.Headline}
-                </a>
-                <ChevronRight
-                  className="text-gray-400 group-hover:text-white transition-colors duration-200"
-                  size={20}
-                />
-              </li>
+  key={index}
+  className="group flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg py-1 px-2 transition-colors duration-200 cursor-pointer"
+>
+  <a
+    href={news["Reference link"]}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-gray-800 dark:text-gray-100 text-sm flex-grow"
+  >
+    {news.Headline}
+  </a>
+  <ChevronRight
+    className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-white transition-colors duration-200"
+    size={20}
+  />
+</li>
             ))}
           </ul>
         </div>

@@ -23,6 +23,7 @@ function Table({
   buttonColor,
   actionButtonColor,
   roiColor,
+  isReversed = false,
 }) {
   const region = localStorage.getItem("region");
 
@@ -41,14 +42,26 @@ function Table({
   const filteredColumns = columns.filter((_, index) => index !== 3);
 
   return (
-    <div className="flex-1 overflow-auto rounded-xl">
-      <div className="flex justify-between pb-2 border-b border-gray-500">
-        <button
-          className={`py-0.5 sm:py-1 px-3 sm:px-5 rounded-2xl bg-white font-bold text-[10px] sm:text-base ${buttonColor}`}
-        >
-          {buttonLabel}
-        </button>
-        <h2 className="font-semibold text-sm sm:text-lg font-[poppins]">{title}</h2>
+    <div className="flex-1 overflow-auto scrollbar-hide rounded-xl">      <div className="flex justify-between pb-2 border-b border-gray-500">
+        {!isReversed ? (
+          <>
+            <h2 className="font-semibold text-sm sm:text-lg font-[poppins]">{title}</h2>
+            <button
+              className={`py-0.5 sm:py-1 px-3 sm:px-5 rounded-2xl bg-white font-bold text-[10px] sm:text-base ${buttonColor}`}
+            >
+              {buttonLabel}
+            </button>
+          </>
+        ) : (
+          <div className="flex w-full justify-between flex-row-reverse">
+            <h2 className="font-semibold text-sm sm:text-lg font-[poppins]">{title}</h2>
+            <button
+              className={`py-0.5 sm:py-1 px-3 sm:px-5 rounded-2xl bg-white font-bold text-[10px] sm:text-base ${buttonColor}`}
+            >
+              {buttonLabel}
+            </button>
+          </div>
+        )}
       </div>
 
       <div
@@ -100,8 +113,8 @@ function Table({
           </div>
         </div>
         <div className="flex-1 lg:max-w-[15%] max-w-[25%]">
-          <div className="overflow-x-auto">
-            <div className="overflow-y-auto h-full">
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="overflow-y-auto scrollbar-hide h-full">
               <table className="table-auto border-collapse w-full bg-transparent">
                 <thead>
                   <tr>                    <th className="w-full px-1 sm:px-2 text-center py-2 sm:py-3 text-[10px] sm:text-xs font-medium tracking-wider">

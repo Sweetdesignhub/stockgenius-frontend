@@ -101,7 +101,7 @@ const TradesTable = ({ selectedColumns, setColumnNames }) => {
   // );
 
   return (
-    <div className="hh-[44vh] overflow-auto scrollbar-hide">
+    <div className="h-[44vh] overflow-auto scrollbar-hide">
       <table className="w-full border-collapse">
         <thead>
           <tr>

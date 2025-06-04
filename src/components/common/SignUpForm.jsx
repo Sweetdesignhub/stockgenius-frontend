@@ -101,7 +101,7 @@ const SignUpForm = ({
   watch("country");
 
   return (
-    <div>      <h1 className="text-2xl text-center font-semibold mb-5">Sign Up</h1>
+    <div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <OAuth />        <div className="flex items-center justify-center my-2">
           <div className="flex-grow border-t border-[#FFFFFF66] dark:border-[#FFFFFF66] border-gray-300"></div>

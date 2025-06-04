@@ -467,7 +467,7 @@ function AITradingBots() {
 
   return (
     <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
+      <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
@@ -483,7 +483,7 @@ function AITradingBots() {
 
         <div
           className={`news-table rounded-2xl ${
-            isAITradingPage ? "bg-gradient" : "bg-white"
+            isAITradingPage ? "bg-gradient" : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
           }`}
         >          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center md:text-left mb-4 md:mb-0">

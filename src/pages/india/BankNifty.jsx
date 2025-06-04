@@ -311,7 +311,7 @@ function BankNifty() {
   const decision = secondTableColumns.slice(secondTableColumns.length - 1);
 
   return (
-    <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
+    <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"
@@ -325,7 +325,7 @@ function BankNifty() {
         alt="bear"
       />
 
-      <div className="bg-white p-4 table-main rounded-2xl">
+      <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10 p-4 table-main rounded-2xl">
         <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
           <h1 className="font-semibold text-xl xl:text-xl lg:text-base mb-4 lg:mb-0 lg:mr-2 xl:mr-4">
             Bank Nifty
