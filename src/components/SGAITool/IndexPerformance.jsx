@@ -71,8 +71,7 @@ const IndexPerformance = ({ data, currency = "" }) => {
   const isNiftyReturnNegative = total_return < 0;
 
   return (
-    <div
-      className={`max-w-3xl h-full mx-auto py-5 px-3 rounded-xl inset-0 
+    <div      className={`max-w-3xl h-full mx-auto py-3 px-2 rounded-xl inset-0 
       bg-gradient-to-b from-white/1  to-transparent
       backdrop-blur-[1px]
       mask-[linear-gradient(to_bottom,white_20%,transparent_80%)]    ${
@@ -93,8 +92,7 @@ const IndexPerformance = ({ data, currency = "" }) => {
         <div>
           <p className={`text-[clamp(0.8rem,1rem,2rem)] mb-3 ${textColor}`}>
             Start Date - {start_date}
-          </p>
-          <div className="grid grid-cols-2 gap-4">
+          </p>          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
               Open - {currency} {start_open.toFixed(2)}
             </div>
@@ -108,8 +106,7 @@ const IndexPerformance = ({ data, currency = "" }) => {
         <div>
           <p className={`text-[clamp(0.8rem,1rem,2rem)] mb-3 ${textColor}`}>
             End Date - {end_date}
-          </p>
-          <div className="grid grid-cols-2 gap-4">
+          </p>          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className={fancyPurpleCardClass}>
               Open - {currency} {end_open.toFixed(2)}
             </div>
@@ -117,29 +114,26 @@ const IndexPerformance = ({ data, currency = "" }) => {
               Close - {currency} {end_close.toFixed(2)}
             </div>
           </div>
-        </div>
-
-        {/* Nifty Return */}
-        <div className="mt-8 pt-6">
-          <div className="flex items-center justify-center">
-            <p className={`text-xl ${textColor}`}>Nifty 100 Return -</p>
-            <div className="flex items-center ml-2">
+        </div>        {/* Nifty Return */}        <div className="mt-8 pt-6">
+          <div className="flex items-center justify-center space-x-1 text-sm sm:text-base">
+            <p className={`text-sm sm:text-xl ${textColor}`}>Nifty 100 Return -</p>
+            <div className="flex items-center">
               <p
-                className={`text-3xl font-bold ${
+                className={`text-base sm:text-3xl font-bold ${
                   isNiftyReturnNegative ? "text-red-500" : "text-green-500"
                 }`}
               >
                 {total_return.toFixed(2)}%
               </p>
               <div
-                className={`ml-2 p-2 rounded-full ${
+                className={`ml-2 p-1 sm:p-2 rounded-full ${
                   isNiftyReturnNegative ? "bg-red-500" : "bg-green-500"
                 }`}
               >
                 {isNiftyReturnNegative ? (
-                  <FiArrowDown className="text-white" size={24} />
+                  <FiArrowDown className="text-white" size={20} />
                 ) : (
-                  <FiArrowUp className="text-white" size={24} />
+                  <FiArrowUp className="text-white" size={20} />
                 )}
               </div>
             </div>

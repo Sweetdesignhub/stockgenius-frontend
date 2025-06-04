@@ -455,7 +455,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
   return (
     <div
       style={theme === "dark" ? darkThemeStyle : { backgroundColor: "#FFFFFF" }}
-      className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
+      className="rounded-xl p-3 lg:p-4 flex flex-col lg:flex-row w-full"
     >
       <svg width="0" height="0" style={{ position: "absolute" }}>
         <filter id={filterId}>
@@ -485,10 +485,10 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
               filter: `url(#${filterId})`,
               width: "20px",
               height: "20px",
-            }} // Apply SVG filter and set dimensions
+            }}
           />
         </div>
-        <div className="py-6 text-center lg:text-left">
+        <div className="py-3 lg:py-4 text-center lg:text-left">
           <div className="flex justify-center lg:justify-start">
             <h3 className="font-semibold text-md mr-2 text-[#16C8FA]">
               Profit % : <span>{botData.profitPercentage}</span>
@@ -512,11 +512,11 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center lg:justify-start lg:w-[66%] w-full px-4 mt-4 lg:mt-0">
+      <div className="flex flex-wrap justify-center lg:justify-start lg:w-[66%] w-full px-2 lg:px-4 mt-3 lg:mt-0">
         {data.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-[25%] mb-4"
+            className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-[25%] mb-3"
           >
             <h1 className="dark:text-[#A6B2CDB2] text-[black] text-xs mb-1">
               {item.title}

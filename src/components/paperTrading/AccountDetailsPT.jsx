@@ -210,15 +210,15 @@ function AccountDetailsPT({ userId }) {
           <h1 className="font-semibold text-md">Account : {userId}</h1>
           <p className="text-gray-400 text-sm">{currentTime}</p> {/* Auto-displays EST/EDT */}
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      </div>      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-2">
         {[
           {
             title: "Invested Amount",
             value: investedAmount,
             valueColor: "text-[#DEB215]",
             bgColor: "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
+            width: "min-w-[160px] lg:min-w-[140px]",
+            height: "min-h-24 lg:min-h-[5rem]"
           },
           {
             title: "Total P&L",

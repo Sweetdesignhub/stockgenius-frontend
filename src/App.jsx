@@ -155,10 +155,9 @@ function MainApp() {
   const chatbotPages = ["/india/dashboard"];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* <Header /> */}
+    <div className="flex flex-col h-screen overflow-hidden">
       {!shouldHideHeader && <Header />}
-      <div className="flex-grow">
+      <main className="flex-1 overflow-scroll scrollbar-hide">
         <Routes>
           {/* Auth routes - these should be first to ensure they take precedence */}
           <Route element={<AuthRoute />}>
@@ -237,15 +236,11 @@ function MainApp() {
             />
           </Route>
         </Routes>
-      </div>
+      </main>
       <SessionExpiredModal
         showModal={showSessionExpired}
         onSignOut={handleSignOut}
       />
-
-      {/* Conditionally render the chatbot */}
-      {/* {chatbotPages.includes(location.pathname) && <ChatbotComponent />} */}
-      {/* <ChatbotComponent /> */}
       {currentUser && <ChatbotComponent />}
     </div>
   );

@@ -10,21 +10,20 @@ function UsaPaperTrading() {
 
   return (
     <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative">
+      <div className="min-h-[85vh] md:h-[118vh] lg:h-[87vh] lg:px-8 p-4 relative page-scrollbar">
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px] md:w-[100px] sm:w-[80px]"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
           alt="bull"
         />
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px] md:w-[100px] sm:w-[80px]"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
           alt="bear"
         />
-
-        <div className="bg-white min-h-[85vh] md:max-h-[85vh] news-table rounded-2xl py-2 px-4 flex flex-col gap-4">
+        <div className="bg-white h-full lg:max-w-[1300px] mx-auto news-table rounded-2xl py-2 px-4 flex flex-col gap-4">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row items-center justify-between border-b-2 py-2 border-[#FFFFFF1A]">
             <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4 text-center md:text-left">
@@ -64,9 +63,9 @@ function UsaPaperTrading() {
           </div>
 
           {/* Content Section */}
-          <div className="flex flex-col md:flex-row gap-4 flex-grow overflow-hidden">
+          <div className="flex flex-col md:flex-row gap-4 flex-1 overflow-hidden">
             {/* Left Side */}
-            <div className="w-full md:w-[60%] flex flex-col gap-4 overflow-hidden">
+            <div className="w-full md:w-[60%] flex flex-col gap-4 overflow-hidden h-full">
               <AccountDetailsPT
                 userId={currentUser.id}
                 className="flex-shrink-0"
@@ -75,7 +74,7 @@ function UsaPaperTrading() {
             </div>
 
             {/* Right Side */}
-            <div className="w-full md:w-[40%]">
+            <div className="w-full md:w-[40%] h-full overflow-auto">
               <DailyUpdates />
             </div>
           </div>

@@ -66,8 +66,7 @@ const SimulationResults = ({ title = "NSE", data, currency = "" }) => {
     final_value < initial_cash ? fancyRedCardClass : fancyGreenCardClass;
 
   return (
-    <div
-      className={`max-w-3xl h-full mx-auto py-5 px-3 rounded-xl backdrop-blur-md
+    <div      className={`max-w-3xl h-full mx-auto py-3 px-2 rounded-xl backdrop-blur-md
         ${isDark ? "bg-white/1  text-white" : "bg-white "}
       `}
     >

@@ -121,7 +121,7 @@ function UsaDashboard() {
   const topLosersColumns = Object.keys(losersData[0] || {});
 
   return (
-    <div className="min-h-screen lg:px-32 p-4 relative">
+    <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"

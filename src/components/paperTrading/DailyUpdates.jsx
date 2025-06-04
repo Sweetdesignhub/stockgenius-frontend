@@ -15,19 +15,19 @@ const StockCard = ({
   volatility,
 }) => (
   <div
-    className="dark:bg-[#1a1f2e] rounded-lg p-2 dark:text-white"
+    className="dark:bg-[#1a1f2e] rounded-lg p-1.5 sm:p-2 md:p-2.5 dark:text-white"
     style={{
       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
       borderRadius: "12px",
     }}
   >
-    <h2 className="text-sm font-semibold mb-2 flex justify-between items-center">
+    <h2 className="text-sm font-semibold mb-1 flex justify-between items-center">
       {title}
     </h2>
-    <div className="flex items-center gap-2 mb-1">
+    <div className="flex items-center gap-1.5 mb-1">
       <div>
         <h3 className="text-xs font-semibold dark:text-white">{stock}</h3>
-        <p className="text-xs text-gray-400">{description}</p>
+        <p className="text-xs text-gray-400 line-clamp-1">{description}</p>
       </div>
     </div>
     <div className="flex gap-1 flex-wrap">
@@ -150,44 +150,35 @@ function DailyUpdates() {
 
   if (loading) {
     return <Loading />;
-  }
-
-  return (
-    <div className="flex flex-col h-full gap-4">
-      <div className="flex flex-col md:flex-col gap-4 flex-1">
+  }  return (  <div className="flex flex-col h-full gap-1.5 lg:gap-2 overflow-hidden">
+      <div className="flex flex-col md:flex-col lg:flex-col gap-1.5 lg:gap-2 flex-shrink-0">
         <StockCard {...stockData.topPick} title="Top Pick for Today" />
         <StockCard {...stockData.highSentiment} title="High Sentiment Stock" />
         <StockCard {...stockData.lowRisk} title="Low Risk Option" />
-      </div>
-
-      <div
-        className="dark:bg-[#1a1f2e] rounded-lg p-4 dark:text-white flex-1 overflow-hidden"
+      </div>      <div
+        className="h-[265px] lg:h-[180px] xl:h-[265px] 2xl:h-[250px] dark:bg-[#1a1f2e] rounded-lg p-2 dark:text-white scrollbar-hide"
         style={{
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           borderRadius: "12px",
-        }}
-      >
-        <h2 className="text-md font-semibold mb-4">News and Events</h2>
-        <div className="lg:h-full md:h-full h-96 overflow-y-auto">
-          <ul>
+        }}><h2 className="text-md font-semibold mb-1">News and Events</h2>        <div className="h-[calc(100%-2rem)] overflow-y-auto rounded-lg"><ul className="space-y-0.5 p-1">
             {newsHeadlines.map((news, index) => (
               <li
-                key={index}
-                className="group flex items-center justify-between hover:bg-gray-800 rounded-lg p-2 transition-colors duration-200 cursor-pointer"
-              >
-                <a
-                  href={news["Reference link"]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="dark:text-gray-100 text-sm flex-grow"
-                >
-                  {news.Headline}
-                </a>
-                <ChevronRight
-                  className="text-gray-400 group-hover:text-white transition-colors duration-200"
-                  size={20}
-                />
-              </li>
+  key={index}
+  className="group flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg py-1 px-2 transition-colors duration-200 cursor-pointer"
+>
+  <a
+    href={news["Reference link"]}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-gray-800 dark:text-gray-100 text-sm flex-grow"
+  >
+    {news.Headline}
+  </a>
+  <ChevronRight
+    className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-white transition-colors duration-200"
+    size={20}
+  />
+</li>
             ))}
           </ul>
         </div>

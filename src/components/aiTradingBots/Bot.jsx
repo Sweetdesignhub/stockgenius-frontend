@@ -575,15 +575,14 @@ function Bot({
   ) {
     return (
       <div className="w-full flex justify-center items-center">
-        <Loading />
+        {/* <Loading /> */}
       </div>
     );
   }
 
-  return (
-    <div
+  return (    <div
       style={theme === "dark" ? darkThemeStyle : { backgroundColor: "#FFFFFF" }}
-      className="rounded-xl p-5 flex flex-col lg:flex-row w-full"
+      className="rounded-xl p-5 flex flex-col md:flex-row w-full"
     >
       <svg width="0" height="0" style={{ position: "absolute" }}>
         <filter id={filterId}>
@@ -598,100 +597,87 @@ function Bot({
             k4="0"
           />
         </filter>
-      </svg>
-
-      <div className="flex flex-col items-center lg:items-start lg:w-1/4 w-full">
+      </svg>      <div className="flex flex-col items-center md:items-start md:w-1/4 w-full">
         <div className="flex items-center">
-          <h1 className="mr-4 font-bold" style={{ color: color }}>
+          <h1 className="mr-2 text-sm font-bold md:text-sm lg:text-sm xl:text-base" style={{ color: color }}>
             {botData.name}
           </h1>
           <img
             src={botData.image}
             alt={`${botData.name} logo`}
-            className=""
+            className="w-3 h-3 md:w-4 md:h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5"
             style={{
               filter: `url(#${filterId})`,
-              width: "20px",
-              height: "20px",
-            }} // Apply SVG filter and set dimensions
-          />
+            }}          />
         </div>
-        <div className="py-6 text-center lg:text-left">
-          <div className="flex justify-center lg:justify-start">
-            <h3 className="font-semibold text-md mr-2 text-[#16C8FA]">
+        <div className="py-4 md:py-4 lg:py-4 xl:py-6 text-center md:text-left">
+          <div className="flex justify-center md:justify-start space-x-2 md:space-x-3">
+            <h3 className="font-semibold text-[10px] md:text-xs lg:text-xs xl:text-sm mr-1 md:mr-2 text-[#16C8FA]">
               Profit % : <span>{botData.profitPercentage}</span>
             </h3>
-            <h3 className="font-semibold text-md text-[#FFC218]">
+            <h3 className="font-semibold text-[10px] md:text-xs lg:text-xs xl:text-sm text-[#FFC218]">
               Risk % : <span>{botData.riskPercentage}</span>
             </h3>
           </div>
-          <h3 className="text-sm text-[#FF1010]">{botData.market}</h3>
-          {/* <p className="text-[10px] mt-1 text-[#A6B2CD]">{botData.timestamp}</p> */}
-          <p className="text-sm mt-2 text-[#FF9800]">
+          <h3 className="text-[10px] md:text-xs lg:text-xs xl:text-sm text-[#FF1010] mt-1">{botData.market}</h3>
+          <p className="text-[10px] md:text-xs lg:text-xs xl:text-sm mt-1 md:mt-2 text-[#FF9800]">
             Product Type: {botData.productType}
           </p>
         </div>
-        <div className="w-full lg:w-auto">
+        <div className="w-[90%] md:w-auto mx-auto">
           <img
             src={botData.extraImage}
             alt="Extra Info"
-            className="w-full h-auto"
-          />
+            className="w-full h-auto md:max-w-[90%] lg:max-w-[90%] xl:max-w-full"          />
         </div>
-      </div>
-
-      <div className="flex flex-wrap justify-center lg:justify-start lg:w-[66%] w-full px-4 mt-4 lg:mt-0">
+      </div>      <div className="flex flex-wrap justify-center md:justify-start md:w-[66%] w-full px-2 md:px-2 mt-2 md:mt-0">
         {data.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col items-center lg:items-start justify-center w-1/2 sm:w-1/3 lg:w-1/5 mb-4"
+            className="flex flex-col items-center md:items-start justify-center w-1/2 md:w-1/5 mb-2 md:mb-2 px-1 md:px-1"
           >
-            <h1 className="dark:text-[#A6B2CDB2] text-[black] text-xs mb-1">
+            <h1 className="dark:text-[#A6B2CDB2] text-[black] text-[8px] md:text-[9px] lg:text-[9px] xl:text-[10px] mb-0.5">
               {item.title}
             </h1>
             {item.title === "Trade Ratio" ? (
               <TradeRatioBar ratio={item.value} />
             ) : (
               <p
-                className="text-sm font-semibold"
+                className={`text-[8px] md:text-[10px] lg:text-[10px] xl:text-xs font-semibold ${item.title === "Scheduled" ? "whitespace-nowrap" : ""}`}
                 style={{ color: item.valueColor }}
               >
                 {item.value}
               </p>
             )}
           </div>
-        ))}
-      </div>
-
-      <div className="w-full lg:w-[8%] flex justify-center lg:justify-end mt-4 lg:mt-0">
+        ))}      </div>      <div className="w-full md:w-[10%] lg:w-[8%] flex justify-center md:justify-end items-center gap-2 mt-4 md:mt-0">
         <Switch
           checked={isEnabled && currentStatus !== "Inactive"}
-          onChange={handleToggle}
-          // disabled={!isCreatedToday}
-          className="group relative flex h-6 w-14 cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
+          onChange={handleToggle}          className="group relative flex h-5 md:h-[26px] lg:h-7 w-10 md:w-[46px] lg:w-[50px] cursor-pointer rounded-md bg-[#F01313] p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-[#37DD1C]"
         >
-          <span
-            className={`absolute right-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-0"
-                : "opacity-100"
-            }`}
-          >
-            OFF
-          </span>
-
-          <span
-            className={`absolute left-2 top-1 text-xs font-semibold transition-opacity duration-200 ${
-              isEnabled && currentStatus !== "Inactive"
-                ? "opacity-100"
-                : "opacity-0"
-            }`}
-          >
-            ON
-          </span>
+          <div className="absolute inset-0 flex items-center justify-between px-1">
+            <span
+              className={`z-10 text-[10px] md:text-[11px] lg:text-xs font-semibold transition-opacity duration-200 text-white ${
+                isEnabled && currentStatus !== "Inactive"
+                  ? "opacity-100"
+                  : "opacity-0"
+              }`}
+            >
+              ON
+            </span>
+            <span
+              className={`z-10 text-[10px] md:text-[11px] lg:text-xs font-semibold transition-opacity duration-200 text-white ${
+                isEnabled && currentStatus !== "Inactive"
+                  ? "opacity-0"
+                  : "opacity-100"
+              }`}
+            >
+              OFF
+            </span>
+          </div>
           <span
             aria-hidden="true"
-            className="pointer-events-none inline-block w-4 h-4 translate-x-0 rounded-sm bg-white ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
+            className="pointer-events-none absolute inline-block h-3.5 md:h-5 lg:h-5 w-3.5 md:w-5 lg:w-5 translate-x-0 rounded-sm bg-white ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-5 md:group-data-[checked]:translate-x-[26px] lg:group-data-[checked]:translate-x-[29px]"
           />
         </Switch>
         <div>

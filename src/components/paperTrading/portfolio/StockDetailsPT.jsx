@@ -333,7 +333,9 @@ const StockDetailsPT = () => {
               {categories.map(({ name }) => (
                 <Tab
                   key={name}
-                  className="rounded-full py-1 px-3 text-sm/6 font-semibold dark:text-white focus:outline-none data-[selected]:bg-gray-300 dark:data-[selected]:bg-white/10 data-[hover]:bg-gray-300 dark:data-[hover]:bg-white/5"
+                  className="rounded-full py-2 px-3 text-sm font-semibold whitespace-nowrap min-w-fit dark:text-white focus:outline-none transition-all
+                    max-[320px]:text-xs max-[320px]:py-1.5 max-[320px]:px-2
+                    data-[selected]:bg-gray-300 dark:data-[selected]:bg-white/10 data-[hover]:bg-gray-300 dark:data-[hover]:bg-white/5"
                 >
                   {name}
                 </Tab>

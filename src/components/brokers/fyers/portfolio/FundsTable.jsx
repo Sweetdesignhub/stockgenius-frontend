@@ -99,14 +99,14 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
   // columnNames = ["title", ...columnNames.filter((col) => col !== "title")];
 
   return (
-    <div className="h-[55vh] overflow-auto">
-      <table className="min-w-full border-collapse">
+    <div className="h-[44vh] overflow-auto scrollbar-hide">
+      <table className="w-full border-collapse">
         <thead>
           <tr>
             {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
-                className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
+                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left"
               >
                 {columnName}
               </th>
@@ -119,17 +119,18 @@ const FundsTable = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}                  
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "title" ? "text-[#6FD4FF]" : ""
-                    }`}
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold ${
+                    columnName === "title" ? "text-[#6FD4FF]" : ""
+                  }`}
                 >
                   {columnName === "equityAmount" && 
                    (fund.title === "Available Balance" || 
                     fund.title === "Receivables" || 
                     fund.title === "Utilized Amount"||
-                  fund.title === "Total Balance" ||
-                fund.title === "Clear Balance"||
-              fund.title === "Realized Profit and Loss"||
-            fund.title === "Utilized Amount")
+                    fund.title === "Total Balance" ||
+                    fund.title === "Clear Balance"||
+                    fund.title === "Realized Profit and Loss"||
+                    fund.title === "Utilized Amount")
                     ? Number(fund[columnName]).toFixed(2)
                     : fund[columnName]}
                 </td>

@@ -30,14 +30,13 @@ const InfoCard = () => {
 
       {/* Glass-like Overlay Content */}
       <div className="relative  flex flex-row p-6 w-full">
-        <div className="flex flex-col h-full justify-between items-start w-full">
-          <h2 className="font-poppins font-semibold text-[28px] leading-none tracking-[0.03em]">
+        <div className="flex flex-col h-full justify-between items-start w-full">          <h2 className="font-poppins font-semibold text-[22px] lg:text-[24px] leading-none tracking-[0.03em]">
             It is not just a tool. It is your trading machine
           </h2>
 
           {/* Description */}
           <div className="flex-1 flex items-center">
-            <p className="font-poppins font-normal text-[24px] leading-none tracking-[0.03em] w-[70%] mt-32 text-green-500">
+            <p className="font-poppins font-normal text-[18px] lg:text-[20px] leading-none tracking-[0.03em] w-[70%] mt-24 lg:mt-28 text-green-500">
               Try now and see your past or future potential
             </p>
           </div>

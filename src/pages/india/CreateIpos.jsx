@@ -221,7 +221,7 @@ function CreateIpos() {
   };
 
   return (
-    <div className="min-h-screen px-2 sm:px-4 lg:px-32 py-2 sm:py-4 lg:py-6 relative">
+    <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
       {/* Background images with responsive positioning */}
       <img
         loading="lazy"
