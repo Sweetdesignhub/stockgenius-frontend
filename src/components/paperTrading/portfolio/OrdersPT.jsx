@@ -109,7 +109,7 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
   const region = useSelector((state) => state.region);
 
   // ✅ Use appropriate context based on region
-  const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();  const { orders = [], loading } = tradingContext;
+  const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading(); const { orders = [], loading } = tradingContext;
   const sortedOrders = [...orders].sort((a, b) => {
     const dateA = new Date(a.orderTime);
     const dateB = new Date(b.orderTime);
@@ -118,13 +118,13 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
       return dateB.getTime() - dateA.getTime();
     }
     return dateB.getHours() * 3600 + dateB.getMinutes() * 60 + dateB.getSeconds() -
-           (dateA.getHours() * 3600 + dateA.getMinutes() * 60 + dateA.getSeconds());
+      (dateA.getHours() * 3600 + dateA.getMinutes() * 60 + dateA.getSeconds());
   });
   const { theme } = useTheme();
 
   useEffect(() => {
     if (orders.length > 0) {
-      const excludedColumns = ["disclosedQuantity", "filledQuantity","limitPrice", "autoTrade", "createdAt", "updatedAt", "_id"];
+      const excludedColumns = ["disclosedQuantity", "filledQuantity", "limitPrice", "autoTrade", "createdAt", "updatedAt", "_id"];
       let allColumnNames = Object.keys(orders[0] || {}).filter(
         (columnName) => !excludedColumns.includes(columnName)
       );
@@ -138,13 +138,13 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
     }
   }, [orders, setColumnNames]);
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex h-40 items-center justify-center p-4">
-  //       <Loading />
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="flex h-40 items-center justify-center p-4">
+        <Loading />
+      </div>
+    );
+  }
 
   if (error) {
     return <div className="text-center p-4 text-red-500">{error}</div>;
@@ -177,23 +177,22 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
           </tr>
         </thead>
         <tbody>          {sortedOrders.map((order, index) => (
-            <tr key={index}>
-              {selectedColumns.map((columnName) => (
-                <td
-                  key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
-                    columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
+          <tr key={index}>
+            {selectedColumns.map((columnName) => (
+              <td
+                key={`${columnName}-${index}`}
+                className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
                   }`}
-                >
-                  {columnName === "orderTime"
-                    ? formatDate(order[columnName], region) // Date & time format
-                    : columnName === "autoTrade"
+              >
+                {columnName === "orderTime"
+                  ? formatDate(order[columnName], region) // Date & time format
+                  : columnName === "autoTrade"
                     ? order[columnName] ? "Yes" : "No" // Display Yes/No for autoTrade
                     : order[columnName] || "-"}
-                </td>
-              ))}
-            </tr>
-          ))}
+              </td>
+            ))}
+          </tr>
+        ))}
         </tbody>
       </table>
     </div>

@@ -201,7 +201,7 @@ function AccountDetailsPT({ userId }) {
 
   }, [region]);
 
-  // if (loading) return <div>Loading...</div>;
+  if (loading || !profitSummary.isCalculated) return <div>Loading...</div>;
 
   return (
     <div className="news-table rounded-xl pb-3 px-2 flex flex-col gap-4">

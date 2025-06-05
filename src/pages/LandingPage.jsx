@@ -18,6 +18,11 @@ function LandingPage() {
     const images = document.querySelectorAll('img');
     const totalImages = images.length;
 
+    if (totalImages === 0) {
+      setIsLoading(false); // No images? Stop loading immediately.
+      return;
+    }
+
     const handleLoad = () => {
       imagesLoaded.current++;
       if (imagesLoaded.current === totalImages) {
@@ -33,7 +38,16 @@ function LandingPage() {
       }
     });
 
+    const fallback = setTimeout(() => {
+      if (isLoading) {
+        console.warn("Loading fallback triggered.");
+        setIsLoading(false);
+      }
+    }, 5000); // 5s timeout to force stop loading
+
     return () => {
+      clearTimeout(fallback);
+
       images.forEach((image) => {
         image.removeEventListener('load', handleLoad);
       });

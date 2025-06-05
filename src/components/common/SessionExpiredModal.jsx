@@ -12,12 +12,18 @@
 
 import React from "react";
 import { Dialog } from "@headlessui/react";
+import { useLocation } from "react-router-dom";
 
 const SessionExpiredModal = ({ showModal, onSignOut }) => {
-  if (!showModal) return null;
+  const location = useLocation();
+  console.log("Location:", location);
 
+  if (!showModal || location.pathname === "/sign-in") {
+    if (location.pathname === "/sign-in") console.log("Reached the sign-in route ");
+    return null;
+  }
   return (
-    <Dialog open={showModal} onClose={() => {}}>
+    <Dialog open={showModal} onClose={() => { }}>
       <div
         className="fixed inset-0 bg-black bg-opacity-40 z-20"
         aria-hidden="true"
