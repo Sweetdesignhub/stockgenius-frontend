@@ -115,7 +115,9 @@ function AccountInfoPT() {
     };
   };
 
-  if (loading) return <div>Loading account information...</div>;
+  // if (loading) return <div>Loading account information...</div>;
+
+  if (loading || !profitSummary.isCalculated) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">      <div className="flex-1 min-w-[200px]">
