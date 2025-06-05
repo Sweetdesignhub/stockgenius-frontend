@@ -381,9 +381,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <th
                   key={columnName}
-                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
-                    columnName === "actions" ? "sticky right-0" : ""
-                  }`}
+                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${columnName === "actions" ? "sticky right-0" : ""
+                    }`}
                   style={{
                     background: columnName === "actions" ? getBackgroundStyle() : "none",
                     zIndex: columnName === "actions" ? 2 : 1,
@@ -396,7 +395,7 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
           </thead>
           <tbody>
             {positions.map((position, index) => {
-              const realTimePrice = realtimePrices[position.stockSymbol];
+              const realTimePrice = realtimePrices[`${position.stockSymbol}.NS`];
               const updatedLtp = realTimePrice || position.ltp;
               const { pnl, pnlPercentage } = calculatePnL(position, updatedLtp);
               const totalInvested = position.quantity * position.avgPrice;
@@ -418,9 +417,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                           <button
                             onClick={() => handleExitClick(position)}
                             disabled={isExiting}
-                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
-                            } text-white`}
+                            className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+                              } text-white`}
                           >
                             <X size={16} />
                           </button>

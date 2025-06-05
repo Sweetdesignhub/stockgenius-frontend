@@ -42,7 +42,7 @@
 //           <p className="text-xs lg:text-base">{currentUser?.name}</p>
 //         </div>
 //       </div>
-  
+
 //       {/* Cards Section */}
 //       <div className="flex-1 w-full lg:w-auto">
 //         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
@@ -74,7 +74,7 @@
 //       </div>
 //     </div>
 //   );
-  
+
 // }
 
 // export default AccountInfoPT;
@@ -119,19 +119,19 @@ function AccountInfoPT() {
 
   return (
     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">      <div className="flex-1 min-w-[200px]">
-        <div className="flex flex-col text-left gap-2">
-          <h1 className="font-semibold text-[11px] lg:text-lg flex flex-col sm:flex-row">
-            <span className="text-[11px] lg:text-lg mb-1 sm:mb-0">Account: {currentUser?.id}</span>
-          </h1>
-          <p className="font-semibold text-[11px] lg:text-lg">Username: {currentUser?.name}</p>
-        </div>
+      <div className="flex flex-col text-left gap-2">
+        <h1 className="font-semibold text-[11px] lg:text-lg flex flex-col sm:flex-row">
+          <span className="text-[11px] lg:text-lg mb-1 sm:mb-0">Account: {currentUser?.id}</span>
+        </h1>
+        <p className="font-semibold text-[11px] lg:text-lg">Username: {currentUser?.name}</p>
       </div>
+    </div>
 
       <div className="flex-1 w-full lg:w-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
           <Cards
             title="Invested Amount"
-            value={investedAmount}
+            value={investedAmount.toFixed(2)}
             valueColor="text-[#DEB215]"
             bgColor="bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]"
           />
