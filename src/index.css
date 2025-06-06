@@ -10,8 +10,8 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* Custom Scrollbar Design */
@@ -29,11 +29,11 @@
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: padding-box;
-  background: linear-gradient(180deg, #3A6FF8 0%, #497bff 100%);
+  background: linear-gradient(180deg, #3a6ff8 0%, #497bff 100%);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #1459DE 0%, #3A6FF8 100%);
+  background: linear-gradient(180deg, #1459de 0%, #3a6ff8 100%);
 }
 
 /* Dark theme scrollbar */
@@ -70,7 +70,6 @@ body {
   background-position: center center;
   color: white;
 }
-
 
 .dark .started {
   background: linear-gradient(
@@ -176,10 +175,8 @@ body {
 .table-main {
   background: #ccd7ff40;
   border: 0.75px solid #ffffff1a;
-  box-shadow: 0px 22.5px 45px 0px #0000001a,
-              0px 11.25px 22.5px 0px #0000000d,
-              0px 3.75px 7.5px 0px #0000000d,
-              0px 37.5px 75px 0px #ffffff26 inset;
+  box-shadow: 0px 22.5px 45px 0px #0000001a, 0px 11.25px 22.5px 0px #0000000d,
+    0px 3.75px 7.5px 0px #0000000d, 0px 37.5px 75px 0px #ffffff26 inset;
 }
 
 .dark .table-main {
@@ -312,7 +309,7 @@ body {
 }
 
 .react-chatbot-kit-chat-bot-message {
-  width: 330px;
+  width: 410px;
 }
 
 .App {
