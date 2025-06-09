@@ -52,8 +52,16 @@ const IndiaDashboard = () => {
         fetchFile(containerName, loserFile),
       ]);
 
-      const gainersJsonData = parseExcel(gainersFileData);
-      const losersJsonData = parseExcel(losersFileData);
+      const gainersJsonData = parseExcel(gainersFileData).filter(
+        (item) => item.ROI > 0
+      );
+
+      const losersJsonData = parseExcel(losersFileData).filter(
+        (item) => item.ROI < 0
+      );
+
+      console.log("Filtered Gainers: ", gainersJsonData);
+      console.log("Filtered Losers: ", losersJsonData);
 
       setGainersData(gainersJsonData);
       setLosersData(losersJsonData);
@@ -237,7 +245,8 @@ const IndiaDashboard = () => {
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9815d9f59dfd4f65b9e50d5dcbb0152c"
           alt="bear"
-        />        <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border border-white/10">
+        />{" "}
+        <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border border-white/10">
           <div className="h-[82vh] overflow-y-auto overflow-x-hidden py-5 px-5 flex flex-col overflow-auto rounded-2xl scrollbar-hide">
             <div className="flex-1 flex flex-col lg:flex-row gap-6">
               <Table
