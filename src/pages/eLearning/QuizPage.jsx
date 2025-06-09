@@ -5,7 +5,6 @@ import module3 from "../../components/eLearning/quiz/data/module3.js";
 import module4 from "../../components/eLearning/quiz/data/module4.js";
 import module5 from "../../components/eLearning/quiz/data/module5.js";
 import Quiz from "../../components/eLearning/quiz/Quiz.jsx";
-
 const quizMap = {
   1: module1,
   2: module2,
@@ -21,7 +20,9 @@ const QuizPage = () => {
 
   if (!quizData)
     return (
-      <div className="text-white p-4 md:p-10">Quiz not found for this module.</div>
+      <div className="text-white p-4 md:p-10">
+        Quiz not found for this module.
+      </div>
     );
 
   return (

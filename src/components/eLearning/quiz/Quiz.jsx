@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import api from "../../../config";
 
 const Quiz = ({ questions }) => {
   const navigate = useNavigate();
   const { moduleId } = useParams();
+  console.log("Inside QuizPage, moduleId:", moduleId);
+
+  const userId =
+    useSelector((state) => state.user?.currentUser?.id) || "defaultUserId";
+  console.log("User ID:", userId);
+
+  const [quizProgress, setQuizProgress] = useState([]);
 
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -11,6 +20,39 @@ const Quiz = ({ questions }) => {
   const [popupContent, setPopupContent] = useState("");
   const [showRetry, setShowRetry] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(new Set());
+
+  useEffect(() => {
+    const fetchQuizProgress = async () => {
+      try {
+        const response = await api.get(
+          `/api/v1/e-learning/quiz-progress/${userId}`
+        );
+        const completed = response.data.data.completedQuizzes || [];
+        console.log("Quiz progress response:", completed);
+        setQuizProgress(completed);
+
+        // 👇 Check if current moduleId is in the completed quizzes
+        const isCompleted = completed.includes(Number(moduleId));
+        if (isCompleted) {
+          // Automatically mark all answers as correct
+          const allCorrect = new Set(
+            Array.from({ length: questions.length }, (_, i) => i)
+          );
+          console.log("All questions marked as correct:", allCorrect);
+
+          setCorrectAnswers(allCorrect);
+          setActiveQuestion(questions.length); // Skip to final/completion screen
+        }
+        console.log("Is this module already completed?", isCompleted);
+      } catch (error) {
+        console.error("Error fetching quiz progress:", error);
+      }
+    };
+
+    if (userId !== "defaultUserId") {
+      fetchQuizProgress();
+    }
+  }, [userId, moduleId]);
 
   // Module-specific completion messages
   const completionMessages = {
@@ -25,16 +67,19 @@ const Quiz = ({ questions }) => {
     },
     3: {
       title: "Module 3: What Are Futures Contracts?",
-      extra: "Great job understanding futures trading! Just like Rahul's sugar deal, you now know how traders can lock in prices for future transactions.",
+      extra:
+        "Great job understanding futures trading! Just like Rahul's sugar deal, you now know how traders can lock in prices for future transactions.",
     },
     4: {
       title: "Module 4: What are Options Contracts?",
-      extra: "Well done! You've mastered the basics of Call and Put options. Remember, just like Rahul's tea stall example, options give you the right but not the obligation to trade.",
+      extra:
+        "Well done! You've mastered the basics of Call and Put options. Remember, just like Rahul's tea stall example, options give you the right but not the obligation to trade.",
     },
     5: {
       title: "Module 5: Understanding Option Chain",
-      extra: "Congratulations! You now understand both the opportunities and risks in options trading. Remember to always trade wisely and use protective strategies like our tea stall examples!",
-    }
+      extra:
+        "Congratulations! You now understand both the opportunities and risks in options trading. Remember to always trade wisely and use protective strategies like our tea stall examples!",
+    },
     // Add more modules as needed
   };
 
@@ -62,7 +107,7 @@ const Quiz = ({ questions }) => {
     setSelectedOption(option);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isCorrect = questions[activeQuestion].answer === selectedOption;
 
     if (isCorrect) {
@@ -71,6 +116,16 @@ const Quiz = ({ questions }) => {
 
       // Check if this was the last question
       if (newCorrectAnswers.size === questions.length) {
+        try {
+          await api.post("/api/v1/e-learning/quiz-progress", {
+            userId: userId,
+            quizNumber: Number(moduleId),
+          });
+          console.log("✅ Quiz marked as completed for user:", userId);
+        } catch (err) {
+          console.error("❌ Failed to update quiz progress:", err);
+        }
+
         setActiveQuestion(questions.length); // Move to completion tab
         setShowPopup(false); // Skip popup
       } else {
