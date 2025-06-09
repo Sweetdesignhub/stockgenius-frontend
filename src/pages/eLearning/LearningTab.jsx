@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 import ModulesCard from "../../components/eLearning/ModulesCard";
-
-
+import api from "../../config";
 // Module data
 const modules = [
   {
@@ -57,28 +56,54 @@ const modules = [
 function LearningTab() {
   const selectedOptions = useSelector((state) => state.learning);
 
+  const userId =
+    useSelector((state) => state.user?.currentUser?.id) || "defaultUserId";
+  console.log("User ID:", userId);
+
+  const [quizProgress, setQuizProgress] = useState([]);
+
+  useEffect(() => {
+    const fetchQuizProgress = async () => {
+      try {
+        const response = await api.get(
+          `/api/v1/e-learning/quiz-progress/${userId}`
+        );
+        const completed = response.data.data.completedQuizzes || [];
+        console.log("Quiz progress response:", completed);
+        setQuizProgress(completed);
+      } catch (error) {
+        console.error("Error fetching quiz progress:", error);
+      }
+    };
+
+    if (userId !== "defaultUserId") {
+      fetchQuizProgress();
+    }
+  }, [userId]);
+
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* Show module cards only on the main learning page */}
       {window.location.pathname === "/e-learning/learning" && (
         <>
-           {/* 🔥 Top Section - Gamified Learning Header */}
-       <div
-         className="h-[15%] p-4 flex flex-col justify-center rounded-xl backdrop-blur-xl"
-         style={{
-           background:
-             "linear-gradient(180deg, rgba(90, 64, 46, 0.15) 0%, rgba(51, 36, 27, 0.2) 100%), radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 99.59%)",
-           boxShadow:
-             "0px 30px 60px rgba(0, 0, 0, 0.4), 0px 15px 30px rgba(0, 0, 0, 0.2), 0px 0px 100px 0px #FFD9A640 inset",
-         }}
-       >
-         <h1 className="text-heading text-white text-2xl font-semibold">
-           Learn Stocks the Fun Way – Gamified, Interactive & Real!
-         </h1>
-         <p className="text-md text-[#FF9A00] ">
-           Master stock trading with step-by-step lessons, live simulations & AI-powered coaching
-         </p>
-       </div>
+          {/* 🔥 Top Section - Gamified Learning Header */}
+          <div
+            className="h-[15%] p-4 flex flex-col justify-center rounded-xl backdrop-blur-xl"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(90, 64, 46, 0.15) 0%, rgba(51, 36, 27, 0.2) 100%), radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 99.59%)",
+              boxShadow:
+                "0px 30px 60px rgba(0, 0, 0, 0.4), 0px 15px 30px rgba(0, 0, 0, 0.2), 0px 0px 100px 0px #FFD9A640 inset",
+            }}
+          >
+            <h1 className="text-heading text-white text-2xl font-semibold">
+              Learn Stocks the Fun Way – Gamified, Interactive & Real!
+            </h1>
+            <p className="text-md text-[#FF9A00] ">
+              Master stock trading with step-by-step lessons, live simulations &
+              AI-powered coaching
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {modules.map((module) => (
               <ModulesCard
@@ -88,6 +113,7 @@ function LearningTab() {
                 bgImage={module.bgImage}
                 link={module.id} // Links to /e-learning/learning/1, /e-learning/learning/2, etc.
                 descColor={module.descColor}
+                completed={quizProgress.includes(Number(module.id))}
               />
             ))}
           </div>
