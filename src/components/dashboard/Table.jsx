@@ -34,7 +34,7 @@ function Table({
     // maxHeight = "calc(70vh - 8rem)";
     maxHeight = "68vh";
   } else if (region === "usa" && stateRegion === "usa") {
-    maxHeight = "80vh";
+    maxHeight = "68vh";
   } else {
     maxHeight = ""; // default or other condition
   }

@@ -270,11 +270,8 @@ export default function Header() {
   // console.log(currentUser);
 
   return (
-    <header className="w-full   border-gray-200">
-      <nav
-        className="mx-auto flex items-center justify-between p-4 lg:px-8"
-        aria-label="Global"
-      >
+    <header className="w-full border-gray-200">
+      <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex items-center">
           <Link to="/">
             <img
@@ -290,44 +287,27 @@ export default function Header() {
         <div className="flex lg:hidden">
           <div>
             {region ? (
-              <div>
-                {region === "india" ? (
-                  <div className="flex items-center justify-center py-[6px] px-2  rounded-xl">
-                    {/* <Flag
-                      code="IN"
-                      style={{
-                        width: "35px",
-                        height: "25px",
-                      }}
-                    /> */}
-                  </div>
+              <div>                {region === "india" ? (
+                  <div></div>
                 ) : region === "usa" ? (
-                  <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
-                    <Flag
-                      code="US"
-                      style={{
-                        marginRight: "5px",
-                        width: "35px",
-                        height: "25px",
-                        "@media (max-width: 1024px)": {
-                          width: "25px",
-                          height: "18px",
-                        }
-                      }}
-                    />
+                  <div className="flex items-center py-[4px] px-1 bg-white rounded-xl">
                     {isMarketDropdownVisible && (
-                      <div>
-                        <select
-                          onChange={handleMarketChange}
-                          value={market}
-                          className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
-                        >
-                          <option value="" disabled>
-                            Market
-                          </option>
-                          <option value="NYSE">NYSE</option>
-                          <option value="NASDAQ">NASDAQ</option>
-                        </select>
+                      <div className="flex items-center">
+                        {market === "NYSE" ? (
+                          <img
+                            src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd7b86ea3de06476c86cc8c3083afa102"
+                            alt="NYSE"
+                            className="h-5 sm:h-6 w-auto cursor-pointer"
+                            onClick={() => handleMarketChange({ target: { value: "NASDAQ" } })}
+                          />
+                        ) : (
+                          <img
+                            src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F62122be093c24c95b6bdb5e7b76f1984"
+                            alt="NASDAQ"
+                            className="h-5 sm:h-6 w-auto cursor-pointer"
+                            onClick={() => handleMarketChange({ target: { value: "NYSE" } })}
+                          />
+                        )}
                       </div>
                     )}
                   </div>
@@ -396,22 +376,16 @@ export default function Header() {
               <div className="flex items-center">
                 <div>
                   {region ? (
-                    <div>
-                      {region === "india" ? (
+                    <div>                      {region === "india" ? (
                         <div className="flex items-center justify-center py-[4px] lg:py-[4px] xl:py-[6px] px-2 bg-white rounded-xl">
                           <Flag
                             code="IN"
                             style={{
                               width: "35px",
                               height: "25px",
-                              "@media (max-width: 1024px)": {
-                                width: "25px",
-                                height: "18px",
-                              }
                             }}
                           />
-                        </div>
-                      ) : region === "usa" ? (
+                        </div>                      ) : region === "usa" ? (
                         <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
                           <Flag
                             code="US"
@@ -419,10 +393,6 @@ export default function Header() {
                               marginRight: "5px",
                               width: "35px",
                               height: "25px",
-                              "@media (max-width: 1024px)": {
-                                width: "25px",
-                                height: "18px",
-                              }
                             }}
                           />
                           {isMarketDropdownVisible && (
