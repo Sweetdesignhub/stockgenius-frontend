@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import api from "../../../config";
+import YesNoConfirmationModal from "../../common/YesNoConfirmationModal";
 
 const Quiz = ({ questions }) => {
   const navigate = useNavigate();
   const { moduleId } = useParams();
+  const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
+
   console.log("Inside QuizPage, moduleId:", moduleId);
 
   const userId =
@@ -125,16 +128,6 @@ const Quiz = ({ questions }) => {
 
       // Check if this was the last question
       if (newCorrectAnswers.size === questions.length) {
-        try {
-          await api.post("/api/v1/e-learning/quiz-progress", {
-            userId: userId,
-            quizNumber: Number(moduleId),
-          });
-          console.log("✅ Quiz marked as completed for user:", userId);
-        } catch (err) {
-          console.error("❌ Failed to update quiz progress:", err);
-        }
-
         setActiveQuestion(questions.length); // Move to completion tab
         setShowPopup(false); // Skip popup
       } else {
@@ -164,6 +157,7 @@ const Quiz = ({ questions }) => {
   };
 
   const handleResetQuiz = async () => {
+    setYesNoModalOpen(false);
     try {
       await api.delete(
         `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`
@@ -198,8 +192,9 @@ const Quiz = ({ questions }) => {
       {/* Question Tabs */}
       <div className="flex flex-wrap gap-2 md:gap-4 mb-4 justify-end">
         <button
-          onClick={handleResetQuiz}
+          onClick={() => setYesNoModalOpen(true)}
           className="bg-[#623CEA] text-white px-4 md:px-5 py-2 font-[poppins] rounded-xl disabled:opacity-50 text-sm md:text-base"
+          disabled={correctAnswers.size === 0}
         >
           Reset Quiz
         </button>
@@ -369,6 +364,14 @@ const Quiz = ({ questions }) => {
           />
         </div>
       )}
+
+      <YesNoConfirmationModal
+        isOpen={isYesNoModalOpen}
+        onClose={() => setYesNoModalOpen(false)}
+        title="Reset Quiz"
+        message={`Are you sure you want to reset the quiz and lose all your progress?`}
+        onConfirm={handleResetQuiz}
+      />
     </div>
   );
 };
