@@ -56,31 +56,6 @@ const modules = [
 function LearningTab() {
   const selectedOptions = useSelector((state) => state.learning);
 
-  const userId =
-    useSelector((state) => state.user?.currentUser?.id) || "defaultUserId";
-  console.log("User ID:", userId);
-
-  const [quizProgress, setQuizProgress] = useState([]);
-
-  useEffect(() => {
-    const fetchQuizProgress = async () => {
-      try {
-        const response = await api.get(
-          `/api/v1/e-learning/quiz-progress/${userId}`
-        );
-        const completed = response.data.data.completedQuizzes || [];
-        console.log("Quiz progress response:", completed);
-        setQuizProgress(completed);
-      } catch (error) {
-        console.error("Error fetching quiz progress:", error);
-      }
-    };
-
-    if (userId !== "defaultUserId") {
-      fetchQuizProgress();
-    }
-  }, [userId]);
-
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* Show module cards only on the main learning page */}
@@ -113,7 +88,7 @@ function LearningTab() {
                 bgImage={module.bgImage}
                 link={module.id} // Links to /e-learning/learning/1, /e-learning/learning/2, etc.
                 descColor={module.descColor}
-                completed={quizProgress.includes(Number(module.id))}
+                // completed={quizProgress.includes(Number(module.id))}
               />
             ))}
           </div>

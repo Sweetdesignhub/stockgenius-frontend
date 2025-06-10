@@ -30,6 +30,9 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import api from "../../config";
 
 function ModulesCard({
   moduleTitle,
@@ -37,8 +40,42 @@ function ModulesCard({
   bgImage,
   link,
   descColor,
-  completed = false,
 }) {
+  const userId =
+    useSelector((state) => state.user?.currentUser?.id) || "defaultUserId";
+
+  console.log({
+    moduleTitle,
+    moduleDescription,
+    bgImage,
+    link,
+    descColor,
+  });
+
+  const [completed, setCompleted] = useState(false);
+
+  useEffect(() => {
+    const fetchQuizProgress = async () => {
+      try {
+        const response = await api.get(
+          `/api/v1/e-learning/quiz-progress/${userId}/${link}`
+        );
+        console.log("Quiz progress response:", response.data);
+
+        const isCompleted = response.data.isCompleted;
+
+        console.log("Quiz progress response:", isCompleted);
+        setCompleted(isCompleted);
+      } catch (error) {
+        console.error("Error fetching quiz progress:", error);
+      }
+    };
+
+    if (userId !== "defaultUserId") {
+      fetchQuizProgress();
+    }
+  }, [userId]);
+
   return (
     <Link to={link} className="block w-full h-full">
       <div

@@ -25,24 +25,17 @@ const Quiz = ({ questions }) => {
     const fetchQuizProgress = async () => {
       try {
         const response = await api.get(
-          `/api/v1/e-learning/quiz-progress/${userId}`
+          `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`
         );
-        const completed = response.data.data.completedQuizzes || [];
-        console.log("Quiz progress response:", completed);
-        setQuizProgress(completed);
+        console.log("Quiz progress response:", response.data);
 
-        // 👇 Check if current moduleId is in the completed quizzes
-        const isCompleted = completed.includes(Number(moduleId));
-        if (isCompleted) {
-          // Automatically mark all answers as correct
-          const allCorrect = new Set(
-            Array.from({ length: questions.length }, (_, i) => i)
-          );
-          console.log("All questions marked as correct:", allCorrect);
+        const isCompleted = response.data.isCompleted;
+        const allCorrect = response.data.completedQuestions || [];
 
-          setCorrectAnswers(allCorrect);
-          setActiveQuestion(questions.length); // Skip to final/completion screen
-        }
+        console.log("All questions marked as correct:", allCorrect);
+
+        setCorrectAnswers(new Set(allCorrect));
+        if (isCompleted) setActiveQuestion(questions.length); // Skip to final/completion screen
         console.log("Is this module already completed?", isCompleted);
       } catch (error) {
         console.error("Error fetching quiz progress:", error);
@@ -53,6 +46,10 @@ const Quiz = ({ questions }) => {
       fetchQuizProgress();
     }
   }, [userId, moduleId]);
+
+  const handleNavigateBack = () => {
+    navigate(`/e-learning/learning/${moduleId}`);
+  };
 
   // Module-specific completion messages
   const completionMessages = {
@@ -83,25 +80,25 @@ const Quiz = ({ questions }) => {
     // Add more modules as needed
   };
 
-  useEffect(() => {
-    const savedActive = localStorage.getItem("activeQuestion");
-    const savedCorrect = localStorage.getItem("correctAnswers");
+  // useEffect(() => {
+  //   const savedActive = localStorage.getItem("activeQuestion");
+  //   const savedCorrect = localStorage.getItem("correctAnswers");
 
-    if (savedActive !== null) setActiveQuestion(parseInt(savedActive, 10));
-    if (savedCorrect !== null)
-      setCorrectAnswers(new Set(JSON.parse(savedCorrect)));
-  }, []);
+  //   if (savedActive !== null) setActiveQuestion(parseInt(savedActive, 10));
+  //   if (savedCorrect !== null)
+  //     setCorrectAnswers(new Set(JSON.parse(savedCorrect)));
+  // }, []);
 
-  useEffect(() => {
-    localStorage.setItem("activeQuestion", activeQuestion);
-  }, [activeQuestion]);
+  // useEffect(() => {
+  //   localStorage.setItem("activeQuestion", activeQuestion);
+  // }, [activeQuestion]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      "correctAnswers",
-      JSON.stringify(Array.from(correctAnswers))
-    );
-  }, [correctAnswers]);
+  // useEffect(() => {
+  //   localStorage.setItem(
+  //     "correctAnswers",
+  //     JSON.stringify(Array.from(correctAnswers))
+  //   );
+  // }, [correctAnswers]);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -113,6 +110,18 @@ const Quiz = ({ questions }) => {
     if (isCorrect) {
       const newCorrectAnswers = new Set(correctAnswers).add(activeQuestion);
       setCorrectAnswers(newCorrectAnswers);
+
+      try {
+        await api.post(
+          `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`,
+          {
+            completedQuestions: [activeQuestion],
+          }
+        );
+        console.log("📬 Updated question progress for user:", userId);
+      } catch (err) {
+        console.error("❌ Failed to update question progress:", err);
+      }
 
       // Check if this was the last question
       if (newCorrectAnswers.size === questions.length) {
@@ -154,6 +163,19 @@ const Quiz = ({ questions }) => {
     setSelectedOption(null);
   };
 
+  const handleResetQuiz = async () => {
+    try {
+      await api.delete(
+        `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`
+      );
+      console.log("🧹 Quiz reset successful");
+      setCorrectAnswers(new Set());
+      setActiveQuestion(0);
+    } catch (err) {
+      console.error("❌ Failed to reset quiz:", err);
+    }
+  };
+
   const handleNextLesson = () => {
     const moduleOrder = ["1", "2", "3", "4", "5"];
     const currentIndex = moduleOrder.indexOf(moduleId);
@@ -174,6 +196,20 @@ const Quiz = ({ questions }) => {
   return (
     <div className="mt-6 px-2 md:px-4">
       {/* Question Tabs */}
+      <div className="flex flex-wrap gap-2 md:gap-4 mb-4 justify-end">
+        <button
+          onClick={handleResetQuiz}
+          className="bg-[#623CEA] text-white px-4 md:px-5 py-2 font-[poppins] rounded-xl disabled:opacity-50 text-sm md:text-base"
+        >
+          Reset Quiz
+        </button>
+        <button
+          onClick={handleNavigateBack}
+          className="bg-[#623CEA] text-white px-4 md:px-5 py-2  font-[poppins] rounded-xl disabled:opacity-50 text-sm md:text-base"
+        >
+          Back
+        </button>
+      </div>
       <div className="flex flex-wrap gap-2 md:space-x-4 mb-1">
         {questions.map((_, index) => {
           const isActive = activeQuestion === index;
