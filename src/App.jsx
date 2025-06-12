@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, useLocation, Navigate, Outlet, useNavigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useLocation,
+  Navigate,
+  Outlet,
+  useNavigate,
+} from "react-router-dom";
 import "./App.css";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute.jsx";
@@ -47,6 +54,10 @@ import TrophyTab from "./pages/eLearning/TrophyTab.jsx";
 import LibraryTab from "./pages/eLearning/LibraryTab.jsx";
 import GroupTab from "./pages/eLearning/GroupTab.jsx";
 import SGAITool from "./pages/SGAITool";
+import Pricing from "./pages/premiumFeatures/Pricing.jsx";
+import Dashboard from "./pages/premiumFeatures/Dashboard.jsx";
+import SuccessPayment from "./pages/premiumFeatures/SuccessPayment.jsx";
+import FailedPayment from "./pages/premiumFeatures/FailedPayment.jsx";
 
 // Add AuthRoute at the top of the file after other imports
 const AuthRoute = () => {
@@ -55,8 +66,14 @@ const AuthRoute = () => {
   const location = useLocation();
 
   if (currentUser) {
-    const region = localStorage.getItem('region') || 'india';
-    return <Navigate to={`/${region}/dashboard`} replace state={{ from: location }} />;
+    const region = localStorage.getItem("region") || "india";
+    return (
+      <Navigate
+        to={`/${region}/dashboard`}
+        replace
+        state={{ from: location }}
+      />
+    );
   }
 
   return <Outlet />;
@@ -88,7 +105,13 @@ function MainApp() {
 
   useEffect(() => {
     // console.log("Checking");
-    const publicRoutes = ["/", "/sign-in", "/sign-up", "/forgot-password","/complete-profile"];
+    const publicRoutes = [
+      "/",
+      "/sign-in",
+      "/sign-up",
+      "/forgot-password",
+      "/complete-profile",
+    ];
     const isResetPasswordRoute =
       location.pathname.startsWith("/reset-password");
 
@@ -188,6 +211,17 @@ function MainApp() {
             </Route>
             <Route path="/quiz/module/:moduleId" element={<QuizPage />} />
             <Route path="/backtesting-tool" element={<SGAITool />} />
+
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/payment/success"
+              element={<SuccessPayment/>}
+            />
+            <Route
+              path="/payment/cancel"
+              element={<FailedPayment/>}
+            />
             {/* sgai-tool */}
             {/* India routes */}
             <Route path="/india/dashboard" element={<IndiaDashboard />} />
