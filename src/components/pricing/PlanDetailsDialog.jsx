@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from 'react';
 import proImage from '../../assets/proDetails.jpg';
@@ -27,6 +27,10 @@ const FeatureItem = ({ text, plan = 'pro' }) => (
 export default function PlanDetailsDialog({ isOpen = false, onClose, initialPlan = 'pro' }) {
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
   const [showPlanSelect, setShowPlanSelect] = useState(false);
+
+  useEffect(() => {
+    setSelectedPlan(initialPlan);
+  }, [initialPlan]);
 
   return (
     <Transition appear show={isOpen || false} as={Fragment}>

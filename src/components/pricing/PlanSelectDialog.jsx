@@ -1,7 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../config";
@@ -49,6 +48,10 @@ export default function PlanSelectDialog({
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
   const [loadingPlan, setLoadingPlan] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setSelectedPlan(initialPlan);
+  }, [initialPlan]);
 
   // Helper function to calculate monthly price
   const calculateMonthlyPrice = (planPrice, months) => {
@@ -504,7 +507,7 @@ export default function PlanSelectDialog({
                           className="font-['Poppins'] text-[40px] font-semibold leading-[22px]"
                           style={{ color: "rgba(255, 255, 255, 1)" }}
                         >
-                          Months
+                          Month
                         </span>
                       </div>
                     </div>                    <div className="flex flex-col items-end">
@@ -531,7 +534,7 @@ export default function PlanSelectDialog({
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      1 months access
+                      1 month access
                     </li>
                     <li className="flex items-center text-gray-200">
                       <svg

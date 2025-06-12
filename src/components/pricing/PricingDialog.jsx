@@ -12,10 +12,12 @@ export default function PricingDialog({
   currentPlan = "basic",
 }) {
   const [showPlanDialog, setShowPlanDialog] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null); // Initialize to null
+  const [selectedPlan, setSelectedPlan] = useState(
+    currentPlan === "basic" ? "pro" : currentPlan
+  );
 
   const handlePlanClick = (plan) => {
-    setSelectedPlan(plan); // This will now properly set to 'master' or 'pro'
+    setSelectedPlan(plan);
     setShowPlanDialog(true);
   };
 

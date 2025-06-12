@@ -77,39 +77,24 @@ function MainApp() {
   const { currentUser } = useSelector((state) => state.user);
   // Effect to show pricing dialog after login/signup
   useEffect(() => {
-    if (currentUser && (!currentUser.plan || currentUser.plan === 'basic')) {
-      // Wait for 2 seconds then show the dialog
-      const timer = setTimeout(() => {
-        setShowPricingDialog(true);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentUser]);
-
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     // Get the timestamp of last dialog show
-  //     const lastDialogShow = localStorage.getItem('lastPricingDialogShow');
-  //     const now = new Date().getTime();
+    // Don't show dialog if user is coming from payment pages
+    const isFromPayment = location.pathname.includes('/payment/');
+    
+    if (currentUser && (!currentUser.plan || currentUser.plan === 'basic') && !isFromPayment) {
+      // Get the timestamp of when user logged in
+      const loginTimestamp = localStorage.getItem('loginTimestamp');
+      const now = new Date().getTime();
       
-  //     // Show dialog if:
-  //     // 1. It hasn't been shown before (no timestamp in localStorage)
-  //     // 2. OR it's been more than 24 hours since last show
-  //     // 3. AND user is on basic plan
-  //     if ((!lastDialogShow || (now - parseInt(lastDialogShow)) > 24 * 60 * 60 * 1000) && 
-  //         (!currentUser.plan || currentUser.plan === 'basic')) {
-  //       // Wait for 2 seconds then show the dialog
-  //       const timer = setTimeout(() => {
-  //         setShowPricingDialog(true);
-  //         // Update the timestamp
-  //         localStorage.setItem('lastPricingDialogShow', now.toString());
-  //       }, 2000);
+      // Only show if user just logged in (within last 5 seconds)
+      if (loginTimestamp && (now - parseInt(loginTimestamp)) < 5000) {
+        const timer = setTimeout(() => {
+          setShowPricingDialog(true);
+        }, 2000);
 
-  //       return () => clearTimeout(timer);
-  //     }
-  //   }
-  // }, [currentUser]);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentUser, location.pathname]);
 
   const handleSignOut = async () => {
     try {

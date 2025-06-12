@@ -292,6 +292,8 @@ function SignIn() {
           dispatch(signInFailure(data.message));
           return;
         }
+        // Set login timestamp when successfully signed in
+        localStorage.setItem('loginTimestamp', new Date().getTime().toString());
         dispatch(signInSuccess(data));
         navigate(`/${selectedRegion}/dashboard`);
       } else {
@@ -319,6 +321,8 @@ function SignIn() {
           dispatch(signInFailure(data.message));
           return;
         } else {
+          // Set login timestamp when successfully signed in
+          localStorage.setItem('loginTimestamp', new Date().getTime().toString());
           dispatch(signInSuccess(data));
           navigate(`/${selectedRegion}/dashboard`);
         }
