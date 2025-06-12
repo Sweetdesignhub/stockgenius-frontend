@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
+import api from "../../config";
 
 const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   const region = useSelector((state) => state.region); // Get region from store
@@ -98,29 +99,18 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
     // console.log("(Calc Onsubmit)Data inout ois", data);
     if (region === "india") {
       try {
-        // http://20.29.48.73:8000/simulate
-        // http://20.244.43.100:8000/simulate INDIA(WORKING)
-        const response = await axios.post(
-          "https://nsereports.stockgenius.ai/simulate",
-          {
-            initial_cash: parseFloat(data.initialCash),
-            start_date: formatDate(data.startDate),
-            end_date: formatDate(data.endDate),
-            profit_margin: parseFloat(data.marginProfit).toFixed(2),
-            loss_margin: parseFloat(data.marginLoss).toFixed(2),
-          },
-          {
-            timeout: 600000, // 10 minutes
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        // console.log("(Calc)response: ", response.data);
-        // if (!response.ok) {
-        //   throw new Error("API request failed");
-        // }
-        const result = response.data;
-        // const result = await response.data.json();
-        // console.log("result is: ", result);
+        const NseResponse = await api.post(`/api/v1/simulation/nse`, {
+          initial_cash: parseFloat(data.initialCash),
+          start_date: formatDate(data.startDate),
+          end_date: formatDate(data.endDate),
+          profit_margin: parseFloat(data.marginProfit).toFixed(2),
+          loss_margin: parseFloat(data.marginLoss).toFixed(2),
+        });
+
+        console.log("NSE Response: ", NseResponse.data);
+
+        const result = NseResponse.data;
+
         if (onSimulationComplete) {
           onSimulationComplete({
             formValues: {
@@ -136,35 +126,28 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
           });
         }
       } catch (error) {
-        console.error("Simulation error:", error);
+        if (error.response && error.response.status === 403) {
+          alert("Simulation limit reached for this month.");
+        } else {
+          console.error("Simulation error:", error);
+        }
       } finally {
         setIsLoading(false);
       }
     } else {
       try {
-        const response = await axios.post(
-          "https://nasdaqnysereports.stockgenius.ai/simulate",
-          {
-            initial_cash: parseFloat(data.initialCash),
-            start_date: formatDate(data.startDate),
-            end_date: formatDate(data.endDate),
-            profit_margin: parseFloat(data.marginProfit).toFixed(2),
-            loss_margin: parseFloat(data.marginLoss).toFixed(2),
-          },
-          {
-            timeout: 600000, // 10 minutes in milliseconds
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const NasdaqResponse = await api.post(`/api/v1/simulation/nasdaq`, {
+          initial_cash: parseFloat(data.initialCash),
+          start_date: formatDate(data.startDate),
+          end_date: formatDate(data.endDate),
+          profit_margin: parseFloat(data.marginProfit).toFixed(2),
+          loss_margin: parseFloat(data.marginLoss).toFixed(2),
+        });
 
-        // if (!response.ok) {
-        //   throw new Error("API request failed");
-        // }
-        const result = response.data;
-        // const result = await response.json();
-        // console.log("result is: ", result);
+        console.log("Nasdaq Response: ", NasdaqResponse.data);
+
+        const result = NasdaqResponse.data;
+
         if (onSimulationComplete) {
           onSimulationComplete({
             formValues: {
@@ -180,7 +163,11 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
           });
         }
       } catch (error) {
-        console.error("Simulation error:", error);
+        if (error.response && error.response.status === 403) {
+          alert("Simulation limit reached for this month.");
+        } else {
+          console.error("Simulation error:", error);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -209,7 +196,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   // }
 
   return (
-    <div      className={`mx-auto w-full max-w-screen-xl px-3 sm:px-4 py-2 rounded-xl 
+    <div
+      className={`mx-auto w-full max-w-screen-xl px-3 sm:px-4 py-2 rounded-xl 
               flex flex-col justify-around items-start 
               h-full inset-0 
               backdrop-blur-[1px] 
@@ -217,7 +205,9 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
               ${bgClass}`}
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-2 mb-2">
-        <div className="flex-1">          <h1 className="text-[clamp(0.9rem,0.9vw,1.6rem)] font-bold leading-tight">
+        <div className="flex-1">
+          {" "}
+          <h1 className="text-[clamp(0.9rem,0.9vw,1.6rem)] font-bold leading-tight">
             SGAI - Investment Simulation Tool
           </h1>
         </div>
@@ -237,9 +227,17 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
       <form onSubmit={handleSubmit(onSubmit)} className=" w-full">
         <div className="h-full">
           {/* Initial Cash */}
-          <div className="">            <div className="flex justify-between items-center w-full mb-2">
+          <div className="">
+            {" "}
+            <div className="flex justify-between items-center w-full mb-2">
               <label className="text-sm">Initial Cash</label>
-              <span className={`flex items-center justify-center rounded-full transition-colors duration-200 ${isDark ? "text-white" : "text-black"} bg-blue-600 text-white ${region === "india" ? "w-5 h-7" : "w-6 h-8"}`}>
+              <span
+                className={`flex items-center justify-center rounded-full transition-colors duration-200 ${
+                  isDark ? "text-white" : "text-black"
+                } bg-blue-600 text-white ${
+                  region === "india" ? "w-5 h-7" : "w-6 h-8"
+                }`}
+              >
                 {region === "india" ? "₹" : "$"}
               </span>
             </div>
@@ -262,11 +260,21 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                   <div className="flex items-center">
                     <input
                       {...field}
-                      type="text"                      className={`w-full border ${errors.initialCash ? 'border-red-500' : 'border-gray-300'} px-3 pr-16 py-1 rounded-lg text-black text-xs sm:text-base`}
-                      placeholder={errors.initialCash ? errors.initialCash.message : "Enter initial cash"}
+                      type="text"
+                      className={`w-full border ${
+                        errors.initialCash
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } px-3 pr-16 py-1 rounded-lg text-black text-xs sm:text-base`}
+                      placeholder={
+                        errors.initialCash
+                          ? errors.initialCash.message
+                          : "Enter initial cash"
+                      }
                     />
                     <button
-                      type="button"                      className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
+                      type="button"
+                      className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
                       onClick={() =>
                         field.onChange(
                           decrementValue("initialCash", field.value)
@@ -276,7 +284,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       <FiMinus size={14} className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                     <button
-                      type="button"                      className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
+                      type="button"
+                      className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
                       onClick={() =>
                         field.onChange(
                           incrementValue("initialCash", field.value)
@@ -305,8 +314,15 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       selected={field.value}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
-                      dateFormat="yyyy/MM/dd"                      className={`w-full px-2 py-1 rounded-lg text-black text-base border ${errors.startDate ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 focus:border-transparent`}
-                      placeholder={errors.startDate ? errors.startDate.message : "YYYY/MM/DD"}
+                      dateFormat="yyyy/MM/dd"
+                      className={`w-full px-2 py-1 rounded-lg text-black text-base border ${
+                        errors.startDate ? "border-red-500" : "border-gray-300"
+                      } focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={
+                        errors.startDate
+                          ? errors.startDate.message
+                          : "YYYY/MM/DD"
+                      }
                       popperClassName="!z-50" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -362,8 +378,13 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       selected={field.value}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
-                      dateFormat="yyyy/MM/dd"                      className={`w-full px-2 py-1 rounded-lg border ${errors.endDate ? 'border-red-500' : 'border-gray-300'} text-black text-base focus:ring-blue-500 focus:border-transparent`}
-                      placeholder={errors.endDate ? errors.endDate.message : "YYYY/MM/DD"}
+                      dateFormat="yyyy/MM/dd"
+                      className={`w-full px-2 py-1 rounded-lg border ${
+                        errors.endDate ? "border-red-500" : "border-gray-300"
+                      } text-black text-base focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={
+                        errors.endDate ? errors.endDate.message : "YYYY/MM/DD"
+                      }
                       popperClassName="!z-50 h-30" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -439,11 +460,21 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                     <div className="flex items-center ">
                       <input
                         {...field}
-                        type="text"                        className={`w-full border ${errors.marginProfit ? 'border-red-500' : 'border-gray-300'} px-3 pr-16 py-1 rounded-lg text-black text-xs sm:text-base`}
-                        placeholder={errors.marginProfit ? errors.marginProfit.message : "00.00"}
+                        type="text"
+                        className={`w-full border ${
+                          errors.marginProfit
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } px-3 pr-16 py-1 rounded-lg text-black text-xs sm:text-base`}
+                        placeholder={
+                          errors.marginProfit
+                            ? errors.marginProfit.message
+                            : "00.00"
+                        }
                       />
                       <button
-                        type="button"                        className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
+                        type="button"
+                        className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             decrementValue("marginProfit", field.value, 0.1)
@@ -453,7 +484,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                         <FiMinus size={16} className="sm:w-5 sm:h-5" />
                       </button>
                       <button
-                        type="button"                        className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
+                        type="button"
+                        className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             incrementValue("marginProfit", field.value, 0.1)
@@ -495,11 +527,21 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       <input
                         {...field}
                         type="text"
-                        step="0.1"                        className={`w-full px-3 pr-16 py-1 rounded-lg border ${errors.marginLoss ? 'border-red-500' : 'border-gray-300'} text-black text-xs sm:text-base`}
-                        placeholder={errors.marginLoss ? errors.marginLoss.message : "00.00"}
+                        step="0.1"
+                        className={`w-full px-3 pr-16 py-1 rounded-lg border ${
+                          errors.marginLoss
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } text-black text-xs sm:text-base`}
+                        placeholder={
+                          errors.marginLoss
+                            ? errors.marginLoss.message
+                            : "00.00"
+                        }
                       />
                       <button
-                        type="button"                        className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
+                        type="button"
+                        className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             decrementValue("marginLoss", field.value, 0.1)
@@ -509,7 +551,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                         <FiMinus size={16} className="sm:w-5 sm:h-5" />
                       </button>
                       <button
-                        type="button"                        className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
+                        type="button"
+                        className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             incrementValue("marginLoss", field.value, 0.1)

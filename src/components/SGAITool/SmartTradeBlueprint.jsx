@@ -8,6 +8,7 @@ import InfoCard from "./InfoCard";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import api from "../../config";
 
 const SmartTradeBlueprint = () => {
   const [isSimulationComplete, setIsSimulationComplete] = useState(false);
@@ -105,26 +106,18 @@ const SmartTradeBlueprint = () => {
 
       try {
         if (region === "india") {
-          const response = await axios.post(
-            "https://nsereports.stockgenius.ai/simulate",
-            {
-              initial_cash: parseFloat(savedFormValues.initialCash),
-              start_date: formatDate(savedFormValues.startDate),
-              end_date: formatDate(savedFormValues.endDate),
-              profit_margin: parseFloat(savedFormValues.marginProfit).toFixed(
-                2
-              ),
-              loss_margin: parseFloat(savedFormValues.marginLoss).toFixed(2),
-            },
-            {
-              timeout: 600000, // 10 minutes
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+          const NseResponse = await api.post(`/api/v1/simulation/nse`, {
+            initial_cash: parseFloat(savedFormValues.initialCash),
+            start_date: formatDate(savedFormValues.startDate),
+            end_date: formatDate(savedFormValues.endDate),
+            profit_margin: parseFloat(savedFormValues.marginProfit).toFixed(2),
+            loss_margin: parseFloat(savedFormValues.marginLoss).toFixed(2),
+          });
 
-          const result = response.data;
+          console.log("NSE Response: ", NseResponse.data);
 
-          // console.log("NSE: ", result);
+          const result = NseResponse.data;
+
           setSimulationData(result.data.nse_simulation); // Replace static simulation data
           setIndexData(result.data.index_performance);
           setTransactions(result.data.transaction_history);
@@ -140,27 +133,19 @@ const SmartTradeBlueprint = () => {
             });
           }
         } else {
-          const response = await axios.post(
-            "https://nasdaqnysereports.stockgenius.ai/simulate",
-            {
-              initial_cash: parseFloat(savedFormValues.initialCash),
-              start_date: formatDate(savedFormValues.startDate),
-              end_date: formatDate(savedFormValues.endDate),
-              profit_margin: parseFloat(savedFormValues.marginProfit).toFixed(
-                2
-              ),
-              loss_margin: parseFloat(savedFormValues.marginLoss).toFixed(2),
-            },
-            {
-              timeout: 600000, // 10 minutes in milliseconds
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const NasdaqResponse = await api.post(`/api/v1/simulation/nasdaq`, {
+            initial_cash: parseFloat(savedFormValues.initialCash),
+            start_date: formatDate(savedFormValues.startDate),
+            end_date: formatDate(savedFormValues.endDate),
+            profit_margin: parseFloat(savedFormValues.marginProfit).toFixed(2),
+            loss_margin: parseFloat(savedFormValues.marginLoss).toFixed(2),
+          });
 
-          const result = response.data;
-          // console.log("result for USA is: ", result);
+          console.log("Nasdaq Response: ", NasdaqResponse.data);
+
+          const result = NasdaqResponse.data;
+
+        
           if (marketTitle === "NYSE") {
             // console.log("NYSE: ", result);
             setSimulationData(result.data.nyse_simulation); // Replace static simulation data
@@ -196,7 +181,11 @@ const SmartTradeBlueprint = () => {
           }
         }
       } catch (error) {
-        console.error("Re-run simulation error:", error);
+        if (error.response && error.response.status === 403) {
+          alert("Simulation limit reached for this month.");
+        } else {
+          console.error("Simulation error:", error);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -209,19 +198,22 @@ const SmartTradeBlueprint = () => {
     // console.log("cdskc", expandedView);
   };
   return (
-    <div      className={`rounded-2xl backdrop-blur-md w-[98%] sm:w-[96%] md:w-[94%] lg:w-[92%] xl:w-[90%] 2xl:w-[88%] mx-auto shadow-lg py-3 px-2 sm:px-3 overflow-hidden ${
+    <div
+      className={`rounded-2xl backdrop-blur-md w-[98%] sm:w-[96%] md:w-[94%] lg:w-[92%] xl:w-[90%] 2xl:w-[88%] mx-auto shadow-lg py-3 px-2 sm:px-3 overflow-hidden ${
         theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
       }`}
     >
       {/* Your content goes here */}
       <Header onReRun={handleReRun} isLoading={isLoading} />
-
       <div
         className={`h-px my-2 ${isDark ? "bg-white/20" : "bg-gray-300"}`}
-      ></div>      {expandedView === null ? (        <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-1 sm:gap-2 mt-3 overflow-hidden">
+      ></div>{" "}
+      {expandedView === null ? (
+        <div className="grid grid-cols-1 h-100 lg:grid-cols-12 gap-1 sm:gap-2 mt-3 overflow-hidden">
           <div className="lg:col-span-5 h-full w-full">
             <SGAICalc onSimulationComplete={handleSimulationComplete} />
-          </div>{!isSimulationComplete && (
+          </div>
+          {!isSimulationComplete && (
             <div className="lg:col-span-7 h-full w-full">
               <InfoCard />
             </div>
@@ -250,7 +242,6 @@ const SmartTradeBlueprint = () => {
       ) : (
         <div></div>
       )}
-
       <div className="mt-4">
         <TransactionHistory
           transactions={transactions}
