@@ -20,6 +20,7 @@ import {
   Dialog,
   DialogPanel,
 } from "@headlessui/react";
+import PricingDialog from "../pricing/PricingDialog";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -49,6 +50,7 @@ export default function Header() {
   const market = useSelector((state) => state.market);
   const region = useSelector((state) => state.region);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
   const location = useLocation();
   const [isHovered, setIsHovered] = useState(false);
   const [isMarketDropdownVisible, setIsMarketDropdownVisible] = useState(true);
@@ -363,14 +365,23 @@ export default function Header() {
                   </div>
                 )}
               </div>
-            ))}
-          </div>
+            ))}          </div>
         ) : (
           ""
-        )}
-        <div className="hidden lg:flex  lg:justify-end">
-          <div className="flex items-center gap-2">
-            <ToggleButton className="mr-4" />
+        )}        <div className="hidden lg:flex  lg:justify-end">
+          <div className="flex items-center gap-4">            {currentUser && (
+              <button 
+                onClick={() => setIsPricingOpen(true)}
+                className="flex items-center rounded-full px-3 py-1 text-[13px] xl:text-[13px] lg:text-[10px] whitespace-nowrap
+                bg-white/10 backdrop-blur-md
+                text-amber-500 font-medium transition-all duration-200 
+                shadow-lg hover:shadow-amber-500/30
+                border-2 border-amber-500/50 hover:border-amber-400
+                dark:bg-[rgba(251,191,36,0.1)]">
+                Pricing
+              </button>
+            )}
+            <ToggleButton />
 
             {currentUser ? (
               <div className="flex items-center">
@@ -554,10 +565,23 @@ export default function Header() {
                       className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
                       onClick={handleMenuClose}
                     >
-                      <item.icon className="h-5 w-5" aria-hidden="true" />
-                      {item.name}
+                      <item.icon className="h-5 w-5" aria-hidden="true" />                      {item.name}
                     </Link>
-                  ))}
+                  ))}                  {currentUser && (                      <button
+                      className="flex items-center gap-2 -mx-3 rounded-lg px-3 py-2 text-base font-[poppins] leading-7
+                        bg-amber-500 backdrop-blur-md
+                        text-white font-semibold
+                        hover:bg-amber-600
+                        dark:bg-amber-500 dark:hover:bg-amber-600
+                        mt-2 w-full text-left"
+                      onClick={() => {
+                        setIsPricingOpen(true);
+                        handleMenuClose();
+                      }}
+                    >
+                      Pricing
+                    </button>
+                  )}
                 </div>
               ) : (
                 ""
@@ -612,8 +636,10 @@ export default function Header() {
               </div>
             </div>
           </div>
-        </DialogPanel>
-      </Dialog>
+        </DialogPanel>      </Dialog>
+      {currentUser && (
+        <PricingDialog isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
+      )}
     </header>
   );
 }
