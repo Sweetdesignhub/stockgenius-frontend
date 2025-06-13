@@ -93,12 +93,21 @@ function AccountInfoPT() {
   const { funds, loading, profitSummary, investedAmount } =
     region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
+  const planFallbacks = {
+    basic: 100000,
+    pro: 1000000,
+    master: 2000000,
+  };
+
+  const fallbackFunds = planFallbacks[currentUser?.plan] || 100000;
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const cumulativeProfit = (
     parseFloat(totalProfit) + parseFloat(todaysProfit)
   ).toFixed(2);
-  const cashBalance = (parseFloat(funds?.availableFunds) || 100000).toFixed(2);
+  const cashBalance = (
+    parseFloat(funds?.availableFunds) || fallbackFunds
+  ).toFixed(2);
 
   const getPnLColor = (value) => {
     const isPositive = parseFloat(value) >= 0;

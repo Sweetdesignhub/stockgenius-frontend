@@ -57,7 +57,7 @@ const PaperTradingAutoTrade = () => {
   const [title, setTitle] = useState("");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
-
+  const [showPlanLimitReached, setShowPlanLimitReached] = useState(false);
   const [botColorMap, setBotColorMap] = useState({});
   const location = useLocation();
   const isAITradingPage = location.pathname === "/india/autotrade-bots";
@@ -376,7 +376,8 @@ const PaperTradingAutoTrade = () => {
               </div>
             </div>
           </div>
-          {currentUser?.plan === "basic" && isABotStopped && (
+          {(showPlanLimitReached ||
+            (currentUser?.plan === "basic" && isABotStopped)) && (
             <div className="px-4 pt-4">
               <div className="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 text-center">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
@@ -415,7 +416,7 @@ const PaperTradingAutoTrade = () => {
                     color={botColorMap[bot._id]}
                     fetchBots={fetchBots}
                     onBotTimeCapReached={() => {
-                      setIsPricingDialogOpen(true);
+                      setShowPlanLimitReached(true);
                     }}
                   />
                 ))
