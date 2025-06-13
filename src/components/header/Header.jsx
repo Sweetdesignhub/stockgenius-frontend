@@ -369,7 +369,8 @@ export default function Header() {
         ) : (
           ""
         )}        <div className="hidden lg:flex  lg:justify-end">
-          <div className="flex items-center gap-4">            {currentUser && (
+          <div className="flex items-center gap-4">
+            {currentUser && region === "india" && (
               <button 
                 onClick={() => setIsPricingOpen(true)}
                 className="flex items-center rounded-full px-3 py-1 text-[13px] xl:text-[13px] lg:text-[10px] whitespace-nowrap
@@ -567,7 +568,8 @@ export default function Header() {
                     >
                       <item.icon className="h-5 w-5" aria-hidden="true" />                      {item.name}
                     </Link>
-                  ))}                  {currentUser && (                      <button
+                  ))}                  {currentUser && region === "india" && (
+                      <button
                       className="flex items-center gap-2 -mx-3 rounded-lg px-3 py-2 text-base font-[poppins] leading-7
                         bg-amber-500 backdrop-blur-md
                         text-white font-semibold

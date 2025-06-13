@@ -52,6 +52,8 @@ import SuccessPayment from "./components/pricing/SuccessPayment.jsx";
 import FailedPayment from "./components/pricing/FailedPayment.jsx";
 import PlanSelectDialog from "./components/pricing/PlanSelectDialog.jsx";
 import Dashboard from "./components/pricing/Dashboard.jsx";
+import { setShowPlanSelectDialog } from "./redux/pricing/pricingSlice";
+
 // Add AuthRoute at the top of the file after other imports
 const AuthRoute = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -73,8 +75,10 @@ function MainApp() {
   const [showPricingDialog, setShowPricingDialog] = useState(false);
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();  const { currentUser } = useSelector((state) => state.user);
+  const showPlanSelectDialog = useSelector((state) => state.pricing.showPlanSelectDialog);
+  const region = useSelector((state) => state.region);
+
   // Effect to show pricing dialog after login/signup
   useEffect(() => {
     // Don't show dialog if user is coming from payment pages
@@ -277,11 +281,20 @@ function MainApp() {
         onSignOut={handleSignOut}
       />
       {currentUser && <ChatbotComponent />}
-      <PricingDialog 
-        isOpen={showPricingDialog} 
-        onClose={() => setShowPricingDialog(false)}
-        currentPlan={currentUser?.plan || 'basic'}
-      />
+      {currentUser && region === "india" && (
+        <>
+          <PricingDialog 
+            isOpen={showPricingDialog} 
+            onClose={() => setShowPricingDialog(false)}
+            currentPlan={currentUser?.plan || 'basic'}
+          />
+          <PlanSelectDialog 
+            isOpen={showPlanSelectDialog} 
+            onClose={() => dispatch(setShowPlanSelectDialog(false))}
+            currentPlan={currentUser?.plan || 'basic'}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -175,26 +175,34 @@ export default function PlanSelectDialog({
 
 
   return (
-    <Dialog
-      as="div"
-      open={isOpen || false}
-      onClose={onClose}
-      className="relative z-50"
-    >
-      <Transition.Child
-        as={Fragment}
-        enter="ease-out duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="ease-in duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
-      </Transition.Child>
+    <Transition appear show={isOpen || false} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={onClose}>
+          <Transition.Child
+            as="div"
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            className="fixed inset-0"
+          >
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+          </Transition.Child>
 
-      <div className="fixed inset-0 flex items-start sm:items-center justify-center overflow-y-auto scrollbar-hide">
-        <Dialog.Panel className="relative mx-auto w-full max-w-[1200px] min-h-screen sm:min-h-[700px] bg-white dark:bg-black/100 rounded-none sm:rounded-[10px] border border-gray-200 dark:border-gray-700 transform transition-all shadow-xl overflow-hidden">
+          <div className="fixed inset-0 flex items-start sm:items-center justify-center overflow-y-auto scrollbar-hide">
+            <div className="flex min-h-full w-full items-start sm:items-center justify-center p-2 sm:p-4">
+              <Transition.Child
+                as="div"
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+                className="w-full"
+              >
+                <Dialog.Panel className="relative mx-auto w-full max-w-[1200px] min-h-screen sm:min-h-[700px] bg-white dark:bg-black/100 rounded-none sm:rounded-[10px] border border-gray-200 dark:border-gray-700 transform transition-all shadow-xl overflow-hidden">
           <button
             onClick={onClose}
             className="absolute right-2 top-2 sm:right-4 sm:top-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10"
@@ -584,7 +592,10 @@ export default function PlanSelectDialog({
             </div>
           </div>
         </Dialog.Panel>
-      </div>
-    </Dialog>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
   );
 }

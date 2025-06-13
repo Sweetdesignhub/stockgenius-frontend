@@ -19,6 +19,7 @@ export default function PricingDialog({
   const handlePlanClick = (plan) => {
     setSelectedPlan(plan);
     setShowPlanDialog(true);
+    onClose(); // Close the pricing dialog when plan details opens
   };
 
   return (

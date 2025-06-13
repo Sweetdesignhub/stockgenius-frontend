@@ -6,6 +6,7 @@ import regionReducer from "./region/regionSlice.js";
 import marketReducer from "./region/marketSlice.js";
 import fyersReducer from './brokers/fyersSlice.js'
 import learningReducer from './eLearning/learningSlice.js'
+import pricingReducer from './pricing/pricingSlice.js'
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   market: marketReducer,
   fyers:fyersReducer,
   learning: learningReducer,
+  pricing: pricingReducer,
 });
 
 const persistConfig = {
