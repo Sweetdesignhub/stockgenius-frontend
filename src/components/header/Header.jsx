@@ -20,6 +20,7 @@ import {
   Dialog,
   DialogPanel,
 } from "@headlessui/react";
+import PricingDialog from "../pricing/PricingDialog";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -53,6 +54,7 @@ export default function Header() {
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isMobileStockListOpen, setIsMobileStockListOpen] = useState(false); // New state
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
   const location = useLocation();
   const [isHovered, setIsHovered] = useState(false);
   const [isMarketDropdownVisible, setIsMarketDropdownVisible] = useState(true);
@@ -296,11 +298,8 @@ export default function Header() {
   // console.log(currentUser);
 
   return (
-    <header className="w-full   border-gray-200">
-      <nav
-        className="mx-auto flex items-center justify-between p-4 lg:px-8"
-        aria-label="Global"
-      >
+    <header className="w-full border-gray-200">
+      <nav className="mx-auto flex items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex items-center">
           <Link to="/">
             <img
@@ -316,44 +315,27 @@ export default function Header() {
         <div className="flex lg:hidden">
           <div>
             {region ? (
-              <div>
-                {region === "india" ? (
-                  <div className="flex items-center justify-center py-[6px] px-2  rounded-xl">
-                    {/* <Flag
-                      code="IN"
-                      style={{
-                        width: "35px",
-                        height: "25px",
-                      }}
-                    /> */}
-                  </div>
+              <div>                {region === "india" ? (
+                  <div></div>
                 ) : region === "usa" ? (
-                  <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
-                    <Flag
-                      code="US"
-                      style={{
-                        marginRight: "5px",
-                        width: "35px",
-                        height: "25px",
-                        "@media (max-width: 1024px)": {
-                          width: "25px",
-                          height: "18px",
-                        }
-                      }}
-                    />
+                  <div className="flex items-center py-[4px] px-1 bg-white rounded-xl">
                     {isMarketDropdownVisible && (
-                      <div>
-                        <select
-                          onChange={handleMarketChange}
-                          value={market}
-                          className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
-                        >
-                          <option value="" disabled>
-                            Market
-                          </option>
-                          <option value="NYSE">NYSE</option>
-                          <option value="NASDAQ">NASDAQ</option>
-                        </select>
+                      <div className="flex items-center">
+                        {market === "NYSE" ? (
+                          <img
+                            src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd7b86ea3de06476c86cc8c3083afa102"
+                            alt="NYSE"
+                            className="h-5 sm:h-6 w-auto cursor-pointer"
+                            onClick={() => handleMarketChange({ target: { value: "NASDAQ" } })}
+                          />
+                        ) : (
+                          <img
+                            src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F62122be093c24c95b6bdb5e7b76f1984"
+                            alt="NASDAQ"
+                            className="h-5 sm:h-6 w-auto cursor-pointer"
+                            onClick={() => handleMarketChange({ target: { value: "NYSE" } })}
+                          />
+                        )}
                       </div>
                     )}
                   </div>
@@ -411,35 +393,39 @@ export default function Header() {
                   </div>
                 )}
               </div>
-            ))}
-          </div>
+            ))}          </div>
         ) : (
           ""
-        )}
-        <div className="hidden lg:flex  lg:justify-end">
-          <div className="flex items-center gap-2">
-            <ToggleButton className="mr-4" />
+        )}        <div className="hidden lg:flex  lg:justify-end">
+          <div className="flex items-center gap-4">
+            {currentUser && region === "india" && (
+              <button 
+                onClick={() => setIsPricingOpen(true)}
+                className="flex items-center rounded-full px-3 py-1 text-[13px] xl:text-[13px] lg:text-[10px] whitespace-nowrap
+                bg-white/10 backdrop-blur-md
+                text-amber-500 font-medium transition-all duration-200 
+                shadow-lg hover:shadow-amber-500/30
+                border-2 border-amber-500/50 hover:border-amber-400
+                dark:bg-[rgba(251,191,36,0.1)]">
+                Pricing
+              </button>
+            )}
+            <ToggleButton />
 
             {currentUser ? (
               <div className="flex items-center">
                 <div>
                   {region ? (
-                    <div>
-                      {region === "india" ? (
+                    <div>                      {region === "india" ? (
                         <div className="flex items-center justify-center py-[4px] lg:py-[4px] xl:py-[6px] px-2 bg-white rounded-xl">
                           <Flag
                             code="IN"
                             style={{
                               width: "35px",
                               height: "25px",
-                              "@media (max-width: 1024px)": {
-                                width: "25px",
-                                height: "18px",
-                              }
                             }}
                           />
-                        </div>
-                      ) : region === "usa" ? (
+                        </div>                      ) : region === "usa" ? (
                         <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
                           <Flag
                             code="US"
@@ -447,10 +433,6 @@ export default function Header() {
                               marginRight: "5px",
                               width: "35px",
                               height: "25px",
-                              "@media (max-width: 1024px)": {
-                                width: "25px",
-                                height: "18px",
-                              }
                             }}
                           />
                           {isMarketDropdownVisible && (
@@ -650,12 +632,26 @@ export default function Header() {
                           className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
                           onClick={handleMenuClose}
                         >
-                          <item.icon className="h-5 w-5" aria-hidden="true" />
-                          {item.name}
+                          <item.icon className="h-5 w-5" aria-hidden="true" />                          {item.name}
                         </Link>
                       )}
                     </div>
-                  ))}
+                  ))}                  {currentUser && region === "india" && (
+                      <button
+                      className="flex items-center gap-2 -mx-3 rounded-lg px-3 py-2 text-base font-[poppins] leading-7
+                        bg-amber-500 backdrop-blur-md
+                        text-white font-semibold
+                        hover:bg-amber-600
+                        dark:bg-amber-500 dark:hover:bg-amber-600
+                        mt-2 w-full text-left"
+                      onClick={() => {
+                        setIsPricingOpen(true);
+                        handleMenuClose();
+                      }}
+                    >
+                      Pricing
+                    </button>
+                  )}
                 </div>
               ) : (
                 ""
@@ -710,8 +706,10 @@ export default function Header() {
               </div>
             </div>
           </div>
-        </DialogPanel>
-      </Dialog>
+        </DialogPanel>      </Dialog>
+      {currentUser && (
+        <PricingDialog isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} />
+      )}
     </header>
   );
 }

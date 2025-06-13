@@ -50,6 +50,8 @@ export default function OAuth() {
           state: { userId, email: data?.email },
         });
       } else {
+        // Set login timestamp when user signs in with Google
+        localStorage.setItem('loginTimestamp', new Date().getTime().toString());
         dispatch(signInSuccess(data));
         navigate(`/${selectedRegion}/dashboard`);
       }
