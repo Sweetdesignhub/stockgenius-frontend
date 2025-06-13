@@ -9,6 +9,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import api from "../../config";
+import PricingDialog from "../pricing/PricingDialog";
 
 const SmartTradeBlueprint = () => {
   const [isSimulationComplete, setIsSimulationComplete] = useState(false);
@@ -19,6 +20,7 @@ const SmartTradeBlueprint = () => {
   const region = useSelector((state) => state.region); // Get region from store
   const market = useSelector((state) => state.market); // Get region from store
   // console.log("Region is: ", market);
+  const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
 
   useEffect(() => {
     if (theme === "system") {
@@ -145,7 +147,6 @@ const SmartTradeBlueprint = () => {
 
           const result = NasdaqResponse.data;
 
-        
           if (marketTitle === "NYSE") {
             // console.log("NYSE: ", result);
             setSimulationData(result.data.nyse_simulation); // Replace static simulation data
@@ -182,7 +183,8 @@ const SmartTradeBlueprint = () => {
         }
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          alert("Simulation limit reached for this month.");
+          setIsPricingDialogOpen(true);
+          // alert("Simulation limit reached for this month.");
         } else {
           console.error("Simulation error:", error);
         }
@@ -250,6 +252,10 @@ const SmartTradeBlueprint = () => {
           isExpanded={expandedView === "TransactionHistory"}
         />
       </div>
+      <PricingDialog
+        isOpen={isPricingDialogOpen}
+        onClose={() => setIsPricingDialogOpen(false)}
+      />
     </div>
   );
   // return (

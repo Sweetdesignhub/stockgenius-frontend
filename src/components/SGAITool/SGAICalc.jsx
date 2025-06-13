@@ -12,6 +12,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import api from "../../config";
+import PricingDialog from "../pricing/PricingDialog";
 
 const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   const region = useSelector((state) => state.region); // Get region from store
@@ -23,6 +24,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   const [marketTitle, setMarketTitle] = useState("NYSE");
   const [currency, setCurrency] = useState("₹");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
+
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const bgClass =
@@ -127,7 +130,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
         }
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          alert("Simulation limit reached for this month.");
+          setIsPricingDialogOpen(true);
+          // alert("Simulation limit reached for this month.");
         } else {
           console.error("Simulation error:", error);
         }
@@ -164,7 +168,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
         }
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          alert("Simulation limit reached for this month.");
+          setIsPricingDialogOpen(true);
+          // alert("Simulation limit reached for this month.");
         } else {
           console.error("Simulation error:", error);
         }
@@ -580,6 +585,11 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
           </div>
         </div>
       </form>
+      <PricingDialog
+        isOpen={isPricingDialogOpen}
+        onClose={() => setIsPricingDialogOpen(false)}
+      />
+
       {showDateErrorModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md text-center">

@@ -21,14 +21,38 @@ import AutoTradeModal from "../brokers/AutoTradeModal";
 import TradeRatioBar from "./TradeRatioBar";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 
-function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
+function PaperTradeBot({
+  botData,
+  updateBotDetails,
+  color,
+  fetchBots,
+  onBotTimeCapReached,
+}) {
   const hasReachedTodayBotTimeCap = useRef(false);
-  // const isEnabled = botData?.isActive && !hasReachedTodayBotTimeCap.current;
-  const isEnabled =
-    botData?.dynamicData[0].status === "Running" &&
-    !hasReachedTodayBotTimeCap.current;
+  const hasNotifiedRef = useRef(false);
 
-  console.log("Bot Data in PaperTradeBot:", botData, "Is Enabled:", isEnabled);
+  useEffect(() => {
+    if (
+      hasReachedTodayBotTimeCap.current &&
+      !hasNotifiedRef.current &&
+      typeof onBotTimeCapReached === "function"
+    ) {
+      onBotTimeCapReached(true);
+      hasNotifiedRef.current = true; // ✅ ensure it's only triggered once
+    }
+  }, [onBotTimeCapReached]);
+
+  // const isEnabled = botData?.isActive && !hasReachedTodayBotTimeCap.current;
+  const isEnabled = botData?.isActive;
+  // botData?.dynamicData[0].status === "Running" &&
+  // !hasReachedTodayBotTimeCap.current;
+
+  console.log(
+    "Bot Data in PaperTradeBot:",
+    botData.dynamicData[0].status,
+    "Is Enabled:",
+    isEnabled
+  );
 
   // Use the PaperTrading context
   const { funds, orders, trades, profitSummary, investedAmount } =
@@ -232,6 +256,35 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     return total + order.quantity * order.tradedPrice;
   }, 0);
 
+  const rawStatus = botData?.dynamicData?.[0]?.status ?? "Inactive";
+  console.log("Bot Data :", botData.dynamicData[0]);
+  let statusText = "Inactive";
+  let statusColor = "#FF4D4D"; // Default Red
+
+  if (hasReachedTodayBotTimeCap.current) {
+    statusText = "Stopped (Limit Reached)";
+    statusColor = "#FFA500"; // Orange
+  } else {
+    switch (rawStatus) {
+      case "Running":
+        statusText = "Running";
+        statusColor = "#00FF47"; // Green
+        break;
+      case "Stopped":
+        statusText = "Stopped";
+        statusColor = "#FF4D4D"; // Red
+        break;
+      case "Schedule":
+        statusText = "Scheduled";
+        statusColor = "#3B82F6"; // Blue
+        break;
+      case "Inactive":
+      default:
+        statusText = "Inactive";
+        statusColor = "#FF4D4D"; // Red
+    }
+  }
+
   const data = [
     {
       title: "Profit Gained",
@@ -289,16 +342,8 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     },
     {
       title: "Status",
-      value: hasReachedTodayBotTimeCap.current
-        ? "Stopped (Limit Reached)"
-        : isEnabled
-        ? "Running"
-        : "Inactive",
-      valueColor: hasReachedTodayBotTimeCap.current
-        ? "#FFA500" // Orange for limit reached
-        : isEnabled
-        ? "#00FF47" // Green for Running
-        : "#FF4D4D", // Red for Inactive
+      value: statusText,
+      valueColor: statusColor,
     },
   ];
 
