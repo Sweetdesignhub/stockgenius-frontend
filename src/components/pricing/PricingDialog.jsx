@@ -5,12 +5,11 @@ import basicImage from "../../assets/basic.png";
 import proImage from "../../assets/pro.png";
 import masterImage from "../../assets/master.png";
 import PlanDetailsDialog from "./PlanDetailsDialog";
+import { useSelector } from "react-redux";
 
-export default function PricingDialog({
-  isOpen = false,
-  onClose,
-  currentPlan = "basic",
-}) {
+export default function PricingDialog({ isOpen = false, onClose }) {
+  const { currentUser } = useSelector((state) => state.user);
+  const currentPlan = currentUser?.plan || "basic"; // Fallback to "basic" if undefined
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(
     currentPlan === "basic" ? "pro" : currentPlan
@@ -24,7 +23,7 @@ export default function PricingDialog({
 
   return (
     <>
-      <Transition appear show={isOpen || false} as={Fragment}>
+      <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={onClose}>
           {/* Background overlay with blur */}
           <Transition.Child
@@ -72,6 +71,7 @@ export default function PricingDialog({
                     text-gray-500 dark:text-gray-400 
                     hover:text-gray-700 dark:hover:text-gray-200
                     transition-colors z-10"
+                    aria-label="Close pricing dialog"
                   >
                     <XMarkIcon className="h-6 w-6" />
                   </button>
@@ -294,7 +294,7 @@ export default function PricingDialog({
                                   "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #0B575C 132.95%)",
                                 borderImageSource: `linear-gradient(180deg, rgba(11, 87, 92, 0.4) 17.19%, rgba(98, 223, 251, 0.77) 100%),
                                 linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
-                                linear-gradient(180deg, rgba(11, 73, 92, 0) -4.69%, rgba(189, 246, 254, 0.3) 100%)`,
+                                linear-gradient(180deg, rgba(11, 58, 92, 0) -4.69%, rgba(189, 246, 254, 0.3) 100%)`,
                                 boxShadow: `0px 8.97px 26.92px 0px rgba(73, 244, 255, 0.7) inset,
                                 0px 8.97px 35.9px 0px rgba(11, 58, 92, 0.5)`,
                               }}

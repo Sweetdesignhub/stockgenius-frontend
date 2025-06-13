@@ -4,14 +4,17 @@
  * toggle their states, and schedule auto-trades. It includes the functionality to create, update, and delete bots,
  * as well as track the status of each bot. The bots' states are managed based on the current market conditions
  * (e.g., market open/close, trading hours). It also provides integration with WebSockets to track the total
- * trading time of all bots and shows real-time data.
+ * trading time of all bots and shows real-time data. Bot creation is restricted to Pro and Master plan users,
+ * with Basic plan users prompted to upgrade via PricingDialog from the banner.
  *
  * Developed by: Arshdeep Singh
  * Developed on: 2024-11-14
  *
- * Updated by: [Name]
- * Updated on: [Update date]
- * - Update description: Brief description of what was updated or fixed
+ * Updated by: Grok (assisted)
+ * Updated on: 2025-06-13
+ * - Update description: Added restrictions for bot creation based on user plan (Basic plan users cannot create bots).
+ * - Update description: Integrated PricingDialog for Basic plan users via banner click.
+ * - Update description: Disabled Schedule Bot button for Basic users without popup.
  */
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
@@ -20,6 +23,7 @@ import BrokerModal from "../../components/brokers/BrokerModal";
 import AutoTradeModal from "../../components/brokers/AutoTradeModal";
 import Bot from "../../components/aiTradingBots/Bot";
 import NotAvailable from "../../components/common/NotAvailable";
+import PricingDialog from "../../components/pricing/PricingDialog"; // Corrected import
 import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
 import moment from "moment-timezone";
@@ -92,6 +96,7 @@ function AITradingBots() {
   const [confirmationAction, setConfirmationAction] = useState(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [togglingBotId, setTogglingBotId] = useState(null);
+  const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
 
   const [botColorMap, setBotColorMap] = useState({});
   const location = useLocation();
@@ -104,6 +109,7 @@ function AITradingBots() {
 
   const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
+  const userPlan = currentUser?.plan || "basic"; // Fallback to "basic"
 
   const {
     holdings = {},
@@ -114,7 +120,7 @@ function AITradingBots() {
   const fetchBots = useCallback(async () => {
     if (!currentUser.id) return;
 
-    setIsInitialLoading(true); // Only set loading on initial fetch
+    setIsInitialLoading(true);
     try {
       const response = await api.get(
         `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`
@@ -166,10 +172,10 @@ function AITradingBots() {
       });
     };
 
-    updateBotStates(); // Initial call
-    const interval = setInterval(updateBotStates, 60000); // Update every minute
+    updateBotStates();
+    const interval = setInterval(updateBotStates, 60000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, []);
 
   const createBot = async (botData) => {
@@ -273,10 +279,6 @@ function AITradingBots() {
         }
       }
 
-      // await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
-      //   status: newStatus
-      // });
-
       setBotStates((prevStates) => ({
         ...prevStates,
         [botId]: {
@@ -285,7 +287,7 @@ function AITradingBots() {
         },
       }));
 
-      await fetchBots(); // Refetch bots to get updated data
+      await fetchBots();
     } catch (error) {
       console.error("Error toggling bot status:", error);
       setTitle("Error");
@@ -299,10 +301,7 @@ function AITradingBots() {
   const handleScheduleTrade = () => {
     if (!fyersAccessToken) {
       setBrokerModalOpen(true);
-      // console.log("First connect to your broker to start auto trade feature.");
     } else {
-      // console.log(fyersAccessToken);
-      // console.log("Successfully connected to broker");
       setAutoTradeModalOpen(true);
     }
   };
@@ -314,14 +313,10 @@ function AITradingBots() {
 
   useEffect(() => {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    // const wsUrl = process.env.NODE_ENV === 'development'
-    //   ? 'ws://localhost:8080'
-    //   : `${wsProtocol}//api.stockgenius.ai`;
     const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
 
     const ws = new WebSocket(wsUrl);
     ws.onopen = () => {
-      // console.log("WebSocket connected for all bots time");
       ws.send(
         JSON.stringify({
           type: "subscribeAllBotsTime",
@@ -341,9 +336,6 @@ function AITradingBots() {
     ws.onerror = (error) => {
       console.error("WebSocket error for all bots time:", error);
     };
-    // ws.onclose = () => {
-    //   console.log("WebSocket disconnected for all bots time");
-    // };
     return () => {
       ws.close();
     };
@@ -363,7 +355,6 @@ function AITradingBots() {
     const today = moment().tz("Asia/Kolkata").startOf("day");
     const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
 
-    // Initialize accumulators
     let todayTotalInvestment = 0;
     let todayTotalProfit = 0;
     let weekTotalInvestment = 0;
@@ -373,13 +364,11 @@ function AITradingBots() {
     botDataList.forEach((bot) => {
       const botCreatedAt = moment(bot.createdAt).tz("Asia/Kolkata");
 
-      // Get the bot's profit and investment amounts
       let profitAmount = 0;
       let investmentAmount = 0;
       let reInvestmentCount = 0;
 
       if (bot.productType === "INTRADAY") {
-        // For intraday bots, use positions data
         profitAmount = positions?.overall?.pl_total || 0;
         investmentAmount = positions?.overall?.buyVal || 0;
         reInvestmentCount =
@@ -389,7 +378,6 @@ function AITradingBots() {
               order.productType === "INTRADAY"
           ).length || 0;
       } else if (bot.productType === "CNC") {
-        // For CNC bots, use holdings data
         profitAmount = holdings?.overall?.total_pl || 0;
         investmentAmount = holdings?.overall?.total_investment || 0;
         reInvestmentCount =
@@ -400,21 +388,18 @@ function AITradingBots() {
           ).length || 0;
       }
 
-      // Calculate metrics for today's bots
       if (botCreatedAt.isSame(today, "day")) {
         todayTotalInvestment += investmentAmount;
         todayTotalProfit += profitAmount;
         todayReInvestments += reInvestmentCount;
       }
 
-      // Calculate metrics for this week's bots
       if (botCreatedAt.isSameOrAfter(startOfWeek)) {
         weekTotalInvestment += investmentAmount;
         weekTotalProfit += profitAmount;
       }
     });
 
-    // Calculate percentages
     const calculatePercentage = (profit, investment) => {
       if (investment === 0) return 0;
       return (profit / investment) * 100;
@@ -485,30 +470,59 @@ function AITradingBots() {
           className={`news-table rounded-2xl min-h-[85vh] ${
             isAITradingPage ? "bg-gradient" : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
           }`}
-        >          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center md:text-left mb-4 md:mb-0">
               AI Trading Bots
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center w-full md:w-auto">
               <button
-                className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
+                className={`text-sm py-2 font-semibold px-4 rounded-xl ${
+                  userPlan === "basic"
+                    ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
+                    : "bg-[#3A6FF8] dark:text-blue-700 dark:bg-white text-white"
+                } w-full sm:w-auto flex flex-col items-center`}
                 onClick={handleScheduleTrade}
+                disabled={userPlan === "basic"}
+                title={
+                  userPlan === "basic"
+                    ? "Upgrade to Pro or Master to create bots"
+                    : "Schedule a new bot"
+                }
               >
                 <span>Schedule Bot</span>
               </button>
             </div>
           </div>
 
-          <div className="p-4">            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-2 xl:gap-2 lg:gap-1">
-              {calculateCardData.map((card, index) => (
-                <Cards key={index} title={card.title} value={card.value} />
+          {userPlan === "basic" && (
+            <div className="p-4">
+              <div className="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 text-center">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  AI Trading Bots are available only for Pro and Master plans.{" "}
+                  <button
+                    onClick={() => setIsPricingDialogOpen(true)}
+                    className="underline font-semibold hover:text-yellow-600 dark:hover:text-yellow-300"
+                  >
+                    Upgrade now
+                  </button>{" "}
+                  to create and manage bots.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-2 xl:gap-2 lg:gap-1">
+              {calculateCardData.map((card) => (
+                <Cards key={card.title} title={card.title} value={card.value} />
               ))}
             </div>
           </div>
 
           <div className="p-4 overflow-scroll scrollbar-hide max-h-[60vh]">
             <div className="flex flex-col gap-4">
-              {isInitialLoading ? ( // Only show loading on initial fetch
+              {isInitialLoading ? (
                 <div className="w-full flex justify-center items-center min-h-[200px]">
                   <Loading />
                 </div>
@@ -521,13 +535,19 @@ function AITradingBots() {
                     onToggle={() => handleToggle(bot._id)}
                     updateBotDetails={updateBotDetails}
                     deleteBot={deleteBot}
-                    loading={togglingBotId === bot._id} // Pass loading state to individual bot
+                    loading={togglingBotId === bot._id}
                     color={botColorMap[bot._id]}
                   />
                 ))
               ) : (
                 <div>
-                  <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+                  <NotAvailable
+                    dynamicText={`<strong>No bots available.</strong> ${
+                      userPlan === "basic"
+                        ? "Upgrade to Pro or Master to activate Auto Trade Bots."
+                        : "Activate Auto Trade Bot to start trading."
+                    }`}
+                  />
                 </div>
               )}
             </div>
@@ -540,10 +560,12 @@ function AITradingBots() {
       />
       <AutoTradeModal
         isOpen={autoTradeModalOpen}
-        onClose={() => {
-          setAutoTradeModalOpen(false);
-        }}
+        onClose={() => setAutoTradeModalOpen(false)}
         onCreateBot={createBot}
+      />
+      <PricingDialog
+        isOpen={isPricingDialogOpen}
+        onClose={() => setIsPricingDialogOpen(false)}
       />
       {message && (
         <ConfirmationModal
@@ -551,7 +573,7 @@ function AITradingBots() {
           onClose={handleConfirmationClose}
           title={title}
           message={message}
-          onConfirm={handleConfirmationClose}
+          onConfirm={confirmationAction || handleConfirmationClose}
         />
       )}
     </div>
