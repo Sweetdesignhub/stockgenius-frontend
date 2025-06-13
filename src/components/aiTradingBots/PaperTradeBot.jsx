@@ -22,9 +22,13 @@ import TradeRatioBar from "./TradeRatioBar";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 
 function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
-  const [hasReachedCapState, setHasReachedCapState] = useState(false);
   const hasReachedTodayBotTimeCap = useRef(false);
-  const isEnabled = botData?.isActive && !hasReachedTodayBotTimeCap.current;
+  // const isEnabled = botData?.isActive && !hasReachedTodayBotTimeCap.current;
+  const isEnabled =
+    botData?.dynamicData[0].status === "Running" &&
+    !hasReachedTodayBotTimeCap.current;
+
+  console.log("Bot Data in PaperTradeBot:", botData, "Is Enabled:", isEnabled);
 
   // Use the PaperTrading context
   const { funds, orders, trades, profitSummary, investedAmount } =
@@ -71,7 +75,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
   const holdingsTotalPL = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const positionTotalPL = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const availableFunds =
-    (parseFloat(funds?.availableFunds) || 2000000).toFixed(2) || "0.00";
+    (parseFloat(funds?.availableFunds) || 100000).toFixed(2) || "0.00";
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {
@@ -147,11 +151,10 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
         });
         // Set the flag only once
         if (
-          todaysBotTime >= 4 * 60 * 60 &&
+          todaysBotTime >= 4 * 60 * 60 && //
           !hasReachedTodayBotTimeCap.current
         ) {
           hasReachedTodayBotTimeCap.current = true;
-          setHasReachedCapState(true); // trigger effect
           console.log("4-hour cap reached");
           // You can trigger any one-time logic here, like disabling a button
         }
@@ -242,7 +245,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
           ? `${formatTime(botTime.todaysBotTime)} (Limit Reached)`
           : formatTime(botTime.todaysBotTime),
       valueColor:
-        botTime.todaysBotTime >= 4 * 60 * 60 ? "text-red-500" : valueColor,
+        botTime.todaysBotTime >= 4 * 60 * 60 ? "text-red-500" : valueColor, // *
     },
 
     // {
