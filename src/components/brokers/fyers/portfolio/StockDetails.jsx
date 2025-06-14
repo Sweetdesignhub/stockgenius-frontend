@@ -159,21 +159,19 @@ const StockDetails = () => {
   // if (!fyersAccessToken) {
   //   return <div className="text-center">Please connect your broker...</div>;
   // }
-  return (    <div className="flex flex-col w-full overflow-hidden max-h-[calc(100vh-14rem)] lg:max-h-[calc(100vh-16rem)] xl:max-h-[calc(100vh-17rem)] 2xl:max-h-[calc(100vh-19rem)]">
-      <div className="w-full h-full auth rounded-xl">
+  return (    <div className="flex flex-col w-full overflow-hidden ">
+      <div className="w-full h-full rounded-xl">
         <TabGroup selectedIndex={currentTab} onChange={setCurrentTab} className="h-full flex flex-col">
           <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3 shrink-0">
             <TabList className="flex flex-wrap gap-2 sm:gap-4">
               {categories.map(({ name, count }) => (
                 <Tab
-                  key={name}
-                  className={({ selected }) => `
+                  key={name}                  className={({ selected }) => `
                     rounded-full py-1.5 px-3 text-xs sm:text-sm font-semibold 
-                    transition-all duration-200 ease-in-out
                     focus:outline-none whitespace-nowrap
                     ${selected 
-                      ? 'bg-gray-100 dark:bg-white/10 dark:text-white'
-                      : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5'
+                      ? 'bg-[#3A6FF8] text-white dark:port'
+                      : 'text-gray-600 dark:text-gray-300 tab-hover'
                     }
                   `}
                 >

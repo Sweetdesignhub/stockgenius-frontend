@@ -419,3 +419,47 @@ body {
 .app-chatbot-button-icon {
   fill: #fff;
 }
+
+.glow {
+    position: relative;
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) -40.91%, rgba(73, 123, 255, 0.2) 132.95%);
+    border-image-source: linear-gradient(180deg, rgba(73, 123, 255, 0.4) 17.19%, rgba(73, 123, 255, 0.7) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 
+      0px 10px 30px 0px rgba(73, 123, 255, 0.3) inset,
+      0px 10px 40px 0px rgba(73, 123, 255, 0.2);
+}
+
+.dark .glow {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #28203f 132.95%);
+    border-image-source: linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+      linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%);
+    box-shadow: 
+      0px 10px 30px 0px rgba(73, 123, 255, 0.7) inset,
+      0px 10px 40px 0px rgba(63, 74, 175, 0.5);
+}
+
+.port {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) -40.91%, rgba(73, 123, 255, 0.2) 132.95%);
+
+  border-image-source: linear-gradient(180deg, rgba(73, 123, 255, 0.4) 17.19%, rgba(73, 123, 255, 0.7) 100%);
+  backdrop-filter: blur(25.436281204223633px);
+  -webkit-backdrop-filter: blur(25.436281204223633px);
+  box-shadow: 
+    0px 12.72px 38.15px 0px rgba(73, 123, 255, 0.3) inset,
+    0px 12.72px 50.87px 0px rgba(73, 123, 255, 0.2);
+}
+
+.dark .port {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%);
+  border-image-source: linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+    linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%);
+  box-shadow: 
+    0px 12.72px 38.15px 0px rgba(73, 123, 255, 0.7) inset,
+    0px 12.72px 50.87px 0px rgba(63, 74, 175, 0.5);
+}
+
