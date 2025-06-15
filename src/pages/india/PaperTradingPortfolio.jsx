@@ -6,7 +6,7 @@ import HeaderPT from "../../components/paperTrading/portfolio/HeaderPT";
 function PaperTradingPortfolio() {
   return (
     <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative">
+      <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
@@ -20,11 +20,11 @@ function PaperTradingPortfolio() {
           alt="bear"
         />
 
-<div className="bg-white min-h-[85vh] news-table rounded-2xl">
+        <div className="bg-white min-h-[85vh] news-table rounded-2xl">
           <div className="py-5 px-5 flex flex-col rounded-2xl">
-            <HeaderPT/>
-            <AccountInfoPT/>
-            <StockDetailsPT/>
+            <HeaderPT />
+            <AccountInfoPT />
+            <StockDetailsPT />
           </div>
         </div>
       </div>

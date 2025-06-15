@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import api from "../../../config";
+import YesNoConfirmationModal from "../../common/YesNoConfirmationModal";
 
 const Quiz = ({ questions }) => {
   const navigate = useNavigate();
   const { moduleId } = useParams();
+  const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
+
+  console.log("Inside QuizPage, moduleId:", moduleId);
+
+  const userId =
+    useSelector((state) => state.user?.currentUser?.id) || "defaultUserId";
+  console.log("User ID:", userId);
+
+  const [quizProgress, setQuizProgress] = useState([]);
 
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -11,6 +23,36 @@ const Quiz = ({ questions }) => {
   const [popupContent, setPopupContent] = useState("");
   const [showRetry, setShowRetry] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(new Set());
+
+  useEffect(() => {
+    const fetchQuizProgress = async () => {
+      try {
+        const response = await api.get(
+          `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`
+        );
+        console.log("Quiz progress response:", response.data);
+
+        const isCompleted = response.data.isCompleted;
+        const allCorrect = response.data.completedQuestions || [];
+
+        console.log("All questions marked as correct:", allCorrect);
+
+        setCorrectAnswers(new Set(allCorrect));
+        if (isCompleted) setActiveQuestion(questions.length); // Skip to final/completion screen
+        console.log("Is this module already completed?", isCompleted);
+      } catch (error) {
+        console.error("Error fetching quiz progress:", error);
+      }
+    };
+
+    if (userId !== "defaultUserId") {
+      fetchQuizProgress();
+    }
+  }, [userId, moduleId]);
+
+  const handleNavigateBack = () => {
+    navigate(`/e-learning/learning/${moduleId}`);
+  };
 
   // Module-specific completion messages
   const completionMessages = {
@@ -25,49 +67,64 @@ const Quiz = ({ questions }) => {
     },
     3: {
       title: "Module 3: What Are Futures Contracts?",
-      extra: "Great job understanding futures trading! Just like Rahul's sugar deal, you now know how traders can lock in prices for future transactions.",
+      extra:
+        "Great job understanding futures trading! Just like Rahul's sugar deal, you now know how traders can lock in prices for future transactions.",
     },
     4: {
       title: "Module 4: What are Options Contracts?",
-      extra: "Well done! You've mastered the basics of Call and Put options. Remember, just like Rahul's tea stall example, options give you the right but not the obligation to trade.",
+      extra:
+        "Well done! You've mastered the basics of Call and Put options. Remember, just like Rahul's tea stall example, options give you the right but not the obligation to trade.",
     },
     5: {
       title: "Module 5: Understanding Option Chain",
-      extra: "Congratulations! You now understand both the opportunities and risks in options trading. Remember to always trade wisely and use protective strategies like our tea stall examples!",
-    }
+      extra:
+        "Congratulations! You now understand both the opportunities and risks in options trading. Remember to always trade wisely and use protective strategies like our tea stall examples!",
+    },
     // Add more modules as needed
   };
 
-  useEffect(() => {
-    const savedActive = localStorage.getItem("activeQuestion");
-    const savedCorrect = localStorage.getItem("correctAnswers");
+  // useEffect(() => {
+  //   const savedActive = localStorage.getItem("activeQuestion");
+  //   const savedCorrect = localStorage.getItem("correctAnswers");
 
-    if (savedActive !== null) setActiveQuestion(parseInt(savedActive, 10));
-    if (savedCorrect !== null)
-      setCorrectAnswers(new Set(JSON.parse(savedCorrect)));
-  }, []);
+  //   if (savedActive !== null) setActiveQuestion(parseInt(savedActive, 10));
+  //   if (savedCorrect !== null)
+  //     setCorrectAnswers(new Set(JSON.parse(savedCorrect)));
+  // }, []);
 
-  useEffect(() => {
-    localStorage.setItem("activeQuestion", activeQuestion);
-  }, [activeQuestion]);
+  // useEffect(() => {
+  //   localStorage.setItem("activeQuestion", activeQuestion);
+  // }, [activeQuestion]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      "correctAnswers",
-      JSON.stringify(Array.from(correctAnswers))
-    );
-  }, [correctAnswers]);
+  // useEffect(() => {
+  //   localStorage.setItem(
+  //     "correctAnswers",
+  //     JSON.stringify(Array.from(correctAnswers))
+  //   );
+  // }, [correctAnswers]);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isCorrect = questions[activeQuestion].answer === selectedOption;
 
     if (isCorrect) {
       const newCorrectAnswers = new Set(correctAnswers).add(activeQuestion);
       setCorrectAnswers(newCorrectAnswers);
+
+      try {
+        await api.post(
+          `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`,
+          {
+            completedQuestions: [activeQuestion],
+          }
+        );
+        console.log("📬 Updated question progress for user:", userId);
+      } catch (err) {
+        console.error("❌ Failed to update question progress:", err);
+      }
 
       // Check if this was the last question
       if (newCorrectAnswers.size === questions.length) {
@@ -99,6 +156,20 @@ const Quiz = ({ questions }) => {
     setSelectedOption(null);
   };
 
+  const handleResetQuiz = async () => {
+    setYesNoModalOpen(false);
+    try {
+      await api.delete(
+        `/api/v1/e-learning/quiz-progress/${userId}/${moduleId}`
+      );
+      console.log("🧹 Quiz reset successful");
+      setCorrectAnswers(new Set());
+      setActiveQuestion(0);
+    } catch (err) {
+      console.error("❌ Failed to reset quiz:", err);
+    }
+  };
+
   const handleNextLesson = () => {
     const moduleOrder = ["1", "2", "3", "4", "5"];
     const currentIndex = moduleOrder.indexOf(moduleId);
@@ -119,6 +190,21 @@ const Quiz = ({ questions }) => {
   return (
     <div className="mt-6 px-2 md:px-4">
       {/* Question Tabs */}
+      <div className="flex flex-wrap gap-2 md:gap-4 mb-4 justify-end">
+        <button
+          onClick={() => setYesNoModalOpen(true)}
+          className="bg-[#623CEA] text-white px-4 md:px-5 py-2 font-[poppins] rounded-xl disabled:opacity-50 text-sm md:text-base"
+          disabled={correctAnswers.size === 0}
+        >
+          Reset Quiz
+        </button>
+        <button
+          onClick={handleNavigateBack}
+          className="bg-[#623CEA] text-white px-4 md:px-5 py-2  font-[poppins] rounded-xl disabled:opacity-50 text-sm md:text-base"
+        >
+          Back
+        </button>
+      </div>
       <div className="flex flex-wrap gap-2 md:space-x-4 mb-1">
         {questions.map((_, index) => {
           const isActive = activeQuestion === index;
@@ -278,6 +364,14 @@ const Quiz = ({ questions }) => {
           />
         </div>
       )}
+
+      <YesNoConfirmationModal
+        isOpen={isYesNoModalOpen}
+        onClose={() => setYesNoModalOpen(false)}
+        title="Reset Quiz"
+        message={`Are you sure you want to reset the quiz and lose all your progress?`}
+        onConfirm={handleResetQuiz}
+      />
     </div>
   );
 };

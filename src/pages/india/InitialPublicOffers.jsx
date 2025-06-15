@@ -120,7 +120,7 @@ function InitialPublicOffers() {
   };
 
   return (
-    <div className="min-h-screen lg:px-32 px-4 py-6 relative">
+    <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"
@@ -226,7 +226,7 @@ function InitialPublicOffers() {
 </div>
 
               {/* Render filtered IPO Cards */}
-              <div className="pt-4 mt-2 overflow-y-scroll scrollbar-hide overflow-x-hidden min-h-[70vh] max-h-[70vh] rounded-lg">
+              <div className="pt-4 mt-2 overflow-y-scroll scrollbar-hide overflow-x-hidden min-h-[20vh] max-h-[67vh] rounded-lg">
                 {filteredIpoData.length > 0 ? (
                   filteredIpoData.map((ipo) => (
                     <IPOCard

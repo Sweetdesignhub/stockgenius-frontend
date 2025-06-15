@@ -174,6 +174,8 @@ function NSE100AiInsights() {
     //   quantity
     // );
 
+    console.log("Hitting Fyers", fyersAccessToken);
+
     let apiUrl = "";
     let requestBody = {};
 
@@ -310,8 +312,7 @@ function NSE100AiInsights() {
   const secondTableColumns = Object.keys(data[0] || {});
   const decision = secondTableColumns.slice(secondTableColumns.length - 1);
 
-  return (
-    <div className="min-h-screen lg:px-32 p-4 relative">
+  return (    <div className="mmin-h-fit lg:px-32 p-4 relative page-scrollbar">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"
@@ -325,9 +326,9 @@ function NSE100AiInsights() {
         alt="bear"
       />
 
-      <div className="bg-white p-4 table-main rounded-2xl">
+      <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10 p-4 table-main rounded-2xl">
         <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
-          <h1 className="font-semibold text-xl mb-4 lg:mb-0 lg:mr-4">
+          <h1 className="font-semibold text-xl xl:text-xl lg:text-base mb-4 lg:mb-0 lg:mr-2 xl:mr-4">
             NSE 100 AI Insights
           </h1>
           <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
@@ -337,7 +338,7 @@ function NSE100AiInsights() {
               value={roiFilter}
               onChange={handleFilterChange}
               placeholder="Filter by ROI"
-              className="border p-1 rounded text-black w-full sm:w-auto"
+              className="border p-1 rounded text-black w-full sm:w-auto lg:text-xs xl:text-sm lg:p-1 xl:p-1"
             />
             <input
               type="text"
@@ -345,13 +346,13 @@ function NSE100AiInsights() {
               value={companyFilter}
               onChange={handleFilterChange}
               placeholder="Filter by Company"
-              className="border p-1 rounded text-black w-full sm:w-auto"
+              className="border p-1 rounded text-black w-full sm:w-auto lg:text-xs xl:text-sm lg:p-1 xl:p-1"
             />
           </div>
-          <div className="flex mt-5 sm:mt-5 items-center">
+          <div className="flex mt-5 sm:mt-5 lg:mt-0 items-center lg:gap-2 xl:gap-4">
             <div className="mr-2 flex items-center">
-              <h1 className="text-sm font-bold">At Close : &nbsp;</h1>
-              <p className="text-xs font-semibold">{lastUpdated}</p>
+              <h1 className="text-sm xl:text-sm lg:text-xs font-bold">At Close : &nbsp;</h1>
+              <p className="text-xs xl:text-xs lg:text-[10px] font-semibold">{lastUpdated}</p>
             </div>
             <div className="relative group">
               <button
@@ -359,21 +360,21 @@ function NSE100AiInsights() {
                 className="px-2 py-1 rounded-lg border border-gray-500"
               >
                 <img
-                  className="h-6 w-6"
+                  className="h-6 w-6 xl:h-6 xl:w-6 lg:h-5 lg:w-5"
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fd35fb8ea213444c79fa01fe0c5f4ebb0"
                   alt="Download excel"
                 />
               </button>
-              <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-max bg-black text-white text-xs lg:text-[10px] xl:text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Download excel
               </span>
             </div>
           </div>
         </div>
-        <div className="p-2 sm:p-4 flex news-table h-[80vh] overflow-y-auto overflow-x-hidden rounded-2xl scrollbar-hide">
+        <div className="p-2 sm:p-4 flex news-table h-[69vh] overflow-y-auto overflow-x-hidden rounded-2xl scrollbar-hide">
   {/* First Table */}
-  <div className="lg:max-w-[88%] max-w-[75%]">
+  <div className="lg:max-w-[88%] max-w-[75%] ">
     <div className="overflow-x-auto scrollbar-hide">
       <table className="table-auto w-full bg-transparent">
                 {/* Table header */}

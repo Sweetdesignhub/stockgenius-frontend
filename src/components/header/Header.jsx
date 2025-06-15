@@ -27,6 +27,7 @@ import { MdDashboard } from "react-icons/md";
 import { RiFilePaper2Fill } from "react-icons/ri";
 import { FaNewspaper, FaAngleDown } from "react-icons/fa";
 import { GiGraduateCap } from "react-icons/gi";
+import { AiOutlineCaretDown, AiOutlineCaretUp } from "react-icons/ai"; // For submenu arrow
 import { BsBank2 } from "react-icons/bs";
 import { BsRobot, BsTools } from "react-icons/bs";
 import { FaBagShopping } from "react-icons/fa6";
@@ -49,11 +50,20 @@ export default function Header() {
   const market = useSelector((state) => state.market);
   const region = useSelector((state) => state.region);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isMobileStockListOpen, setIsMobileStockListOpen] = useState(false); // New state
   const location = useLocation();
   const [isHovered, setIsHovered] = useState(false);
+  const [isMarketDropdownVisible, setIsMarketDropdownVisible] = useState(true);
   let hoverTimeout;
 
   // console.log(currentUser);
+
+
+  // const handleMouseEnter = (index) => setHoveredIndex(index);
+  // const handleMouseLeave = () => setHoveredIndex(null);
+
 
   const dispatch = useDispatch();
 
@@ -66,17 +76,29 @@ export default function Header() {
     hoverTimeout = setTimeout(() => setIsHovered(false), 300); // delay in ms
   };
 
-  const isMarketDropdownVisible =
-    location.pathname === "/usa/dashboard" ||
-    location.pathname === "/usa/portfolio" ||
-    location.pathname === "/usa/paper-trading/portfolio" ||
-    location.pathname === "/usa/stock-lists" ||
-    location.pathname === "/usa/paper-trading";
+  const toggleMobileDropdown = (index) => {
+    setMobileDropdownOpen((prev) => (prev === index ? null : index));
+  };
+
+  const toggleMobileStockList = () => {
+    setIsMobileStockListOpen(!isMobileStockListOpen);
+  };
+
+  // const isMarketDropdownVisible =
+  //   location.pathname === "/usa/dashboard" ||
+  //   location.pathname === "/usa/portfolio" ||
+  //   location.pathname === "/usa/paper-trading/portfolio" ||
+  //   location.pathname === "/usa/stock-lists" ||
+  //   location.pathname === "/usa/paper-trading";
 
   useEffect(() => {
     if (region) {
       localStorage.setItem("region", region);
     }
+  }, [region]);
+
+  useEffect(() => {
+    setIsMarketDropdownVisible(region === "usa");
   }, [region]);
 
   const handleRegionChange = (selectedOption) => {
@@ -274,20 +296,20 @@ export default function Header() {
   // console.log(currentUser);
 
   return (
-    <header>
+    <header className="w-full   border-gray-200">
       <nav
-        className="flex items-center justify-between p-6 lg:px-4"
+        className="mx-auto flex items-center justify-between p-4 lg:px-8"
         aria-label="Global"
       >
-        <div className="flex items-center ">
+        <div className="flex items-center">
           <Link to="/">
             <img
-              className="h-7 mr-1"
+              className="h-7 xl:h-7 lg:h-5 mr-1"
               src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F44c1d4cdd7274260a729d09f18bb553e"
               alt="Stockgenius.ai"
             />
           </Link>
-          <Link to="/" className="ml-1 text-lg font-[aldrich]">
+          <Link to="/" className="ml-1 text-lg xl:text-lg lg:text-sm font-[aldrich]">
             Stockgenius.ai
           </Link>
         </div>
@@ -305,17 +327,35 @@ export default function Header() {
                       }}
                     /> */}
                   </div>
-                ) : region === "usa" && isMarketDropdownVisible ? (
-                  <div className="flex items-center bg-white rounded-xl">
-                    <Select
-                      options={marketOptions}
-                      onChange={handleMarketChangeMobile}
-                      value={marketOptions.find(
-                        (option) => option.value === market
-                      )}
-                      classNamePrefix="react-select"
-                      styles={marketCustomStyles}
+                ) : region === "usa" ? (
+                  <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
+                    <Flag
+                      code="US"
+                      style={{
+                        marginRight: "5px",
+                        width: "35px",
+                        height: "25px",
+                        "@media (max-width: 1024px)": {
+                          width: "25px",
+                          height: "18px",
+                        }
+                      }}
                     />
+                    {isMarketDropdownVisible && (
+                      <div>
+                        <select
+                          onChange={handleMarketChange}
+                          value={market}
+                          className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
+                        >
+                          <option value="" disabled>
+                            Market
+                          </option>
+                          <option value="NYSE">NYSE</option>
+                          <option value="NASDAQ">NASDAQ</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   ""
@@ -335,7 +375,7 @@ export default function Header() {
           </button>
         </div>
         {currentUser ? (
-          <div className="hidden lg:flex lg:gap-x-2">
+          <div className="hidden lg:flex lg:gap-x-1">
             {navigation.map((item) => (
               <div
                 key={item.name}
@@ -348,23 +388,22 @@ export default function Header() {
                   className={({ isActive }) =>
                     classNames(
                       isActive ? "bg-[#3A6FF8] text-white" : "",
-                      "rounded-md px-[7px] py-2 text-[13px] flex items-center gap-2"
+                      "rounded-md px-[5px] py-1.5 text-[13px] flex items-center gap-1.5 xl:text-[13px] lg:text-[10px] whitespace-nowrap xl:px-[7px] xl:py-2 xl:gap-2"
                     )
                   }
                   exact="true"
                 >
-                  <item.icon className="h-5 w-5" aria-hidden="true" />
+                  <item.icon className="h-5 w-5 xl:h-5 xl:w-5 lg:h-3.5 lg:w-3.5" aria-hidden="true" />
                   {item.name}
                 </NavLink>
 
-                {/* Dropdown for items with submenu */}
                 {item.submenu && isHovered && (
-                  <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-white shadow-lg rounded-md mt-1 py-1 z-10 min-w-[180px]">
-                    {item.submenu.map((subItem) => (
-                      <NavLink
+                 <div className="absolute top-[calc(100%-2px)] left-0 hidden group-hover:flex flex-col bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 z-10 min-w-[180px] backdrop-blur-md border border-gray-200 dark:border-gray-700">
+                    {item.submenu.map((subItem) => (                      <NavLink
                         key={subItem.name}
                         to={subItem.to}
-                        className="px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 whitespace-nowrap"
+                        onClick={() => setIsHovered(false)}
+                        className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 whitespace-nowrap transition-colors duration-150 hover:bg-[#3A6FF8] hover:text-white"
                       >
                         {subItem.name}
                       </NavLink>
@@ -387,40 +426,48 @@ export default function Header() {
                   {region ? (
                     <div>
                       {region === "india" ? (
-                        <div className="flex items-center justify-center py-[6px] px-2 bg-white rounded-xl">
+                        <div className="flex items-center justify-center py-[4px] lg:py-[4px] xl:py-[6px] px-2 bg-white rounded-xl">
                           <Flag
                             code="IN"
                             style={{
-                              // marginRight: "10px",
                               width: "35px",
                               height: "25px",
+                              "@media (max-width: 1024px)": {
+                                width: "25px",
+                                height: "18px",
+                              }
                             }}
                           />
-                          {/* <span className="text-black">India</span> */}
                         </div>
-                      ) : region === "usa" && isMarketDropdownVisible ? (
-                        <div className="flex items-center py-[6px] px-1 bg-white rounded-xl">
+                      ) : region === "usa" ? (
+                        <div className="flex items-center py-[4px] lg:py-[4px] xl:py-[6px] px-1 bg-white rounded-xl">
                           <Flag
                             code="US"
                             style={{
                               marginRight: "5px",
                               width: "35px",
                               height: "25px",
+                              "@media (max-width: 1024px)": {
+                                width: "25px",
+                                height: "18px",
+                              }
                             }}
                           />
-                          <div>
-                            <select
-                              onChange={handleMarketChange}
-                              value={market}
-                              className="font-bold text-sm text-[#FF0000] w-20 border-none outline-none"
-                            >
-                              <option value="" disabled>
-                                Select Market
-                              </option>
-                              <option value="NYSE">NYSE</option>
-                              <option value="NASDAQ">NASDAQ</option>
-                            </select>
-                          </div>
+                          {isMarketDropdownVisible && (
+                            <div>
+                              <select
+                                onChange={handleMarketChange}
+                                value={market}
+                                className="font-bold xl:text-sm lg:text-xs text-[#FF0000] w-16 lg:w-16 xl:w-20 border-none outline-none"
+                              >
+                                <option value="" disabled>
+                                  Market
+                                </option>
+                                <option value="NYSE">NYSE</option>
+                                <option value="NASDAQ">NASDAQ</option>
+                              </select>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         ""
@@ -432,19 +479,19 @@ export default function Header() {
                 </div>
                 <Menu as="div" className="relative">
                   <div>
-                    <MenuButton className="relative flex rounded-full  text-md focus:outline-none">
-                      <div className="flex items-center px-1 ">
+                    <MenuButton className="relative flex rounded-full text-md focus:outline-none">
+                      <div className="flex items-center px-1">
                         <img
-                          className="h-9 w-9 mr-1 rounded-xl"
+                          className="h-9 w-9 xl:h-9 xl:w-9 lg:h-7 lg:w-7 mr-1 rounded-xl"
                           src={currentUser?.avatar}
                           alt="User avatar"
                           loading="lazy"
                         />
                         <div className="flex items-center">
-                          <h2 className="mr-1 capitalize">
+                          <h2 className="mr-1 capitalize xl:text-base lg:text-xs">
                             {currentUser.name.slice(0, 10)}
                           </h2>
-                          <FaAngleDown />
+                          <FaAngleDown className="xl:h-4 xl:w-4 lg:h-2.5 lg:w-2.5" />
                         </div>
                       </div>
                     </MenuButton>
@@ -559,15 +606,55 @@ export default function Header() {
               {currentUser ? (
                 <div className="space-y-2 py-6">
                   {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.to}
-                      className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
-                      onClick={handleMenuClose}
-                    >
-                      <item.icon className="h-5 w-5" aria-hidden="true" />
-                      {item.name}
-                    </Link>
+                    <div key={item.name}>
+                      {item.submenu ? (
+                        <div>
+                      <button
+                        onClick={() => {
+                          if (item.name === "StockList") {
+                            setIsMobileStockListOpen(!isMobileStockListOpen);
+                          }
+                        }}
+                        className="-mx-3 flex items-center justify-between rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900 w-full"
+                      >
+                        <div className="flex items-center gap-2">
+                          <item.icon className="h-5 w-5" aria-hidden="true" />
+                          {item.name}
+                        </div>
+                        {item.name === "StockList" && (
+                          isMobileStockListOpen ? (
+                            <AiOutlineCaretUp className="h-5 w-5" aria-hidden="true" />
+                          ) : (
+                            <AiOutlineCaretDown className="h-5 w-5" aria-hidden="true" />
+                          )
+                        )}
+                      </button>
+                      {item.name === "StockList" && isMobileStockListOpen && (
+                        <div className="mt-2 pl-4">
+                          {item.submenu.map((subItem) => (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.to}
+                              className="-mx-3 block rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
+                              onClick={handleMenuClose}
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                      ) : (
+                        <Link
+                          to={item.to}
+                          className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2 text-base font-[poppins] leading-7 dark:text-white text-gray-900"
+                          onClick={handleMenuClose}
+                        >
+                          <item.icon className="h-5 w-5" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      )}
+                    </div>
                   ))}
                 </div>
               ) : (

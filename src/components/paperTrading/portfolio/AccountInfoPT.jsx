@@ -118,13 +118,12 @@ function AccountInfoPT() {
   if (loading) return <div>Loading account information...</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">
-      <div className="flex-1 min-w-[200px]">
-        <div className="flex flex-col text-center lg:text-left">
-          <h1 className="font-semibold text-sm lg:text-lg">
-            Account: {currentUser?.id}
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">      <div className="flex-1 min-w-[200px]">
+        <div className="flex flex-col text-left gap-2">
+          <h1 className="font-semibold text-[11px] lg:text-lg flex flex-col sm:flex-row">
+            <span className="text-[11px] lg:text-lg mb-1 sm:mb-0">Account: {currentUser?.id}</span>
           </h1>
-          <p className="text-xs lg:text-base">{currentUser?.name}</p>
+          <p className="font-semibold text-[11px] lg:text-lg">Username: {currentUser?.name}</p>
         </div>
       </div>
 

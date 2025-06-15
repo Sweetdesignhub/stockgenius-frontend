@@ -314,7 +314,7 @@ const PaperTradingAutoTrade = () => {
 
   return (
     <div className="-z-10">
-      <div className="min-h-screen lg:px-32 p-4 relative">
+      <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
@@ -327,14 +327,13 @@ const PaperTradingAutoTrade = () => {
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
           alt="Bear"
         />
-
         <div
-          className={`lg:min-h-[85vh] news-table rounded-2xl ${
+          className={`lg:min-h-[80vh]  news-table rounded-2xl ${
             isAITradingPage ? "bg-gradient" : "bg-white"
           }`}
         >
-          <div className="flex flex-col lg:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
-            <h2 className="font-semibold text-xl text-center lg:text-left mb-4 lg:mb-0">
+          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
+            <h2 className="font-semibold text-xl text-center md:text-left mb-4 md:mb-0">
               AI Trading Bots
             </h2>
 
@@ -376,9 +375,8 @@ const PaperTradingAutoTrade = () => {
               ))}
             </div>
           </div>
-
-          <div className="p-4 overflow-scroll max-h-[60vh]">
-            <div className="flex flex-col gap-10">
+          <div className="p-4 overflow-scroll scrollbar-hide max-h-[60vh]">
+            <div className="flex flex-col gap-4">
               {isInitialLoading ? ( // Only show loading on initial fetch
                 <div className="w-full flex justify-center items-center">
                   <Loading />

@@ -209,8 +209,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
   // }
 
   return (
-    <div
-      className={`mx-auto w-full max-w-screen-xl px-4 sm:px-6 py-4 rounded-xl 
+    <div      className={`mx-auto w-full max-w-screen-xl px-3 sm:px-4 py-2 rounded-xl 
               flex flex-col justify-around items-start 
               h-full inset-0 
               backdrop-blur-[1px] 
@@ -218,8 +217,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
               ${bgClass}`}
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-2 mb-2">
-        <div className="flex-1">
-          <h1 className="text-[clamp(1.25rem,1.2vw,2rem)] font-bold leading-tight">
+        <div className="flex-1">          <h1 className="text-[clamp(0.9rem,0.9vw,1.6rem)] font-bold leading-tight">
             SGAI - Investment Simulation Tool
           </h1>
         </div>
@@ -227,7 +225,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
         <button
           type="button"
           onClick={handleClear}
-          className="px-4 py-1 bg-white text-red-500 rounded-xl font-medium hover:bg-gray-100 transition-colors whitespace-nowrap"
+          className="px-2 py-0.5 bg-white text-red-500 rounded-lg font-medium hover:bg-gray-100 transition-colors whitespace-nowrap text-xs"
         >
           Clear
         </button>
@@ -239,41 +237,11 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
       <form onSubmit={handleSubmit(onSubmit)} className=" w-full">
         <div className="h-full">
           {/* Initial Cash */}
-          <div className="">
-            <div className="flex justify-between items-center w-full mb-2">
-              <label className="text-base">Initial Cash</label>
-              <RadioGroup value={currency} onChange={() => {}} className="flex">
-                <RadioGroup.Option value="₹" disabled>
-                  {({ checked }) => (
-                    <span
-                      className={`w-6 h-8 flex items-center justify-center rounded-full transition-colors duration-200 ${
-                        checked
-                          ? "bg-blue-600 text-white"
-                          : isDark
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-300 text-black"
-                      } opacity-50 cursor-not-allowed`}
-                    >
-                      ₹
-                    </span>
-                  )}
-                </RadioGroup.Option>
-                <RadioGroup.Option value="$" className="ml-2" disabled>
-                  {({ checked }) => (
-                    <span
-                      className={`w-6 h-8 flex items-center justify-center rounded-full transition-colors duration-200 ${
-                        checked
-                          ? "bg-blue-600 text-white"
-                          : isDark
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-300 text-black"
-                      } opacity-100 cursor-not-allowed`}
-                    >
-                      $
-                    </span>
-                  )}
-                </RadioGroup.Option>
-              </RadioGroup>
+          <div className="">            <div className="flex justify-between items-center w-full mb-2">
+              <label className="text-sm">Initial Cash</label>
+              <span className={`flex items-center justify-center rounded-full transition-colors duration-200 ${isDark ? "text-white" : "text-black"} bg-blue-600 text-white ${region === "india" ? "w-5 h-7" : "w-6 h-8"}`}>
+                {region === "india" ? "₹" : "$"}
+              </span>
             </div>
             <div className="relative">
               <Controller
@@ -294,43 +262,36 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                   <div className="flex items-center">
                     <input
                       {...field}
-                      type="text"
-                      className="w-full border border-gray-300  px-3 py-1 rounded-lg  text-black text-base"
-                      // className="w-full sm:max-w-[300px] px-3 py-1 border border-gray-300 rounded-lg text-black text-base"
-                      placeholder="Enter initial cash"
+                      type="text"                      className={`w-full border ${errors.initialCash ? 'border-red-500' : 'border-gray-300'} px-3 pr-16 py-1 rounded-lg text-black text-xs sm:text-base`}
+                      placeholder={errors.initialCash ? errors.initialCash.message : "Enter initial cash"}
                     />
                     <button
-                      type="button"
-                      className="absolute right-12 text-gray-500"
+                      type="button"                      className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
                       onClick={() =>
                         field.onChange(
                           decrementValue("initialCash", field.value)
                         )
                       }
                     >
-                      <FiMinus size={20} />
+                      <FiMinus size={14} className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                     <button
-                      type="button"
-                      className="absolute right-2 text-gray-500"
+                      type="button"                      className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
                       onClick={() =>
                         field.onChange(
                           incrementValue("initialCash", field.value)
                         )
                       }
                     >
-                      <FiPlus size={20} />
+                      <FiPlus size={16} className="sm:w-5 sm:h-5" />
                     </button>
                   </div>
                 )}
               />
             </div>
-            {errors.initialCash && (
-              <p className="mt-1 text-red-400">{errors.initialCash.message}</p>
-            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
             <div>
               <label className="block text-medium mt-1 mb-2">Start Date</label>
               <Controller
@@ -344,8 +305,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       selected={field.value}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
-                      dateFormat="yyyy/MM/dd"
-                      className="w-full px-2 py-1 rounded-lg text-black text-base border border-gray-300  focus:ring-blue-500 focus:border-transparent"
+                      dateFormat="yyyy/MM/dd"                      className={`w-full px-2 py-1 rounded-lg text-black text-base border ${errors.startDate ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={errors.startDate ? errors.startDate.message : "YYYY/MM/DD"}
                       popperClassName="!z-50" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -386,11 +347,6 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                   </div>
                 )}
               />
-              {errors.startDate && (
-                <p className="text-xs text-red-400">
-                  {errors.startDate.message}
-                </p>
-              )}
             </div>
 
             <div>
@@ -406,8 +362,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       selected={field.value}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
-                      dateFormat="yyyy/MM/dd"
-                      className="w-full px-2 py-1 rounded-lg border border-gray-300   text-black text-base focus:ring-blue-500 focus:border-transparent"
+                      dateFormat="yyyy/MM/dd"                      className={`w-full px-2 py-1 rounded-lg border ${errors.endDate ? 'border-red-500' : 'border-gray-300'} text-black text-base focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={errors.endDate ? errors.endDate.message : "YYYY/MM/DD"}
                       popperClassName="!z-50 h-30" // Ensures the modal appears above other elements
                       wrapperClassName="w-full"
                       renderCustomHeader={({
@@ -449,9 +405,6 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                   </div>
                 )}
               />
-              {errors.endDate && (
-                <p className="mt-1 text-red-400">{errors.endDate.message}</p>
-              )}
             </div>
           </div>
 
@@ -486,31 +439,28 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                     <div className="flex items-center ">
                       <input
                         {...field}
-                        type="text"
-                        className="w-full border border-gray-300  px-3 py-1 rounded-lg  text-black text-base"
-                        placeholder="00.00"
+                        type="text"                        className={`w-full border ${errors.marginProfit ? 'border-red-500' : 'border-gray-300'} px-3 pr-16 py-1 rounded-lg text-black text-xs sm:text-base`}
+                        placeholder={errors.marginProfit ? errors.marginProfit.message : "00.00"}
                       />
                       <button
-                        type="button"
-                        className="absolute right-12 text-gray-500"
+                        type="button"                        className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             decrementValue("marginProfit", field.value, 0.1)
                           )
                         }
                       >
-                        <FiMinus size={20} />
+                        <FiMinus size={16} className="sm:w-5 sm:h-5" />
                       </button>
                       <button
-                        type="button"
-                        className="absolute right-2 text-gray-500"
+                        type="button"                        className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             incrementValue("marginProfit", field.value, 0.1)
                           )
                         }
                       >
-                        <FiPlus size={20} />
+                        <FiPlus size={16} className="sm:w-5 sm:h-5" />
                       </button>
                     </div>
                   )}
@@ -545,31 +495,28 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       <input
                         {...field}
                         type="text"
-                        step="0.1"
-                        className="w-full px-3 py-1 rounded-lg border border-gray-300  text-black text-base"
-                        placeholder="00.00"
+                        step="0.1"                        className={`w-full px-3 pr-16 py-1 rounded-lg border ${errors.marginLoss ? 'border-red-500' : 'border-gray-300'} text-black text-xs sm:text-base`}
+                        placeholder={errors.marginLoss ? errors.marginLoss.message : "00.00"}
                       />
                       <button
-                        type="button"
-                        className="absolute right-12 text-gray-500"
+                        type="button"                        className="absolute right-8 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             decrementValue("marginLoss", field.value, 0.1)
                           )
                         }
                       >
-                        <FiMinus size={20} />
+                        <FiMinus size={16} className="sm:w-5 sm:h-5" />
                       </button>
                       <button
-                        type="button"
-                        className="absolute right-2 text-gray-500"
+                        type="button"                        className="absolute right-1 text-gray-500 p-0.5 rounded-lg"
                         onClick={() =>
                           field.onChange(
                             incrementValue("marginLoss", field.value, 0.1)
                           )
                         }
                       >
-                        <FiPlus size={20} />
+                        <FiPlus size={16} className="sm:w-5 sm:h-5" />
                       </button>
                     </div>
                   )}

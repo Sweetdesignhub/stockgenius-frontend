@@ -13,8 +13,8 @@
 import React from "react";
 
 const Loading = ({ className = "", isSignInOTP = false }) => (
-  <div className={`flex justify-center items-center ${isSignInOTP ? '' : 'h-screen'} ${className}`}>
-    <div className={`animate-spin rounded-full ${isSignInOTP ? 'h-5 w-5 border-2 border-b-transparent' : 'h-16 w-16 border-b-2'} ${isSignInOTP ? 'border-white' : 'dark:border-white border-gray-900'}`}></div>
+  <div className={`flex justify-center items-center h-full ${className}`}>
+    <div className={`animate-spin rounded-full ${isSignInOTP ? 'h-5 w-5 border-2 border-b-transparent' : 'h-12 w-12 border-b-2'} ${isSignInOTP ? 'border-white' : 'dark:border-white border-gray-900'}`}></div>
   </div>
 );
 

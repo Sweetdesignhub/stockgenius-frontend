@@ -70,7 +70,23 @@ const SignUp = () => {
   };
   return (
     <div className='min-h-[100px] flex items-center justify-center px-3 sm:px-6 py-2'>
-      <div className='w-full max-w-[550px] mx-auto auth rounded-2xl px-4 sm:px-6 py-6 dark:bg-[#1a1a1a]/40 dark:backdrop-blur-md dark:border dark:border-[#ffffff1a] dark:shadow-[inset_0_1px_12px_rgba(255,255,255,0.06)] bg-white/80 backdrop-blur-sm'>
+      <div className='w-full max-w-[400px] mx-auto rounded-2xl px-4 sm:px-6 py-8'
+          style={{
+            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)',
+            border: '1.04px solid transparent',
+            borderImage: 'linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)',
+            borderImageSlice: '1',
+            boxShadow: '0px 10.35px 31.05px 0px rgba(73, 123, 255, 0.7) inset, 0px 10.35px 41.41px 0px rgba(63, 74, 175, 0.5)',
+            backdropFilter: 'blur(20.702987670898438px)',
+          }}>
+            <div className="flex items-center justify-center gap-2 mb-4">
+          <img
+            className="h-7 xl:h-7 lg:h-5 mr-1"
+            src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F44c1d4cdd7274260a729d09f18bb553e"
+            alt="Stockgenius.ai"
+          />
+          <h1 className='text-2xl text-center font-semibold'>Sign Up</h1>
+        </div>
         {renderStep()}
         {error && (
           <p className='text-red-500 text-center mt-4 text-sm'>

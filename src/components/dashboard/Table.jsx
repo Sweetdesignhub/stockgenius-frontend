@@ -23,6 +23,7 @@ function Table({
   buttonColor,
   actionButtonColor,
   roiColor,
+  isReversed = false,
 }) {
   const region = localStorage.getItem("region");
 
@@ -31,7 +32,7 @@ function Table({
   let maxHeight;
   if (region === "india" && stateRegion === "india") {
     // maxHeight = "calc(70vh - 8rem)";
-    maxHeight = "62vh";
+    maxHeight = "68vh";
   } else if (region === "usa" && stateRegion === "usa") {
     maxHeight = "80vh";
   } else {
@@ -41,30 +42,41 @@ function Table({
   const filteredColumns = columns.filter((_, index) => index !== 3);
 
   return (
-    <div className="flex-1 overflow-auto rounded-xl">
-      <div className="flex justify-between pb-2 border-b border-gray-500">
-        <button
-          className={`py-1 px-5 rounded-2xl bg-white font-bold ${buttonColor}`}
-        >
-          {buttonLabel}
-        </button>
-        <h2 className="font-semibold text-lg font-[poppins]">{title}</h2>
+    <div className="flex-1 overflow-auto scrollbar-hide rounded-xl">      <div className="flex justify-between pb-2 border-b border-gray-500">
+        {!isReversed ? (
+          <>
+            <h2 className="font-semibold text-sm sm:text-lg font-[poppins]">{title}</h2>
+            <button
+              className={`py-0.5 sm:py-1 px-3 sm:px-5 rounded-2xl bg-white font-bold text-[10px] sm:text-base ${buttonColor}`}
+            >
+              {buttonLabel}
+            </button>
+          </>
+        ) : (
+          <div className="flex w-full justify-between flex-row-reverse">
+            <h2 className="font-semibold text-sm sm:text-lg font-[poppins]">{title}</h2>
+            <button
+              className={`py-0.5 sm:py-1 px-3 sm:px-5 rounded-2xl bg-white font-bold text-[10px] sm:text-base ${buttonColor}`}
+            >
+              {buttonLabel}
+            </button>
+          </div>
+        )}
       </div>
 
       <div
-        className="overflow-scroll p-4 flex max-h-[80vh] news-table rounded-xl mt-4"
+        className="overflow-scroll scrollbar-hide p-2 sm:p-4 flex max-h-[80vh] news-table rounded-xl mt-4"
         style={{ maxHeight }}
         // style={{ maxHeight: "calc(70vh - 8rem)" }}
       >
         <div className="lg:max-w-[85%] max-w-[75%]">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scrollbar-hide">
             <table className="table-auto w-full bg-transparent">
               <thead>
                 <tr>
-                  {filteredColumns.map((column, index) => (
-                    <th
+                  {filteredColumns.map((column, index) => (                    <th
                       key={index}
-                      className="w-full px-2 text-left py-3 text-xs font-medium tracking-wider"
+                      className="w-full px-1 sm:px-2 text-left py-2 sm:py-3 text-[10px] sm:text-xs font-medium tracking-wider"
                     >
                       {column}
                     </th>
@@ -83,8 +95,7 @@ function Table({
 
                       return (
                         <td
-                          key={colIndex}
-                          className={`w-full h-20 min-w-24 capitalize px-2 whitespace-nowrap ${getClassNames()}`}
+                          key={colIndex}                          className={`w-full h-16 sm:h-20 min-w-16 sm:min-w-24 capitalize px-1 sm:px-2 text-[10px] sm:text-sm whitespace-nowrap ${getClassNames()}`}
                         >
                           {/* {colIndex === 3 ? (
                             <Speedometer value={parseFloat(row[column])} />
@@ -102,23 +113,21 @@ function Table({
           </div>
         </div>
         <div className="flex-1 lg:max-w-[15%] max-w-[25%]">
-          <div className="overflow-x-auto">
-            <div className="overflow-y-auto h-full">
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="overflow-y-auto scrollbar-hide h-full">
               <table className="table-auto border-collapse w-full bg-transparent">
                 <thead>
-                  <tr>
-                    <th className="w-full px-2 text-center py-3 text-xs font-medium tracking-wider">
+                  <tr>                    <th className="w-full px-1 sm:px-2 text-center py-2 sm:py-3 text-[10px] sm:text-xs font-medium tracking-wider">
                       Decision
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      <td className="h-20 capitalize px-2 text-center whitespace-nowrap">
+                    <tr key={rowIndex}>                      <td className="h-16 sm:h-20 capitalize px-1 sm:px-2 text-center whitespace-nowrap">
                         <button
                           onClick={() => buttonAction(row)}
-                          className={`text-xs font-semibold font[poppins] px-2 py-1 rounded-xl text-center border ${actionButtonColor}`}
+                          className={`text-[10px] sm:text-xs font-semibold font[poppins] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-center border ${actionButtonColor}`}
                         >
                           {buttonLabel}
                         </button>

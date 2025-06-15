@@ -149,53 +149,50 @@ const PositionsTable = ({
     );
   }
 
-   return (
-    <>
-      <div className="h-[55vh] relative">
-        <table className="w-full border-collapse">
-          <thead className="bg-transparent sticky top-0 z-10">
-            <tr>
-              {selectedColumns.map((columnName) => (
-                <th
-                  key={columnName}
-                  className="px-4 py-3 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left whitespace-nowrap"
-                >
-                  {columnName}
-                </th>
-              ))}
-              <th className="w-16"></th> {/* Add header for action column */}
-            </tr>
-          </thead>
-          <tbody className="overflow-y-auto">
-            {positionsData.map((position, index) => (
-              <tr key={position.id || index}>
-                {selectedColumns.map((columnName) => (
-                  <td
-                    key={`${columnName}-${position.id || index}`}
-                    className={`px-4 py-4 whitespace-nowrap text-left font-semibold ${
-                      columnName === "symbol" ? "text-[#6FD4FF]" : ""
-                    }`}
-                  >
-                    {columnName === "pl" || columnName === "unrealized_profit" || columnName === "realized_profit" || columnName === "buyAvg"|| columnName === "sellAvg"
-                      ? Number(position[columnName]).toFixed(2)
-                      : position[columnName] || ""}
-                  </td>
-                ))}
-                <td className="px-4 py-4 w-16">
-                  <div className="flex justify-center py-0">
-                    <button
-                      onClick={(e) => handleExitPosition(e, position)}
-                      className="p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
-                    >
-                      <X className="w-4 h-4 text-red-600 dark:text-white" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+  return (
+    <div className="h-[44vh] overflow-auto scrollbar-hide">
+      <table className="w-full border-collapse">
+        <thead className="bg-transparent sticky top-0 z-10">
+          <tr>
+            {selectedColumns.map((columnName) => (
+              <th
+                key={columnName}
+                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm font-[poppins] font-normal dark:text-[#FFFFFF99] text-left whitespace-nowrap"
+              >
+                {columnName}
+              </th>
             ))}
-          </tbody>
-        </table>
-      </div>
+            <th className="w-8 sm:w-12 lg:w-16"></th> {/* Action column */}
+          </tr>
+        </thead>
+        <tbody className="overflow-y-auto">
+          {positionsData.map((position, index) => (
+            <tr key={position.id || index}>
+              {selectedColumns.map((columnName) => (
+                <td
+                  key={`${columnName}-${position.id || index}`}
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold ${
+                    columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                  }`}
+                >
+                  {columnName === "pl" || columnName === "unrealized_profit" || columnName === "realized_profit" || columnName === "buyAvg" || columnName === "sellAvg"
+                    ? Number(position[columnName]).toFixed(2)
+                    : position[columnName] || ""}
+                </td>
+              ))}
+              <td className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 whitespace-nowrap">
+                <button
+                  onClick={(e) => handleExitPosition(e, position)}
+                  className="p-0.5 sm:p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200"
+                >
+                  <X className="w-3 h-3 sm:w-4 sm:h-4 text-red-600 dark:text-white" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
       <YesNoConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -203,7 +200,7 @@ const PositionsTable = ({
         message={`Are you sure you want to exit the position with ID: <strong>${positionToExit?.id}?</strong>`}
         onConfirm={confirmExitPosition}
       />
-    </>
+    </div>
   );
 };
 
