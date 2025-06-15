@@ -59,7 +59,26 @@ body {
 }
 
 .react-datepicker-popper {
-  z-index: 500 !important; /* Tailwind: z-50 */
+  z-index: 9999 !important;
+  position: fixed !important;
+}
+
+.react-datepicker-wrapper {
+  display: block !important;
+  width: 100% !important;
+}
+
+.react-datepicker__input-container {
+  width: 100% !important;
+}
+
+@media (min-width: 1024px) {
+  .react-datepicker-popper {
+    transform: translate3d(0, 0, 0) !important;
+  }
+  .react-datepicker-popper[data-placement^="bottom"] {
+    margin-top: 10px !important;
+  }
 }
 
 .dark body {

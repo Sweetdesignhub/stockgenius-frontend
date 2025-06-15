@@ -298,16 +298,22 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                 name="startDate"
                 control={control}
                 rules={{ required: "Start date is required" }}
-                render={({ field }) => (
-                  <div className="relative">
+                render={({ field }) => (                  <div className="relative" onClick={() => {
+                    const dateInput = document.getElementById('startDate');
+                    if (dateInput) {
+                      dateInput.focus();
+                    }
+                  }}>
                     <DatePicker
+                      id="startDate"
                       {...field}
-                      selected={field.value}
+                      selected={field.value ? new Date(field.value) : null}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
-                      dateFormat="yyyy/MM/dd"                      className={`w-full px-2 py-1 rounded-lg text-black text-base border ${errors.startDate ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 focus:border-transparent`}
-                      placeholder={errors.startDate ? errors.startDate.message : "YYYY/MM/DD"}
-                      popperClassName="!z-50" // Ensures the modal appears above other elements
+                      dateFormat="yyyy/MM/dd"
+                      className={`w-full px-2 py-1 rounded-lg text-black text-base border ${errors.startDate ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={errors.startDate ? errors.startDate.message : "YYYY/MM/DD"}                      popperClassName="!z-[9999] !transform !translate-x-[100px]"
+                      popperPlacement="bottom-start"
                       wrapperClassName="w-full"
                       renderCustomHeader={({
                         monthDate,
@@ -341,7 +347,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                       )}
                     />
                     <FiCalendar
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
                       size={20}
                     />
                   </div>
@@ -355,16 +361,21 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                 name="endDate"
                 control={control}
                 rules={{ required: "End date is required" }}
-                render={({ field }) => (
-                  <div className="relative">
+                render={({ field }) => (                  <div className="relative" onClick={() => {
+                    const dateInput = document.getElementById('endDate');
+                    if (dateInput) {
+                      dateInput.focus();
+                    }
+                  }}>
                     <DatePicker
+                      id="endDate"
                       {...field}
-                      selected={field.value}
+                      selected={field.value ? new Date(field.value) : null}
                       onChange={(date) => field.onChange(date)}
                       placeholderText="YYYY/MM/DD"
                       dateFormat="yyyy/MM/dd"                      className={`w-full px-2 py-1 rounded-lg border ${errors.endDate ? 'border-red-500' : 'border-gray-300'} text-black text-base focus:ring-blue-500 focus:border-transparent`}
                       placeholder={errors.endDate ? errors.endDate.message : "YYYY/MM/DD"}
-                      popperClassName="!z-50 h-30" // Ensures the modal appears above other elements
+                      popperClassName="!z-50 h-30"
                       wrapperClassName="w-full"
                       renderCustomHeader={({
                         monthDate,
@@ -397,9 +408,8 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
                         </div>
                       )}
                     />
-
                     <FiCalendar
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
                       size={20}
                     />
                   </div>
