@@ -1,17 +1,67 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../../redux/user/userSlice.js';
+import api from '../../config';
 
 function SuccessPayment() {
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const region = localStorage.getItem('region') || 'india';
-      navigate(`/${region}/dashboard`);
+    let isMounted = true;
+
+    const fetchUser = async () => {
+      try {
+        dispatch(updateUserStart());
+        const res = await api.get('/api/v1/users/me', { withCredentials: true });
+        console.log('User data in SuccessPayment:', res.data);
+
+        if (!isMounted) return;
+
+        dispatch(updateUserSuccess(res.data.user || res.data));
+        console.log('Redux currentUser after dispatch:', JSON.stringify(currentUser, null, 2));
+        setIsLoading(false);
+      } catch (error) {
+        if (!isMounted) return;
+        console.error('Fetch user error:', error.message);
+        dispatch(updateUserFailure(error.message));
+        setError('Failed to load user data.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+
+    const redirectTimer = setTimeout(() => {
+      if (isMounted && !error) {
+        navigate('/india/dashboard', { replace: true });
+      }
     }, 3000);
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
+    return () => {
+      isMounted = false;
+      clearTimeout(redirectTimer);
+    };
+  }, [dispatch, navigate]);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h2 className="text-2xl font-bold text-red-600">Error</h2>
+        <p>{error}</p>
+        <button
+          onClick={() => navigate('/india/dashboard')}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Return to Dashboard
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -37,10 +87,10 @@ function SuccessPayment() {
             Payment Successful!
           </h2>
           <p className="font-['Poppins'] text-[16px] sm:text-[18px] text-gray-200 mb-4">
-            Thank you for your purchase. Your account has been upgraded successfully.
+            {isLoading ? 'Processing your account upgrade...' : 'Your account has been upgraded.'}
           </p>
           <p className="text-sm text-gray-300 font-light">
-            Redirecting to dashboard in a few seconds...
+            Redirecting to dashboard...
           </p>
         </div>
       </div>
