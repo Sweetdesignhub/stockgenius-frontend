@@ -42,7 +42,7 @@
 //           <p className="text-xs lg:text-base">{currentUser?.name}</p>
 //         </div>
 //       </div>
-  
+
 //       {/* Cards Section */}
 //       <div className="flex-1 w-full lg:w-auto">
 //         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
@@ -74,11 +74,10 @@
 //       </div>
 //     </div>
 //   );
-  
+
 // }
 
 // export default AccountInfoPT;
-
 
 import React from "react";
 import Cards from "../../brokers/fyers/Cards";
@@ -91,19 +90,24 @@ function AccountInfoPT() {
   const region = useSelector((state) => state.region); // Get selected region
 
   // Dynamically select the correct trading context
-  const {
-    funds,
-    loading,
-    profitSummary,
-    investedAmount,
-  } = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
+  const { funds, loading, profitSummary, investedAmount } =
+    region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
+  const planFallbacks = {
+    basic: 100000,
+    pro: 1000000,
+    master: 2000000,
+  };
+
+  const fallbackFunds = planFallbacks[currentUser?.plan] || 100000;
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const cumulativeProfit = (
     parseFloat(totalProfit) + parseFloat(todaysProfit)
   ).toFixed(2);
-  const cashBalance = (parseFloat(funds?.availableFunds) || 2000000).toFixed(2);
+  const cashBalance = (
+    parseFloat(funds?.availableFunds) || fallbackFunds
+  ).toFixed(2);
 
   const getPnLColor = (value) => {
     const isPositive = parseFloat(value) >= 0;
@@ -118,15 +122,20 @@ function AccountInfoPT() {
   if (loading) return <div>Loading account information...</div>;
 
   return (
-    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">      <div className="flex-1 min-w-[200px]">
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between py-5 gap-5">
+      {" "}
+      <div className="flex-1 min-w-[200px]">
         <div className="flex flex-col text-left gap-2">
           <h1 className="font-semibold text-[11px] lg:text-lg flex flex-col sm:flex-row">
-            <span className="text-[11px] lg:text-lg mb-1 sm:mb-0">Account: {currentUser?.id}</span>
+            <span className="text-[11px] lg:text-lg mb-1 sm:mb-0">
+              Account: {currentUser?.id}
+            </span>
           </h1>
-          <p className="font-semibold text-[11px] lg:text-lg">Username: {currentUser?.name}</p>
+          <p className="font-semibold text-[11px] lg:text-lg">
+            Username: {currentUser?.name}
+          </p>
         </div>
       </div>
-
       <div className="flex-1 w-full lg:w-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:justify-around gap-3">
           <Cards

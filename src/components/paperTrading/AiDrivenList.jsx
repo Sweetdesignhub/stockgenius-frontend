@@ -249,7 +249,7 @@ function AiDrivenList() {
         <h1 className="text-black font-semibold text-md dark:text-white lg:col-span-3">
           AIDrivenList
         </h1>
-        
+
         {/* Search and Options Container */}
         <div className="flex items-center gap-3 md:gap-2 lg:col-span-9 lg:justify-between">
           {/* Search Input - Centered in laptop view */}
@@ -361,9 +361,7 @@ function AiDrivenList() {
         ) : filteredData.length > 0 ? (
           <div className="h-full overflow-auto">
             <table className="w-full text-sm text-left text-black bg-transparent dark:text-white">
-              <thead className="top-0 z-10">
-                {renderTableHeaders()}
-              </thead>
+              <thead className="top-0 z-10">{renderTableHeaders()}</thead>
               <tbody>{renderTableRows()}</tbody>
             </table>
           </div>

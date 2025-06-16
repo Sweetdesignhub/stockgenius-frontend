@@ -60,8 +60,12 @@ function Cards({ title, value }) {
       className="border-[0.1px] rounded-xl py-1 px-1 flex flex-col justify-center h-[60px] lg:h-[50px]"
       style={backgroundStyle}
     >
-      <h1 className="text-xs lg:text-[10px] text-end whitespace-nowrap">{title}</h1>
-      <h1 className="font-bold text-sm lg:text-xs text-end text-[#37DD1C] whitespace-nowrap">{value}</h1>
+      <h1 className="text-xs lg:text-[10px] text-end whitespace-nowrap">
+        {title}
+      </h1>
+      <h1 className="font-bold text-sm lg:text-xs text-end text-[#37DD1C] whitespace-nowrap">
+        {value}
+      </h1>
     </div>
   );
 }
@@ -471,7 +475,9 @@ function AITradingBots() {
 
         <div
           className={`news-table rounded-2xl min-h-[85vh] ${
-            isAITradingPage ? "bg-gradient" : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
+            isAITradingPage
+              ? "bg-gradient"
+              : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
           }`}
         >
           <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
