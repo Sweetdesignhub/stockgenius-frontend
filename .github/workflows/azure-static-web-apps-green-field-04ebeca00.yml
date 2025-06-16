@@ -33,8 +33,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Verify Node.js and npm Versions
+        run: |
+          node --version
+          npm --version
+      - name: Clear npm Cache
+        run: npm cache clean --force
       - name: Install Dependencies
-        run: npm install
+        run: npm install --include=dev
       - name: Build App
         run: npm run build
       - name: Install OIDC Client from Core Package
@@ -57,6 +63,7 @@ jobs:
           api_location: ""
           output_location: "dist"
           github_id_token: ${{ steps.idtoken.outputs.result }}
+          skip_app_build: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
