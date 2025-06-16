@@ -14,7 +14,12 @@ const userSlice = createSlice({
       state.loading = true;
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload;
+      const user = action.payload;
+      state.currentUser = {
+        ...user,
+        id: user.id || user._id,
+      };
+      delete state.currentUser._id;
       state.loading = false;
       state.error = false;
     },
@@ -26,7 +31,12 @@ const userSlice = createSlice({
       state.loading = true;
     },
     updateUserSuccess: (state, action) => {
-      state.currentUser = action.payload;
+      const user = action.payload;
+      state.currentUser = {
+        ...user,
+        id: user.id || user._id,
+      };
+      delete state.currentUser._id;
       state.loading = false;
       state.error = false;
     },

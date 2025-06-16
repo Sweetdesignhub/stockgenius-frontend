@@ -91,21 +91,24 @@ export default function PlanSelectDialog({ isOpen = false, onClose, initialPlan 
         });
         console.log('Success response:', successResponse.data);
 
-        if (successResponse.data.redirect) {
-          dispatch(updateUserStart());
-          const userResponse = await api.get('/api/v1/users/me', { withCredentials: true });
-          console.log('User data:', userResponse.data);
+        dispatch(updateUserStart());
+        const userResponse = await api.get('/api/v1/users/me', { withCredentials: true });
+        console.log('User data:', userResponse.data);
 
-          dispatch(updateUserSuccess(userResponse.data.user || userResponse.data));
-          navigate(successResponse.data.redirect, { replace: true });
-          onClose();
-        } else {
-          throw new Error('No redirect path provided');
-        }
+        // Normalize user object
+        const normalizedUser = {
+          ...userResponse.data,
+          id: userResponse.data._id || userResponse.data.id,
+        };
+        delete normalizedUser._id;
+        delete normalizedUser.success; // Remove success field if present
+
+        dispatch(updateUserSuccess(normalizedUser));
+        navigate(successResponse.data.redirect || '/india/AI-Trading-Bots', { replace: true });
+        onClose();
       } catch (error) {
         console.error('Success error:', error.message);
         dispatch(updateUserFailure(error.message));
-        // Stay on /payment/success instead of redirecting to /payment/cancel
         navigate('/payment/success', { replace: true });
       }
     };
