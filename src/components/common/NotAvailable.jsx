@@ -21,7 +21,7 @@ const NotAvailable = ({ dynamicText }) => {
   );
 
   return (  <div 
-      className="min-h-[44vh] 320:min-h-[50vh] flex flex-col glow md:flex-row items-start justify-start p-8 rounded-xl border relative overflow-hidden"
+      className="h-full min-h-[44vh] 320:min-h-[50vh] 1440:min-h-[63vh] flex flex-col glow md:flex-row items-center justify-center p-4 sm:p-6 md:p-8 rounded-xl border relative overflow-hidden"
     >{/* Background Image */}
       <img 
         src={currencyBg}
@@ -33,13 +33,13 @@ const NotAvailable = ({ dynamicText }) => {
         }}
         alt=""
       />
-      <div className="relative md:absolute left-8 320:left-0 320:px-4 md:top-1/2 md:-translate-y-1/2 z-20 w-full md:w-[60%] lg:w-[50%] 320:mb-4 md:mb-0">
+      <div className="relative w-full md:w-[60%] lg:w-[50%] p-4 sm:p-6 md:p-8 z-20 flex flex-col justify-center">
         <span
           className="text-lg 320:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-black dark:text-[rgba(255,255,255,0.6)] font-semibold break-words block text-center md:text-left"
           dangerouslySetInnerHTML={{ __html: styledText }}
         />
       </div>
-      <div className="relative md:absolute right-8 320:right-0 md:top-1/2 md:-translate-y-1/2 z-20 flex items-center justify-center w-full md:w-auto">
+      <div className="relative w-full md:w-auto z-20 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <img
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F86858af14e164e91a3cc4fdac4da3ed0"
           alt="Person with laptop"

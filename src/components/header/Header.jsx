@@ -368,20 +368,7 @@ export default function Header() {
             ))}          </div>
         ) : (
           ""
-        )}        <div className="hidden lg:flex  lg:justify-end">
-          <div className="flex items-center gap-4">
-            {currentUser && region === "india" && (
-              <button 
-                onClick={() => setIsPricingOpen(true)}
-                className="flex items-center rounded-full px-3 py-1 text-[13px] xl:text-[13px] lg:text-[10px] whitespace-nowrap
-                bg-white/10 backdrop-blur-md
-                text-amber-500 font-medium transition-all duration-200 
-                shadow-lg hover:shadow-amber-500/30
-                border-2 border-amber-500/50 hover:border-amber-400
-                dark:bg-[rgba(251,191,36,0.1)]">
-                Pricing
-              </button>
-            )}
+        )}        <div className="hidden lg:flex  lg:justify-end">          <div className="flex items-center gap-4">
             <ToggleButton />
 
             {currentUser ? (
@@ -440,25 +427,16 @@ export default function Header() {
                           src={currentUser?.avatar}
                           alt="User avatar"
                           loading="lazy"
-                        />
-                        <div className="flex items-center">
-                          <h2 className="mr-1 capitalize xl:text-base lg:text-xs">
-                            {currentUser.name.slice(0, 10)}
-                          </h2>
+                        />                        <div className="flex items-center">
                           <FaAngleDown className="xl:h-4 xl:w-4 lg:h-2.5 lg:w-2.5" />
                         </div>
                       </div>
                     </MenuButton>
-                  </div>
-                  <Transition
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
+                  </div>                  
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="px-4 py-2 text-sm font-medium text-gray-900 border-b border-gray-200">
+                        <span className="block capitalize">{currentUser.name}</span>
+                      </div>
                       <MenuItem>
                         {({ active }) => (
                           <Link
@@ -471,8 +449,7 @@ export default function Header() {
                             Profile
                           </Link>
                         )}
-                      </MenuItem>
-                      <MenuItem>
+                      </MenuItem><MenuItem>
                         {({ active }) => (
                           <Link
                             to={`/${region}/brokerage`}
@@ -485,6 +462,21 @@ export default function Header() {
                           </Link>
                         )}
                       </MenuItem>
+                      {region === "india" && (
+                        <MenuItem>
+                          {({ active }) => (
+                            <button
+                              onClick={() => setIsPricingOpen(true)}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block w-full text-left px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Pricing
+                            </button>
+                          )}
+                        </MenuItem>
+                      )}
                       <MenuItem>
                         {({ active }) => (
                           <Link
@@ -499,7 +491,7 @@ export default function Header() {
                         )}
                       </MenuItem>
                     </MenuItems>
-                  </Transition>
+                  
                 </Menu>
               </div>
             ) : (
@@ -568,22 +560,7 @@ export default function Header() {
                     >
                       <item.icon className="h-5 w-5" aria-hidden="true" />                      {item.name}
                     </Link>
-                  ))}                  {currentUser && region === "india" && (
-                      <button
-                      className="flex items-center gap-2 -mx-3 rounded-lg px-3 py-2 text-base font-[poppins] leading-7
-                        bg-amber-500 backdrop-blur-md
-                        text-white font-semibold
-                        hover:bg-amber-600
-                        dark:bg-amber-500 dark:hover:bg-amber-600
-                        mt-2 w-full text-left"
-                      onClick={() => {
-                        setIsPricingOpen(true);
-                        handleMenuClose();
-                      }}
-                    >
-                      Pricing
-                    </button>
-                  )}
+                  ))}
                 </div>
               ) : (
                 ""

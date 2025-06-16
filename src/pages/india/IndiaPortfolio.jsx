@@ -93,7 +93,7 @@ function IndiaPortfolio() {
           alt="bear"
         /> 
         
-        <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border  border-white/10">
+        <div className="1440:h-[103vh] 1024:h-[110vh] 320:h-[145vh] md:h-[110vh] sbg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border  border-white/10">
           <div className="py-2 sm:py-3 md:py-4 lg:py-5 px-2 sm:px-3 md:px-4 lg:px-5 flex flex-col rounded-2xl">
             {renderContent()}
           </div>

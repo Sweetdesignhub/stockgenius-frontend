@@ -467,23 +467,22 @@ function AITradingBots() {
 
   return (
     <div className="-z-10">
-      <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
+      <div className="min-h-fit lg:px-32 p-4 relative ">
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
-          alt="Bull"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F87dfd2fd4eea4f378d9e578d4c5dd7d0"
+          alt="bull"
         />
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
-          alt="Bear"
-        />
-
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9815d9f59dfd4f65b9e50d5dcbb0152c"
+          alt="bear"
+        /> 
         <div
-          className={`news-table rounded-2xl ${
-            isAITradingPage ? "bg-gradient" : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
+          className={`news-table rounded-2xl bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border border-white/10 ${
+            isAITradingPage ? "bg-gradient" : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border border-white/10"
           }`}
         >          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center md:text-left mb-4 md:mb-0">
@@ -506,7 +505,7 @@ function AITradingBots() {
             </div>
           </div>
 
-          <div className="p-4 overflow-scroll scrollbar-hide max-h-[60vh]">
+          <div className="p-4 overflow-scroll scrollbar-hide max-h-[70vh]">
             <div className="flex flex-col gap-4">
               {isInitialLoading ? ( // Only show loading on initial fetch
                 <div className="w-full flex justify-center items-center min-h-[200px]">

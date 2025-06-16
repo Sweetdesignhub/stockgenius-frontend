@@ -150,14 +150,13 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   return (
-    <div
-      className="h-[55vh] overflow-auto"
-      style={{
-        background: theme === "light" ? "#ffffff" : "#402788",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-      }}
-    >
+    <div className="relative h-[63vh] 320:h-[50vh] 1024:h-[65vh] 1440:h-[63vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:glow 
+      shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] 
+      dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)]
+      border border-transparent
+      dark:backdrop-blur-[20px]
+      ">
+      
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -177,7 +176,7 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${index}`}
-                  className={`px-4 whitespace-nowrap overflow-hidden font-semibold py-4 ${
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold ${
                     columnName === "stockSymbol" ? "text-[#6FD4FF]" : ""
                   }`}
                 >

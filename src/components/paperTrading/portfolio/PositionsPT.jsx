@@ -129,7 +129,7 @@
 //               {selectedColumns.map((columnName) => (
 //                 <th
 //                   key={columnName}
-//                   className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
+//                   className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left ${
 //                     columnName === "actions" ? "sticky right-0" : ""
 //                   }`}
 //                   style={{
@@ -158,7 +158,7 @@
 //                       return (
 //                         <td
 //                           key={`${columnName}-${index}`}
-//                           className="px-4 py-4 sticky right-0"
+//                           className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold sticky right-0"
 //                           style={{
 //                             background: getBackgroundStyle(),
 //                             zIndex: 2,
@@ -181,7 +181,7 @@
 
 //                     let content = position[columnName];
 //                     let className =
-//                       "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
+//                       "px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold";
 
 //                     if (columnName === "stockSymbol") {
 //                       className += " text-[#6FD4FF]";
@@ -345,7 +345,7 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   };
 
   const getBackgroundStyle = () => {
-    return theme === "light" ? "#ffffff" : "#402788";
+    return theme === "light" ? "" : "";
   };
 
   if (loading) {
@@ -362,14 +362,13 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
 
   return (
     <>
-      <div
-        className="h-[55vh] overflow-auto relative"
-        style={{
-          background: getBackgroundStyle(),
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          borderRadius: "8px",
-        }}
-      >
+      <div className="relative h-[63vh] 320:h-[50vh] 1024:h-[65vh] 1440:h-[63vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:glow 
+      shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] 
+      dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)]
+      border border-transparent
+      dark:backdrop-blur-[20px]
+      ">
+      
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4 rounded">
             {error}
@@ -381,8 +380,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <th
                   key={columnName}
-                  className={`px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left ${
-                    columnName === "actions" ? "sticky right-0" : ""
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left ${
+                    columnName === "actions" ? "" : ""
                   }`}
                   style={{
                     background: columnName === "actions" ? getBackgroundStyle() : "none",
@@ -409,7 +408,7 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                       return (
                         <td
                           key={`${columnName}-${index}`}
-                          className="px-4 py-4 sticky right-0"
+                          className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold "
                           style={{
                             background: getBackgroundStyle(),
                             zIndex: 2,
@@ -429,7 +428,7 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                     }
 
                     let content = position[columnName];
-                    let className = "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
+                    let className = "px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold";
 
                     if (columnName === "stockSymbol") {
                       className += " text-[#6FD4FF]";

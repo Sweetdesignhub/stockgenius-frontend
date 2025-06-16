@@ -366,15 +366,8 @@ function SignIn() {
   ];
   return (
       <div className='min-h-[100px] flex items-center justify-center mt-10 px-4 sm:px-6'>
-        <div className='w-full max-w-[400px] mx-auto rounded-2xl px-4 sm:px-6 py-10'
-          style={{
-            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)',
-            border: '1.04px solid transparent',
-            borderImage: 'linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)',
-            borderImageSlice: '1',
-            boxShadow: '0px 10.35px 31.05px 0px rgba(73, 123, 255, 0.7) inset, 0px 10.35px 41.41px 0px rgba(63, 74, 175, 0.5)',
-            backdropFilter: 'blur(20.702987670898438px)',
-          }}>
+        <div className='w-full port max-w-[400px] mx-auto rounded-2xl px-4 sm:px-6 py-10'
+          >
         <div className="flex items-center justify-center gap-2 mb-4">
           <img
             className="h-7 xl:h-7 lg:h-5 mr-1"

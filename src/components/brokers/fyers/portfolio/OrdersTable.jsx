@@ -98,8 +98,7 @@ const OrdersTable = ({ selectedColumns, setColumnNames }) => {
   // );
 
   return (
-    <div className="relative h-[50vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:glow 
-      
+    <div className="relative h-[63vh] 320:h-[50vh] 1024:h-[65vh] 1440:h-[63vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:glow 
       shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] 
       dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)]
       border border-transparent
