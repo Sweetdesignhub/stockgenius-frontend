@@ -3,11 +3,11 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - sandbox
+      - main
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - sandbox
+      - main
 
 jobs:
   build_and_deploy_job:
@@ -15,72 +15,42 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-      NODE_ENV: production
       VITE_AZURE_STORAGE_ACCOUNT_NAME: sgaicoreengine
       VITE_AZURE_STORAGE_CONTAINER_NAME: sgaiindia
       VITE_AZURE_STORAGE_SAS_TOKEN: sv=2022-11-02&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2030-02-24T14:05:50Z&st=2025-02-24T06:05:50Z&spr=https,http&sig=KEgla7bzOZPB80o7AZC8Afe8jTshYpN8D5e9N3YVw38%3D
       VITE_GOOGLE_CLIENT_ID: 139066726123-bbupf44e4dagnc4fs3pu346o191s4dth.apps.googleusercontent.com
       VITE_APP_STRIPE_PUBLISHABLE_KEY: pk_test_51RYhDTPuspqCKWhVbashuTpFyHSxZnwCUa5OkpBdlJ4Rc5VjBX4o8M1JD0eWF9SeZm9UEobC02zx4pKhqf9hCcYO00QZ0RmOSY
     permissions:
-      id-token: write
-      contents: read
+       id-token: write
+       contents: read
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Verify Node.js and npm Versions
-        run: |
-          node --version
-          npm --version
-      - name: Clear npm Cache
-        run: npm cache clean --force
-      - name: Install Dependencies
-        run: npm install --include=dev
-      - name: Check Vite Installation
-        run: |
-          npm list vite
-          npx vite --version
-          ls -la node_modules/.bin | grep vite
-      - name: Build App
-        run: npm run build
-      - name: List dist Folder
-        run: |
-          du -sh dist
-          find dist -type f -exec du -h {} + | sort -rh
-      - name: Clean Workspace
-        run: |
-          find . -maxdepth 1 -not -name "dist" -not -name "." -exec rm -rf {} +
-          ls -la
-      - name: List Workspace
-        run: |
-          du -sh .
-          find . -type f -exec du -h {} + | sort -rh | head -n 20
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
       - name: Get Id Token
         uses: actions/github-script@v6
         id: idtoken
         with:
-          script: |
-            const coredemo = require('@actions/core')
-            return await coredemo.getIDToken()
-          result-encoding: string
+           script: |
+               const coredemo = require('@actions/core')
+               return await coredemo.getIDToken()
+           result-encoding: string
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_FIELD_04EBECA00 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_MEADOW_0C54B7400 }}
           action: "upload"
-          app_location: "/"
-          api_location: ""
-          output_location: "dist"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "/" # App source code path
+          api_location: "" # Api source code path - optional
+          output_location: "dist" # Built app content directory - optional
           github_id_token: ${{ steps.idtoken.outputs.result }}
-          skip_app_build: true
+          ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
