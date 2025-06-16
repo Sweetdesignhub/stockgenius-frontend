@@ -10,6 +10,6 @@ const CoBotAvatar = () => {
       </div>
     </div>
   );
-};
+}; 
 
 export default CoBotAvatar;
