@@ -300,7 +300,6 @@ import { FiSearch, FiDownload, FiPlus, FiGrid } from "react-icons/fi";
 import { CgMaximizeAlt } from "react-icons/cg";
 import { RiExpandUpDownFill } from "react-icons/ri";
 import { useTheme } from "../../contexts/ThemeContext";
-import imgs from "../../assets/ZeroTransactionBull.jpg";
 
 const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -374,7 +373,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
           className="relative w-full h-full rounded-lg"
           style={{
             zIndex: -1,
-            backgroundImage: `url(${imgs})`,
+            backgroundImage: `url(${'https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fe3f5ccc3a8d9468d98c81e283d566d26'})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",

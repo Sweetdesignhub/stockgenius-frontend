@@ -1,16 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import basicImage from "../../assets/basic.png";
-import proImage from "../../assets/pro.png";
-import masterImage from "../../assets/master.png";
 import PlanDetailsDialog from "./PlanDetailsDialog";
 import { useSelector } from "react-redux";
 
 export default function PricingDialog({ isOpen = false, onClose }) {
   const { currentUser } = useSelector((state) => state.user);
   const currentPlan = currentUser?.plan || "basic"; // Fallback to "basic" if undefined
-    console.log(currentUser);
+  console.log(currentUser);
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(
     currentPlan === "basic" ? "pro" : currentPlan
@@ -101,7 +98,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                           {/* Image and header section */}{" "}
                           <div className="relative mb-2 mx-auto w-full max-w-[280px] md:max-w-[260px] 1024:max-w-[280px] 1440:max-w-[320px]">
                             <img
-                              src={basicImage}
+                              loading="lazy"
+                              src={
+                                "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F6828d46de1f14fceb4b40e36d8c28d11"
+                              }
                               alt="Basic Plan"
                               className="w-full h-[180px] md:h-[160px] 1024:h-[180px] 1440:h-[218px] object-contain rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700"
                             />
@@ -193,7 +193,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                           {/* Image and header section */}{" "}
                           <div className="relative mb-2 mx-auto w-full max-w-[280px] md:max-w-[260px] 1024:max-w-[280px] 1440:max-w-[320px] h-[180px] md:h-[160px] 1024:h-[180px] 1440:h-[218px]">
                             <img
-                              src={proImage}
+                              loading="lazy"
+                              src={
+                                "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fb6caa97ae2eb49a58ba06b49427e93e1"
+                              }
                               alt="Pro Plan"
                               className="w-full h-full object-cover object-center rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700"
                             />
@@ -320,7 +323,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                           {/* Image and header section */}{" "}
                           <div className="relative mb-2 mx-auto w-full aspect-[423/289] max-w-[280px] md:max-w-[260px] 1024:max-w-[280px] 1440:max-w-[320px]">
                             <img
-                              src={masterImage}
+                              loading="lazy"
+                              src={
+                                "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fa909a5df465642789cd5ee20a8eeb509"
+                              }
                               alt="Master Plan"
                               className="w-full h-[180px] md:h-[160px] 1024:h-[180px] 1440:h-[218px] object-contain rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700 transform -scale-x-100"
                             />

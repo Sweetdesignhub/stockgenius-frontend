@@ -1,5 +1,4 @@
-import React from "react";
-import imgs from "../../assets/InfoCardImageSGAI.png";
+
 import { useTheme } from "../../contexts/ThemeContext";
 
 const InfoCard = () => {
@@ -17,7 +16,8 @@ const InfoCard = () => {
     >
       {/* Background Image Layer */}
       <img
-        src={imgs}
+      loading="lazy"
+        src={'https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F43b54df40a4b4e51bbc5bf049e5dda98'}
         alt="Background"
         className={`
           absolute right-0 
