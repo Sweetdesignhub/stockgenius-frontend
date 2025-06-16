@@ -9,7 +9,7 @@
  * Updated on: [Update date]
  * - Update description: Brief description of what was updated or fixed
  */
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Switch } from "@headlessui/react";
 import moment from "moment-timezone";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
@@ -21,8 +21,38 @@ import AutoTradeModal from "../brokers/AutoTradeModal";
 import TradeRatioBar from "./TradeRatioBar";
 import { usePaperTrading } from "../../contexts/PaperTradingContext";
 
-function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
+function PaperTradeBot({
+  botData,
+  updateBotDetails,
+  color,
+  fetchBots,
+  onBotTimeCapReached,
+}) {
+  const hasReachedTodayBotTimeCap = useRef(false);
+  const hasNotifiedRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      hasReachedTodayBotTimeCap.current &&
+      !hasNotifiedRef.current &&
+      typeof onBotTimeCapReached === "function"
+    ) {
+      onBotTimeCapReached(true);
+      hasNotifiedRef.current = true; // ✅ ensure it's only triggered once
+    }
+  }, [onBotTimeCapReached]);
+
+  // const isEnabled = botData?.isActive && !hasReachedTodayBotTimeCap.current;
   const isEnabled = botData?.isActive;
+  // botData?.dynamicData[0].status === "Running" &&
+  // !hasReachedTodayBotTimeCap.current;
+
+  console.log(
+    "Bot Data in PaperTradeBot:",
+    botData.dynamicData[0].status,
+    "Is Enabled:",
+    isEnabled
+  );
 
   // Use the PaperTrading context
   const { funds, orders, trades, profitSummary, investedAmount } =
@@ -66,10 +96,18 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     .tz("Asia/Kolkata")
     .format("YYYY-MM-DD");
 
+  const planFallbacks = {
+    basic: 100000,
+    pro: 1000000,
+    master: 2000000,
+  };
+
+  const fallbackFunds = planFallbacks[currentUser?.plan] || 100000;
+
   const holdingsTotalPL = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const positionTotalPL = (profitSummary?.todaysProfit || 0.0).toFixed(2);
   const availableFunds =
-    (parseFloat(funds?.availableFunds) || 2000000).toFixed(2) || "0.00";
+    (parseFloat(funds?.availableFunds) || fallbackFunds).toFixed(2) || "0.00";
 
   // Compute profitGainedValue
   const calculateProfitGainedValue = () => {
@@ -137,11 +175,21 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "botTime") {
+        const todaysBotTime = parseInt(data.todaysBotTime || 0);
         setBotTime({
           workingTime: parseInt(data.workingTime || 0),
           todaysBotTime: parseInt(data.todaysBotTime || 0),
           currentWeekTime: parseInt(data.currentWeekTime || 0),
         });
+        // Set the flag only once
+        if (
+          todaysBotTime >= 4 * 60 * 60 && //
+          !hasReachedTodayBotTimeCap.current
+        ) {
+          hasReachedTodayBotTimeCap.current = true;
+          console.log("4-hour cap reached");
+          // You can trigger any one-time logic here, like disabling a button
+        }
       }
     };
 
@@ -158,16 +206,36 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     };
   }, [botData._id, botData.createdAt]);
 
-  // const formatTime = useCallback((seconds) => {
-  //   if (isNaN(seconds) || seconds < 0) {
-  //     return "0h 0m 0s";
-  //   }
+  // Effect to run fetchBots() only once when cap is reached
+  // useEffect(() => {
+  //   const fetchIfCapReached = async () => {
+  //     if (hasReachedCapState) {
+  //       await fetchBots();
+  //     }
+  //   };
+  //   fetchIfCapReached();
+  // }, [hasReachedCapState]);
 
-  //   const hours = Math.floor(seconds / 3600);
-  //   const minutes = Math.floor((seconds % 3600) / 60);
-  //   const secs = seconds % 60;
-  //   return `${hours}h ${minutes}m ${secs}s`;
-  // }, []);
+  // useEffect(() => {
+  //   const checkAndFetch = async () => {
+  //     if (botTime?.todaysBotTime >= 4 * 60 * 60) {
+  //       await fetchBots();
+  //     }
+  //   };
+
+  //   checkAndFetch();
+  // }, [botTime?.todaysBotTime]);
+
+  const formatTime = useCallback((seconds) => {
+    if (isNaN(seconds) || seconds < 0) {
+      return "0h 0m 0s";
+    }
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
+  }, []);
 
   const profitPercentage =
     investedAmount > 0
@@ -196,15 +264,54 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     return total + order.quantity * order.tradedPrice;
   }, 0);
 
+  const rawStatus = botData?.dynamicData?.[0]?.status ?? "Inactive";
+  console.log("Bot Data :", botData.dynamicData[0]);
+  let statusText = "Inactive";
+  let statusColor = "#FF4D4D"; // Default Red
+
+  if (hasReachedTodayBotTimeCap.current) {
+    statusText = "Stopped (Limit Reached)";
+    statusColor = "#FFA500"; // Orange
+  } else {
+    switch (rawStatus) {
+      case "Running":
+        statusText = "Running";
+        statusColor = "#00FF47"; // Green
+        break;
+      case "Stopped":
+        statusText = "Stopped";
+        statusColor = "#FF4D4D"; // Red
+        break;
+      case "Schedule":
+        statusText = "Scheduled";
+        statusColor = "#3B82F6"; // Blue
+        break;
+      case "Inactive":
+      default:
+        statusText = "Inactive";
+        statusColor = "#FF4D4D"; // Red
+    }
+  }
+
   const data = [
     {
       title: "Profit Gained",
       value: positionTotalPL,
       valueColor,
     },
+    {
+      title: "Today's Time",
+      value:
+        botTime.todaysBotTime >= 4 * 60 * 60
+          ? `${formatTime(botTime.todaysBotTime)} (Limit Reached)`
+          : formatTime(botTime.todaysBotTime),
+      valueColor:
+        botTime.todaysBotTime >= 4 * 60 * 60 ? "text-red-500" : valueColor, // *
+    },
+
     // {
-    //   title: "Working Time",
-    //   value: formatTime(botTime.workingTime),
+    //   title: "Todays Time",
+    //   value: formatTime(botTime.todaysBotTime),
     //   valueColor,
     // },
     {
@@ -243,10 +350,8 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     },
     {
       title: "Status",
-      value: isEnabled ? "Running" : "Inactive", // If isActive is true, show "Running", else "Inactive"
-      valueColor: isEnabled // Check if the bot is active
-        ? "#00FF47" // Green for Running
-        : "#FF4D4D", // Red for Inactive
+      value: statusText,
+      valueColor: statusColor,
     },
   ];
 
@@ -316,7 +421,7 @@ function PaperTradeBot({ botData, updateBotDetails, color, fetchBots }) {
     try {
       // Always update isActive regardless of trading hours
       // console.log("Updating isActive to true...");
-      
+
       await api.patch(
         `/api/v1/autotrade-bots/users/${currentUser.id}/bots/${botId}/activate`
       );

@@ -10,6 +10,7 @@ import { usePaperTrading } from "../../contexts/PaperTradingContext";
 import moment from "moment-timezone";
 import Loading from "../../components/common/Loading";
 import PaperTradeBot from "../../components/aiTradingBots/PaperTradeBot";
+import PricingDialog from "../../components/pricing/PricingDialog";
 
 // Define an array of colors for the bots
 const botColors = [
@@ -55,10 +56,12 @@ const PaperTradingAutoTrade = () => {
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState("");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
+  const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
+  const [showPlanLimitReached, setShowPlanLimitReached] = useState(false);
   const [botColorMap, setBotColorMap] = useState({});
   const location = useLocation();
   const isAITradingPage = location.pathname === "/india/autotrade-bots";
+  const [isABotStopped, setIsABotStopped] = useState(false);
 
   const [allBotsTime, setAllBotsTime] = useState({
     totalTodaysBotTime: 0,
@@ -66,7 +69,7 @@ const PaperTradingAutoTrade = () => {
   });
 
   const { currentUser } = useSelector((state) => state.user);
-
+  console.log("Current Plan:", currentUser?.plan);
   // Use the PaperTrading context
   const { holdings, positions, orders, profitSummary, investedAmount } =
     usePaperTrading();
@@ -227,6 +230,11 @@ const PaperTradingAutoTrade = () => {
     let todayReInvestments = 0;
 
     botDataList.forEach((bot) => {
+      console.log("Bot Data:", bot);
+      if (bot.dynamicData[0].status === "Stopped") {
+        setIsABotStopped(true);
+      }
+
       const botCreatedAt = moment(bot.createdAt).tz("Asia/Kolkata");
 
       // Get the bot's profit and investment amounts
@@ -368,6 +376,24 @@ const PaperTradingAutoTrade = () => {
               </div>
             </div>
           </div>
+          {(showPlanLimitReached ||
+            (currentUser?.plan === "basic" && isABotStopped)) && (
+            <div className="px-4 pt-4">
+              <div className="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 text-center">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  Paper Trading Bots are available only Unlimited Use for Pro
+                  and Master plans.{" "}
+                  <button
+                    onClick={() => setIsPricingDialogOpen(true)}
+                    className="underline font-semibold hover:text-yellow-600 dark:hover:text-yellow-300"
+                  >
+                    Upgrade now
+                  </button>{" "}
+                  to create and manage bots.
+                </p>
+              </div>
+            </div>
+          )}
           <div className="p-4">
             <div className="grid grid-cols-1 lg:grid-cols-6 gap-2">
               {calculateCardData.map((card, index) => (
@@ -389,6 +415,9 @@ const PaperTradingAutoTrade = () => {
                     updateBotDetails={updateBotDetails}
                     color={botColorMap[bot._id]}
                     fetchBots={fetchBots}
+                    onBotTimeCapReached={() => {
+                      setShowPlanLimitReached(true);
+                    }}
                   />
                 ))
               ) : (
@@ -406,6 +435,10 @@ const PaperTradingAutoTrade = () => {
           setAutoTradeModalOpen(false);
         }}
         onCreateBot={createBot}
+      />
+      <PricingDialog
+        isOpen={isPricingDialogOpen}
+        onClose={() => setIsPricingDialogOpen(false)}
       />
       {message && (
         <ConfirmationModal

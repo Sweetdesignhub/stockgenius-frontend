@@ -151,21 +151,27 @@ function AccountDetailsPT({ userId }) {
   const [currentTime, setCurrentTime] = useState("");
   const region = useSelector((state) => state.region); // Fetch user region
   // console.log(region);
-  
 
   // ✅ Select the correct context based on region
-  const {
-    funds,
-    positions,
-    loading,
-    profitSummary,
-    investedAmount,
-  } = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
+  const { funds, positions, loading, profitSummary, investedAmount } =
+    region === "usa" ? useUsaPaperTrading() : usePaperTrading();
+
+  const planFallbacks = {
+    basic: 100000,
+    pro: 1000000,
+    master: 2000000,
+  };
+
+  const { currentUser } = useSelector((state) => state.user);
+
+  const fallbackFunds = planFallbacks[currentUser?.plan] || 100000;
 
   const totalProfit = (profitSummary?.totalProfit || 0.0).toFixed(2);
   const todaysProfit = (profitSummary?.todaysProfit || 0.0).toFixed(2);
-  const cumulativeProfit = (parseFloat(totalProfit) + parseFloat(todaysProfit)).toFixed(2);
-  const cashBalance = (parseFloat(funds?.availableFunds) || 2000000).toFixed(2);
+  const cumulativeProfit = (
+    parseFloat(totalProfit) + parseFloat(todaysProfit)
+  ).toFixed(2);
+  const cashBalance = (parseFloat(funds?.availableFunds) || fallbackFunds).toFixed(2);
 
   // Helper function to get color based on value
   const getPnLColor = (value) => {
@@ -191,14 +197,14 @@ function AccountDetailsPT({ userId }) {
 
       // Calculate time until the next minute tick
       const now = new Date();
-      const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+      const msUntilNextMinute =
+        60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
 
       const timer = setTimeout(updateLiveTime, msUntilNextMinute);
       return () => clearTimeout(timer); // Cleanup on unmount
     };
 
     updateLiveTime(); // Initialize
-
   }, [region]);
 
   if (loading) return <div>Loading...</div>;
@@ -208,17 +214,20 @@ function AccountDetailsPT({ userId }) {
       <div className="flex justify-between items-center border-b-2 border-[#FFFFFF1A]">
         <div className="py-2">
           <h1 className="font-semibold text-md">Account : {userId}</h1>
-          <p className="text-gray-400 text-sm">{currentTime}</p> {/* Auto-displays EST/EDT */}
+          <p className="text-gray-400 text-sm">{currentTime}</p>{" "}
+          {/* Auto-displays EST/EDT */}
         </div>
-      </div>      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-2">
+      </div>{" "}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-2">
         {[
           {
             title: "Invested Amount",
             value: investedAmount,
             valueColor: "text-[#DEB215]",
-            bgColor: "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
+            bgColor:
+              "bg-[linear-gradient(to_bottom,_rgba(229,_156,_70,_0.3),_rgba(229,_156,_70,_0.1),_rgba(229,_156,_70,_0.3))]",
             width: "min-w-[160px] lg:min-w-[140px]",
-            height: "min-h-24 lg:min-h-[5rem]"
+            height: "min-h-24 lg:min-h-[5rem]",
           },
           {
             title: "Total P&L",
@@ -236,7 +245,8 @@ function AccountDetailsPT({ userId }) {
             title: "Cash Balance",
             value: cashBalance,
             valueColor: "text-[#45FCFC]",
-            bgColor: "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]",
+            bgColor:
+              "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]",
           },
         ].map((card, index) => (
           <Cards

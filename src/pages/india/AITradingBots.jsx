@@ -1,25 +1,10 @@
-/**
- * File: AITradingBots
- * Description: This file contains the implementation of the AI Trading Bots page, where users can manage their trading bots,
- * toggle their states, and schedule auto-trades. It includes the functionality to create, update, and delete bots,
- * as well as track the status of each bot. The bots' states are managed based on the current market conditions
- * (e.g., market open/close, trading hours). It also provides integration with WebSockets to track the total
- * trading time of all bots and shows real-time data.
- *
- * Developed by: Arshdeep Singh
- * Developed on: 2024-11-14
- *
- * Updated by: [Name]
- * Updated on: [Update date]
- * - Update description: Brief description of what was updated or fixed
- */
-
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import BrokerModal from "../../components/brokers/BrokerModal";
 import AutoTradeModal from "../../components/brokers/AutoTradeModal";
 import Bot from "../../components/aiTradingBots/Bot";
 import NotAvailable from "../../components/common/NotAvailable";
+import PlanSelectDialog from "../../components/pricing/PlanSelectDialog";
 import api from "../../config";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
 import moment from "moment-timezone";
@@ -28,12 +13,10 @@ import {
   isBeforeMarketOpen,
   isWithinTradingHours,
 } from "../../utils/helper";
-import { useData } from "../../contexts/FyersDataContext";
 import Loading from "../../components/common/Loading";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "@emotion/react";
 import { useLocation } from "react-router-dom";
 
-// Define an array of colors for the bots
 const botColors = [
   "#F62024",
   "#F6208F",
@@ -69,14 +52,20 @@ function Cards({ title, value }) {
         }
       : {
           backgroundColor: "white",
+          borderColor: "rgba(0, 0, 0, 0.1)",
         };
+
   return (
     <div
       className="border-[0.1px] rounded-xl py-1 px-1 flex flex-col justify-center h-[60px] lg:h-[50px]"
       style={backgroundStyle}
     >
-      <h1 className="text-xs lg:text-[10px] text-end whitespace-nowrap">{title}</h1>
-      <h1 className="font-bold text-sm lg:text-xs text-end text-[#37DD1C] whitespace-nowrap">{value}</h1>
+      <h1 className="text-xs lg:text-[10px] text-end whitespace-nowrap">
+        {title}
+      </h1>
+      <h1 className="font-bold text-sm lg:text-xs text-end text-[#37DD1C] whitespace-nowrap">
+        {value}
+      </h1>
     </div>
   );
 }
@@ -92,8 +81,9 @@ function AITradingBots() {
   const [confirmationAction, setConfirmationAction] = useState(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [togglingBotId, setTogglingBotId] = useState(null);
-
+  const [isPricingDialogOpen, setIsPricingDialogOpen] = useState(false);
   const [botColorMap, setBotColorMap] = useState({});
+  const [error, setError] = useState(null);
   const location = useLocation();
   const isAITradingPage = location.pathname === "/india/AI-Trading-Bots";
 
@@ -102,124 +92,169 @@ function AITradingBots() {
     totalCurrentWeekTime: 0,
   });
 
-  const fyersAccessToken = useSelector((state) => state.fyers);
   const { currentUser } = useSelector((state) => state.user);
+  const userPlan = currentUser?.plan || "basic";
 
-  const {
-    holdings = {},
-    positions = { overall: {} },
-    orders = { orderBook: [] },
-  } = useData();
+  console.log("crt", currentUser); // Debug: Log currentUser
 
-  const fetchBots = useCallback(async () => {
-    if (!currentUser.id) return;
+  const fetchBots = useCallback(
+    async (retryCount = 0) => {
+      if (!currentUser?.id) {
+        if (retryCount < 3) {
+          console.log("User ID missing, retrying...", retryCount + 1);
+          setTimeout(() => fetchBots(retryCount + 1), 1000);
+          return;
+        }
+        setIsInitialLoading(false);
+        setError("User not logged in or user ID missing. Please refresh the page.");
+        return;
+      }
 
-    setIsInitialLoading(true); // Only set loading on initial fetch
-    try {
-      const response = await api.get(
-        `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`
-      );
-      const sortedBots = response.data.bots.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-      setBotDataList(sortedBots);
-      setBotStates(
-        sortedBots.reduce((acc, bot) => {
-          acc[bot._id] = {
-            isActive:
-              bot.dynamicData[0]?.status === "Running" ||
-              bot.dynamicData[0]?.status === "Schedule",
-          };
-          return acc;
-        }, {})
-      );
+      setIsInitialLoading(true);
+      setError(null);
 
-      // Assign colors to bots
-      const colorMap = {};
-      sortedBots.forEach((bot, index) => {
-        colorMap[bot._id] = botColors[index % botColors.length];
-      });
-      setBotColorMap(colorMap);
-    } catch (error) {
-      console.error("Error fetching bots:", error);
-    } finally {
-      setIsInitialLoading(false);
-    }
-  }, [currentUser.id]);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      try {
+        console.log("Fetching bots for userId:", currentUser.id);
+        const response = await api.get(
+          `/api/v1/ai-trading-bots/getBotsByUserId/${currentUser.id}`,
+          { withCredentials: true, signal: controller.signal }
+        );
+        clearTimeout(timeoutId);
+        console.log("AI bots response:", response.data, "Status:", response.status);
+
+        if (!response?.data?.bots || !Array.isArray(response.data?.bots)) {
+          throw new Error("Invalid bot data received from server");
+        }
+
+        const sortedBots = response.data.bots.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        sortedBots.forEach((bot) => {
+          if (!bot._id || !bot.dynamicData || !Array.isArray(bot.dynamicData)) {
+            console.warn(`Invalid bot data for bot ID ${bot._id || "unknown"}`, bot);
+          }
+        });
+
+        setBotDataList(sortedBots);
+        setBotStates(
+          sortedBots.reduce((acc, curr) => {
+            acc[curr._id] = {
+              isActive: true,
+              status:
+                curr?.dynamicData?.[0]?.status ||
+                curr?.status ||
+                getBotStatus(curr?.dynamicData?.[0]?.isActive || false),
+            };
+            return acc;
+          }, {})
+        );
+
+        const colorMap = {};
+        sortedBots.forEach((bot, index) => {
+          colorMap[bot._id] = botColors[index % botColors.length];
+        });
+        setBotColorMap(colorMap);
+      } catch (error) {
+        clearTimeout(timeoutId);
+        console.error(
+          "Error fetching bots:",
+          error.message,
+          error.response?.data,
+          error.response?.status
+        );
+        if (error.name === "AbortError") {
+          setError("Request timed out. Please check your connection and try again.");
+        } else {
+          setError(
+            error.response?.data?.error ||
+              `Failed to load bots: ${error.message}. Please try again later.`
+          );
+        }
+      } finally {
+        setIsInitialLoading(false);
+      }
+    },
+    [currentUser?.id]
+  );
 
   useEffect(() => {
     fetchBots();
-  }, [currentUser.id]);
+  }, [fetchBots]);
 
   useEffect(() => {
     const updateBotStates = () => {
       setBotStates((prevStates) => {
-        const newStates = {};
-        for (const botId of Object.keys(prevStates)) {
-          const { isActive } = prevStates[botId];
-          newStates[botId] = {
-            isActive,
+        const newStates = { ...prevStates };
+        botDataList.forEach((bot) => {
+          const isActive = bot?.dynamicData?.[0]?.isActive || false;
+          newStates[bot._id] = {
+            ...newStates[bot._id],
             status: getBotStatus(isActive),
           };
-        }
+        });
         return newStates;
       });
     };
 
-    updateBotStates(); // Initial call
-    const interval = setInterval(updateBotStates, 60000); // Update every minute
+    updateBotStates();
+    const intervalId = setInterval(updateBotStates, 60000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+    return () => clearInterval(intervalId);
+  }, [botDataList]);
 
   const createBot = async (botData) => {
+    if (userPlan === "basic") {
+      setIsPricingDialogOpen(true);
+      return;
+    }
+
     try {
       const response = await api.post(
-        `api/v1/ai-trading-bots/createBot/${currentUser.id}`,
-        botData
+        `/api/v1/ai-trading-bots/createBot/${currentUser.id}`,
+        botData,
+        { withCredentials: true }
       );
       if (response.status === 201) {
         await fetchBots();
-        setTitle("Congratulations");
+        setTitle("Success");
         setMessage(
-          `${botData.name} has been successfully created. To activate it, you need to switch it ON.`
+          `${botData.name} has been successfully created. To activate it, you must enable it first`
         );
         setConfirmationOpen(true);
       } else {
-        console.error("Unexpected response format:", response.data);
-        alert("An unexpected response format was received.");
+        throw new Error("Unexpected response format");
       }
     } catch (error) {
-      setTitle("Error");
-      console.error("Unexpected error:", error.response?.data || error.message);
-      setMessage(
-        error.response?.data?.message ||
-          "An unexpected error occurred. Please try again."
-      );
+      console.error("Error:", error.response?.data?.error || error.message);
+      setError(error.response?.data?.message || error.message);
+      setMessage("Failed to create bot. Please try again.");
       setConfirmationOpen(true);
     }
   };
 
-  const updateBotDetails = async (botId, updateData) => {
+  const updateBotDetails = async (botId, botUpdateData) => {
     try {
       const response = await api.put(
-        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`,
-        updateData
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/${botId}`,
+        botUpdateData,
+        { withCredentials: true }
       );
       if (response.status === 200) {
         await fetchBots();
-        setTitle("Congratulations");
-        setMessage(
-          `${updateData.name} has been successfully updated. To activate it, you need to switch it ON.`
-        );
+        setTitle("Success");
+        setMessage(`${botUpdateData.name} has been successfully updated.`);
         setConfirmationOpen(true);
       } else {
-        console.error("Update failed:", response.data.message);
+        throw new Error("Failed to update bot");
       }
     } catch (error) {
-      console.error("Error updating bot:", error.response.data.message);
-      setTitle("Bot Update Error");
-      setMessage(error.response.data.message);
+      console.error("Error:", error.response?.data?.error || error.message);
+      setError(error.response?.data?.message || error.message);
+      setMessage("Failed to update bot. Please try again.");
       setConfirmationOpen(true);
     }
   };
@@ -227,20 +262,21 @@ function AITradingBots() {
   const deleteBot = async (botId, botName) => {
     try {
       const response = await api.delete(
-        `/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/${botId}`,
+        { withCredentials: true }
       );
       if (response.status === 200) {
         await fetchBots();
-        setTitle("Bot Deleted");
+        setTitle("Success");
         setMessage(`${botName} has been successfully deleted.`);
         setConfirmationOpen(true);
       } else {
-        console.error("Deletion failed:", response.data.message);
+        throw new Error("Failed to delete bot");
       }
     } catch (error) {
-      console.error("Error deleting bot:", error.response.data.message);
-      setTitle("Error");
-      setMessage(error.response.data.message);
+      console.error("Error:", error.response?.data?.error || error.message);
+      setError(error.response?.data?.message || error.message);
+      setMessage("Failed to delete bot. Please try again.");
       setConfirmationOpen(true);
     }
   };
@@ -248,47 +284,44 @@ function AITradingBots() {
   const handleToggle = async (botId) => {
     if (isAfterMarketClose()) {
       setTitle("Action Not Allowed");
-      setMessage("You can't activate the bot after market closes.");
+      setMessage("You cannot activate bot after market close.");
       setConfirmationAction(() => () => setConfirmationOpen(false));
       setConfirmationOpen(true);
       return;
     }
 
     setTogglingBotId(botId);
-
     try {
       const bot = botDataList.find((b) => b._id === botId);
-      const currentStatus = bot.dynamicData[0]?.status;
+      if (!bot) throw new Error("Bot not found");
+
+      const currStatus = botStates[botId]?.status || "Inactive";
       let newStatus;
 
-      if (currentStatus === "Running" || currentStatus === "Schedule") {
+      if (currStatus === "Running" || currStatus === "Schedule") {
         newStatus = "Inactive";
       } else {
-        if (isWithinTradingHours()) {
-          newStatus = "Running";
-        } else if (isBeforeMarketOpen()) {
-          newStatus = "Schedule";
-        } else {
-          newStatus = "Inactive";
-        }
+        newStatus = isWithinTradingHours() ? "Running" : "Schedule";
       }
 
-      // await api.put(`/api/v1/ai-trading-bots/users/${currentUser.id}/bots/${botId}`, {
-      //   status: newStatus
-      // });
+      const response = await api.put(
+        `/api/v1/ai-trading-bots/users/${currentUser.id}/${botId}`,
+        { status: newStatus },
+        { withCredentials: true }
+      );
 
-      setBotStates((prevStates) => ({
-        ...prevStates,
-        [botId]: {
-          isActive: newStatus === "Running" || newStatus === "Schedule",
-          status: newStatus,
-        },
-      }));
-
-      await fetchBots(); // Refetch bots to get updated data
+      if (response.status === 200) {
+        setBotStates((prev) => ({
+          ...prev,
+          [botId]: { ...prev[botId], status: newStatus },
+        }));
+        await fetchBots();
+      } else {
+        throw new Error("Failed to toggle bot status");
+      }
     } catch (error) {
-      console.error("Error toggling bot status:", error);
-      setTitle("Error");
+      console.error("Error:", error.message);
+      setError(error.response?.data?.message || error.message);
       setMessage("Failed to update bot status. Please try again.");
       setConfirmationOpen(true);
     } finally {
@@ -297,61 +330,54 @@ function AITradingBots() {
   };
 
   const handleScheduleTrade = () => {
-    if (!fyersAccessToken) {
-      setBrokerModalOpen(true);
-      // console.log("First connect to your broker to start auto trade feature.");
-    } else {
-      // console.log(fyersAccessToken);
-      // console.log("Successfully connected to broker");
-      setAutoTradeModalOpen(true);
+    if (userPlan === "basic") {
+      setIsPricingDialogOpen(true);
+      return;
     }
+    setBrokerModalOpen(true);
   };
 
   const handleConfirmationClose = () => {
     setConfirmationOpen(false);
-    setAutoTradeModalOpen(false);
+    setMessage("");
+    setTitle("");
+    setConfirmationAction(null);
   };
 
   useEffect(() => {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    // const wsUrl = process.env.NODE_ENV === 'development'
-    //   ? 'ws://localhost:8080'
-    //   : `${wsProtocol}//api.stockgenius.ai`;
-    const wsUrl = `${wsProtocol}//api.stockgenius.ai`;
-
+    const wsUrl = `${wsProtocol}//${window.location.host}/api/v1/ws`;
     const ws = new WebSocket(wsUrl);
+
     ws.onopen = () => {
-      // console.log("WebSocket connected for all bots time");
       ws.send(
         JSON.stringify({
-          type: "subscribeAllBotsTime",
-          userId: currentUser.id,
+          type: "subscribe",
+          userId: currentUser?.id || "",
         })
       );
     };
+
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "allBotsTime") {
         setAllBotsTime({
-          totalTodaysBotTime: parseInt(data.totalTodaysBotTime),
-          totalCurrentWeekTime: parseInt(data.totalCurrentWeekTime),
+          totalTodaysBotTime: parseInt(data.totalTodaysBotTime) || 0,
+          totalCurrentWeekTime: parseInt(data.totalCurrentWeekTime) || 0,
         });
       }
     };
+
     ws.onerror = (error) => {
-      console.error("WebSocket error for all bots time:", error);
+      console.error("WebSocket error:", error);
     };
-    // ws.onclose = () => {
-    //   console.log("WebSocket disconnected for all bots time");
-    // };
-    return () => {
-      ws.close();
-    };
-  }, [currentUser.id]);
+
+    return () => ws.close();
+  }, [currentUser?.id]);
 
   const formatTime = useCallback((seconds) => {
-    if (isNaN(seconds) || seconds < 0) {
-      return "0h 0m 0s";
+    if (!seconds || seconds <= 0) {
+      return "0 seconds";
     }
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -363,7 +389,6 @@ function AITradingBots() {
     const today = moment().tz("Asia/Kolkata").startOf("day");
     const startOfWeek = moment().tz("Asia/Kolkata").startOf("isoWeek");
 
-    // Initialize accumulators
     let todayTotalInvestment = 0;
     let todayTotalProfit = 0;
     let weekTotalInvestment = 0;
@@ -372,62 +397,29 @@ function AITradingBots() {
 
     botDataList.forEach((bot) => {
       const botCreatedAt = moment(bot.createdAt).tz("Asia/Kolkata");
+      const profitAmount = bot?.dynamicData?.[0]?.profit || 0;
+      const investmentAmount = bot?.dynamicData?.[0]?.investment || 0;
+      const reInvestmentCount = bot?.dynamicData?.[0]?.reInvestments || 0;
 
-      // Get the bot's profit and investment amounts
-      let profitAmount = 0;
-      let investmentAmount = 0;
-      let reInvestmentCount = 0;
-
-      if (bot.productType === "INTRADAY") {
-        // For intraday bots, use positions data
-        profitAmount = positions?.overall?.pl_total || 0;
-        investmentAmount = positions?.overall?.buyVal || 0;
-        reInvestmentCount =
-          orders?.orderBook?.filter(
-            (order) =>
-              moment(order.orderDateTime).isSame(today, "day") &&
-              order.productType === "INTRADAY"
-          ).length || 0;
-      } else if (bot.productType === "CNC") {
-        // For CNC bots, use holdings data
-        profitAmount = holdings?.overall?.total_pl || 0;
-        investmentAmount = holdings?.overall?.total_investment || 0;
-        reInvestmentCount =
-          orders?.orderBook?.filter(
-            (order) =>
-              moment(order.orderDateTime).isSame(today, "day") &&
-              order.productType === "CNC"
-          ).length || 0;
-      }
-
-      // Calculate metrics for today's bots
       if (botCreatedAt.isSame(today, "day")) {
         todayTotalInvestment += investmentAmount;
         todayTotalProfit += profitAmount;
         todayReInvestments += reInvestmentCount;
       }
 
-      // Calculate metrics for this week's bots
       if (botCreatedAt.isSameOrAfter(startOfWeek)) {
         weekTotalInvestment += investmentAmount;
         weekTotalProfit += profitAmount;
       }
     });
 
-    // Calculate percentages
     const calculatePercentage = (profit, investment) => {
       if (investment === 0) return 0;
       return (profit / investment) * 100;
     };
 
-    const todayProfitPercentage = calculatePercentage(
-      todayTotalProfit,
-      todayTotalInvestment
-    );
-    const weekProfitPercentage = calculatePercentage(
-      weekTotalProfit,
-      weekTotalInvestment
-    );
+    const todayProfitPercentage = calculatePercentage(todayTotalProfit, todayTotalInvestment);
+    const weekProfitPercentage = calculatePercentage(weekTotalProfit, weekTotalInvestment);
 
     return [
       {
@@ -463,7 +455,7 @@ function AITradingBots() {
         value: todayTotalProfit.toFixed(2),
       },
     ];
-  }, [botDataList, allBotsTime, formatTime, holdings, positions, orders]);
+  }, [botDataList, allBotsTime, formatTime]);
 
   return (
     <div className="-z-10">
@@ -483,51 +475,98 @@ function AITradingBots() {
 
         <div
           className={`news-table rounded-2xl min-h-[85vh] ${
-            isAITradingPage ? "bg-gradient" : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
+            isAITradingPage
+              ? "bg-gradient"
+              : "bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10"
           }`}
-        >          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between p-4 border-[#FFFFFF1A] mx-5 border-b">
             <h2 className="font-semibold text-xl text-center md:text-left mb-4 md:mb-0">
               AI Trading Bots
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center w-full md:w-auto">
               <button
-                className=" text-sm py-2 font-semibold px-4 rounded-xl bg-[#3A6FF8]  dark:text-blue-700 dark:bg-white w-full sm:w-auto flex flex-col items-center text-white"
+                className={`text-sm py-2 font-semibold px-4 rounded-xl ${
+                  userPlan === "basic"
+                    ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
+                    : "bg-[#3A6FF8] dark:text-blue-700 dark:bg-white text-white"
+                } w-full sm:w-auto flex flex-col items-center`}
                 onClick={handleScheduleTrade}
+                disabled={userPlan === "basic"}
+                title={
+                  userPlan === "basic"
+                    ? "Upgrade to Pro or Master to create bots"
+                    : "Schedule a new bot"
+                }
               >
                 <span>Schedule Bot</span>
               </button>
             </div>
           </div>
 
-          <div className="p-4">            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-2 xl:gap-2 lg:gap-1">
-              {calculateCardData.map((card, index) => (
-                <Cards key={index} title={card.title} value={card.value} />
+          {userPlan === "basic" && (
+            <div className="p-4">
+              <div className="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 text-center">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  AI Trading Bots are available only for Pro and Master plans.{" "}
+                  <button
+                    onClick={() => setIsPricingDialogOpen(true)}
+                    className="underline font-semibold hover:text-yellow-600 dark:hover:text-yellow-300"
+                  >
+                    Upgrade now
+                  </button>{" "}
+                  to create and manage bots.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-2 xl:gap-2 lg:gap-1">
+              {calculateCardData.map((card) => (
+                <Cards key={card.title} title={card.title} value={card.value} />
               ))}
             </div>
           </div>
 
           <div className="p-4 overflow-scroll scrollbar-hide max-h-[60vh]">
             <div className="flex flex-col gap-4">
-              {isInitialLoading ? ( // Only show loading on initial fetch
+              {isInitialLoading ? (
                 <div className="w-full flex justify-center items-center min-h-[200px]">
                   <Loading />
+                </div>
+              ) : error ? (
+                <div className="text-center text-red-600 dark:text-red-400">
+                  <p>{error}</p>
+                  <button
+                    onClick={() => fetchBots()}
+                    className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Retry
+                  </button>
                 </div>
               ) : botDataList.length > 0 ? (
                 botDataList.map((bot) => (
                   <Bot
                     key={bot._id}
                     botData={bot}
-                    isEnabled={botStates[bot._id].isActive}
+                    isEnabled={botStates[bot._id]?.isActive || false}
                     onToggle={() => handleToggle(bot._id)}
                     updateBotDetails={updateBotDetails}
                     deleteBot={deleteBot}
-                    loading={togglingBotId === bot._id} // Pass loading state to individual bot
+                    loading={togglingBotId === bot._id}
                     color={botColorMap[bot._id]}
                   />
                 ))
               ) : (
                 <div>
-                  <NotAvailable dynamicText="<strong>No bots available.</strong> Activate Auto Trade Bot to start trading." />
+                  <NotAvailable
+                    dynamicText={`<strong>No bots available.</strong> ${
+                      userPlan === "basic"
+                        ? "Upgrade to Pro or Master to activate Auto Trade Bots."
+                        : "Activate Auto Trade Bot to start trading."
+                    }`}
+                  />
                 </div>
               )}
             </div>
@@ -540,10 +579,12 @@ function AITradingBots() {
       />
       <AutoTradeModal
         isOpen={autoTradeModalOpen}
-        onClose={() => {
-          setAutoTradeModalOpen(false);
-        }}
+        onClose={() => setAutoTradeModalOpen(false)}
         onCreateBot={createBot}
+      />
+      <PlanSelectDialog
+        isOpen={isPricingDialogOpen}
+        onClose={() => setIsPricingDialogOpen(false)}
       />
       {message && (
         <ConfirmationModal
@@ -551,7 +592,7 @@ function AITradingBots() {
           onClose={handleConfirmationClose}
           title={title}
           message={message}
-          onConfirm={handleConfirmationClose}
+          onConfirm={confirmationAction || handleConfirmationClose}
         />
       )}
     </div>

@@ -17,4 +17,10 @@ export default defineConfig({
       },
     },
   },
+  resolve: {
+    alias: {
+      // Ensure Stripe.js is loaded correctly
+      "@stripe/stripe-js": "@stripe/stripe-js",
+    },
+  },
 });
