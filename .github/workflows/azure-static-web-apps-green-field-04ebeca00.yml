@@ -41,8 +41,25 @@ jobs:
         run: npm cache clean --force
       - name: Install Dependencies
         run: npm install --include=dev
+      - name: Check Vite Installation
+        run: |
+          npm list vite
+          npx vite --version
+          ls -la node_modules/.bin | grep vite
       - name: Build App
         run: npm run build
+      - name: List dist Folder
+        run: |
+          du -sh dist
+          find dist -type f -exec du -h {} + | sort -rh
+      - name: Clean Workspace
+        run: |
+          find . -maxdepth 1 -not -name "dist" -not -name "." -exec rm -rf {} +
+          ls -la
+      - name: List Workspace
+        run: |
+          du -sh .
+          find . -type f -exec du -h {} + | sort -rh | head -n 20
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
       - name: Get Id Token
