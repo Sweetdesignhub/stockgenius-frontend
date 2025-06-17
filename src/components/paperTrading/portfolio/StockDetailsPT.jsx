@@ -222,10 +222,10 @@ const StockDetailsPT = () => {
   const [columnNames, setColumnNames] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState({});
   const [currentTab, setCurrentTab] = useState(0);
-  const filterRef = useRef(null);
-  const region = useSelector((state) => state.region); // Get selected region
+  const filterButtonRef = useRef(null);
+  const filterDropdownRef = useRef(null);
+  const region = useSelector((state) => state.region);
 
-  // ✅ Dynamically select the correct trading context
   const { funds, holdings, positions, trades, orders, loading, error } =
     region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
@@ -264,16 +264,22 @@ const StockDetailsPT = () => {
   // Handle clicks outside filter dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target) &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
         setShowFilter(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    if (showFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [showFilter]);
 
   const toggleFilter = () => {
     setShowFilter(!showFilter);
@@ -286,7 +292,7 @@ const StockDetailsPT = () => {
         ...prev,
         [currentTabKey]: {
           ...prev[currentTabKey],
-          [columnName]: !prev[currentTabKey][columnName],
+          [columnName]: !(prev[currentTabKey]?.[columnName] ?? true),
         },
       }));
     },
@@ -324,6 +330,7 @@ const StockDetailsPT = () => {
 
     return selected;
   }, [categories, currentTab, selectedColumns]);
+
   return (
     <div className="flex flex-col w-full overflow-hidden">
       <div className="w-full h-full rounded-xl">
@@ -349,39 +356,81 @@ const StockDetailsPT = () => {
               ))}
             </TabList>
 
-            <button
-              ref={filterRef}
-              onClick={toggleFilter}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors duration-200"
-            >
-              <RiMenuLine className="w-5 h-5" />
-            </button>
-
-            {showFilter && (
-              <div
-                className="absolute right-0 top-12 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-20 border dark:border-white/10 border-gray-200"
-                style={{ maxHeight: "300px", overflowY: "auto", width: "200px" }}
+            {/* Filter button - visible in both mobile and desktop */}
+            <div className="relative">
+              <button
+                ref={filterButtonRef}
+                onClick={toggleFilter}
+                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors duration-200"
+                aria-label="Toggle column filter"
               >
-                <h3 className="font-semibold mb-2 dark:text-white">Select columns:</h3>
-                <div className="flex flex-col gap-2">
-                  {columnNames.map((columnName) => (
-                    <label key={columnName} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={
-                          selectedColumns[categories[currentTab].key]?.[
-                            columnName
-                          ] ?? true
-                        }
-                        onChange={() => handleColumnToggle(columnName)}
-                        className="mr-2"
-                      />
-                      <span className="text-sm dark:text-gray-300">{columnName}</span>
-                    </label>
-                  ))}
+                <RiMenuLine className="w-5 h-5" />
+              </button>
+
+              {/* Filter dropdown - desktop version */}
+              {showFilter && (
+                <div
+                  ref={filterDropdownRef}
+                  className="hidden sm:block absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-50 border dark:border-white/10 border-gray-200 min-w-[200px]"
+                >
+                  <h3 className="font-semibold mb-3 dark:text-white">Select columns:</h3>
+                  <div className="flex flex-col gap-2 max-h-[250px] overflow-y-auto">
+                    {columnNames.map((columnName) => (
+                      <label 
+                        key={columnName} 
+                        className="flex items-center p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedColumns[categories[currentTab].key]?.[columnName] ?? true}
+                          onChange={() => handleColumnToggle(columnName)}
+                          className="mr-3 w-4 h-4 rounded border-gray-300 dark:border-gray-600"
+                        />
+                        <span className="text-sm dark:text-gray-300">{columnName}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Filter dropdown - mobile version */}
+              {showFilter && (
+                <div
+                  ref={filterDropdownRef}
+                  className="sm:hidden fixed right-4 top-20 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-50 border dark:border-white/10 border-gray-200 w-[calc(100%-2rem)] max-w-[300px]"
+                  style={{ maxHeight: 'calc(100vh - 120px)' }}
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold dark:text-white">Select columns:</h3>
+                    <button
+                      onClick={() => setShowFilter(false)}
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                      aria-label="Close filter"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+                    {columnNames.map((columnName) => (
+                      <label 
+                        key={columnName} 
+                        className="flex items-center p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedColumns[categories[currentTab].key]?.[columnName] ?? true}
+                          onChange={() => handleColumnToggle(columnName)}
+                          className="mr-3 w-4 h-4 rounded border-gray-300 dark:border-gray-600"
+                        />
+                        <span className="text-sm dark:text-gray-300">{columnName}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="overflow-hidden rounded-lg h-[calc(100%-4rem)]">

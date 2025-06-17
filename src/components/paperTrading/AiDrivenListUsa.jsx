@@ -242,16 +242,8 @@ function AiDrivenListUsa() {
 
   return (
     <div
-      className="p-3 rounded-lg flex flex-col h-full relative"
-      style={{
-        background:
-          theme === "light"
-            ? "#ffffff"
-            : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-        height: "calc(100vh - 390px)",
-      }}
+      className="p-3 bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-lg flex flex-col h-full relative"
+      
     >
       {/* Header Section */}
       <div className="flex-shrink-0 justify-between flex flex-col sm:flex-row items-center border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A]">

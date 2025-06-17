@@ -369,7 +369,7 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
     const isDark = theme === "dark";
 
   return (
-      <div className="relative text-[10px] sm:text-sm md:text-base lg:text-lg h-[400px]">
+      <div className="relative text-[10px] port sm:text-sm md:text-base lg:text-lg h-[400px]">
         <div
           className="relative w-full h-full rounded-lg"
           style={{
@@ -406,19 +406,8 @@ const TransactionHistory = ({ transactions, onMagnifyToggle, isExpanded }) => {
   };
   return (
     <div
-      className={`p-2 sm:p-4 rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] w-full min-h-[360px]  ${
-        theme === "dark"
-          ? "border border-[0.73px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_-40.91%,#402788_132.95%)] border-blue-500"
-          : filteredTransactions.length !== 0
-          ? "bg-white"
-          : "bg-white/10 z-[-4]"
-      }`}
-      style={{
-        borderImage: `linear-gradient(180deg, rgba(39, 55, 207, 0.4) 17.19%, rgba(101, 98, 251, 0.77) 100%),
-                   linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
-                   linear-gradient(180deg, rgba(39, 55, 207, 0) -4.69%, rgba(189, 252, 254, 0.3) 100%)`,
-        borderImageSlice: 1,
-      }}
+      className={`p-2 sm:p-4 port rounded-xl shadow-lg shadow-[inset_0_0_8px_4px_rgba(96,165,250,0.6)] w-full min-h-[360px]  `}
+      
     >      {/* Header Section */}      <div className="flex flex-col p-2 sm:flex-row sm:items-center mb-4 space-y-4 sm:space-y-0">
         {/* Left: Title */}
         <div className="sm:w-1/4">

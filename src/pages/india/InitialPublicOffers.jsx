@@ -119,6 +119,7 @@ function InitialPublicOffers() {
     });
   };
 
+  
   return (
     <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
       <img
@@ -134,16 +135,16 @@ function InitialPublicOffers() {
         alt="bear"
       />
 
-      {loading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <Loading />
-        </div>
-      ) : (
-        <div className="bg-white min-h-[85vh] news-table rounded-2xl">
-          <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-start lg:gap-4">
-            {/* Left Side (100% for mobile, 45% for desktop) */}
-            <div className="w-full lg:w-[45%]">
-              <div className="flex flex-col sm:flex-row items-center justify-between border-b border-[#FFFFFF1A] pb-2 sm:pb-4">
+      <div className="dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main min-h-[85vh] news-table rounded-2xl">
+        {loading && (
+          <div className="absolute inset-0 bg-white/50 dark:bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm rounded-2xl">
+            <Loading />
+          </div>
+        )}
+        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-start lg:gap-4">
+          {/* Left Side (100% for mobile, 45% for desktop) */}
+          <div className="w-full lg:w-[45%]">
+            <div className="flex flex-col sm:flex-row items-center justify-between border-b border-[#FFFFFF1A] pb-2 sm:pb-4">
   <h1 className="font-semibold text-base sm:text-lg mb-2 sm:mb-0">
     Initial Public Offers (IPOs)
   </h1>
@@ -189,7 +190,7 @@ function InitialPublicOffers() {
   </div>
 </div>
 
-              {/* Ongoing, Upcoming, Past Selection */}
+            {/* Ongoing, Upcoming, Past Selection */}
 
 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-2 sm:pt-4 w-full">
   <div className="flex justify-between items-center w-full">
@@ -225,91 +226,90 @@ function InitialPublicOffers() {
   </div>
 </div>
 
-              {/* Render filtered IPO Cards */}
-              <div className="pt-4 mt-2 overflow-y-scroll scrollbar-hide overflow-x-hidden min-h-[20vh] max-h-[67vh] rounded-lg">
-                {filteredIpoData.length > 0 ? (
-                  filteredIpoData.map((ipo) => (
-                    <IPOCard
-                      key={ipo.name}
-                      logo={ipo.logo}
-                      name={ipo.name}
-                      company={ipo.company}
-                      // ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)}
-                      // listingDate={formatDate(ipo.listingDate)}
-                      ipoDate={
-                        ipo.ipoStartDate && ipo.ipoEndDate
-                          ? formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)
-                          : "To be announced"
-                      }
-                      listingDate={
-                        ipo.listingDate
-                          ? formatDate(ipo.listingDate)
-                          : "To be announced"
-                      }
-                      type={ipo.exchangeType}
-                      sentimentScore={ipo.sentimentScore || "0.00"}
-                      decisionRate={ipo.decisionRate}
-                      priceRange={`${ipo.priceStartRange}-${ipo.priceEndRange}`}
-                      minQuantity={ipo.minQuantity}
-                      onSelect={handleSelect}
-                    />
-                  ))
-                ) : (
-                  <div className="text-center p-4 text-gray-500">
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F774045b915a94da8b083607e7ede6341"
-                      alt="no ipos availabe"
+            {/* Render filtered IPO Cards */}
+            <div className="pt-4 mt-2 overflow-y-scroll scrollbar-hide overflow-x-hidden min-h-[20vh] max-h-[67vh] rounded-lg">
+              {filteredIpoData.length > 0 ? (
+                filteredIpoData.map((ipo) => (
+                  <IPOCard
+                    key={ipo.name}
+                    logo={ipo.logo}
+                    name={ipo.name}
+                    company={ipo.company}
+                    // ipoDate={formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)}
+                    // listingDate={formatDate(ipo.listingDate)}
+                    ipoDate={
+                      ipo.ipoStartDate && ipo.ipoEndDate
+                        ? formatIpoDate(ipo.ipoStartDate, ipo.ipoEndDate)
+                        : "To be announced"
+                    }
+                    listingDate={
+                      ipo.listingDate
+                        ? formatDate(ipo.listingDate)
+                        : "To be announced"
+                    }
+                    type={ipo.exchangeType}
+                    sentimentScore={ipo.sentimentScore || "0.00"}
+                    decisionRate={ipo.decisionRate}
+                    priceRange={`${ipo.priceStartRange}-${ipo.priceEndRange}`}
+                    minQuantity={ipo.minQuantity}
+                    onSelect={handleSelect}
+                  />
+                ))
+              ) : (
+                <div className="text-center p-4 text-gray-500">
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F774045b915a94da8b083607e7ede6341"
+                    alt="no ipos availabe"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Side (100% for mobile, 55% for desktop) */}
+          <div className="w-full lg:w-[55%] p-1 flex flex-col h-full mt-6 lg:mt-0">
+            <div className="h-[10%] overflow-x-auto flex space-x-2 py-1 scrollbar-hide">
+              {suggestionCardsData.length > 0 ? (
+                suggestionCardsData.map((card, index) => (
+                  <div className="flex-shrink-0" key={index}>
+                    <SuggestionCard
+                      logo={card.logo}
+                      category={card.category}
+                      subCategory={card.subCategory}
+                      change={card.change}
+                      title={card.title}
+                      image={card.graph}
                     />
                   </div>
-                )}
-              </div>
+                ))
+              ) : (
+                <div className="text-center w-96 p-4 text-gray-500">
+                  No suggestion available.
+                </div>
+              )}
             </div>
 
-            {/* Right Side (100% for mobile, 55% for desktop) */}
-            <div className="w-full lg:w-[55%] p-1 flex flex-col h-full mt-6 lg:mt-0">
-              <div className="h-[10%] overflow-x-auto flex space-x-2 py-1 scrollbar-hide">
-                {suggestionCardsData.length > 0 ? (
-                  suggestionCardsData.map((card, index) => (
-                    <div className="flex-shrink-0" key={index}>
-                      <SuggestionCard
-                        logo={card.logo}
-                        category={card.category}
-                        subCategory={card.subCategory}
-                        change={card.change}
-                        title={card.title}
-                        image={card.graph}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center w-96 p-4 text-gray-500">
-                    No suggestion available.
-                  </div>
-                )}
-              </div>
-
-              <div className="h-[90%] mt-4">
-                {selectedIPO && (
-                  <IPODetail
-                    theme={theme}
-                    formatDate={formatDate}
-                    ipoData={
-                      ipoData.length > 0
-                        ? ipoData.find(
-                            (ipo) =>
-                              selectedIPO.toLowerCase() ===
-                              ipo.company.toLowerCase()
-                          ) || null
-                        : null
-                    }
-                  />
-                )}
-              </div>
+            <div className="h-[90%] mt-4">
+              {selectedIPO && (
+                <IPODetail
+                  theme={theme}
+                  formatDate={formatDate}
+                  ipoData={
+                    ipoData.length > 0
+                      ? ipoData.find(
+                          (ipo) =>
+                            selectedIPO.toLowerCase() ===
+                            ipo.company.toLowerCase()
+                        ) || null
+                      : null
+                  }
+                />
+              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

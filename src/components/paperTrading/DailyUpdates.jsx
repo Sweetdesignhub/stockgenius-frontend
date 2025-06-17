@@ -15,7 +15,7 @@ const StockCard = ({
   volatility,
 }) => (
   <div
-    className="dark:bg-[#1a1f2e] rounded-lg p-1.5 sm:p-2 md:p-2.5 dark:text-white"
+    className="glass-card rounded-lg p-1.5 sm:p-2 md:p-2.5 dark:text-white"
     style={{
       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
       borderRadius: "12px",
@@ -30,14 +30,13 @@ const StockCard = ({
         <p className="text-xs text-gray-400 line-clamp-1">{description}</p>
       </div>
     </div>
-    <div className="flex gap-1 flex-wrap">
-      <div className="px-2 py-1 rounded-full text-xs bg-[#14AE5C1A] text-[#7EF36B] border border-[#14AE5C]">
+    <div className="flex gap-1 flex-wrap">      <div className="px-2 py-1 rounded-full text-xs bg-[#14AE5C1A] text-[#14AE5C] dark:text-[#7EF36B] border border-[#14AE5C]">
         ROI - {roi}
       </div>
-      <div className="px-2 py-1 rounded-full text-xs bg-[#8B5CF61A] text-[#C4B5FD] border border-[#8B5CF6]">
+      <div className="px-2 py-1 rounded-full text-xs bg-[#8B5CF61A] text-[#8B5CF6] dark:text-[#C4B5FD] border border-[#8B5CF6]">
         Sentiment Score - {sentimentScore}
       </div>
-      <div className="px-2 py-1 rounded-full text-xs bg-[#F59E0B1A] text-[#FCD34D] border border-[#F59E0B]">
+      <div className="px-2 py-1 rounded-full text-xs bg-[#F59E0B1A] text-[#F59E0B] dark:text-[#FCD34D] border border-[#F59E0B]">
         Volatility - {volatility}
       </div>
     </div>
@@ -150,13 +149,13 @@ function DailyUpdates() {
 
   if (loading) {
     return <Loading />;
-  }  return (  <div className="flex flex-col h-full gap-1.5 lg:gap-2 overflow-hidden">
+  }  return (  <div className=" flex flex-col h-full gap-1.5 lg:gap-2 overflow-hidden">
       <div className="flex flex-col md:flex-col lg:flex-col gap-1.5 lg:gap-2 flex-shrink-0">
         <StockCard {...stockData.topPick} title="Top Pick for Today" />
         <StockCard {...stockData.highSentiment} title="High Sentiment Stock" />
         <StockCard {...stockData.lowRisk} title="Low Risk Option" />
       </div>      <div
-        className="h-[265px] lg:h-[180px] xl:h-[265px] 2xl:h-[250px] dark:bg-[#1a1f2e] rounded-lg p-2 dark:text-white scrollbar-hide"
+        className="h-[265px] lg:h-[180px] xl:h-[265px] 2xl:h-[250px] glass-card rounded-lg p-2 dark:text-white scrollbar-hide"
         style={{
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           borderRadius: "12px",

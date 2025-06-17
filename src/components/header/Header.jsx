@@ -419,24 +419,26 @@ export default function Header() {
                   )}
                 </div>
                 <Menu as="div" className="relative">
-                  <div>
-                    <MenuButton className="relative flex rounded-full text-md focus:outline-none">
+                  <div>                    <MenuButton className="relative flex rounded-full text-md focus:outline-none">
                       <div className="flex items-center px-1">
                         <img
-                          className="h-9 w-9 xl:h-9 xl:w-9 lg:h-7 lg:w-7 mr-1 rounded-xl"
+                          className="h-9 w-9 xl:h-9 xl:w-9 lg:h-7 lg:w-7 rounded-xl"
                           src={currentUser?.avatar}
                           alt="User avatar"
                           loading="lazy"
-                        />                        <div className="flex items-center">
+                        />
+                        {currentUser && (
+                          <span className="ml-2 mr-2 text-sm sm:text-base lg:text-sm xl:text-base font-medium text-gray-600 dark:text-gray-300 hidden sm:inline-block">
+                            {currentUser.name?.slice(0, 6)}
+                          </span>
+                        )}
+                        <div className="flex items-center">
                           <FaAngleDown className="xl:h-4 xl:w-4 lg:h-2.5 lg:w-2.5" />
                         </div>
                       </div>
                     </MenuButton>
                   </div>                  
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <div className="px-4 py-2 text-sm font-medium text-gray-900 border-b border-gray-200">
-                        <span className="block capitalize">{currentUser.name}</span>
-                      </div>
                       <MenuItem>
                         {({ active }) => (
                           <Link

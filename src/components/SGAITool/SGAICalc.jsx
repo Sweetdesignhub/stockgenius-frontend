@@ -212,8 +212,7 @@ const SGAICalc = ({ onSimulationComplete, onStatusUpdate }) => {
     <div      className={`mx-auto w-full max-w-screen-xl px-3 sm:px-4 py-2 rounded-xl 
               flex flex-col justify-around items-start 
               h-full inset-0 
-              backdrop-blur-[1px] 
-              mask-[linear-gradient(to_bottom,white_20%,transparent_80%)] 
+              glass-card] 
               ${bgClass}`}
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-2 mb-2">

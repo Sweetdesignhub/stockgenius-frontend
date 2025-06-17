@@ -233,16 +233,8 @@ function AiDrivenList() {
 
   return (
     <div
-      className="p-3 rounded-lg flex flex-col max-h-[400px] md:max-h-[410px] lg:max-h-[395px] relative"
-      style={{
-        background:
-          theme === "light"
-            ? "#ffffff"
-            : "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #402788 132.95%)",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-        overflow: "hidden",
-      }}
+      className="p-3 port rounded-lg flex flex-col max-h-[400px] md:max-h-[410px] lg:max-h-[395px] relative"
+      
     >
       {/* Header Section */}
       <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between lg:grid lg:grid-cols-12 border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A] gap-3 md:gap-2">
@@ -259,7 +251,7 @@ function AiDrivenList() {
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-black dark:text-white font-semibold text-xs md:text-sm border rounded-full px-2 py-[1px] w-[100px] md:w-[120px] lg:w-[180px]"
+              className="bg-transparent text-gray-800 dark:text-white font-semibold text-xs md:text-sm border border-gray-400 dark:border-gray-600 rounded-full px-2 py-[1px] w-[100px] md:w-[120px] lg:w-[180px] placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none"
             />
           </div>
 

@@ -21,7 +21,7 @@ const NotAvailable = ({ dynamicText }) => {
   );
 
   return (  <div 
-      className="h-full min-h-[44vh] 320:min-h-[50vh] 1440:min-h-[63vh] flex flex-col glow md:flex-row items-center justify-center p-4 sm:p-6 md:p-8 rounded-xl border relative overflow-hidden"
+      className="min-h-[20vh] max-h-[43vh] overflow-y flex flex-col glow md:flex-row items-center justify-center p-4 sm:p-6 md:p-8 rounded-xl border relative overflow-hidden"
     >{/* Background Image */}
       <img 
         src={currencyBg}
@@ -43,7 +43,7 @@ const NotAvailable = ({ dynamicText }) => {
         <img
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F86858af14e164e91a3cc4fdac4da3ed0"
           alt="Person with laptop"
-          className="w-28 h-28 320:w-32 320:h-32 sm:w-40 sm:h-40 md:w-64 md:h-64 lg:w-80 lg:h-80 object-contain transition-all duration-300"
+          className="w-28 h-28 320:w-32 320:h-32 sm:w-40 sm:h-40 md:w-54 md:h-54 lg:w-68 lg:h-68 xl:w-72 xl:h-72 object-contain transition-all duration-300"
         />
       </div>
     </div>
