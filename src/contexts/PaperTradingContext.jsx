@@ -28,12 +28,19 @@ export function PaperTradingProvider({ children }) {
   const [investedAmount, setInvestedAmount] = useState(0);
 
   const { currentUser } = useSelector((state) => state.user);
+  const region = useSelector((state) => state.region);
 
   useEffect(() => {
-    const socket = io(PAPER_TRADE_URL);
+    const dataSourceURL = PAPER_TRADE_URL;
+    // region === "india" ? PAPER_TRADE_URL : PAPER_TRADE_USA_URL;
 
-    socket.on("stockData", (data) => {
-      // console.log("💹 WebSocket stock data received:", data); // helpful debug log
+    const socket = io(dataSourceURL);
+
+    const emitAddress = `stockData-${region}`;
+    // console.log("Emit Address USA:", emitAddress);
+
+    socket.on(emitAddress, (data) => {
+      console.log("💹 WebSocket stock data received:", data); // helpful debug log
       setStocks(data);
       const pricesObject = data.reduce((acc, { ticker, price }) => {
         if (ticker && price != null) acc[ticker] = price;
@@ -74,7 +81,7 @@ export function PaperTradingProvider({ children }) {
   // }, []);
 
   // ✅ Calculate Profits & Invested Amount
-  
+
   const calculateProfits = useCallback(
     (prices, positionsArray, holdingsArray) => {
       let todaysProfit = 0;

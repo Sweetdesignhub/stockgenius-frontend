@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 export default function PricingDialog({ isOpen = false, onClose }) {
   const { currentUser } = useSelector((state) => state.user);
   const currentPlan = currentUser?.plan || "basic"; // Fallback to "basic" if undefined
-    console.log(currentUser);
+  // console.log(currentUser);
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(
     currentPlan === "basic" ? "pro" : currentPlan
