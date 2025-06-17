@@ -238,7 +238,9 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const { holdings, loading, realtimePrices } = tradingContext;
   const { theme } = useTheme();
 
-  const getBackgroundStyle = () => (theme === "light" ? "":"");
+  const getBackgroundStyle = () => {
+    return theme === "light" ? "" : "";
+  };
 
   useEffect(() => {
     if (!loading && isExiting) {
@@ -309,28 +311,21 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
     );
   }
 
-
   return (
     <>
-      <div className="relative min-h-[45vh] max-h-[45vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:port 
-      shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] 
-      dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)]
-      border border-transparent
-      dark:backdrop-blur-[20px]
-      ">
-      
-        <table className="w-full border-collapse relative">
+      <div className="relative min-h-[45vh] max-h-[45vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-md shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)] border border-transparent dark:backdrop-blur-[20px]">
+        <table className="w-full border-collapse">
           <thead>
             <tr>
               {selectedColumns.map((columnName) => (
                 <th
                   key={columnName}
-                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left${
-                    columnName === "actions" ? "sticky right-0" : ""
+                  className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left ${
+                    columnName === "actions" ? "sticky right-0 z-10" : ""
                   }`}
                   style={{
-                    background: columnName === "actions" ? getBackgroundStyle() : "none",
-                    zIndex: columnName === "actions" ? 2 : 1,
+                    background: columnName === "actions" ? getBackgroundStyle() : "transparent",
+                    borderRadius: columnName === "actions" ? "" : "0",
                   }}
                 >
                   {columnName === "pnlPercentage" ? "% Chng" : columnName}
@@ -354,10 +349,9 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                       return (
                         <td
                           key={`${columnName}-${index}`}
-                          className="px-1 320:px-1.5 sm:px-3 lg:px-4 py-1 320:py-1.5 sm:py-2.5 lg:py-3 text-[7px] 320:text-[8px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold "
+                          className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold sticky right-0 z-10"
                           style={{
-                            background: getBackgroundStyle(),
-                            zIndex: 2,
+                            background: getBackgroundStyle()
                           }}
                         >
                           <button
@@ -374,7 +368,7 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                     }
 
                     let content = holding[columnName];
-                    let className = "px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold ";
+                    let className = "px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold";
 
                     if (columnName === "stockSymbol") {
                       className += " text-[#6FD4FF]";

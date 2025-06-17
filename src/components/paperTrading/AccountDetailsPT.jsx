@@ -204,7 +204,7 @@ function AccountDetailsPT({ userId }) {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-xl pb-3 px-2 flex flex-col gap-4">
+    <div className="glass-card rounded-xl pb-3 px-2 flex flex-col gap-4">
       <div className="flex justify-between items-center border-b-2 border-[#FFFFFF1A]">
         <div className="py-2">
           <h1 className="font-semibold text-md">Account : {userId}</h1>

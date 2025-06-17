@@ -56,8 +56,8 @@ function IndiaPortfolio() {
   const renderContent = () => {
     if (!fyersAccessToken) {
       return (
-        <div className="flex flex-col items-center justify-center">
-          <button onClick={handleBroker} className="auth px-4 py-1 mb-4">
+        <div className="min-h-fit h-[80vh] lg:px-32 p-4 flex flex-col items-center">
+          <button onClick={handleBroker} className="auth px-4 py-1mt-4 p-2 port ">
             Connect your Broker
           </button>
         </div>

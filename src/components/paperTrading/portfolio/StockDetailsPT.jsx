@@ -335,29 +335,32 @@ const StockDetailsPT = () => {
     <div className="flex flex-col w-full overflow-hidden">
       <div className="w-full h-full rounded-xl">
         <TabGroup selectedIndex={currentTab} onChange={setCurrentTab} className="h-full flex flex-col">
-          <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3 shrink-0">
-            <TabList className="flex flex-wrap gap-2 sm:gap-4">
-              {categories.map(({ name }) => (
-                <Tab
-                  key={name}
-                  className={({ selected }) => `
-                    rounded-full py-1.5 px-3 text-xs sm:text-sm font-semibold 
-                    focus:outline-none whitespace-nowrap
-                    ${selected 
-                      ? 'bg-[#3A6FF8] text-white dark:port'
-                      : 'text-gray-600 dark:text-gray-300 tab-hover'
-                    }
-                  `}
-                >
-                  <span className="flex items-center gap-1">
-                    {name}
-                  </span>
-                </Tab>
-              ))}
-            </TabList>
+          <div className="relative p-3 shrink-0">
+            {/* Header container with absolute filter button */}
+            <div className="relative flex flex-wrap gap-2 sm:gap-4">
+              <TabList className="flex flex-wrap gap-2 sm:gap-4">
+                {categories.map(({ name }) => (
+                  <Tab
+                    key={name}
+                    className={({ selected }) => `
+                      rounded-full py-1.5 px-3 text-xs sm:text-sm font-semibold 
+                      focus:outline-none whitespace-nowrap
+                      ${selected 
+                        ? 'bg-[#3A6FF8] text-white dark:port'
+                        : 'text-gray-600 dark:text-gray-300 tab-hover'
+                      }
+                    `}
+                  >
+                    <span className="flex items-center gap-1">
+                      {name}
+                    </span>
+                  </Tab>
+                ))}
+              </TabList>
+            </div>
 
-            {/* Filter button - visible in both mobile and desktop */}
-            <div className="relative">
+            {/* Filter button - hidden in mobile, visible in desktop */}
+            <div className="hidden sm:block sm:absolute sm:right-3 sm:top-3">
               <button
                 ref={filterButtonRef}
                 onClick={toggleFilter}
@@ -367,41 +370,14 @@ const StockDetailsPT = () => {
                 <RiMenuLine className="w-5 h-5" />
               </button>
 
-              {/* Filter dropdown - desktop version */}
+              {/* Filter dropdown */}
               {showFilter && (
-                <div
-                  ref={filterDropdownRef}
-                  className="hidden sm:block absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-50 border dark:border-white/10 border-gray-200 min-w-[200px]"
-                >
-                  <h3 className="font-semibold mb-3 dark:text-white">Select columns:</h3>
-                  <div className="flex flex-col gap-2 max-h-[250px] overflow-y-auto">
-                    {columnNames.map((columnName) => (
-                      <label 
-                        key={columnName} 
-                        className="flex items-center p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedColumns[categories[currentTab].key]?.[columnName] ?? true}
-                          onChange={() => handleColumnToggle(columnName)}
-                          className="mr-3 w-4 h-4 rounded border-gray-300 dark:border-gray-600"
-                        />
-                        <span className="text-sm dark:text-gray-300">{columnName}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Filter dropdown - mobile version */}
-              {showFilter && (
-                <div
-                  ref={filterDropdownRef}
-                  className="sm:hidden fixed right-4 top-20 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-50 border dark:border-white/10 border-gray-200 w-[calc(100%-2rem)] max-w-[300px]"
-                  style={{ maxHeight: 'calc(100vh - 120px)' }}
+                <div                  ref={filterDropdownRef}
+                  className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-50 border dark:border-white/10 border-gray-200 w-[200px] overflow-y-auto"
+                  style={{ maxHeight: 'calc(50vh - 120px)' }}
                 >
                   <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-semibold dark:text-white">Select columns:</h3>
+                    <h3 className="font-semibold dark:text-white text-sm">Select columns:</h3>
                     <button
                       onClick={() => setShowFilter(false)}
                       className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
@@ -412,7 +388,7 @@ const StockDetailsPT = () => {
                       </svg>
                     </button>
                   </div>
-                  <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+                  <div className="flex flex-col gap-2">
                     {columnNames.map((columnName) => (
                       <label 
                         key={columnName} 
