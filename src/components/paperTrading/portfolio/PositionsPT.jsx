@@ -260,7 +260,10 @@ import { useTheme } from "../../../contexts/ThemeContext.jsx";
 import { X } from "lucide-react";
 import PlaceOrderModal from "../PlaceOrderModal.jsx";
 import ConfirmationModal from "../../common/ConfirmationModal.jsx";
-import { isWithinTradingHours, isWithinTradingHoursUS } from "../../../utils/helper.js";
+import {
+  isWithinTradingHours,
+  isWithinTradingHoursUS,
+} from "../../../utils/helper.js";
 
 const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -274,7 +277,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   const region = useSelector((state) => state.region);
 
   // ✅ Use appropriate context based on region
-  const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
+  const tradingContext =
+    region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
   const { positions, loading, realtimePrices } = tradingContext;
   const { theme } = useTheme();
@@ -315,7 +319,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   }, [getColumnNames, setColumnNames]);
 
   const handleExitClick = (position) => {
-    const isMarketOpen = region === "usa" ? isWithinTradingHoursUS() : isWithinTradingHours();
+    const isMarketOpen =
+      region === "usa" ? isWithinTradingHoursUS() : isWithinTradingHours();
     if (!isMarketOpen) {
       setConfirmationModalMessage(
         region === "usa"
@@ -340,7 +345,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
 
   const calculatePnL = (position, currentPrice) => {
     const pnl = (currentPrice - position.avgPrice) * position.quantity;
-    const pnlPercentage = ((currentPrice - position.avgPrice) / position.avgPrice) * 100;
+    const pnlPercentage =
+      ((currentPrice - position.avgPrice) / position.avgPrice) * 100;
     return { pnl, pnlPercentage };
   };
 
@@ -357,7 +363,9 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   if (!positions || positions.length === 0) {
-    return <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />;
+    return (
+      <NotAvailable dynamicText={"<strong>Step</strong> into the market!"} />
+    );
   }
 
   return (
@@ -385,7 +393,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                     columnName === "actions" ? "sticky right-0" : ""
                   }`}
                   style={{
-                    background: columnName === "actions" ? getBackgroundStyle() : "none",
+                    background:
+                      columnName === "actions" ? getBackgroundStyle() : "none",
                     zIndex: columnName === "actions" ? 2 : 1,
                   }}
                 >
@@ -397,7 +406,11 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
           <tbody>
             {positions.map((position, index) => {
               const realTimePrice = realtimePrices[position.stockSymbol];
-              const updatedLtp = realTimePrice || position.ltp;
+              if (!realTimePrice)
+                console.log(
+                  `❌ Couldn't fetch real-time price for symbol: ${position.stockSymbol}`
+                );
+              const updatedLtp = realTimePrice || position.ltp || 0;
               const { pnl, pnlPercentage } = calculatePnL(position, updatedLtp);
               const totalInvested = position.quantity * position.avgPrice;
               const currentValue = updatedLtp * position.quantity;
@@ -419,7 +432,9 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                             onClick={() => handleExitClick(position)}
                             disabled={isExiting}
                             className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+                              isExiting
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600"
                             } text-white`}
                           >
                             <X size={16} />
@@ -429,7 +444,8 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                     }
 
                     let content = position[columnName];
-                    let className = "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
+                    let className =
+                      "px-4 whitespace-nowrap overflow-hidden font-semibold py-4";
 
                     if (columnName === "stockSymbol") {
                       className += " text-[#6FD4FF]";
@@ -437,17 +453,24 @@ const PositionsPT = ({ selectedColumns, setColumnNames }) => {
                       content = updatedLtp.toFixed(2);
                     } else if (columnName === "pnl") {
                       content = pnl.toFixed(2);
-                      className += pnl >= 0 ? " text-green-500" : " text-red-500";
+                      className +=
+                        pnl >= 0 ? " text-green-500" : " text-red-500";
                     } else if (columnName === "pnlPercentage") {
                       content = pnlPercentage.toFixed(2) + "%";
-                      className += pnlPercentage >= 0 ? " text-green-500" : " text-red-500";
+                      className +=
+                        pnlPercentage >= 0
+                          ? " text-green-500"
+                          : " text-red-500";
                     } else if (columnName === "avgPrice") {
                       content = parseFloat(position[columnName]).toFixed(2);
                     } else if (columnName === "totalInvested") {
                       content = totalInvested.toFixed(2);
                     } else if (columnName === "currentValue") {
                       content = currentValue.toFixed(2);
-                      className += currentValue > totalInvested ? " text-green-500" : " text-red-500";
+                      className +=
+                        currentValue > totalInvested
+                          ? " text-green-500"
+                          : " text-red-500";
                     }
 
                     return (
