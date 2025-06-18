@@ -14,7 +14,7 @@ import {
   isWithinTradingHours,
 } from "../../utils/helper";
 import Loading from "../../components/common/Loading";
-import { useTheme } from "@emotion/react";
+import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation } from "react-router-dom";
 
 const botColors = [
@@ -51,7 +51,7 @@ function Cards({ title, value }) {
             "radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)",
         }
       : {
-          backgroundColor: "transparent",
+          backgroundColor: "white",
           borderColor: "rgba(0, 0, 0, 0.1)",
         };
 
