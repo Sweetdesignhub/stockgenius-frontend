@@ -56,8 +56,8 @@ function IndiaPortfolio() {
   const renderContent = () => {
     if (!fyersAccessToken) {
       return (
-        <div className="flex flex-col items-center justify-center">
-          <button onClick={handleBroker} className="auth px-4 py-1 mb-4">
+        <div className="min-h-fit h-[80vh] lg:px-32 p-4 flex flex-col items-center">
+          <button onClick={handleBroker} className="auth px-4 py-1mt-4 p-2 port ">
             Connect your Broker
           </button>
         </div>
@@ -78,24 +78,22 @@ function IndiaPortfolio() {
   };
 
   return (
-    <div className="relative w-full">
-      <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
-        {/* Bull image - hidden on small screens */}
+    <div className="-z-10">
+      <div className="min-h-fit h-[80vh] lg:px-32 p-4 relative ">
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0 w-[100px] sm:w-[120px] lg:w-[165px] hidden sm:block"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F87dfd2fd4eea4f378d9e578d4c5dd7d0"
           alt="bull"
         />
-        {/* Bear image - hidden on small screens */}
         <img
           loading="lazy"
-          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-0 w-[100px] sm:w-[120px] lg:w-[160px] hidden sm:block"
-          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
+          className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
+          src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F9815d9f59dfd4f65b9e50d5dcbb0152c"
           alt="bear"
-        />
+        /> 
         
-        <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10 min-h-[80vh] sm:min-h-[80vh] md:min-h-[80vh] lg:min-h-[85vh] xl:min-h-[85vh] 2xl:min-h-[85vh] 4xl:min-h-[40vh] news-table rounded-2xl">
+        <div className=" sbg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border  border-white/10">
           <div className="py-2 sm:py-3 md:py-4 lg:py-5 px-2 sm:px-3 md:px-4 lg:px-5 flex flex-col rounded-2xl">
             {renderContent()}
           </div>

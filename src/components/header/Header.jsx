@@ -396,20 +396,7 @@ export default function Header() {
             ))}          </div>
         ) : (
           ""
-        )}        <div className="hidden lg:flex  lg:justify-end">
-          <div className="flex items-center gap-4">
-            {currentUser && region === "india" && (
-              <button 
-                onClick={() => setIsPricingOpen(true)}
-                className="flex items-center rounded-full px-3 py-1 text-[13px] xl:text-[13px] lg:text-[10px] whitespace-nowrap
-                bg-white/10 backdrop-blur-md
-                text-amber-500 font-medium transition-all duration-200 
-                shadow-lg hover:shadow-amber-500/30
-                border-2 border-amber-500/50 hover:border-amber-400
-                dark:bg-[rgba(251,191,36,0.1)]">
-                Pricing
-              </button>
-            )}
+        )}        <div className="hidden lg:flex  lg:justify-end">          <div className="flex items-center gap-4">
             <ToggleButton />
 
             {currentUser ? (
@@ -460,32 +447,25 @@ export default function Header() {
                   )}
                 </div>
                 <Menu as="div" className="relative">
-                  <div>
-                    <MenuButton className="relative flex rounded-full text-md focus:outline-none">
+                  <div>                    <MenuButton className="relative flex rounded-full text-md focus:outline-none">
                       <div className="flex items-center px-1">
                         <img
-                          className="h-9 w-9 xl:h-9 xl:w-9 lg:h-7 lg:w-7 mr-1 rounded-xl"
+                          className="h-9 w-9 xl:h-9 xl:w-9 lg:h-7 lg:w-7 rounded-xl"
                           src={currentUser?.avatar}
                           alt="User avatar"
                           loading="lazy"
                         />
+                        {currentUser && (
+                          <span className="ml-2 mr-2 text-sm sm:text-base lg:text-sm xl:text-base font-medium text-gray-600 dark:text-gray-300 hidden sm:inline-block">
+                            {currentUser.name?.slice(0, 6)}
+                          </span>
+                        )}
                         <div className="flex items-center">
-                          <h2 className="mr-1 capitalize xl:text-base lg:text-xs">
-                            {currentUser.name.slice(0, 10)}
-                          </h2>
                           <FaAngleDown className="xl:h-4 xl:w-4 lg:h-2.5 lg:w-2.5" />
                         </div>
                       </div>
                     </MenuButton>
-                  </div>
-                  <Transition
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
+                  </div>                  
                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <MenuItem>
                         {({ active }) => (
@@ -499,8 +479,7 @@ export default function Header() {
                             Profile
                           </Link>
                         )}
-                      </MenuItem>
-                      <MenuItem>
+                      </MenuItem><MenuItem>
                         {({ active }) => (
                           <Link
                             to={`/${region}/brokerage`}
@@ -513,6 +492,21 @@ export default function Header() {
                           </Link>
                         )}
                       </MenuItem>
+                      {region === "india" && (
+                        <MenuItem>
+                          {({ active }) => (
+                            <button
+                              onClick={() => setIsPricingOpen(true)}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block w-full text-left px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Pricing
+                            </button>
+                          )}
+                        </MenuItem>
+                      )}
                       <MenuItem>
                         {({ active }) => (
                           <Link
@@ -527,7 +521,7 @@ export default function Header() {
                         )}
                       </MenuItem>
                     </MenuItems>
-                  </Transition>
+                  
                 </Menu>
               </div>
             ) : (

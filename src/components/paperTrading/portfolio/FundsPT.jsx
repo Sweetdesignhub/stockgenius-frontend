@@ -231,25 +231,28 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
   }
 
   if (!fundsData || fundsData.length === 0) {
-    return <NotAvailable dynamicText={"Opportunities are <strong>endless</strong>"} />;
+    return (
+      <NotAvailable
+        dynamicText={"Opportunities are <strong>endless</strong>"}
+      />
+    );
   }
 
   return (
-    <div
-      className="h-[55vh] overflow-auto"
-      style={{
-        background: theme === "light" ? "#ffffff" : "#402788",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-      }}
-    >
+    <div className="relative min-h-[45vh] max-h-[45vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:port 
+      shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] 
+      dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)]
+      border border-transparent
+      dark:backdrop-blur-[20px]
+      ">
+      
       <table className="min-w-full border-collapse">
         <thead>
           <tr>
             {selectedColumns.map((columnName) => (
               <th
                 key={columnName}
-                className="px-4 capitalize whitespace-nowrap overflow-hidden py-2 font-[poppins] text-sm font-normal dark:text-[#FFFFFF99] text-left"
+                className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap capitalize font-[poppins] font-normal dark:text-[#FFFFFF99] text-left"
               >
                 {columnName.replace(/([a-z])([A-Z])/g, "$1 $2")} {/* Convert camelCase to spaced */}
               </th>
@@ -262,7 +265,7 @@ const FundsPT = ({ selectedColumns, setColumnNames }) => {
               {selectedColumns.map((columnName) => (
                 <td
                   key={`${columnName}-${fund._id}`}
-                  className="px-4 whitespace-nowrap overflow-hidden font-semibold py-4"
+                  className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap text-left font-semibold" 
                 >
                   {fund[columnName] ?? "-"}
                 </td>

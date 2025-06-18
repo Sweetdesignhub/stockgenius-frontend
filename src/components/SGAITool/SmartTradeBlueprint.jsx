@@ -200,10 +200,7 @@ const SmartTradeBlueprint = () => {
     // console.log("cdskc", expandedView);
   };
   return (
-    <div
-      className={`rounded-2xl backdrop-blur-md w-[98%] sm:w-[96%] md:w-[94%] lg:w-[92%] xl:w-[90%] 2xl:w-[88%] mx-auto shadow-lg py-3 px-2 sm:px-3 overflow-hidden ${
-        theme === "dark" ? "bg-white/10" : "bg-[#CCD7FF40]"
-      }`}
+    <div      className={`dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl backdrop-blur-md w-[98%] sm:w-[96%] md:w-[94%] lg:w-[92%] xl:w-[90%] 2xl:w-[88%] mx-auto shadow-lg py-3 px-2 sm:px-3 overflow-hidden `}
     >
       {/* Your content goes here */}
       <Header onReRun={handleReRun} isLoading={isLoading} />

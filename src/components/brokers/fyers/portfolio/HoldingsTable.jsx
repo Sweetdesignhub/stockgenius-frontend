@@ -102,8 +102,12 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
 
   // columnNames = ["symbol", ...columnNames.filter((col) => col !== "symbol")];
 
-  return (
-    <div className="h-[44vh] overflow-auto scrollbar-hide">
+  return (   <div className="relative min-h-[20vh] max-h-[42vh] overflow-auto pt-5 pl-5 scrollbar-hide rounded-xl dark:glow 
+      shadow-[0px_15px_34px_0px_rgba(0,0,0,0.12)] 
+      dark:shadow-[0px_10px_30px_0px_rgba(73,123,255,0.7)_inset,0px_10px_40px_0px_rgba(63,74,175,0.5)]
+      border border-transparent
+      dark:backdrop-blur-[20px]
+      ">
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -120,11 +124,18 @@ const HoldingsTable = ({ selectedColumns, setColumnNames }) => {
         <tbody>
           {holdingsData.map((holding, index) => (
             <tr key={index}>
-              {selectedColumns.map((columnName) => (
-                <td
+              {selectedColumns.map((columnName) => (                <td
                   key={`${columnName}-${index}`}
                   className={`px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 lg:py-3 text-[10px] sm:text-[11px] lg:text-sm whitespace-nowrap overflow-hidden font-semibold ${
                     columnName === "symbol" ? "text-[#6FD4FF]" : ""
+                  } ${
+                    columnName === "pl" 
+                      ? Number(holding[columnName]) < 0 
+                        ? "text-[rgba(252,69,69,1)]" 
+                        : Number(holding[columnName]) > 0 
+                          ? "text-[rgba(126,243,107,1)]" 
+                          : ""
+                      : ""
                   }`}
                 >
                   {columnName === "pl" || columnName === "marketVal"

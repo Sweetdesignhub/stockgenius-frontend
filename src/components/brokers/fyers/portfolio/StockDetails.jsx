@@ -11,16 +11,12 @@ import { RiMenuLine } from "react-icons/ri";
 import { useData } from "../../../../contexts/FyersDataContext";
 
 const StockDetails = () => {
-  // const [ordersCount, setOrdersCount] = useState(0);
-  // const [positionsCount, setPositionsCount] = useState(0);
-  // const [holdingsCount, setHoldingsCount] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
   const [columnNames, setColumnNames] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState({});
   const [currentTab, setCurrentTab] = useState(0);
-  const filterRef = useRef(null);
-  //  const [isInitialDataLoaded, setIsInitialDataLoaded] = useState(false);
-  //  const { currentUser } = useSelector((state) => state.user);
+  const filterButtonRef = useRef(null);
+  const filterDropdownRef = useRef(null);
 
   const {
     holdings = { holdings: [] },
@@ -93,17 +89,22 @@ const StockDetails = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target) &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
         setShowFilter(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    if (showFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [showFilter]);
 
   const toggleFilter = () => {
     setShowFilter(!showFilter);
@@ -159,64 +160,64 @@ const StockDetails = () => {
   // if (!fyersAccessToken) {
   //   return <div className="text-center">Please connect your broker...</div>;
   // }
-  return (    <div className="flex flex-col w-full overflow-hidden max-h-[calc(100vh-14rem)] lg:max-h-[calc(100vh-16rem)] xl:max-h-[calc(100vh-17rem)] 2xl:max-h-[calc(100vh-19rem)]">
-      <div className="w-full h-full auth rounded-xl">
+  return (
+    <div className="flex flex-col w-full overflow-hidden">
+      <div className="w-full h-full rounded-xl">
         <TabGroup selectedIndex={currentTab} onChange={setCurrentTab} className="h-full flex flex-col">
           <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3 shrink-0">
             <TabList className="flex flex-wrap gap-2 sm:gap-4">
-              {categories.map(({ name, count }) => (
+              {categories.map(({ name }) => (
                 <Tab
                   key={name}
                   className={({ selected }) => `
                     rounded-full py-1.5 px-3 text-xs sm:text-sm font-semibold 
-                    transition-all duration-200 ease-in-out
                     focus:outline-none whitespace-nowrap
                     ${selected 
-                      ? 'bg-gray-100 dark:bg-white/10 dark:text-white'
-                      : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5'
+                      ? 'bg-[#3A6FF8] text-white dark:port'
+                      : 'text-gray-600 dark:text-gray-300 tab-hover'
                     }
                   `}
                 >
-                  <span className="flex items-center gap-1">
-                    {name}
-                    {typeof count !== 'undefined' && (
-                      <span className={`${
-                        count > 0 ? 'bg-blue-500' : 'bg-gray-500'
-                      } text-white text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center`}>
-                        {count}
-                      </span>
-                    )}
-                  </span>
+                  {name}
                 </Tab>
               ))}
             </TabList>
 
             <button
-              ref={filterRef}
+              ref={filterButtonRef}
               onClick={toggleFilter}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors duration-200"
+              className="hidden sm:block p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors duration-200"
             >
               <RiMenuLine className="w-5 h-5" />
-            </button>
-
-            {showFilter && (
+            </button>            {showFilter && (
               <div
-                className="absolute right-0 top-12 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-20 border dark:border-white/10 border-gray-200"
-                style={{ maxHeight: "300px", overflowY: "auto", width: "200px" }}
+                ref={filterDropdownRef}
+                className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-lg p-4 z-50 border dark:border-white/10 border-gray-200 w-[200px] overflow-y-auto"
+                style={{ maxHeight: 'calc(50vh - 120px)' }}
               >
-                <h3 className="font-semibold mb-2 dark:text-white">Select columns:</h3>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-semibold dark:text-white text-sm">Select columns:</h3>
+                  <button
+                    onClick={() => setShowFilter(false)}
+                    className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                    aria-label="Close filter"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
                 <div className="flex flex-col gap-2">
                   {columnNames.map((columnName) => (
-                    <label key={columnName} className="flex items-center">
+                    <label 
+                      key={columnName} 
+                      className="flex items-center p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md cursor-pointer"
+                    >
                       <input
                         type="checkbox"
-                        checked={
-                          selectedColumns[categories[currentTab].key]?.[
-                            columnName
-                          ] ?? true
-                        }
+                        checked={selectedColumns[categories[currentTab].key]?.[columnName] ?? true}
                         onChange={() => handleColumnToggle(columnName)}
-                        className="mr-2"
+                        className="mr-3 w-4 h-4 rounded border-gray-300 dark:border-gray-600"
                       />
                       <span className="text-sm dark:text-gray-300">{columnName}</span>
                     </label>

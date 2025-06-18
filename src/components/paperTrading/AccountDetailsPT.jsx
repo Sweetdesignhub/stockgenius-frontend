@@ -210,7 +210,7 @@ function AccountDetailsPT({ userId }) {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="news-table rounded-xl pb-3 px-2 flex flex-col gap-4">
+    <div className="glass-card rounded-xl pb-3 px-2 flex flex-col gap-4">
       <div className="flex justify-between items-center border-b-2 border-[#FFFFFF1A]">
         <div className="py-2">
           <h1 className="font-semibold text-md">Account : {userId}</h1>
@@ -241,12 +241,10 @@ function AccountDetailsPT({ userId }) {
             valueColor: getPnLColor(todaysProfit).textColor,
             bgColor: getPnLColor(todaysProfit).bgColor,
           },
-          {
-            title: "Cash Balance",
+          {            title: "Cash Balance",
             value: cashBalance,
-            valueColor: "text-[#45FCFC]",
-            bgColor:
-              "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]",
+            valueColor: "text-[#0A8F8F] dark:text-[#45FCFC]",
+            bgColor: "bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.5),_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.5))] dark:bg-[linear-gradient(to_bottom,_rgba(70,_229,_229,_0.3),_rgba(70,_229,_229,_0.1),_rgba(70,_229,_229,_0.3))]",
           },
         ].map((card, index) => (
           <Cards
