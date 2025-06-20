@@ -43,7 +43,7 @@ export function UsaPaperTradingProvider({ children }) {
     // console.log("Emit Address USA:", emitAddress);
 
     socket.on(emitAddress, (data) => {
-      console.log("💹 WebSocket stock data received:", data); // helpful debug log
+      // console.log("💹 WebSocket stock data received:", data); // helpful debug log
       setStocks(data);
       const pricesObject = data.reduce((acc, { ticker, price }) => {
         if (ticker && price != null) acc[ticker] = price;

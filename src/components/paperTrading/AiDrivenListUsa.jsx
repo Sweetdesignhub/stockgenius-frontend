@@ -136,8 +136,6 @@ function AiDrivenListUsa() {
     setPredictionFilter(filter);
   };
   const handleBuy = (row) => {
-    setSelectedRow({ ...row, action: "BUY" });
-    setModalOpen(true);
     if (isWithinTradingHoursUS()) {
       setSelectedRow({ ...row, action: "BUY" });
       setModalOpen(true);
