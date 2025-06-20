@@ -94,7 +94,7 @@ function IndiaPortfolio() {
         /> 
         
         <div className=" sbg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-2xl border  border-white/10">
-          <div className="py-2 sm:py-3 md:py-4 lg:py-5 px-2 sm:px-3 md:px-4 lg:px-5 flex flex-col rounded-2xl">
+          <div className="h-[85vh] py-2 sm:py-3 md:py-4 lg:py-5 px-2 sm:px-3 md:px-4 lg:px-5 flex flex-col rounded-2xl">
             {renderContent()}
           </div>
         </div>

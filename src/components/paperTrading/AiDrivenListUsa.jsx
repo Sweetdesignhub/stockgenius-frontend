@@ -146,7 +146,7 @@ function AiDrivenListUsa() {
       setIsConfirmationModalOpen(true);
     }
   };
-  
+
   const handleSell = (row) => {
     if (isWithinTradingHoursUS()) {
       setSelectedRow({ ...row, action: "SELL" });
@@ -158,7 +158,6 @@ function AiDrivenListUsa() {
       setIsConfirmationModalOpen(true);
     }
   };
-  
 
   const handleModalClose = () => {
     setModalOpen(false);

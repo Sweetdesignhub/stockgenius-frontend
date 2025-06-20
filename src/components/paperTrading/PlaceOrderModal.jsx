@@ -157,7 +157,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   return (
     <>
       <div className="fixed inset-0 z-1 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="w-full max-w-lg bg-[#1C1C1E] rounded-lg shadow-lg">
+        <div className="w-full max-w-lg bg-[#1C1C1E] rounded-lg shadow-lg items-center justify-center">
           {/* Modal Header */}
           <div
             className={`px-6 py-4 border-b-gray-900 bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)] text-white`}

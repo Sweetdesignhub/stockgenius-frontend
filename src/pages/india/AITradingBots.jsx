@@ -16,6 +16,7 @@ import {
 import Loading from "../../components/common/Loading";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation } from "react-router-dom";
+import { useData } from "../../contexts/FyersDataContext";
 
 const botColors = [
   "#F62024",
@@ -86,7 +87,8 @@ function AITradingBots() {
   const [error, setError] = useState(null);
   const location = useLocation();
   const isAITradingPage = location.pathname === "/india/AI-Trading-Bots";
-
+  const { proUsageLimit } = useData();
+  console.log("PRO USAGE LIMIT:", proUsageLimit);
   const [allBotsTime, setAllBotsTime] = useState({
     totalTodaysBotTime: 0,
     totalCurrentWeekTime: 0,
@@ -94,8 +96,9 @@ function AITradingBots() {
 
   const { currentUser } = useSelector((state) => state.user);
   const userPlan = currentUser?.plan || "basic";
+  // console.log("PRO Plan LIMIT:", currentUser?.plan);
 
-  console.log("crt", currentUser); // Debug: Log currentUser
+  // console.log("crt", currentUser); // Debug: Log currentUser
 
   const fetchBots = useCallback(
     async (retryCount = 0) => {
@@ -106,7 +109,9 @@ function AITradingBots() {
           return;
         }
         setIsInitialLoading(false);
-        setError("User not logged in or user ID missing. Please refresh the page.");
+        setError(
+          "User not logged in or user ID missing. Please refresh the page."
+        );
         return;
       }
 
@@ -123,7 +128,12 @@ function AITradingBots() {
           { withCredentials: true, signal: controller.signal }
         );
         clearTimeout(timeoutId);
-        console.log("AI bots response:", response.data, "Status:", response.status);
+        console.log(
+          "AI bots response:",
+          response.data,
+          "Status:",
+          response.status
+        );
 
         if (!response?.data?.bots || !Array.isArray(response.data?.bots)) {
           throw new Error("Invalid bot data received from server");
@@ -135,7 +145,10 @@ function AITradingBots() {
 
         sortedBots.forEach((bot) => {
           if (!bot._id || !bot.dynamicData || !Array.isArray(bot.dynamicData)) {
-            console.warn(`Invalid bot data for bot ID ${bot._id || "unknown"}`, bot);
+            console.warn(
+              `Invalid bot data for bot ID ${bot._id || "unknown"}`,
+              bot
+            );
           }
         });
 
@@ -167,7 +180,9 @@ function AITradingBots() {
           error.response?.status
         );
         if (error.name === "AbortError") {
-          setError("Request timed out. Please check your connection and try again.");
+          setError(
+            "Request timed out. Please check your connection and try again."
+          );
         } else {
           setError(
             error.response?.data?.error ||
@@ -418,8 +433,14 @@ function AITradingBots() {
       return (profit / investment) * 100;
     };
 
-    const todayProfitPercentage = calculatePercentage(todayTotalProfit, todayTotalInvestment);
-    const weekProfitPercentage = calculatePercentage(weekTotalProfit, weekTotalInvestment);
+    const todayProfitPercentage = calculatePercentage(
+      todayTotalProfit,
+      todayTotalInvestment
+    );
+    const weekProfitPercentage = calculatePercentage(
+      weekTotalProfit,
+      weekTotalInvestment
+    );
 
     return [
       {
@@ -495,8 +516,9 @@ function AITradingBots() {
               </button>
             </div>
           </div>
-
-          {userPlan === "basic" && (
+          {/* usageData?.aiLiveTrading?.dailyTransactions  */}
+          {(userPlan === "basic" ||
+            (currentUser.plan === "pro" && proUsageLimit >= 10)) && (
             <div className="p-4">
               <div className="bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 text-center">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">

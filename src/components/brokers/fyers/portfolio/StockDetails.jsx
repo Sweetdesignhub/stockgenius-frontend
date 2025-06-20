@@ -161,7 +161,7 @@ const StockDetails = () => {
   //   return <div className="text-center">Please connect your broker...</div>;
   // }
   return (
-    <div className="flex flex-col w-full overflow-hidden">
+    <div className="h-[70%] flex flex-col w-full overflow-hidden">
       <div className="w-full h-full rounded-xl">
         <TabGroup selectedIndex={currentTab} onChange={setCurrentTab} className="h-full flex flex-col">
           <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-3 shrink-0">
@@ -227,7 +227,7 @@ const StockDetails = () => {
             )}
           </div>
 
-          <div className="overflow-hidden rounded-lg h-[calc(100%-4rem)]">
+          <div className="overflow-hidden rounded-lg h-[100%]">
             <TabPanels className="h-full">
               {categories.map(({ name, component: Component }) => (
                 <TabPanel key={name} className="rounded-xl p-2 overflow-y-auto h-full">

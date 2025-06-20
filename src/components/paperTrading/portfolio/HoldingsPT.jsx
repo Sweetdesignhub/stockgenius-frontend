@@ -216,7 +216,10 @@ import NotAvailable from "../../common/NotAvailable.jsx";
 import PlaceOrderModal from "../PlaceOrderModal";
 import ConfirmationModal from "../../common/ConfirmationModal.jsx";
 import { X } from "lucide-react";
-import { isWithinTradingHours, isWithinTradingHoursUS } from "../../../utils/helper.js";
+import {
+  isWithinTradingHours,
+  isWithinTradingHoursUS,
+} from "../../../utils/helper.js";
 import { useTheme } from "../../../contexts/ThemeContext.jsx";
 import { useSelector } from "react-redux";
 import { usePaperTrading } from "../../../contexts/PaperTradingContext.jsx";
@@ -233,7 +236,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   const region = useSelector((state) => state.region);
 
   // ✅ Use appropriate context based on region
-  const tradingContext = region === "usa" ? useUsaPaperTrading() : usePaperTrading();
+  const tradingContext =
+    region === "usa" ? useUsaPaperTrading() : usePaperTrading();
 
   const { holdings, loading, realtimePrices } = tradingContext;
   const { theme } = useTheme();
@@ -271,7 +275,8 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
   }, [getColumnNames, setColumnNames]);
 
   const handleExitClick = (holding) => {
-    const isMarketOpen = region === "usa" ? isWithinTradingHoursUS() : isWithinTradingHours();
+    const isMarketOpen =
+      region === "usa" ? isWithinTradingHoursUS() : isWithinTradingHours();
     if (!isMarketOpen) {
       setConfirmationModalMessage(
         region === "usa"
@@ -336,7 +341,12 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
           <tbody>
             {holdings.map((holding, index) => {
               const realTimePrice = realtimePrices[holding.stockSymbol];
-              const updatedLtp = realTimePrice || holding.ltp;
+              if (!realTimePrice)
+                console.log(
+                  `❌ Couldn't fetch real-time price for symbol: ${holding.stockSymbol}`
+                );
+
+              const updatedLtp = realTimePrice || holding.ltp || 0;
               const { pnl, pnlPercentage } = calculatePnL(holding, updatedLtp);
 
               const totalInvested = holding.investedValue;
@@ -358,7 +368,9 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                             onClick={() => handleExitClick(holding)}
                             disabled={isExiting}
                             className={`flex items-center justify-center px-2 py-1 rounded-md text-sm transition-colors ${
-                              isExiting ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+                              isExiting
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600"
                             } text-white`}
                           >
                             <X size={16} />
@@ -376,22 +388,31 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
                       content = updatedLtp.toFixed(2);
                     } else if (columnName === "pnl") {
                       content = pnl.toFixed(2);
-                      className += pnl >= 0 ? " text-green-500" : " text-red-500";
+                      className +=
+                        pnl >= 0 ? " text-green-500" : " text-red-500";
                     } else if (columnName === "pnlPercentage") {
                       content = pnlPercentage.toFixed(2) + "%";
-                      className += pnlPercentage >= 0 ? " text-green-500" : " text-red-500";
+                      className +=
+                        pnlPercentage >= 0
+                          ? " text-green-500"
+                          : " text-red-500";
                     } else if (columnName === "averagePrice") {
                       content = parseFloat(holding[columnName]).toFixed(2);
                     } else if (columnName === "totalInvested") {
                       content = totalInvested.toFixed(2);
                     } else if (columnName === "currentValue") {
                       content = currentValue.toFixed(2);
-                      className += currentValue > totalInvested ? " text-green-500" : " text-red-500";
+                      className +=
+                        currentValue > totalInvested
+                          ? " text-green-500"
+                          : " text-red-500";
                     }
 
                     return (
                       <td key={`${columnName}-${index}`} className={className}>
-                        {content !== undefined && content !== null ? content : "-"}
+                        {content !== undefined && content !== null
+                          ? content
+                          : "-"}
                       </td>
                     );
                   })}
@@ -428,4 +449,3 @@ const HoldingsPT = ({ selectedColumns, setColumnNames }) => {
 };
 
 export default HoldingsPT;
-

@@ -40,7 +40,6 @@
 //   return `${dayNumber}${ordinalSuffix}-${month}-${year} , ${time}`;
 // };
 
-
 const getOrdinalSuffix = (day) => {
   if (day > 3 && day < 21) return "th"; // Covers 11th - 19th
   switch (day % 10) {

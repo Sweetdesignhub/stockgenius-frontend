@@ -55,7 +55,7 @@ import TrophyTab from "./pages/eLearning/TrophyTab.jsx";
 import LibraryTab from "./pages/eLearning/LibraryTab.jsx";
 import GroupTab from "./pages/eLearning/GroupTab.jsx";
 import SGAITool from "./pages/SGAITool";
-import SuccessPayment from "./components/pricing/SuccessPayment.jsx"; 
+import SuccessPayment from "./components/pricing/SuccessPayment.jsx";
 import FailedPayment from "./components/pricing/FailedPayment.jsx";
 import PlanSelectDialog from "./components/pricing/PlanSelectDialog.jsx";
 import Dashboard from "./components/pricing/Dashboard.jsx";
@@ -88,22 +88,29 @@ function MainApp() {
   const [showPricingDialog, setShowPricingDialog] = useState(false);
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate();  const { currentUser } = useSelector((state) => state.user);
-  const showPlanSelectDialog = useSelector((state) => state.pricing.showPlanSelectDialog);
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
+  const showPlanSelectDialog = useSelector(
+    (state) => state.pricing.showPlanSelectDialog
+  );
   const region = useSelector((state) => state.region);
 
   // Effect to show pricing dialog after login/signup
   useEffect(() => {
     // Don't show dialog if user is coming from payment pages
-    const isFromPayment = location.pathname.includes('/payment/');
-    
-    if (currentUser && (!currentUser.plan || currentUser.plan === 'basic') && !isFromPayment) {
+    const isFromPayment = location.pathname.includes("/payment/");
+
+    if (
+      currentUser &&
+      (!currentUser.plan || currentUser.plan === "basic") &&
+      !isFromPayment
+    ) {
       // Get the timestamp of when user logged in
-      const loginTimestamp = localStorage.getItem('loginTimestamp');
+      const loginTimestamp = localStorage.getItem("loginTimestamp");
       const now = new Date().getTime();
-      
+
       // Only show if user just logged in (within last 5 seconds)
-      if (loginTimestamp && (now - parseInt(loginTimestamp)) < 5000) {
+      if (loginTimestamp && now - parseInt(loginTimestamp) < 5000) {
         const timer = setTimeout(() => {
           setShowPricingDialog(true);
         }, 2000);
@@ -238,14 +245,8 @@ function MainApp() {
             <Route path="/backtesting-tool" element={<SGAITool />} />
             <Route path="/pricing" element={<PlanSelectDialog />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route
-              path="/payment/success"
-              element={<SuccessPayment/>}
-            />
-            <Route
-              path="/payment/cancel"
-              element={<FailedPayment/>}
-            />
+            <Route path="/payment/success" element={<SuccessPayment />} />
+            <Route path="/payment/cancel" element={<FailedPayment />} />
             {/* sgai-tool */}
             {/* India routes */}
             <Route path="/india/dashboard" element={<IndiaDashboard />} />
@@ -274,7 +275,6 @@ function MainApp() {
               element={<PaperTradingAutoTrade />}
             />
 
-
             {/* admin route */}
             <Route element={<OnlyAdminPrivateRoute />}>
               <Route path="/india/admin-create-ipos" element={<CreateIpos />} />
@@ -295,22 +295,23 @@ function MainApp() {
             />
           </Route>
         </Routes>
-      </main>      <SessionExpiredModal
+      </main>{" "}
+      <SessionExpiredModal
         showModal={showSessionExpired}
         onSignOut={handleSignOut}
       />
       {currentUser && <ChatbotComponent />}
       {currentUser && region === "india" && (
         <>
-          <PricingDialog 
-            isOpen={showPricingDialog} 
+          <PricingDialog
+            isOpen={showPricingDialog}
             onClose={() => setShowPricingDialog(false)}
-            currentPlan={currentUser?.plan || 'basic'}
+            currentPlan={currentUser?.plan || "basic"}
           />
-          <PlanSelectDialog 
-            isOpen={showPlanSelectDialog} 
+          <PlanSelectDialog
+            isOpen={showPlanSelectDialog}
             onClose={() => dispatch(setShowPlanSelectDialog(false))}
-            currentPlan={currentUser?.plan || 'basic'}
+            currentPlan={currentUser?.plan || "basic"}
           />
         </>
       )}

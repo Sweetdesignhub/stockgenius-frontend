@@ -15,12 +15,21 @@ function LandingPage() {
   const region = useSelector((state) => state.region);
 
   useEffect(() => {
+    const timeout = setTimeout(() => setIsLoading(false), 5000); // fallback
+
     const images = document.querySelectorAll("img");
     const totalImages = images.length;
+
+    if (totalImages === 0) {
+      clearTimeout(timeout);
+      setIsLoading(false);
+      return;
+    }
 
     const handleLoad = () => {
       imagesLoaded.current++;
       if (imagesLoaded.current === totalImages) {
+        clearTimeout(timeout);
         setIsLoading(false);
       }
     };
@@ -34,6 +43,7 @@ function LandingPage() {
     });
 
     return () => {
+      clearTimeout(timeout);
       images.forEach((image) => {
         image.removeEventListener("load", handleLoad);
       });

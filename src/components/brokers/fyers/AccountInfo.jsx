@@ -29,7 +29,7 @@ function AccountInfo() {
   }
 
   return (    
-    <div className='flex flex-col lg:flex-row items-start lg:items-center justify-between py-3 lg:py-4 space-y-6 lg:space-y-0 w-full max-w-full overflow-x-hidden page-scrollbar'>
+    <div className='h-[20%] flex flex-col lg:flex-row items-start lg:items-center justify-between py-3 lg:py-4 space-y-6 lg:space-y-0 w-full max-w-full overflow-x-hidden page-scrollbar'>
       <div className='w-full lg:w-1/3 shrink-0'>
         <div className='flex flex-col'>
           <h1 className='font-semibold text-base sm:text-lg whitespace-nowrap overflow-hidden text-ellipsis'>Account: {profile.fy_id}</h1>

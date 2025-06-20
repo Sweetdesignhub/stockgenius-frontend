@@ -24,7 +24,7 @@ export function DataProvider({ children }) {
   const [trades, setTrades] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [proUsageLimit, setProUsageLimit] = useState(0);
   const { currentUser } = useSelector((state) => state.user);
 
   const fetchData = async () => {
@@ -39,12 +39,17 @@ export function DataProvider({ children }) {
           { headers }
         );
         const data = response.data[0];
-
+        console.log("Data FYERS is:", data);
         setProfile(data.profile);
         setFunds(data.funds || {});
         setHoldings(data.holdings || []);
         setPositions(data.positions || {});
         setTrades(data.trades || []);
+        setProUsageLimit(
+          (data.trades.tradeBook || []).filter((trade) =>
+            trade.orderTag?.includes("autotrade")
+          ).length
+        );
         setOrders(data.orders || []);
       }
     } catch (error) {
@@ -71,7 +76,16 @@ export function DataProvider({ children }) {
 
   return (
     <FyersDataContext.Provider
-      value={{ profile, holdings, funds, positions, trades, orders, loading }}
+      value={{
+        profile,
+        holdings,
+        funds,
+        positions,
+        trades,
+        orders,
+        loading,
+        proUsageLimit,
+      }}
     >
       {children}
     </FyersDataContext.Provider>
