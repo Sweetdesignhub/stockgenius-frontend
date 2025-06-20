@@ -37,7 +37,7 @@ const LineChart = ({ data }) => {
       y: {
         title: {
           display: true,
-          text: "Price (₹)",
+          text: "Price",
         },
       },
     },

@@ -26,6 +26,8 @@ export function PaperTradingProvider({ children }) {
   });
   const [stocks, setStocks] = useState([]);
   const [investedAmount, setInvestedAmount] = useState(0);
+  const [isFirstLoadPendingProfitCalc, setIsFirstLoadPendingProfitCalc] =
+    useState(false);
 
   const { currentUser } = useSelector((state) => state.user);
   const region = useSelector((state) => state.region);
@@ -40,7 +42,7 @@ export function PaperTradingProvider({ children }) {
     // console.log("Emit Address USA:", emitAddress);
 
     socket.on(emitAddress, (data) => {
-      // console.log("💹 WebSocket stock data received:", data); // helpful debug log
+      console.log("💹 WebSocket stock data received:", data); // helpful debug log
       setStocks(data);
       const pricesObject = data.reduce((acc, { ticker, price }) => {
         if (ticker && price != null) acc[ticker] = price;
@@ -138,6 +140,7 @@ export function PaperTradingProvider({ children }) {
 
         if (isFirstLoad) {
           setLoading(true); // ✅ Only set loading on the first load
+          setIsFirstLoadPendingProfitCalc(true);
         }
 
         const [
@@ -179,20 +182,21 @@ export function PaperTradingProvider({ children }) {
           ...new Set([...positionSymbols, ...holdingSymbols]),
         ];
 
-        if (uniqueSymbols.length > 0) {
-          const prices = realtimePrices; // await fetchRealtimePrices(uniqueSymbols);
-          calculateProfits(prices, positionsArray, holdingsArray);
-        } else {
-          calculateProfits({}, positionsArray, holdingsArray);
-        }
+        // if (uniqueSymbols.length > 0) {
+        //   const prices = realtimePrices; // await fetchRealtimePrices(uniqueSymbols);
+        //   calculateProfits(prices, positionsArray, holdingsArray);
+        // } else {
+        //   calculateProfits({}, positionsArray, holdingsArray);
+        // }
       } catch (error) {
         setError("Error fetching paper trading data");
         console.error("Error fetching data:", error);
-      } finally {
-        if (isFirstLoad) {
-          setLoading(false); // ✅ Stop loading only on first load
-        }
       }
+      // finally {
+      //   if (isFirstLoad) {
+      //     setLoading(false); // ✅ Stop loading only on first load
+      //   }
+      // }
     },
     [currentUser?.id, calculateProfits] // fetchRealTimePrices
   );
@@ -250,8 +254,14 @@ export function PaperTradingProvider({ children }) {
   }, [currentUser?.id, fetchPaperTradingData]);
 
   useEffect(() => {
-    if (positions.length || holdings.length) {
-      calculateProfits(realtimePrices, positions, holdings);
+    const hasRealtimePrices = Object.keys(realtimePrices).length > 0;
+
+    // Always recalculate profits on any update
+    calculateProfits(realtimePrices, positions, holdings);
+
+    if (hasRealtimePrices && isFirstLoadPendingProfitCalc) {
+      setIsFirstLoadPendingProfitCalc(false);
+      setLoading(false); // ✅ complete first load only after realtimePrices are in
     }
   }, [realtimePrices, positions, holdings]);
 

@@ -31,7 +31,7 @@ const HistoricalPerformanceChart = ({ performanceData }) => {
     labels: performanceData.map(item => formatDate(item.Date)), // Formatted Dates
     datasets: [
       {
-        label: 'Close Price (₹)',
+        label: 'Close Price ()',
         data: performanceData.map(item => item.Close), // Close price as y-axis
         fill: true,
         borderColor: '#4db8ff', // Soft blue line color
@@ -63,7 +63,7 @@ const HistoricalPerformanceChart = ({ performanceData }) => {
         bodyColor: '#333',
         callbacks: {
           label: function (tooltipItem) {
-            return `₹${tooltipItem.raw.toFixed(2)}`;
+            return `${tooltipItem.raw.toFixed(2)}`;
           },
         },
       },
@@ -91,7 +91,7 @@ const HistoricalPerformanceChart = ({ performanceData }) => {
         ticks: {
           color: '#333', // Dark color for y-axis labels
           callback: function(value) {
-            return `₹${value.toFixed(2)}`;
+            return `${value.toFixed(2)}`;
           },
         },
         title: {
