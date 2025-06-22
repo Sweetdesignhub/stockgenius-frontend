@@ -249,6 +249,12 @@ export function PaperTradingProvider({ children }) {
     }
   }, [currentUser?.id, fetchPaperTradingData]);
 
+  useEffect(() => {
+    if (positions.length || holdings.length) {
+      calculateProfits(realtimePrices, positions, holdings);
+    }
+  }, [realtimePrices, positions, holdings]);
+
   // ✅ Context Value
   const contextValue = {
     funds,
