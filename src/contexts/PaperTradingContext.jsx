@@ -28,9 +28,10 @@ export function PaperTradingProvider({ children }) {
   const [investedAmount, setInvestedAmount] = useState(0);
 
   const { currentUser } = useSelector((state) => state.user);
-  const region = useSelector((state) => state.region);
-
+  const region = useSelector((state) => state?.region) || "india";
+  console.log("Region:", region);
   useEffect(() => {
+    if (region !== "india") return; // ✅ Only allow for India region
     const dataSourceURL = PAPER_TRADE_URL;
     // region === "india" ? PAPER_TRADE_URL : PAPER_TRADE_USA_URL;
 
@@ -52,7 +53,7 @@ export function PaperTradingProvider({ children }) {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [region]);
 
   // ✅ Fetch Real-time Prices for Stocks
   // const fetchRealtimePrices = useCallback(async (symbols) => {
@@ -129,6 +130,7 @@ export function PaperTradingProvider({ children }) {
   // ✅ Fetch Paper Trading Data
   const fetchPaperTradingData = useCallback(
     async (isFirstLoad = false) => {
+      if (region !== "india") return; // ✅ Skip API calls if not India
       try {
         const userId = currentUser?.id;
         if (!userId) {
@@ -194,7 +196,7 @@ export function PaperTradingProvider({ children }) {
         }
       }
     },
-    [currentUser?.id, calculateProfits] // fetchRealTimePrices
+    [currentUser?.id, calculateProfits, region] // fetchRealTimePrices
   );
 
   // // ✅ Auto-fetch Data Every 10 Seconds
@@ -217,7 +219,7 @@ export function PaperTradingProvider({ children }) {
   //  // Removed fetchPaperTradingData from dependencies to avoid unnecessary re-renders
 
   useEffect(() => {
-    if (currentUser?.id) {
+    if (currentUser?.id && region === "india") {
       const fetchData = async () => {
         setLoading(true); // ✅ Show loading only for the first fetch
         await fetchPaperTradingData(true); // ✅ Pass true to indicate first load
@@ -247,7 +249,7 @@ export function PaperTradingProvider({ children }) {
 
       return () => clearInterval(dataInterval);
     }
-  }, [currentUser?.id, fetchPaperTradingData]);
+  }, [currentUser?.id, region, fetchPaperTradingData]);
 
   useEffect(() => {
     if (positions.length || holdings.length) {
