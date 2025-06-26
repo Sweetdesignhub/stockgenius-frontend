@@ -31,9 +31,10 @@ export function UsaPaperTradingProvider({ children }) {
 
   // ✅ Safe retrieval of `currentUser`
   const currentUser = useSelector((state) => state.user?.currentUser);
-  const region = useSelector((state) => state.region);
+  const region = useSelector((state) => state?.region) || "usa";
 
   useEffect(() => {
+    if (region !== "usa") return; // ✅ Run only for USA region
     const dataSourceURL = PAPER_TRADE_USA_URL;
     // region === "india" ? PAPER_TRADE_URL : PAPER_TRADE_USA_URL;
 
@@ -55,7 +56,7 @@ export function UsaPaperTradingProvider({ children }) {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [region]);
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -128,6 +129,7 @@ export function UsaPaperTradingProvider({ children }) {
   // ✅ Fetch Paper Trading Data
   const fetchPaperTradingData = useCallback(
     async (isFirstLoad = false) => {
+      if (region !== "usa") return; // ✅ Skip API fetching for other regions
       try {
         if (!userId) {
           setError("User not found");
@@ -187,12 +189,12 @@ export function UsaPaperTradingProvider({ children }) {
         if (isFirstLoad) setLoading(false);
       }
     },
-    [userId, calculateProfits] //fetchRealtimePrices
+    [userId, calculateProfits, region] //fetchRealtimePrices
   );
 
   // ✅ Auto-fetch Data Every 10 Seconds
   useEffect(() => {
-    if (userId) {
+    if (userId && region === "usa") {
       const fetchData = async () => {
         setLoading(true);
         await fetchPaperTradingData(true);
@@ -206,7 +208,13 @@ export function UsaPaperTradingProvider({ children }) {
 
       return () => clearInterval(dataInterval);
     }
-  }, [userId, fetchPaperTradingData]);
+  }, [userId, region, fetchPaperTradingData]);
+
+  useEffect(() => {
+    if (positions.length || holdings.length) {
+      calculateProfits(realtimePrices, positions, holdings);
+    }
+  }, [realtimePrices, positions, holdings]);
 
   // ✅ Context Value
   const contextValue = {
