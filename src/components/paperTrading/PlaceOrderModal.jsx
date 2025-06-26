@@ -4,6 +4,7 @@ import { paperTradeApi, paperTradeUsaApi } from "../../config";
 import { ToggleRight, ToggleLeft } from "lucide-react";
 import YesNoConfirmationModal from "../common/YesNoConfirmationModal";
 import ConfirmationModal from "../common/ConfirmationModal";
+import { Dialog } from "@headlessui/react";
 
 const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const region = useSelector((state) => state.region);
@@ -148,36 +149,38 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       setLoading(false);
     }
   };
-
   if (!isOpen) return null;
 
   const isBuy = formData.action === "BUY";
   const actionColor = isBuy ? "blue" : "red";
 
   return (
-    <>
-      <div className="fixed inset-0 z-1 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="w-full max-w-lg bg-[#1C1C1E] rounded-lg shadow-lg">
-          {/* Modal Header */}
-          <div
-            className={`px-6 py-4 border-b-gray-900 bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)] text-white`}
-          >
+    <>      <Dialog
+        open={Boolean(isOpen)}
+        as="div"
+        className="relative z-50"
+        onClose={onClose}
+      >        <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-50">
+          <Dialog.Panel className="w-full max-w-xs sm:max-w-lg mx-2 sm:mx-0 bg-[#1C1C1E] rounded-lg shadow-lg max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">            {/* Modal Header */}
+            <div
+              className={`px-3 sm:px-6 py-3 sm:py-4 border-b-gray-900 bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)] text-white rounded-t-lg`}
+            >
             <div className="flex flex-col">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold">
+                <span className="text-sm sm:text-lg font-semibold">
                   {formData.stockSymbol}
                 </span>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   {/* Toggle Icon: Conditional Rendering based on action */}
                   {isBuy ? (
                     <ToggleLeft
                       onClick={handleActionToggle}
-                      className="w-6 h-6 cursor-pointer hover:text-blue-200"
+                      className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer hover:text-blue-200"
                     />
                   ) : (
                     <ToggleRight
                       onClick={handleActionToggle}
-                      className="w-6 h-6 cursor-pointer hover:text-red-200"
+                      className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer hover:text-red-200"
                     />
                   )}
                 </div>
@@ -185,15 +188,15 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
               {/* Radio Buttons moved to header */}
               {region === "india" && (
-                <div className="flex gap-8 mt-3">
-                  <div className="flex gap-3">
+                <div className="flex gap-4 sm:gap-8 mt-2 sm:mt-3">
+                  <div className="flex gap-2 sm:gap-3 text-xs sm:text-sm">
                     <input
                       type="radio"
                       name="exchange"
                       value="NSE"
                       checked={formData.exchange === "NSE"}
                       onChange={handleChange}
-                      className="mr-0"
+                      className="mr-1"
                     />
                     NSE {initialData.price}
                     <input
@@ -202,20 +205,18 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                       value="BSE"
                       checked={formData.exchange === "BSE"}
                       onChange={handleChange}
-                      className="mr-0"
+                      className="mr-1 ml-2"
                     />
                     BSE {initialData.price}
                   </div>
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Order Type Toggle Buttons: Quick vs Regular */}
-          <div className="flex gap-2 p-4 border-t mb-">
+          </div>          {/* Order Type Toggle Buttons: Quick vs Regular */}
+          <div className="flex gap-1 sm:gap-2 p-2 sm:p-4 border-t">
             <button
               onClick={() => handleOrderTypeToggle("quick")}
-              className={`px-4 py-1 text-sm rounded-lg border ${
+              className={`px-2 sm:px-4 py-1 text-xs sm:text-sm rounded-lg border ${
                 isQuickOrder
                   ? "border-blue-500 text-blue-500 bg-white"
                   : "border-[#1C1C1E] text-white hover:bg-gray-900"
@@ -225,7 +226,7 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
             </button>
             <button
               onClick={() => handleOrderTypeToggle("regular")}
-              className={`px-4 py-1 text-sm rounded-lg border ${
+              className={`px-2 sm:px-4 py-1 text-xs sm:text-sm rounded-lg border ${
                 !isQuickOrder
                   ? "border-blue-500 text-blue-500 bg-white"
                   : "border-[#1C1C1E] text-white hover:bg-gray-900"
@@ -236,33 +237,32 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           </div>
 
           {/* Modal Form */}
-          <form onSubmit={handleSubmit} className="p-6">
-            {/* Product Type (Intraday / CNC) */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-white">
+          <form onSubmit={handleSubmit} className="p-3 sm:p-6">            {/* Product Type (Intraday / CNC) */}
+            <div className="mb-3 sm:mb-4">
+              <label className="block text-xs sm:text-sm font-medium text-white mb-1">
                 Product Type
               </label>
-              <div className="flex gap-4 mt-1 text-white">
-                <label className="flex items-center">
+              <div className="flex gap-3 sm:gap-4 text-white">
+                <label className="flex items-center text-xs sm:text-sm">
                   <input
                     type="radio"
                     name="productType"
                     value="INTRADAY"
                     checked={formData.productType === "INTRADAY"}
                     onChange={handleChange}
-                    className="mr-2"
+                    className="mr-1 sm:mr-2"
                     disabled
                   />
                   Intraday
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center text-xs sm:text-sm">
                   <input
                     type="radio"
                     name="productType"
                     value="CNC"
                     checked={formData.productType === "CNC"}
                     onChange={handleChange}
-                    className="mr-2"
+                    className="mr-1 sm:mr-2"
                   />
                   CNC
                 </label>
@@ -271,9 +271,8 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
 
             {/* Quick Order Mode: Show only Quantity and Buy/Cancel */}
             {isQuickOrder ? (
-              <>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-white">
+              <>                <div className="mb-3 sm:mb-4">
+                  <label className="block text-xs sm:text-sm font-medium text-white mb-1">
                     Quantity
                   </label>
                   <input
@@ -282,92 +281,89 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                     value={formData.quantity}
                     onChange={handleChange}
                     placeholder="Enter quantity"
-                    className="w-full mt-1 border border-gray-900 bg-[#3A6FF8] rounded-lg p-2 text-white"
+                    className="w-full border border-gray-900 bg-[#3A6FF8] rounded-lg p-2 text-white text-xs sm:text-sm"
                     required
                   />
                 </div>
 
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-end gap-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 text-sm text-[#235CEF] bg-white border rounded-lg hover:bg-gray-300"
+                    className="px-3 py-1.5 text-xs text-[#235CEF] bg-white border rounded-lg hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className={`px-4 py-2 text-sm text-white rounded-lg ${
+                    className={`px-3 py-1.5 text-xs text-white rounded-lg ${
                       isBuy
                         ? "bg-blue-500 hover:bg-blue-600"
                         : "bg-red-500 hover:bg-red-600"
                     }`}
-                    disabled={loading} // Disable button while loading
+                    disabled={loading}
                   >
-                    {loading ? "Placing Order..." : isBuy ? "Buy" : "Sell"}
+                    {loading ? "Placing..." : isBuy ? "Buy" : "Sell"}
                   </button>
                 </div>
               </>
-            ) : (
-              // Regular Order Mode: Show all the fields
+            ) : (              // Regular Order Mode: Show all the fields
               <>
                 {/* Order Type */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-white">
+                <div className="mb-3 sm:mb-4">
+                  <label className="block text-xs sm:text-sm font-medium text-white mb-1">
                     Order Type
                   </label>
-                  <div className="flex gap-4 mt-1 text-white">
-                    <label className="flex items-center">
+                  <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-4 text-white">
+                    <label className="flex items-center text-xs sm:text-sm">
                       <input
                         type="checkbox"
                         name="orderType"
                         value="MARKET"
                         checked={formData.orderType === "MARKET"}
                         onChange={handleCheckboxChange}
-                        className="mr-2"
+                        className="mr-1 sm:mr-2"
                       />
                       Market
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-xs sm:text-sm">
                       <input
                         type="checkbox"
                         name="orderType"
                         value="LIMIT"
                         checked={formData.orderType === "LIMIT"}
                         onChange={handleCheckboxChange}
-                        className="mr-2"
+                        className="mr-1 sm:mr-2"
                       />
                       Limit
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-xs sm:text-sm">
                       <input
                         type="checkbox"
                         name="orderType"
                         value="STOP_LOSS"
                         checked={formData.orderType === "STOP_LOSS"}
                         onChange={handleCheckboxChange}
-                        className="mr-2"
+                        className="mr-1 sm:mr-2"
                       />
                       Stop Loss
                     </label>
-                    <label className="flex items-center">
+                    <label className="flex items-center text-xs sm:text-sm">
                       <input
                         type="checkbox"
                         name="orderType"
                         value="STOP_LIMIT"
                         checked={formData.orderType === "STOP_LIMIT"}
                         onChange={handleCheckboxChange}
-                        className="mr-2"
+                        className="mr-1 sm:mr-2"
                       />
                       Stop Limit
                     </label>
                   </div>
-                </div>
-
-                {/* Limit Price (appears only for Limit or Stop Limit orders) */}
+                </div>                {/* Limit Price (appears only for Limit or Stop Limit orders) */}
                 {["LIMIT", "STOP_LIMIT"].includes(formData.orderType) && (
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-white">
+                  <div className="mb-3 sm:mb-4">
+                    <label className="block text-xs sm:text-sm font-medium text-white mb-1">
                       Limit Price
                     </label>
                     <input
@@ -376,15 +372,15 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                       value={formData.limitPrice}
                       onChange={handleChange}
                       placeholder="Enter limit price"
-                      className="w-full mt-1 border border-gray-300 rounded-lg p-2 text-black"
+                      className="w-full border border-gray-300 rounded-lg p-2 text-black text-xs sm:text-sm"
                     />
                   </div>
                 )}
 
                 {/* Stop Price (appears only for Stop Loss or Stop Limit orders) */}
                 {["STOP_LOSS", "STOP_LIMIT"].includes(formData.orderType) && (
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-white">
+                  <div className="mb-3 sm:mb-4">
+                    <label className="block text-xs sm:text-sm font-medium text-white mb-1">
                       Stop Price
                     </label>
                     <input
@@ -393,14 +389,14 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                       value={formData.stopPrice}
                       onChange={handleChange}
                       placeholder="Enter stop price"
-                      className="w-full mt-1 border border-gray-300 rounded-lg p-2 text-black"
+                      className="w-full border border-gray-300 rounded-lg p-2 text-black text-xs sm:text-sm"
                     />
                   </div>
                 )}
 
                 {/* Quantity */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-white">
+                <div className="mb-3 sm:mb-4">
+                  <label className="block text-xs sm:text-sm font-medium text-white mb-1">
                     Quantity
                   </label>
                   <input
@@ -409,40 +405,39 @@ const PlaceOrderModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                     value={formData.quantity}
                     onChange={handleChange}
                     placeholder="Enter quantity"
-                    className="w-full mt-1 border border-gray-800 bg-[#3A6FF8] rounded-lg p-2 text-white"
+                    className="w-full border border-gray-800 bg-[#3A6FF8] rounded-lg p-2 text-white text-xs sm:text-sm"
                   />
-                </div>
-
-                <div className="flex justify-end gap-4">
+                </div>                <div className="flex justify-end gap-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 text-sm text-[#235CEF] bg-white border rounded-lg hover:bg-gray-300"
+                    className="px-3 py-1.5 text-xs text-[#235CEF] bg-white border rounded-lg hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className={`px-4 py-2 text-sm text-white rounded-lg ${
+                    className={`px-3 py-1.5 text-xs text-white rounded-lg ${
                       isBuy
                         ? "bg-blue-500 hover:bg-blue-600"
                         : "bg-red-500 hover:bg-red-600"
                     }`}
-                    disabled={loading} // Disable button while loading
+                    disabled={loading}
                   >
-                    {loading ? "Placing Order..." : isBuy ? "Buy" : "Sell"}
+                    {loading ? "Placing..." : isBuy ? "Buy" : "Sell"}
                   </button>
                 </div>
               </>
             )}
-          </form>
-
-          {/* Show error message if there's an issue */}
+          </form>          {/* Show error message if there's an issue */}
           {error && (
-            <div className="mt-4 text-red-500 text-sm text-center">{error}</div>
+            <div className="mx-3 sm:mx-6 mb-3 sm:mb-4 text-red-500 text-xs sm:text-sm text-center bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
+              {error}
+            </div>
           )}
+          </Dialog.Panel>
         </div>
-      </div>
+      </Dialog>
       {/* Confirmation Modal */}
       <YesNoConfirmationModal
         isOpen={showConfirmation}

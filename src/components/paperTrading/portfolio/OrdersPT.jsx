@@ -129,7 +129,10 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
         (columnName) => !excludedColumns.includes(columnName)
       );
 
-      // Ensure "stockSymbol" is the first column
+
+      // Remove stockSymbol if it exists in the array
+      allColumnNames = allColumnNames.filter(col => col !== "stockSymbol");
+      // Add stockSymbol at the beginning
       allColumnNames = ["stockSymbol", ...allColumnNames];
 
       setColumnNames(allColumnNames);
