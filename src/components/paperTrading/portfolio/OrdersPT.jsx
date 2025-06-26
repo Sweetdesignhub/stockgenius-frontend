@@ -128,7 +128,7 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
   const { theme } = useTheme();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(7); // Set initial default
+  const [pageSize, setPageSize] = useState(10); // Set initial default
 
   const totalPages = useMemo(
     () => Math.ceil(sortedOrders.length / pageSize),

@@ -101,7 +101,6 @@ import { useUsaPaperTrading } from "../../../contexts/UsaPaperTradingContext.jsx
 import { formatDate } from "../../../utils/formatDate";
 import { useTheme } from "../../../contexts/ThemeContext.jsx";
 
-
 const TradesPT = ({ selectedColumns, setColumnNames }) => {
   const [error, setError] = useState(null);
   const region = useSelector((state) => state.region); // Get selected region
@@ -126,7 +125,7 @@ const TradesPT = ({ selectedColumns, setColumnNames }) => {
   });
   const { theme } = useTheme();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(7); // Set initial default
+  const [pageSize, setPageSize] = useState(10); // Set initial default
 
   const totalPages = useMemo(
     () => Math.ceil(tradesData.length / pageSize),
