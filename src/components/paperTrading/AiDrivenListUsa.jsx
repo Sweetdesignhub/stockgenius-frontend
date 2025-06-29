@@ -241,43 +241,47 @@ function AiDrivenListUsa() {
 
   return (
     <div
-      className="p-3 bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main rounded-lg flex flex-col h-full relative"
+      className="p-3 port rounded-lg flex flex-col h-[400px] md:h-[410px] lg:h-[395px] relative"
       
     >
       {/* Header Section */}
-      <div className="flex-shrink-0 justify-between flex flex-col sm:flex-row items-center border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A]">
-        <h1 className="text-black font-semibold text-md dark:text-white mb-2 sm:mb-0">
+      <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between lg:grid lg:grid-cols-12 border-b border-gray pb-3 mb-4 dark:border-[#FFFFFF1A] gap-3 md:gap-2">
+        <h1 className="text-black font-semibold text-md dark:text-white lg:col-span-3">
           AIDrivenList
         </h1>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent text-black dark:text-white font-semibold text-sm border rounded-xl px-2 py-[1px] w-full sm:w-auto"
-          />
-        </div>
 
-        <div className="flex items-center gap-4 mt-2 sm:mt-0">
-          <div className="flex items-center gap-2">
+        {/* Search and Options Container */}
+        <div className="flex items-center gap-3 md:gap-2 lg:col-span-9 lg:justify-between">
+          {/* Search Input - Centered in laptop view */}
+          <div className="lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent text-gray-800 dark:text-white font-semibold text-xs md:text-sm border border-gray-400 dark:border-gray-600 rounded-full px-2 py-[1px] w-[100px] md:w-[120px] lg:w-[180px] placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none"
+            />
+          </div>
+
+          {/* Filter Options - Right aligned in laptop view */}
+          <div className="flex items-center gap-1 md:gap-1.5 lg:ml-auto">
             <button
               onClick={() => handlePredictionFilter("all")}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 predictionFilter === "all"
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
               } hover:bg-[#FFFFFF1A]`}
             >
               <Infinity
-                className={`w-5 h-5 ${
+                className={`w-4 h-4 md:w-5 md:h-5 ${
                   predictionFilter === "all" ? "text-white" : "text-[#3A6FF8]"
                 }`}
               />
             </button>
             <button
               onClick={() => handlePredictionFilter("buy")}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 predictionFilter === "buy"
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
@@ -287,7 +291,7 @@ function AiDrivenListUsa() {
             </button>
             <button
               onClick={() => handlePredictionFilter("sell")}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 predictionFilter === "sell"
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
@@ -301,7 +305,7 @@ function AiDrivenListUsa() {
             <button
               ref={filterButtonRef}
               onClick={() => setShowFilter(!showFilter)}
-              className={`p-1 rounded-md transition-colors ${
+              className={`p-0.5 md:p-1 rounded-md transition-colors ${
                 showFilter
                   ? "bg-[linear-gradient(180deg,_rgba(0,_0,_0,_0)_-40.91%,_#402788_132.95%)]"
                   : "bg-[#FFFFFF]"
@@ -347,20 +351,16 @@ function AiDrivenListUsa() {
           </div>
         </div>
       </div>
-
       {/* Table Section with max height */}
-      <div
-        className="flex-grow overflow-auto"
-        style={{ maxHeight: "calc(100% - 60px)" }}
-      >
+      <div className="flex-grow overflow-hidden">
         {isLoading ? (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
             <Loading />
           </div>
         ) : filteredData.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div className="h-full overflow-auto">
             <table className="w-full text-sm text-left text-black bg-transparent dark:text-white">
-              <thead>{renderTableHeaders()}</thead>
+              <thead className="top-0 z-10">{renderTableHeaders()}</thead>
               <tbody>{renderTableRows()}</tbody>
             </table>
           </div>

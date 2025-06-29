@@ -301,7 +301,7 @@ function MainApp() {
         onSignOut={handleSignOut}
       />
       {currentUser && <ChatbotComponent />}
-      {currentUser && region === "india" && (
+      {currentUser && (
         <>
           <PricingDialog
             isOpen={showPricingDialog}

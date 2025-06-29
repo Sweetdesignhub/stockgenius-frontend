@@ -10,20 +10,19 @@ function UsaPaperTrading() {
 
   return (
     <div className="-z-10">
-      <div className="min-h-[85vh] md:h-[118vh] lg:h-[87vh] lg:px-8 p-4 relative page-scrollbar">
+      <div className="min-h-fit lg:px-32 p-4 relative">
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-[0] w-[165px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F842b9a90647948f6be555325a809b962"
-          alt="bull"
+          alt="Bull"
         />
         <img
           loading="lazy"
           className="absolute -z-10 top-1/2 transform -translate-y-1/2 right-[0px] w-[160px]"
           src="https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fc271dc9e12c34485b3409ffedc33f935"
-          alt="bear"
-        />
-        <div className="bg-white h-full lg:max-w-[1300px] mx-auto news-table rounded-2xl py-2 px-4 flex flex-col gap-4">
+          alt="Bear"
+        /><div className="h-full bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md table-main  mx-auto  rounded-2xl py-2 px-4 flex flex-col gap-4">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row items-center justify-between border-b-2 py-2 border-[#FFFFFF1A]">
             <h1 className="font-semibold text-lg mb-4 lg:mb-0 lg:mr-4 text-center md:text-left">
