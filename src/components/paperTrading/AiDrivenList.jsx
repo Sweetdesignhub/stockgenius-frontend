@@ -127,14 +127,28 @@ function AiDrivenList() {
     setPredictionFilter(filter);
   };
 
-  const handleBuy = (row) => {
-    setSelectedRow({ ...row, action: "BUY" });
+    const handleBuy = (row) => {
+    if (isWithinTradingHours()) {
+      setSelectedRow({ ...row, action: "BUY" });
       setModalOpen(true);
+    } else {
+      setConfirmationModalMessage(
+        "Orders can only be placed between 9:15 AM and 3:30 PM IST."
+      );
+      setIsConfirmationModalOpen(true);
+    }
   };
 
   const handleSell = (row) => {
-    setSelectedRow({ ...row, action: "SELL" });
+    if (isWithinTradingHours()) {
+      setSelectedRow({ ...row, action: "SELL" });
       setModalOpen(true);
+    } else {
+      setConfirmationModalMessage(
+        "Orders can only be placed between 9:15 AM and 3:30 PM IST."
+      );
+      setIsConfirmationModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
