@@ -293,6 +293,10 @@ function MainApp() {
               path="/usa/paper-trading/portfolio"
               element={<UsaPaperTradingPortfolio />}
             />
+            <Route
+              path="/usa/paper-trading/auto-trade"
+              element={<PaperTradingAutoTrade />}
+            />
           </Route>
         </Routes>
       </main>{" "}
