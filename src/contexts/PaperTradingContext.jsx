@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from "react";
 import { useSelector } from "react-redux";
 import api, { PAPER_TRADE_URL, paperTradeApi } from "../config";
@@ -26,60 +27,132 @@ export function PaperTradingProvider({ children }) {
   });
   const [stocks, setStocks] = useState([]);
   const [investedAmount, setInvestedAmount] = useState(0);
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const fallbackIntervalRef = useRef(null);
+  const socketRef = useRef(null); // Optional: To track socket instance globally
 
   const { currentUser } = useSelector((state) => state.user);
   const region = useSelector((state) => state?.region) || "india";
-  // console.log("Region:", region);
-  useEffect(() => {
-    if (region !== "india") return; // ✅ Only allow for India region
-    const dataSourceURL = PAPER_TRADE_URL;
-    // region === "india" ? PAPER_TRADE_URL : PAPER_TRADE_USA_URL;
 
-    const socket = io(dataSourceURL);
+  // ✅ Fetch Real-time Prices for Stocks
+  const fetchRealtimePrices = useCallback(async (symbols) => {
+    if (!symbols.length) return {};
+
+    try {
+      const pricePromises = symbols.map((symbol) =>
+        paperTradeApi
+          .get(`/api/v1/stocks/price/${symbol}`)
+          .then((response) => ({ symbol, price: response.data.price }))
+          .catch(() => ({ symbol, price: null }))
+      );
+
+      const prices = await Promise.all(pricePromises);
+      const priceMap = prices.reduce((acc, { symbol, price }) => {
+        if (price !== null) acc[symbol] = price;
+        return acc;
+      }, {});
+
+      setRealtimePrices((prev) => ({ ...prev, ...priceMap }));
+      return priceMap;
+    } catch (error) {
+      console.error("Error fetching real-time prices:", error);
+      return {};
+    }
+  }, []);
+
+  useEffect(() => {
+    if (region !== "india") return;
+
+    const dataSourceURL = PAPER_TRADE_URL;
+    const socket = io(dataSourceURL, {
+      transports: ["websocket"],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
+      timeout: 10000, // Add connection timeout
+    });
+
+    socketRef.current = socket;
 
     const emitAddress = `stockData-${region}`;
-    // console.log("Emit Address USA:", emitAddress);
 
-    socket.on(emitAddress, (data) => {
-      // console.log("💹 WebSocket stock data received:", data); // helpful debug log
+    const startFallback = () => {
+      if (fallbackIntervalRef.current) return; // ✅ already running
+
+      console.warn("🕔 Starting fallback API polling every 5s...");
+      fallbackIntervalRef.current = setInterval(async () => {
+        const symbols = [
+          ...new Set([
+            ...positions.map((p) => p.stockSymbol),
+            ...holdings.map((h) => h.stockSymbol),
+          ]),
+        ].filter(Boolean);
+
+        if (symbols.length > 0) {
+          await fetchRealtimePrices(symbols);
+        }
+      }, 10000);
+    };
+
+    const stopFallback = () => {
+      if (fallbackIntervalRef.current) {
+        clearInterval(fallbackIntervalRef.current);
+        fallbackIntervalRef.current = null;
+        console.info("✅ Fallback polling stopped");
+      }
+    };
+
+    const onStockData = (data) => {
+      setIsSocketConnected(true);
+      stopFallback(); // ✅ socket working, stop fallback
+
       setStocks(data);
       const pricesObject = data.reduce((acc, { ticker, price }) => {
         if (ticker && price != null) acc[ticker] = price;
         return acc;
       }, {});
       setRealtimePrices(pricesObject);
+    };
+
+    socket.on(emitAddress, onStockData);
+
+    socket.on("connect", () => {
+      console.log("✅ Socket connected");
+      setIsSocketConnected(true);
+      stopFallback();
+    });
+
+    socket.on("disconnect", () => {
+      console.warn("⚠️ Socket disconnected");
+      setIsSocketConnected(false);
+      startFallback();
+    });
+
+    // ✅ Handle successful reconnection
+    socket.on("reconnect", (attemptNumber) => {
+      console.log("🔄 Socket reconnected after", attemptNumber, "attempts");
+      setIsSocketConnected(true);
+      stopFallback();
+    });
+    // ✅ Handle reconnection failures
+    socket.on("reconnect_failed", () => {
+      console.error("❌ Socket reconnection failed permanently");
+      setIsSocketConnected(false);
+      startFallback();
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("🚫 Socket connection error:", err);
+      setIsSocketConnected(false);
+      startFallback();
     });
 
     return () => {
+      console.log("🧹 Cleaning up socket connection");
       socket.disconnect();
+      stopFallback();
+      socketRef.current = null;
     };
-  }, [region]);
-
-  // ✅ Fetch Real-time Prices for Stocks
-  // const fetchRealtimePrices = useCallback(async (symbols) => {
-  //   if (!symbols.length) return {};
-
-  //   try {
-  //     const pricePromises = symbols.map((symbol) =>
-  //       paperTradeApi
-  //         .get(`/api/v1/stocks/price/${symbol}`)
-  //         .then((response) => ({ symbol, price: response.data.price }))
-  //         .catch(() => ({ symbol, price: null }))
-  //     );
-
-  //     const prices = await Promise.all(pricePromises);
-  //     const priceMap = prices.reduce((acc, { symbol, price }) => {
-  //       if (price !== null) acc[symbol] = price;
-  //       return acc;
-  //     }, {});
-
-  //     setRealtimePrices((prev) => ({ ...prev, ...priceMap }));
-  //     return priceMap;
-  //   } catch (error) {
-  //     console.error("Error fetching real-time prices:", error);
-  //     return {};
-  //   }
-  // }, []);
+  }, [region]); // , positions, holdings, fetchRealtimePrices
 
   // ✅ Calculate Profits & Invested Amount
 
@@ -226,7 +299,7 @@ export function PaperTradingProvider({ children }) {
       };
 
       fetchData(); // ✅ Initial fetch
-
+      let dataInterval;
       const checkAndFetchData = () => {
         const now = new Date();
         const day = now.getDay(); // 0 = Sunday, 6 = Saturday
@@ -245,7 +318,7 @@ export function PaperTradingProvider({ children }) {
         }
       };
 
-      const dataInterval = setInterval(checkAndFetchData, 15000); // ✅ 15 sec interval
+      dataInterval = setInterval(checkAndFetchData, 15000);
 
       return () => clearInterval(dataInterval);
     }
