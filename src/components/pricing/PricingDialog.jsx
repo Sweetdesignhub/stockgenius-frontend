@@ -53,13 +53,14 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                 {/* Dialog panel with responsive width and height */}{" "}
                 <Dialog.Panel
                   className="relative mx-auto
-                w-full sm:w-[calc(100%-2rem)] max-w-[1200px] min-h-screen sm:min-h-[800px]
-                sm:320:w-full sm:320:min-h-[800px]
-                1024:w-[1000px] 1024:min-h-[700px]
-                1440:w-[1200px] 1440:min-h-[700px]
+                w-full sm:w-[calc(100%-2rem)] max-w-[1200px] min-h-screen 
+                sm:min-h-[700px] md:min-h-[650px] lg:min-h-[600px] xl:min-h-[700px]
+                sm:h-[700px] md:h-[650px] lg:h-[600px] xl:h-[700px]
+                1024:w-[1000px] 1024:h-[600px]
+                1440:w-[1200px] 1440:h-[700px]
                 bg-white dark:bg-black/80 rounded-none sm:rounded-[10px] 
                 border border-gray-200 dark:border-gray-700
-                transform transition-all shadow-xl sm:my-4"
+                transform transition-all shadow-xl sm:my-4 overflow-hidden"
                 >
                   {/* Close button - stays in position */}
                   <button
@@ -74,19 +75,19 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                     <XMarkIcon className="h-6 w-6" />
                   </button>
                   {/* Content container with proper padding and no scroll */}{" "}
-                  <div className="p-2 sm:p-6 md:p-8 w-full h-full flex flex-col">
+                  <div className="p-2 sm:p-4 md:p-5 lg:p-6 xl:p-8 w-full h-full flex flex-col">
                     {/* Pricing title */}{" "}
-                    <div className="text-center mb-4 sm:mb-6 md:mb-8 pt-6 sm:pt-3">
+                    <div className="text-center mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8 pt-4 sm:pt-3">
                       {" "}
-                      <h2 className="font-['Aldrich'] text-[20px] sm:text-[36px] md:text-[40px] font-normal leading-[100%] tracking-[0.02em] align-middle text-gray-900 dark:text-white">
+                      <h2 className="font-['Aldrich'] text-[18px] sm:text-[24px] md:text-[28px] lg:text-[32px] xl:text-[40px] font-normal leading-[100%] tracking-[0.02em] align-middle text-gray-900 dark:text-white">
                         StockScope Pass
                       </h2>
                     </div>
                     {/* Pricing grid - responsive columns */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 max-w-7xl mx-auto h-auto md:h-[calc(100%-80px)]">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 max-w-7xl mx-auto flex-1">
                       {/* Basic Plan */}
                       <div
-                        className="flex flex-col h-[600px] sm:h-[650px] md:h-[600px] 1024:h-[620px] 1440:h-[550px] p-3 pb-2 sm:p-4 sm:pb-3 text-center text-gray-900 dark:text-white
+                        className="flex flex-col h-[520px] sm:h-[550px] md:h-[480px] lg:h-[450px] xl:h-[550px] p-2 pb-1 sm:p-3 sm:pb-2 md:p-3 md:pb-2 lg:p-3 lg:pb-2 xl:p-4 xl:pb-3 text-center text-gray-900 dark:text-white
                       rounded-lg border border-gray-200 dark:border-gray-700 
                       shadow-lg transition-all duration-200 hover:shadow-xl"
                         style={{
@@ -96,38 +97,38 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                       >
                         <div className="flex-none">
                           {/* Image and header section */}{" "}
-                          <div className="relative mb-2 mx-auto w-full max-w-[280px] md:max-w-[260px] 1024:max-w-[280px] 1440:max-w-[320px]">
+                          <div className="relative mb-1 sm:mb-2 mx-auto w-full max-w-[220px] sm:max-w-[240px] md:max-w-[200px] lg:max-w-[180px] xl:max-w-[320px] h-[140px] sm:h-[150px] md:h-[120px] lg:h-[110px] xl:h-[218px]">
                             <img
                               loading="lazy"
                               src={
                                 "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2F6828d46de1f14fceb4b40e36d8c28d11"
                               }
                               alt="Basic Plan"
-                              className="w-full h-[180px] md:h-[160px] 1024:h-[180px] 1440:h-[218px] object-contain rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700"
+                              className="w-full h-full object-cover object-center rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700"
                             />
                           </div>{" "}
-                          <div className="text-left mb-2 flex justify-between items-center">
+                          <div className="text-left mb-1 sm:mb-2 flex justify-between items-center">
                             <div className="flex-1">
                               {" "}
-                              <p className="font-['Poppins'] text-[20px] text-gray-900 font-bold dark:text-white">
+                              <p className="font-['Poppins'] text-[16px] sm:text-[18px] md:text-[16px] lg:text-[18px] xl:text-[20px] text-gray-900 font-bold dark:text-white">
                                 STOCKSCOPE PASS
                               </p>
-                              <p className="text-lg font-bold text-[30px] text-[rgba(222,178,21,1)]">
+                              <p className="text-lg font-bold text-[24px] sm:text-[26px] md:text-[22px] lg:text-[26px] xl:text-[30px] text-[rgba(222,178,21,1)]">
                                 Basic
                               </p>
                             </div>{" "}
-                            <p className="text-lg text-gray-900 dark:text-white">
+                            <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
                               <span className="font-bold">Free ($ 0)</span>
                             </p>
                           </div>{" "}
                           {/* Features list */}
-                          <p className="text-left font-semibold text-gray-900 dark:text-white mt-8 mb-4 ml-1">
+                          <p className="text-left font-semibold text-gray-900 dark:text-white mt-4 sm:mt-6 md:mt-4 lg:mt-5 xl:mt-8 mb-2 sm:mb-3 md:mb-2 lg:mb-3 xl:mb-4 ml-1 text-sm sm:text-base md:text-sm lg:text-base">
                             Unlimited access to
                           </p>
-                          <ul className="space-y-2 text-left text-sm pl-2">
+                          <ul className="space-y-1 sm:space-y-2 text-left text-xs sm:text-sm md:text-xs lg:text-sm pl-2">
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -141,7 +142,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -155,7 +156,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -169,9 +170,9 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                           </ul>
                         </div>{" "}
-                        <div className="mt-auto pb-2">
+                        <div className="mt-auto pb-1 sm:pb-2">
                           {currentPlan === "basic" ? (
-                            <p className="font-['Poppins'] text-[18px] font-semibold text-[rgba(222,178,21,1)]">
+                            <p className="font-['Poppins'] text-[14px] sm:text-[16px] md:text-[14px] lg:text-[16px] xl:text-[18px] font-semibold text-[rgba(222,178,21,1)]">
                               Your Current Plan
                             </p>
                           ) : null}
@@ -180,7 +181,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
 
                       {/* Pro Plan */}
                       <div
-                        className="flex flex-col h-[600px] sm:h-[650px] md:h-[600px] 1024:h-[620px] 1440:h-[550px] p-3 pb-2 sm:p-4 sm:pb-3 text-center text-gray-900 dark:text-white
+                        className="flex flex-col h-[520px] sm:h-[550px] md:h-[480px] lg:h-[450px] xl:h-[550px] p-2 pb-1 sm:p-3 sm:pb-2 md:p-3 md:pb-2 lg:p-3 lg:pb-2 xl:p-4 xl:pb-3 text-center text-gray-900 dark:text-white
                       rounded-lg border border-gray-200 dark:border-gray-700 
                       shadow-lg transition-all duration-200 hover:shadow-xl"
                         style={{
@@ -191,7 +192,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                         <div className="flex-none">
                           {" "}
                           {/* Image and header section */}{" "}
-                          <div className="relative mb-2 mx-auto w-full max-w-[280px] md:max-w-[260px] 1024:max-w-[280px] 1440:max-w-[320px] h-[180px] md:h-[160px] 1024:h-[180px] 1440:h-[218px]">
+                          <div className="relative mb-1 sm:mb-2 mx-auto w-full max-w-[220px] sm:max-w-[240px] md:max-w-[200px] lg:max-w-[180px] xl:max-w-[320px] h-[140px] sm:h-[150px] md:h-[120px] lg:h-[110px] xl:h-[218px]">
                             <img
                               loading="lazy"
                               src={
@@ -201,28 +202,28 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                               className="w-full h-full object-cover object-center rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700"
                             />
                           </div>
-                          <div className="text-left mb-2 flex justify-between items-center">
+                          <div className="text-left mb-1 sm:mb-2 flex justify-between items-center">
                             <div className="flex-1">
                               {" "}
-                              <p className="font-['Poppins'] text-[20px] font-bold text-gray-900 dark:text-white">
+                              <p className="font-['Poppins'] text-[16px] sm:text-[18px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-bold text-gray-900 dark:text-white">
                                 STOCKSCOPE PASS
                               </p>
-                              <p className="text-lg font-bold text-[30px] text-[rgba(69,252,252,1)]">
+                              <p className="text-lg font-bold text-[24px] sm:text-[26px] md:text-[22px] lg:text-[26px] xl:text-[30px] text-[rgba(69,252,252,1)]">
                                 Pro
                               </p>
                             </div>
-                            <p className="text-lg text-gray-900 dark:text-white">
+                            <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
                               <span className="font-bold">$ 25</span>/month
                             </p>
                           </div>{" "}
                           {/* Features list */}
-                          <p className="text-left font-semibold text-gray-900 dark:text-white mt-8 mb-4 ml-1">
+                          <p className="text-left font-semibold text-gray-900 dark:text-white mt-4 sm:mt-6 md:mt-4 lg:mt-5 xl:mt-8 mb-2 sm:mb-3 md:mb-2 lg:mb-3 xl:mb-4 ml-1 text-sm sm:text-base md:text-sm lg:text-base">
                             Unlimited access to
                           </p>
-                          <ul className="space-y-2 text-left text-sm pl-2">
+                          <ul className="space-y-1 sm:space-y-2 text-left text-xs sm:text-sm md:text-xs lg:text-sm pl-2">
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -236,7 +237,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -252,7 +253,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -268,7 +269,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -282,16 +283,16 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                           </ul>{" "}
                         </div>{" "}
-                        <div className="mt-auto pb-2 flex justify-center">
+                        <div className="mt-auto pb-1 sm:pb-2 flex justify-center">
                           {currentPlan === "pro" ? (
-                            <p className="font-['Poppins'] text-[18px] font-semibold text-[rgba(69,252,252,1)]">
+                            <p className="font-['Poppins'] text-[14px] sm:text-[16px] md:text-[14px] lg:text-[16px] xl:text-[18px] font-semibold text-[rgba(69,252,252,1)]">
                               Your Current Plan
                             </p>
                           ) : currentPlan === "basic" ? (
                             <button
                               onClick={() => handlePlanClick("pro")}
-                              className="w-[142px] h-[36px] rounded-[7.18px] border-[0.9px] px-[26.92px]
-                            text-white font-['Poppins'] font-semibold text-[18px] text-center align-middle
+                              className="w-[120px] sm:w-[135px] md:w-[120px] lg:w-[135px] xl:w-[142px] h-[30px] sm:h-[33px] md:h-[30px] lg:h-[33px] xl:h-[36px] rounded-[7.18px] border-[0.9px] px-[20px] sm:px-[24px] md:px-[20px] lg:px-[24px] xl:px-[26.92px]
+                            text-white font-['Poppins'] font-semibold text-[14px] sm:text-[16px] md:text-[14px] lg:text-[16px] xl:text-[18px] text-center align-middle
                             backdrop-blur-[17.95px]"
                               style={{
                                 background:
@@ -311,7 +312,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
 
                       {/* Master Plan */}
                       <div
-                        className="flex flex-col h-[600px] sm:h-[650px] md:h-[600px] 1024:h-[620px] 1440:h-[550px] p-3 pb-2 sm:p-4 sm:pb-3 text-center text-gray-900 dark:text-white
+                        className="flex flex-col h-[520px] sm:h-[550px] md:h-[480px] lg:h-[450px] xl:h-[550px] p-2 pb-1 sm:p-3 sm:pb-2 md:p-3 md:pb-2 lg:p-3 lg:pb-2 xl:p-4 xl:pb-3 text-center text-gray-900 dark:text-white
                       rounded-lg border border-gray-200 dark:border-gray-700 
                       shadow-lg transition-all duration-200 hover:shadow-xl"
                         style={{
@@ -321,38 +322,38 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                       >
                         <div className="flex-none">
                           {/* Image and header section */}{" "}
-                          <div className="relative mb-2 mx-auto w-full aspect-[423/289] max-w-[280px] md:max-w-[260px] 1024:max-w-[280px] 1440:max-w-[320px]">
+                          <div className="relative mb-1 sm:mb-2 mx-auto w-full max-w-[220px] sm:max-w-[240px] md:max-w-[200px] lg:max-w-[180px] xl:max-w-[320px] h-[140px] sm:h-[150px] md:h-[120px] lg:h-[110px] xl:h-[218px]">
                             <img
                               loading="lazy"
                               src={
                                 "https://cdn.builder.io/api/v1/image/assets%2F462dcf177d254e0682506e32d9145693%2Fa909a5df465642789cd5ee20a8eeb509"
                               }
                               alt="Master Plan"
-                              className="w-full h-[180px] md:h-[160px] 1024:h-[180px] 1440:h-[218px] object-contain rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700 transform -scale-x-100"
+                              className="w-full h-full object-cover object-center rounded-[7.62px] border-[0.69px] border-gray-200 dark:border-gray-700 transform -scale-x-100"
                             />
                           </div>{" "}
-                          <div className="text-left mb-2 flex justify-between items-center">
+                          <div className="text-left mb-1 sm:mb-2 flex justify-between items-center">
                             <div className="flex-1">
                               {" "}
-                              <p className="font-['Poppins'] text-[20px] font-bold text-gray-900 dark:text-white">
+                              <p className="font-['Poppins'] text-[16px] sm:text-[18px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-bold text-gray-900 dark:text-white">
                                 STOCKSCOPE PASS
                               </p>
-                              <p className="text-lg font-bold text-[30px] text-[rgba(21,222,115,1)]">
+                              <p className="text-lg font-bold text-[24px] sm:text-[26px] md:text-[22px] lg:text-[26px] xl:text-[30px] text-[rgba(21,222,115,1)]">
                                 Master
                               </p>
                             </div>
-                            <p className="text-lg text-gray-900 dark:text-white">
+                            <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
                               <span className="font-bold">$ 50</span>/month
                             </p>
                           </div>{" "}
                           {/* Features list */}
-                          <p className="text-left font-semibold text-gray-900 dark:text-white mt-8 mb-4 ml-1">
+                          <p className="text-left font-semibold text-gray-900 dark:text-white mt-4 sm:mt-6 md:mt-4 lg:mt-5 xl:mt-8 mb-2 sm:mb-3 md:mb-2 lg:mb-3 xl:mb-4 ml-1 text-sm sm:text-base md:text-sm lg:text-base">
                             Unlimited access to
                           </p>
-                          <ul className="space-y-2 text-left text-sm pl-2">
+                          <ul className="space-y-1 sm:space-y-2 text-left text-xs sm:text-sm md:text-xs lg:text-sm pl-2">
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -366,7 +367,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -380,7 +381,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -394,7 +395,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
-                                className="flex-shrink-0 w-5 h-5 text-green-500"
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                               >
@@ -410,16 +411,16 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </li>
                           </ul>{" "}
                         </div>{" "}
-                        <div className="mt-auto pb-2 flex justify-center">
+                        <div className="mt-auto pb-1 sm:pb-2 flex justify-center">
                           {currentPlan === "master" ? (
-                            <p className="font-['Poppins'] text-[18px] font-semibold text-[rgba(21,222,115,1)]">
+                            <p className="font-['Poppins'] text-[14px] sm:text-[16px] md:text-[14px] lg:text-[16px] xl:text-[18px] font-semibold text-[rgba(21,222,115,1)]">
                               Your Current Plan
                             </p>
                           ) : (
                             <button
                               onClick={() => handlePlanClick("master")}
-                              className="w-[142px] h-[36px] rounded-[7.18px] border-[0.9px] px-[26.92px]
-                            text-white font-['Poppins'] font-semibold text-[18px] text-center align-middle
+                              className="w-[120px] sm:w-[135px] md:w-[120px] lg:w-[135px] xl:w-[142px] h-[30px] sm:h-[33px] md:h-[30px] lg:h-[33px] xl:h-[36px] rounded-[7.18px] border-[0.9px] px-[20px] sm:px-[24px] md:px-[20px] lg:px-[24px] xl:px-[26.92px]
+                            text-white font-['Poppins'] font-semibold text-[14px] sm:text-[16px] md:text-[14px] lg:text-[16px] xl:text-[18px] text-center align-middle
                             backdrop-blur-[17.95px]"
                               style={{
                                 background:

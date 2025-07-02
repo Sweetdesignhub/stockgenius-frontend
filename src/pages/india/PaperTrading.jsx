@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 function PaperTrading() {
   const { currentUser } = useSelector((state) => state.user);
 
-  return (    <div className="-z-10">
+  return (    
+  <div className="-z-10">
       <div className="min-h-fit lg:px-32 p-4 relative">
         <img
           loading="lazy"
