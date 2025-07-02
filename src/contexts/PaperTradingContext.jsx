@@ -29,7 +29,7 @@ export function PaperTradingProvider({ children }) {
 
   const { currentUser } = useSelector((state) => state.user);
   const region = useSelector((state) => state?.region) || "india";
-  console.log("Region:", region);
+  // console.log("Region:", region);
   useEffect(() => {
     if (region !== "india") return; // ✅ Only allow for India region
     const dataSourceURL = PAPER_TRADE_URL;
