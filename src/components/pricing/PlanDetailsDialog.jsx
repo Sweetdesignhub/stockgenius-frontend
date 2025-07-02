@@ -184,7 +184,7 @@ export default function PlanSelectDialog({
               leaveTo="opacity-0 scale-95"
               className="w-full"
             >
-              <Dialog.Panel className="relative mx-auto w-full max-w-[1200px] min-h-screen sm:min-h-[700px] bg-white dark:bg-black/100 rounded-none sm:rounded-[10px] border border-gray-200 dark:border-gray-700 transform transition-all shadow-xl overflow-hidden">
+              <Dialog.Panel className='relative mx-auto w-full max-w-[1200px] min-h-screen sm:min-h-[600px] bg-white dark:bg-black/100 rounded-none sm:rounded-[10px] border border-gray-200 dark:border-gray-700 transform transition-all shadow-xl overflow-hidden'>
                 <button
                   onClick={onClose}
                   className="absolute right-2 top-2 sm:right-4 sm:top-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10"
@@ -193,18 +193,18 @@ export default function PlanSelectDialog({
                   <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
 
-                <div className="flex flex-col w-full h-full">
-                  <div className="w-full text-center py-4 sm:py-8">
-                    <div className="text-center mb-4 sm:mb-6 md:mb-8 pt-6 sm:pt-3">
-                      <h2 className="font-['Aldrich'] text-[20px] sm:text-[36px] md:text-[40px] font-normal leading-[100%] tracking-[0.02em] align-middle text-gray-900 dark:text-white">
+                <div className='flex flex-col w-full h-full'>
+                  <div className='w-full text-center py-3 sm:py-6 md:py-8'>
+                    <div className='text-center mb-3 sm:mb-5 md:mb-8 pt-4 sm:pt-2 md:pt-3'>
+                      <h2 className="font-['Aldrich'] text-[18px] sm:text-[28px] md:text-[40px] font-normal leading-[100%] tracking-[0.02em] align-middle text-gray-900 dark:text-white">
                         StockScope Pass
                       </h2>
                     </div>
-                    <div className="flex justify-center space-x-3 px-2 sm:px-0">
+                    <div className='flex justify-center space-x-2 sm:space-x-3 px-2 sm:px-0'>
                       <button
-                        onClick={() => setSelectedPlan("pro")}
-                        className={`relative px-8 py-1 rounded-md transition-all duration-300 font-semibold border-[0.9px] text-white ${
-                          selectedPlan === "pro" ? "scale-105" : "scale-95"
+                        onClick={() => setSelectedPlan('pro')}
+                        className={`relative px-6 sm:px-8 py-0.5 sm:py-1 rounded-md transition-all duration-300 font-semibold border-[0.9px] text-white ${
+                          selectedPlan === 'pro' ? 'scale-105' : 'scale-95'
                         }`}
                         style={{
                           background:
@@ -219,12 +219,12 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(73, 244, 255, 0.7) inset, 0px 8.97px 35.9px 0px rgba(11, 58, 92, 0.5)",
                         }}
                       >
-                        <span className="relative z-10 text-sm">PRO PASS</span>
+                        <span className='relative z-10 text-xs sm:text-sm'>PRO PASS</span>
                       </button>
                       <button
-                        onClick={() => setSelectedPlan("master")}
-                        className={`relative px-4 py-1.5 rounded-lg transition-all duration-300 font-semibold border-[0.9px] text-white ${
-                          selectedPlan === "master" ? "scale-105" : "scale-95"
+                        onClick={() => setSelectedPlan('master')}
+                        className={`relative px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg transition-all duration-300 font-semibold border-[0.9px] text-white ${
+                          selectedPlan === 'master' ? 'scale-105' : 'scale-95'
                         }`}
                         style={{
                           background:
@@ -239,19 +239,17 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(73, 255, 91, 0.7) inset, 0px 8.97px 35.9px 0px rgba(65, 175, 63, 0.5)",
                         }}
                       >
-                        <span className="relative z-10 text-sm">
-                          MASTER PASS
-                        </span>
+                        <span className='relative z-10 text-xs sm:text-sm'>MASTER PASS</span>
                       </button>
                     </div>
                   </div>
-                  <div className="w-full px-4 sm:px-8 pb-6">
-                    <h3 className="font-['Poppins'] text-[20px] sm:text-[24px] font-semibold text-gray-800 dark:text-white mb-4 text-center">
+                  <div className='w-full px-3 sm:px-6 md:px-8 pb-4 sm:pb-5 md:pb-6'>
+                    <h3 className="font-['Poppins'] text-[16px] sm:text-[20px] md:text-[24px] font-semibold text-gray-800 dark:text-white mb-3 sm:mb-4 text-center">
                       Choose Your Subscription Plan
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4'>
                       <div
-                        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-shadow relative"
+                        className='bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative'
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #88272D 132.95%)",
@@ -263,11 +261,11 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(255, 73, 106, 0.7) inset, 0px 8.97px 35.9px 0px rgba(175, 63, 83, 0.5)",
                         }}
                       >
-                        <div className="flex justify-between items-start mb-4">
+                        <div className='flex justify-between items-start mb-3 sm:mb-4'>
                           <div>
                             <div className="flex flex-col items-start">
                               <span
-                                className="font-['Poppins'] text-[108px] font-extrabold leading-[100%] tracking-[0.02em]"
+                                className="font-['Poppins'] text-[80px] sm:text-[95px] md:text-[90px] font-extrabold leading-[100%] tracking-[0.02em]"
                                 style={{
                                   background: "rgba(222, 21, 21, 0.99)",
                                   WebkitBackgroundClip: "text",
@@ -278,15 +276,15 @@ export default function PlanSelectDialog({
                                 12
                               </span>
                               <span
-                                className="font-['Poppins'] text-[40px] font-semibold leading-[22px]"
-                                style={{ color: "rgba(255, 255, 255, 1)" }}
+                                className="font-['Poppins'] text-[28px] sm:text-[35px] md:text-[30px] font-semibold leading-[22px]"
+                                style={{ color: 'rgba(255, 255, 255, 1)' }}
                               >
                                 Months
                               </span>
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-3xl font-bold text-white">
+                            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
                               {PRICING_PLANS[region]?.symbol}
                               {selectedPlan === "pro"
                                 ? PRICING_PLANS[region]?.pro?.twelve_months
@@ -294,7 +292,7 @@ export default function PlanSelectDialog({
                                 : PRICING_PLANS[region]?.master?.twelve_months
                                     .price || "400"}
                             </span>
-                            <span className="text-gray-200 font-bold mt-3">
+                            <span className="text-gray-200 font-bold mt-2 sm:mt-3 text-sm sm:text-base">
                               {calculateMonthlyPrice(
                                 selectedPlan === "pro"
                                   ? PRICING_PLANS[region]?.pro?.twelve_months
@@ -307,13 +305,13 @@ export default function PlanSelectDialog({
                             </span>
                           </div>
                         </div>
-                        <ul className="mb-6 space-y-2">
-                          <li className="flex items-center text-gray-200">
+                        <ul className='mb-4 sm:mb-5 md:mb-6 space-y-1 sm:space-y-2'>
+                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
                             <svg
-                              className="w-4 h-4 mr-2 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
                             >
                               <path
                                 strokeLinecap="round"
@@ -324,12 +322,12 @@ export default function PlanSelectDialog({
                             </svg>
                             Best value for money
                           </li>
-                          <li className="flex items-center text-gray-200">
+                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
                             <svg
-                              className="w-4 h-4 mr-2 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
                             >
                               <path
                                 stroke="round"
@@ -349,10 +347,8 @@ export default function PlanSelectDialog({
                               );
                               handleUpgrade(selectedPlan, "12_months");
                             }}
-                            className={`w-[165px] h-[35px] rounded-[7.18px] font-semibold text-white transition-all duration-300 ${
-                              loadingPlan === `${selectedPlan}-12_months`
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
+                            className={`w-[140px] sm:w-[155px] md:w-[165px] h-[30px] sm:h-[33px] md:h-[35px] rounded-[7.18px] font-semibold text-white transition-all duration-300 text-xs sm:text-sm ${
+                              loadingPlan === `${selectedPlan}-12_months` ? 'opacity-50 cursor-not-allowed' : ''
                             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
                             disabled={
                               loadingPlan === `${selectedPlan}-12_months`
@@ -377,7 +373,7 @@ export default function PlanSelectDialog({
                         </div>
                       </div>
                       <div
-                        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-shadow relative"
+                        className='bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative'
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #882776 132.95%)",
@@ -389,11 +385,11 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(255, 73, 242, 0.7) inset, 0px 8.97px 35.9px 0px rgba(175, 63, 159, 0.5)",
                         }}
                       >
-                        <div className="flex justify-between items-start mb-4">
+                        <div className='flex justify-between items-start mb-3 sm:mb-4'>
                           <div>
                             <div className="flex flex-col items-start">
                               <span
-                                className="font-['Poppins'] text-[108px] font-extrabold leading-[100%] tracking-[0.02em]"
+                                className="font-['Poppins'] text-[80px] sm:text-[95px] md:text-[90px] font-extrabold leading-[100%] tracking-[0.02em]"
                                 style={{
                                   background: "rgba(222, 21, 203, 0.99)",
                                   WebkitBackgroundClip: "text",
@@ -404,15 +400,15 @@ export default function PlanSelectDialog({
                                 3
                               </span>
                               <span
-                                className="font-['Poppins'] text-[40px] font-semibold leading-[22px]"
-                                style={{ color: "rgba(255, 255, 255, 1)" }}
+                                className="font-['Poppins'] text-[28px] sm:text-[35px] md:text-[30px] font-semibold leading-[22px]"
+                                style={{ color: 'rgba(255, 255, 255, 1)' }}
                               >
                                 Months
                               </span>
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-3xl font-bold text-white">
+                            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
                               {PRICING_PLANS[region]?.symbol}
                               {selectedPlan === "pro"
                                 ? PRICING_PLANS[region]?.pro?.three_months
@@ -420,7 +416,7 @@ export default function PlanSelectDialog({
                                 : PRICING_PLANS[region]?.master?.three_months
                                     .price || "400"}
                             </span>
-                            <span className="text-gray-200 font-bold mt-3">
+                            <span className="text-gray-200 font-bold mt-2 sm:mt-3 text-sm sm:text-base">
                               {calculateMonthlyPrice(
                                 selectedPlan === "pro"
                                   ? PRICING_PLANS[region]?.pro?.three_months
@@ -433,13 +429,13 @@ export default function PlanSelectDialog({
                             </span>
                           </div>
                         </div>
-                        <ul className="mb-6 space-y-2">
-                          <li className="flex items-center text-gray-200">
+                        <ul className='mb-4 sm:mb-5 md:mb-6 space-y-1 sm:space-y-2'>
+                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
                             <svg
-                              className="w-4 h-4 mr-2 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
                             >
                               <path
                                 stroke="round"
@@ -449,12 +445,12 @@ export default function PlanSelectDialog({
                             </svg>
                             3 months access
                           </li>
-                          <li className="flex items-center text-gray-200">
+                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
                             <svg
-                              className="w-4 h-4 mr-2 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
                             >
                               <path
                                 stroke="round"
@@ -473,10 +469,8 @@ export default function PlanSelectDialog({
                               );
                               handleUpgrade(selectedPlan, "3_months");
                             }}
-                            className={`w-[165px] h-[35px] rounded-[7.18px] font-semibold text-white transition-all duration-300 ${
-                              loadingPlan === `${selectedPlan}-3_months`
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
+                            className={`w-[140px] sm:w-[155px] md:w-[165px] h-[30px] sm:h-[33px] md:h-[35px] rounded-[7.18px] font-semibold text-white transition-all duration-300 text-xs sm:text-sm ${
+                              loadingPlan === `${selectedPlan}-3_months` ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                             disabled={
                               loadingPlan === `${selectedPlan}-3_months`
@@ -500,7 +494,7 @@ export default function PlanSelectDialog({
                         </div>
                       </div>
                       <div
-                        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-shadow relative"
+                        className='bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative'
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #200B5C 132.95%)",
@@ -512,11 +506,11 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(109, 73, 255, 0.7) inset, 0px 8.97px 35.9px 0px rgba(54, 63, 175, 0.5)",
                         }}
                       >
-                        <div className="flex justify-between items-start mb-4">
+                        <div className='flex justify-between items-start mb-3 sm:mb-4'>
                           <div>
                             <div className="flex flex-col items-start">
                               <span
-                                className="font-['Poppins'] text-[108px] font-extrabold leading-[100%]"
+                                className="font-['Poppins'] text-[80px] sm:text-[95px] md:text-[90px] font-extrabold leading-[100%]"
                                 style={{
                                   background: "rgba(21, 68, 222, 0.99)",
                                   WebkitBackgroundClip: "text",
@@ -526,15 +520,15 @@ export default function PlanSelectDialog({
                                 1
                               </span>
                               <span
-                                className="font-['Poppins'] text-[40px] font-semibold leading-[22px]"
-                                style={{ color: "rgba(255, 255, 255, 1)" }}
+                                className="font-['Poppins'] text-[28px] sm:text-[35px] md:text-[30px] font-semibold leading-[22px]"
+                                style={{ color: 'rgba(255, 255, 255, 1)' }}
                               >
                                 Month
                               </span>
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-3xl font-bold text-white">
+                            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
                               {PRICING_PLANS[region]?.symbol}
                               {selectedPlan === "pro"
                                 ? PRICING_PLANS[region]?.pro?.one_month.price ||
@@ -542,7 +536,7 @@ export default function PlanSelectDialog({
                                 : PRICING_PLANS[region]?.master?.one_month
                                     .price || "400"}
                             </span>
-                            <span className="text-gray-200 font-bold mt-3">
+                            <span className="text-gray-200 font-bold mt-2 sm:mt-3 text-sm sm:text-base">
                               {calculateMonthlyPrice(
                                 selectedPlan === "pro"
                                   ? PRICING_PLANS[region]?.pro?.one_month

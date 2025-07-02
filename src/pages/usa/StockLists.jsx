@@ -175,8 +175,9 @@ function StockLists() {
     .slice(0, firstTableColumns.length - 1)
     .filter((_, index) => index !== 4);
   const secondTableColumns = Object.keys(data[0] || {});
-  const decision = secondTableColumns.slice(secondTableColumns.length - 1);  return (
-    <div className="min-h-screen lg:px-32 p-4 relative page-scrollbar">
+  const decision = secondTableColumns.slice(secondTableColumns.length - 1);
+  return (
+    <div className="min-h-fit lg:px-32 p-4 relative page-scrollbar">
       <img
         loading="lazy"
         className="absolute -z-10 top-1/2 transform -translate-y-1/2 left-0"
@@ -190,15 +191,20 @@ function StockLists() {
         alt="bear"
       />
 
-      <div className="bg-white p-4 table-main rounded-2xl">
-        {/* <div className="p-4">{renderMarketTitle()}</div> */}        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
+      <div className="bg-white/5 dark:bg-[rgba(5,5,5,0.2)] backdrop-blur-md border-white/10 p-4 table-main rounded-2xl">
+        {/* <div className="p-4">{renderMarketTitle()}</div> */}{" "}
+        <div className="p-4 flex flex-col items-center justify-between lg:flex-row lg:items-center">
           <h1 className="font-semibold text-xl xl:text-xl lg:text-base mb-4 lg:mb-0 lg:mr-2 xl:mr-4">
             {renderMarketTitle()}
           </h1>
           <div className="flex mt-5 sm:mt-5 lg:mt-0 items-center lg:gap-2 xl:gap-4">
             <div className="mr-2 flex items-center">
-              <h1 className="text-sm xl:text-sm lg:text-xs font-bold">At Close : &nbsp;</h1>
-              <p className="text-xs xl:text-xs lg:text-[10px] font-semibold">{lastUpdated}</p>
+              <h1 className="text-sm xl:text-sm lg:text-xs font-bold">
+                At Close : &nbsp;
+              </h1>
+              <p className="text-xs xl:text-xs lg:text-[10px] font-semibold">
+                {lastUpdated}
+              </p>
             </div>
             <div className="relative group">
               <button
@@ -217,7 +223,8 @@ function StockLists() {
               </span>
             </div>
           </div>
-        </div>        <div className="p-2 sm:p-4 flex news-table h-[69vh] overflow-y-auto overflow-x-hidden rounded-2xl scrollbar-hide">
+        </div>{" "}
+        <div className="p-2 sm:p-4 flex news-table h-[69vh] overflow-y-auto overflow-x-hidden rounded-2xl scrollbar-hide">
           {/* First Table */}
           <div className="lg:max-w-[88%] max-w-[75%]">
             <div className="overflow-x-auto scrollbar-hide">
@@ -238,7 +245,8 @@ function StockLists() {
                 <tbody>
                   {data.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      {dataTable.map((column, colIndex) => (                        <td
+                      {dataTable.map((column, colIndex) => (
+                        <td
                           key={colIndex}
                           className={`h-12 sm:h-20 w-full min-w-16 sm:min-w-24 capitalize px-1 sm:px-2 text-[10px] sm:text-sm whitespace-nowrap ${
                             colIndex === 1
@@ -267,7 +275,8 @@ function StockLists() {
                 </tbody>
               </table>
             </div>
-          </div>          <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
+          </div>{" "}
+          <div className="flex-1 lg:max-w-[12%] max-w-[25%]">
             {/* Second Table */}
             <div className="overflow-x-auto scrollbar-hide">
               <div className="overflow-y-auto h-full scrollbar-hide">
@@ -296,7 +305,8 @@ function StockLists() {
 
                           return (
                             <td
-                              key={colIndex}                              className="h-12 sm:h-20 capitalize px-1 sm:px-2 text-center whitespace-nowrap"
+                              key={colIndex}
+                              className="h-12 sm:h-20 capitalize px-1 sm:px-2 text-center whitespace-nowrap"
                             >
                               {isBuy && (
                                 <button
@@ -326,7 +336,6 @@ function StockLists() {
             </div>
           </div>
         </div>
-
         <Modal isOpen={modalOpen} onClose={closeModal}>
           <div className="p-4 bg-white rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-4">

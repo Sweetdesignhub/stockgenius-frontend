@@ -127,7 +127,7 @@ function AiDrivenList() {
     setPredictionFilter(filter);
   };
 
-  const handleBuy = (row) => {
+    const handleBuy = (row) => {
     if (isWithinTradingHours()) {
       setSelectedRow({ ...row, action: "BUY" });
       setModalOpen(true);
@@ -233,7 +233,7 @@ function AiDrivenList() {
 
   return (
     <div
-      className="p-3 port rounded-lg flex flex-col max-h-[400px] md:max-h-[410px] lg:max-h-[395px] relative"
+      className="p-3 port rounded-lg flex flex-col h-[400px] md:h-[410px] lg:h-[395px] relative"
       
     >
       {/* Header Section */}

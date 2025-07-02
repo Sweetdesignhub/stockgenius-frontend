@@ -492,7 +492,7 @@ export default function Header() {
                           </Link>
                         )}
                       </MenuItem>
-                      {region === "india" && (
+                      { (
                         <MenuItem>
                           {({ active }) => (
                             <button
@@ -630,7 +630,7 @@ export default function Header() {
                         </Link>
                       )}
                     </div>
-                  ))}                  {currentUser && region === "india" && (
+                  ))}                  {currentUser && (
                       <button
                       className="flex items-center gap-2 -mx-3 rounded-lg px-3 py-2 text-base font-[poppins] leading-7
                         bg-amber-500 backdrop-blur-md
