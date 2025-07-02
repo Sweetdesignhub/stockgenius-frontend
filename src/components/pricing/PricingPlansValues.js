@@ -1,40 +1,37 @@
 const PRICING_PLANS = {
   india: {
-    symbol: "₹ ",
+    symbol: "$ ",
     basic: {
-      price: "₹ 0",
+      price: "$ 0",
       paperTradeFundCap: "1 lakh",
       aiBotTransactionLimit: "N/A",
       simulationLimit: "5 simulations/month",
       description: "Free Access",
     },
     pro: {
-      price: "₹ 25",
+      price: "$ 25",
       paperTradeFundCap: "10 lakhs",
       aiBotTransactionLimit: "10 daily/50 weekly transactions using bots",
       simulationLimit: "25 simulations/month",
       description: "Past 7 days per ticker (News & Sentiments)",
       one_month: {
-        symbol: "₹ ",
         price: "25",
         access: "1 month access",
         discount: "Pay as you go",
       },
       three_months: {
-        symbol: "₹ ",
-        price: "50",
+        price: "60",
         access: "3 month access",
         discount: "10% discount applied",
       },
       twelve_months: {
-        symbol: "₹ ",
         price: "200",
         access: "Best value for money",
         discount: "20% discount applied",
       },
     },
     master: {
-      price: "₹ 50",
+      price: "$ 50",
       paperTradeFundCap: "50 lakhs",
       aiBotTransactionLimit: "Unlimited bots, full trading hours",
       simulationLimit: "Unlimited simulations",
@@ -60,14 +57,14 @@ const PRICING_PLANS = {
     symbol: "$ ",
     basic: {
       price: "$ 0",
-      paperTradeFundCap: "1 lakh",
+      paperTradeFundCap: "1000",
       aiBotTransactionLimit: "N/A",
       simulationLimit: "5 simulations/month",
       description: "Free Access",
     },
     pro: {
-      price: "$ 25",
-      paperTradeFundCap: "10 lakhs",
+      price: "$ 35",
+      paperTradeFundCap: "5000",
       aiBotTransactionLimit: "10 daily / 50 weekly transactions",
       simulationLimit: "25 simulations/month",
       description: "Past 7 days per ticker (News & Sentiments)",
@@ -89,7 +86,7 @@ const PRICING_PLANS = {
     },
     master: {
       price: "$ 50",
-      paperTradeFundCap: "50 lakhs",
+      paperTradeFundCap: "15000",
       aiBotTransactionLimit: "Unlimited bots, full trading hours",
       simulationLimit: "Unlimited simulations",
       description: "Full history with insights",
