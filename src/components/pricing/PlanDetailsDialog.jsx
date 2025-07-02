@@ -12,10 +12,6 @@ import {
 } from "../../redux/user/userSlice.js";
 import PRICING_PLANS from "./PricingPlansValues.js";
 
-const stripePromise = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
-  ? loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY)
-  : Promise.reject(new Error("Stripe publishable key not found"));
-
 const FeatureItem = ({ text, plan = "basic" }) => (
   <div className="flex items-center space-x-2 sm:space-x-3">
     <svg
@@ -55,6 +51,13 @@ export default function PlanSelectDialog({
   const sessionIdRef = useRef(null);
 
   const region = useSelector((state) => state.region);
+  const stripeKey =
+    region === "usa"
+      ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY_USA
+      : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = stripeKey
+    ? loadStripe(stripeKey)
+    : Promise.reject(new Error("Stripe publishable key not found"));
 
   useEffect(() => {
     setSelectedPlan(initialPlan);
@@ -184,7 +187,7 @@ export default function PlanSelectDialog({
               leaveTo="opacity-0 scale-95"
               className="w-full"
             >
-              <Dialog.Panel className='relative mx-auto w-full max-w-[1200px] min-h-screen sm:min-h-[600px] bg-white dark:bg-black/100 rounded-none sm:rounded-[10px] border border-gray-200 dark:border-gray-700 transform transition-all shadow-xl overflow-hidden'>
+              <Dialog.Panel className="relative mx-auto w-full max-w-[1200px] min-h-screen sm:min-h-[600px] bg-white dark:bg-black/100 rounded-none sm:rounded-[10px] border border-gray-200 dark:border-gray-700 transform transition-all shadow-xl overflow-hidden">
                 <button
                   onClick={onClose}
                   className="absolute right-2 top-2 sm:right-4 sm:top-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10"
@@ -193,18 +196,18 @@ export default function PlanSelectDialog({
                   <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
 
-                <div className='flex flex-col w-full h-full'>
-                  <div className='w-full text-center py-3 sm:py-6 md:py-8'>
-                    <div className='text-center mb-3 sm:mb-5 md:mb-8 pt-4 sm:pt-2 md:pt-3'>
+                <div className="flex flex-col w-full h-full">
+                  <div className="w-full text-center py-3 sm:py-6 md:py-8">
+                    <div className="text-center mb-3 sm:mb-5 md:mb-8 pt-4 sm:pt-2 md:pt-3">
                       <h2 className="font-['Aldrich'] text-[18px] sm:text-[28px] md:text-[40px] font-normal leading-[100%] tracking-[0.02em] align-middle text-gray-900 dark:text-white">
                         StockScope Pass
                       </h2>
                     </div>
-                    <div className='flex justify-center space-x-2 sm:space-x-3 px-2 sm:px-0'>
+                    <div className="flex justify-center space-x-2 sm:space-x-3 px-2 sm:px-0">
                       <button
-                        onClick={() => setSelectedPlan('pro')}
+                        onClick={() => setSelectedPlan("pro")}
                         className={`relative px-6 sm:px-8 py-0.5 sm:py-1 rounded-md transition-all duration-300 font-semibold border-[0.9px] text-white ${
-                          selectedPlan === 'pro' ? 'scale-105' : 'scale-95'
+                          selectedPlan === "pro" ? "scale-105" : "scale-95"
                         }`}
                         style={{
                           background:
@@ -219,12 +222,14 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(73, 244, 255, 0.7) inset, 0px 8.97px 35.9px 0px rgba(11, 58, 92, 0.5)",
                         }}
                       >
-                        <span className='relative z-10 text-xs sm:text-sm'>PRO PASS</span>
+                        <span className="relative z-10 text-xs sm:text-sm">
+                          PRO PASS
+                        </span>
                       </button>
                       <button
-                        onClick={() => setSelectedPlan('master')}
+                        onClick={() => setSelectedPlan("master")}
                         className={`relative px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg transition-all duration-300 font-semibold border-[0.9px] text-white ${
-                          selectedPlan === 'master' ? 'scale-105' : 'scale-95'
+                          selectedPlan === "master" ? "scale-105" : "scale-95"
                         }`}
                         style={{
                           background:
@@ -239,17 +244,19 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(73, 255, 91, 0.7) inset, 0px 8.97px 35.9px 0px rgba(65, 175, 63, 0.5)",
                         }}
                       >
-                        <span className='relative z-10 text-xs sm:text-sm'>MASTER PASS</span>
+                        <span className="relative z-10 text-xs sm:text-sm">
+                          MASTER PASS
+                        </span>
                       </button>
                     </div>
                   </div>
-                  <div className='w-full px-3 sm:px-6 md:px-8 pb-4 sm:pb-5 md:pb-6'>
+                  <div className="w-full px-3 sm:px-6 md:px-8 pb-4 sm:pb-5 md:pb-6">
                     <h3 className="font-['Poppins'] text-[16px] sm:text-[20px] md:text-[24px] font-semibold text-gray-800 dark:text-white mb-3 sm:mb-4 text-center">
                       Choose Your Subscription Plan
                     </h3>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4'>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                       <div
-                        className='bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative'
+                        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative"
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #88272D 132.95%)",
@@ -261,7 +268,7 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(255, 73, 106, 0.7) inset, 0px 8.97px 35.9px 0px rgba(175, 63, 83, 0.5)",
                         }}
                       >
-                        <div className='flex justify-between items-start mb-3 sm:mb-4'>
+                        <div className="flex justify-between items-start mb-3 sm:mb-4">
                           <div>
                             <div className="flex flex-col items-start">
                               <span
@@ -277,7 +284,7 @@ export default function PlanSelectDialog({
                               </span>
                               <span
                                 className="font-['Poppins'] text-[28px] sm:text-[35px] md:text-[30px] font-semibold leading-[22px]"
-                                style={{ color: 'rgba(255, 255, 255, 1)' }}
+                                style={{ color: "rgba(255, 255, 255, 1)" }}
                               >
                                 Months
                               </span>
@@ -305,13 +312,13 @@ export default function PlanSelectDialog({
                             </span>
                           </div>
                         </div>
-                        <ul className='mb-4 sm:mb-5 md:mb-6 space-y-1 sm:space-y-2'>
-                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
+                        <ul className="mb-4 sm:mb-5 md:mb-6 space-y-1 sm:space-y-2">
+                          <li className="flex items-center text-gray-200 text-sm sm:text-base">
                             <svg
-                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
-                              fill='none'
-                              stroke='currentColor'
-                              viewBox='0 0 24 24'
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
                               <path
                                 strokeLinecap="round"
@@ -320,14 +327,15 @@ export default function PlanSelectDialog({
                                 d="M5 13l4 4L19 7"
                               />
                             </svg>
-                            Best value for money
+                            {PRICING_PLANS[region]?.pro?.twelve_months
+                              ?.access || "Best value for money"}
                           </li>
-                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
+                          <li className="flex items-center text-gray-200 text-sm sm:text-base">
                             <svg
-                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
-                              fill='none'
-                              stroke='currentColor'
-                              viewBox='0 0 24 24'
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
                               <path
                                 stroke="round"
@@ -336,7 +344,8 @@ export default function PlanSelectDialog({
                                 d="M5 13l4 4L19 7"
                               />
                             </svg>
-                            20% discount applied
+                            {PRICING_PLANS[region]?.pro?.twelve_months
+                              ?.discount || "20% discount applied"}
                           </li>
                         </ul>
                         <div className="flex justify-center">
@@ -348,7 +357,9 @@ export default function PlanSelectDialog({
                               handleUpgrade(selectedPlan, "12_months");
                             }}
                             className={`w-[140px] sm:w-[155px] md:w-[165px] h-[30px] sm:h-[33px] md:h-[35px] rounded-[7.18px] font-semibold text-white transition-all duration-300 text-xs sm:text-sm ${
-                              loadingPlan === `${selectedPlan}-12_months` ? 'opacity-50 cursor-not-allowed' : ''
+                              loadingPlan === `${selectedPlan}-12_months`
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
                             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
                             disabled={
                               loadingPlan === `${selectedPlan}-12_months`
@@ -373,7 +384,7 @@ export default function PlanSelectDialog({
                         </div>
                       </div>
                       <div
-                        className='bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative'
+                        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative"
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #882776 132.95%)",
@@ -385,7 +396,7 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(255, 73, 242, 0.7) inset, 0px 8.97px 35.9px 0px rgba(175, 63, 159, 0.5)",
                         }}
                       >
-                        <div className='flex justify-between items-start mb-3 sm:mb-4'>
+                        <div className="flex justify-between items-start mb-3 sm:mb-4">
                           <div>
                             <div className="flex flex-col items-start">
                               <span
@@ -401,7 +412,7 @@ export default function PlanSelectDialog({
                               </span>
                               <span
                                 className="font-['Poppins'] text-[28px] sm:text-[35px] md:text-[30px] font-semibold leading-[22px]"
-                                style={{ color: 'rgba(255, 255, 255, 1)' }}
+                                style={{ color: "rgba(255, 255, 255, 1)" }}
                               >
                                 Months
                               </span>
@@ -429,13 +440,13 @@ export default function PlanSelectDialog({
                             </span>
                           </div>
                         </div>
-                        <ul className='mb-4 sm:mb-5 md:mb-6 space-y-1 sm:space-y-2'>
-                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
+                        <ul className="mb-4 sm:mb-5 md:mb-6 space-y-1 sm:space-y-2">
+                          <li className="flex items-center text-gray-200 text-sm sm:text-base">
                             <svg
-                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
-                              fill='none'
-                              stroke='currentColor'
-                              viewBox='0 0 24 24'
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
                               <path
                                 stroke="round"
@@ -443,14 +454,15 @@ export default function PlanSelectDialog({
                                 d="M5 13l4 4L19 7"
                               />
                             </svg>
-                            3 months access
+                            {PRICING_PLANS[region]?.pro?.three_months?.access ||
+                              "3 months access"}
                           </li>
-                          <li className='flex items-center text-gray-200 text-sm sm:text-base'>
+                          <li className="flex items-center text-gray-200 text-sm sm:text-base">
                             <svg
-                              className='w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white'
-                              fill='none'
-                              stroke='currentColor'
-                              viewBox='0 0 24 24'
+                              className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
                               <path
                                 stroke="round"
@@ -458,7 +470,8 @@ export default function PlanSelectDialog({
                                 d="M5 13l4 4L19 7"
                               />
                             </svg>
-                            10% discount applied
+                            {PRICING_PLANS[region]?.pro?.three_months
+                              ?.discount || "10% discount applied"}
                           </li>
                         </ul>
                         <div className="flex justify-center">
@@ -470,7 +483,9 @@ export default function PlanSelectDialog({
                               handleUpgrade(selectedPlan, "3_months");
                             }}
                             className={`w-[140px] sm:w-[155px] md:w-[165px] h-[30px] sm:h-[33px] md:h-[35px] rounded-[7.18px] font-semibold text-white transition-all duration-300 text-xs sm:text-sm ${
-                              loadingPlan === `${selectedPlan}-3_months` ? 'opacity-50 cursor-not-allowed' : ''
+                              loadingPlan === `${selectedPlan}-3_months`
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
                             }`}
                             disabled={
                               loadingPlan === `${selectedPlan}-3_months`
@@ -494,7 +509,7 @@ export default function PlanSelectDialog({
                         </div>
                       </div>
                       <div
-                        className='bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative'
+                        className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow relative"
                         style={{
                           background:
                             "linear-gradient(180deg, rgba(0, 0, 0, 0) -40.91%, #200B5C 132.95%)",
@@ -506,7 +521,7 @@ export default function PlanSelectDialog({
                             "0px 8.97px 26.92px 0px rgba(109, 73, 255, 0.7) inset, 0px 8.97px 35.9px 0px rgba(54, 63, 175, 0.5)",
                         }}
                       >
-                        <div className='flex justify-between items-start mb-3 sm:mb-4'>
+                        <div className="flex justify-between items-start mb-3 sm:mb-4">
                           <div>
                             <div className="flex flex-col items-start">
                               <span
@@ -521,7 +536,7 @@ export default function PlanSelectDialog({
                               </span>
                               <span
                                 className="font-['Poppins'] text-[28px] sm:text-[35px] md:text-[30px] font-semibold leading-[22px]"
-                                style={{ color: 'rgba(255, 255, 255, 1)' }}
+                                style={{ color: "rgba(255, 255, 255, 1)" }}
                               >
                                 Month
                               </span>
@@ -563,7 +578,8 @@ export default function PlanSelectDialog({
                                 d="M5 13l4 4L19 7"
                               />
                             </svg>
-                            1 month access
+                            {PRICING_PLANS[region]?.pro?.one_month?.access ||
+                              "1 month access"}
                           </li>
                           <li className="flex items-center text-gray-200">
                             <svg
@@ -578,7 +594,8 @@ export default function PlanSelectDialog({
                                 d="M5 13l4 4L19 7"
                               />
                             </svg>
-                            Pay as you go
+                            {PRICING_PLANS[region]?.pro?.one_month?.discount ||
+                              "Pay as you go"}
                           </li>
                         </ul>
                         <div className="flex justify-center">

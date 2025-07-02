@@ -122,7 +122,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </div>{" "}
                             <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
                               <span className="font-bold">
-                                Free (
+                                Free ({PRICING_PLANS[region]?.symbol}
                                 {PRICING_PLANS[region]?.basic?.price || "$ 0"})
                               </span>
                             </p>
@@ -230,6 +230,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </div>
                             <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
                               <span className="font-bold">
+                                {PRICING_PLANS[region]?.symbol}
                                 {PRICING_PLANS[region]?.pro?.price || "$ 25"}
                               </span>
                               / month
@@ -374,6 +375,7 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                             </div>
                             <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
                               <span className="font-bold">
+                                {PRICING_PLANS[region]?.symbol}
                                 {PRICING_PLANS[region]?.master?.price || "$ 50"}
                               </span>
                               /month

@@ -11,9 +11,9 @@ import {
   updateUserFailure,
 } from "../../redux/user/userSlice.js";
 
-const stripePromise = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
-  ? loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY)
-  : Promise.reject(new Error("Stripe publishable key not found"));
+// const stripePromise = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
+//   ? loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY)
+//   : Promise.reject(new Error("Stripe publishable key not found"));
 
 const FeatureItem = ({ text, plan = "basic" }) => (
   <div className="flex items-center space-x-2 sm:space-x-3">
@@ -54,6 +54,14 @@ export default function PlanSelectDialog({
   const sessionIdRef = useRef(null);
 
   const region = useSelector((state) => state.region);
+
+  const stripeKey =
+    region === "usa"
+      ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY_USA
+      : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = stripeKey
+    ? loadStripe(stripeKey)
+    : Promise.reject(new Error("Stripe publishable key not found"));
 
   useEffect(() => {
     setSelectedPlan(initialPlan);

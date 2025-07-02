@@ -2,15 +2,21 @@ import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../config";
 import { useSelector } from "react-redux";
-const stripePromise = loadStripe(
-  import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
-);
+// const stripePromise = loadStripe(
+//   import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
+// );
 
 const Pricing = () => {
   const [loading, setLoading] = useState(false);
 
   const region = useSelector((state) => state.region);
-
+  const stripeKey =
+    region === "usa"
+      ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY_USA
+      : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = stripeKey
+    ? loadStripe(stripeKey)
+    : Promise.reject(new Error("Stripe publishable key not found"));
   const handleUpgrade = async (plan, billingCycle) => {
     setLoading(true);
     try {
