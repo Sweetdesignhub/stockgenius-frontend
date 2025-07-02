@@ -254,12 +254,13 @@ export function PaperTradingProvider({ children }) {
           ...new Set([...positionSymbols, ...holdingSymbols]),
         ];
 
-        if (uniqueSymbols.length > 0) {
-          const prices = realtimePrices; // await fetchRealtimePrices(uniqueSymbols);
+        if (uniqueSymbols.length > 0 && isFirstLoad) {
+          const prices = await fetchRealtimePrices(uniqueSymbols);
           calculateProfits(prices, positionsArray, holdingsArray);
-        } else {
-          calculateProfits({}, positionsArray, holdingsArray);
         }
+        // else {
+        //   calculateProfits({}, positionsArray, holdingsArray);
+        // }
       } catch (error) {
         setError("Error fetching paper trading data");
         console.error("Error fetching data:", error);
