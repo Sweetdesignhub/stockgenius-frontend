@@ -51,10 +51,7 @@ export default function PlanSelectDialog({
   const sessionIdRef = useRef(null);
 
   const region = useSelector((state) => state.region);
-  const stripeKey =
-    region === "usa"
-      ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY_USA
-      : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
+  const stripeKey = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = stripeKey
     ? loadStripe(stripeKey)
     : Promise.reject(new Error("Stripe publishable key not found"));
@@ -79,15 +76,8 @@ export default function PlanSelectDialog({
         region
       );
 
-      const endpoint =
-        region === "usa"
-          ? "/api/v1/stripe/usa/plan/upgrade-usa"
-          : "/api/v1/stripe/plan/upgrade";
-
-      const requestBody =
-        region === "usa"
-          ? { plan, billingCycle, region: "USA" }
-          : { plan, billingCycle };
+      const endpoint = "/api/v1/stripe/plan/upgrade";
+      const requestBody = { plan, billingCycle, region: region }; // Ensure region is "India" or "USA"
 
       const response = await api.post(endpoint, requestBody, {
         withCredentials: true,

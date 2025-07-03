@@ -55,10 +55,9 @@ export default function PlanSelectDialog({
 
   const region = useSelector((state) => state.region);
 
-  const stripeKey =
-    region === "usa"
-      ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY_USA
-      : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
+  
+
+  const stripeKey = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = stripeKey
     ? loadStripe(stripeKey)
     : Promise.reject(new Error("Stripe publishable key not found"));
@@ -71,53 +70,46 @@ export default function PlanSelectDialog({
     return Math.round(planPrice / months);
   };
 
-  const handleUpgrade = async (plan, billingCycle) => {
-    setLoadingPlan(`${plan}-${billingCycle}`);
-    try {
-      console.log(
-        "Initiating checkout for plan:",
-        plan,
-        "billingCycle:",
-        billingCycle,
-        "Region:",
-        region
-      );
+const handleUpgrade = async (plan, billingCycle) => {
+  setLoadingPlan(`${plan}-${billingCycle}`);
+  try {
+    console.log(
+      "Initiating checkout for plan:",
+      plan,
+      "billingCycle:",
+      billingCycle,
+      "Region:",
+      region
+    );
 
-      const endpoint =
-        region === "usa"
-          ? "/api/v1/stripe/usa/plan/upgrade-usa"
-          : "/api/v1/stripe/plan/upgrade";
+    const endpoint = "/api/v1/stripe/plan/upgrade";
+    const requestBody = { plan, billingCycle, region }; // Ensure region is "India" or "USA"
 
-      const requestBody =
-        region === "usa"
-          ? { plan, billingCycle, region: "USA" }
-          : { plan, billingCycle };
+    const response = await api.post(endpoint, requestBody, {
+      withCredentials: true,
+    });
+    console.log("Checkout session response:", response.data);
 
-      const response = await api.post(endpoint, requestBody, {
-        withCredentials: true,
-      });
-      console.log("Checkout session response:", response.data);
-
-      if (!response.data.sessionId) {
-        throw new Error("No sessionId received from server");
-      }
-
-      const stripe = await stripePromise;
-      const result = await stripe.redirectToCheckout({
-        sessionId: response.data.sessionId,
-      });
-
-      if (result.error) {
-        throw new Error(
-          result.error.message || "Failed to redirect to Stripe Checkout"
-        );
-      }
-    } catch (error) {
-      console.error("Upgrade error:", error.message);
-      alert(`Error: ${error.message || "Checkout failed"}`);
-      setLoadingPlan(null);
+    if (!response.data.sessionId) {
+      throw new Error("No sessionId received from server");
     }
-  };
+
+    const stripe = await stripePromise;
+    const result = await stripe.redirectToCheckout({
+      sessionId: response.data.sessionId,
+    });
+
+    if (result.error) {
+      throw new Error(
+        result.error.message || "Failed to redirect to Stripe Checkout"
+      );
+    }
+  } catch (error) {
+    console.error("Upgrade error:", error.message);
+    alert(`Error: ${error.message || "Checkout failed"}`);
+    setLoadingPlan(null);
+  }
+};
 
   useEffect(() => {
     if (!isOpen || location.pathname !== "/payment/success") return;

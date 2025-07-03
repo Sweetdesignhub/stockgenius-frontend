@@ -12,7 +12,7 @@ const Pricing = () => {
   const region = useSelector((state) => state.region);
   const stripeKey =
     region === "usa"
-      ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY_USA
+      ? import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
       : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = stripeKey
     ? loadStripe(stripeKey)
