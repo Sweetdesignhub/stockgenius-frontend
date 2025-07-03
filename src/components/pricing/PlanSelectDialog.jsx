@@ -11,10 +11,6 @@ import {
   updateUserFailure,
 } from "../../redux/user/userSlice.js";
 
-// const stripePromise = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
-//   ? loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY)
-//   : Promise.reject(new Error("Stripe publishable key not found"));
-
 const FeatureItem = ({ text, plan = "basic" }) => (
   <div className="flex items-center space-x-2 sm:space-x-3">
     <svg
@@ -43,19 +39,16 @@ const FeatureItem = ({ text, plan = "basic" }) => (
 export default function PlanSelectDialog({
   isOpen = false,
   onClose,
-  initialPlan = "pro",
+  currentPlan = "basic",
 }) {
-  const [selectedPlan, setSelectedPlan] = useState(initialPlan);
+  const [selectedPlan, setSelectedPlan] = useState(currentPlan);
   const [loadingPlan, setLoadingPlan] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const hasProcessed = useRef(false);
   const sessionIdRef = useRef(null);
-
-  const region = useSelector((state) => state.region);
-
-  
+  const region = useSelector((state) => state.region) || localStorage.getItem("region") || "india";
 
   const stripeKey = import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = stripeKey
@@ -63,53 +56,53 @@ export default function PlanSelectDialog({
     : Promise.reject(new Error("Stripe publishable key not found"));
 
   useEffect(() => {
-    setSelectedPlan(initialPlan);
-  }, [initialPlan]);
+    setSelectedPlan(currentPlan);
+  }, [currentPlan]);
 
   const calculateMonthlyPrice = (planPrice, months) => {
     return Math.round(planPrice / months);
   };
 
-const handleUpgrade = async (plan, billingCycle) => {
-  setLoadingPlan(`${plan}-${billingCycle}`);
-  try {
-    console.log(
-      "Initiating checkout for plan:",
-      plan,
-      "billingCycle:",
-      billingCycle,
-      "Region:",
-      region
-    );
-
-    const endpoint = "/api/v1/stripe/plan/upgrade";
-    const requestBody = { plan, billingCycle, region }; // Ensure region is "India" or "USA"
-
-    const response = await api.post(endpoint, requestBody, {
-      withCredentials: true,
-    });
-    console.log("Checkout session response:", response.data);
-
-    if (!response.data.sessionId) {
-      throw new Error("No sessionId received from server");
-    }
-
-    const stripe = await stripePromise;
-    const result = await stripe.redirectToCheckout({
-      sessionId: response.data.sessionId,
-    });
-
-    if (result.error) {
-      throw new Error(
-        result.error.message || "Failed to redirect to Stripe Checkout"
+  const handleUpgrade = async (plan, billingCycle) => {
+    setLoadingPlan(`${plan}-${billingCycle}`);
+    try {
+      console.log(
+        "Initiating checkout for plan:",
+        plan,
+        "billingCycle:",
+        billingCycle,
+        "Region:",
+        region
       );
+
+      const endpoint = "/api/v1/stripe/plan/upgrade";
+      const requestBody = { plan, billingCycle, region };
+
+      const response = await api.post(endpoint, requestBody, {
+        withCredentials: true,
+      });
+      console.log("Checkout session response:", response.data);
+
+      if (!response.data.sessionId) {
+        throw new Error("No sessionId received from server");
+      }
+
+      const stripe = await stripePromise;
+      const result = await stripe.redirectToCheckout({
+        sessionId: response.data.sessionId,
+      });
+
+      if (result.error) {
+        throw new Error(
+          result.error.message || "Failed to redirect to Stripe Checkout"
+        );
+      }
+    } catch (error) {
+      console.error("Upgrade error:", error.message);
+      alert(`Error: ${error.message || "Checkout failed"}`);
+      setLoadingPlan(null);
     }
-  } catch (error) {
-    console.error("Upgrade error:", error.message);
-    alert(`Error: ${error.message || "Checkout failed"}`);
-    setLoadingPlan(null);
-  }
-};
+  };
 
   useEffect(() => {
     if (!isOpen || location.pathname !== "/payment/success") return;
@@ -139,33 +132,43 @@ const handleUpgrade = async (plan, billingCycle) => {
         console.log("Success response:", successResponse.data);
 
         dispatch(updateUserStart());
-        const userResponse = await api.get("/api/v1/users/me", {
-          withCredentials: true,
-        });
-        console.log("User data:", userResponse.data);
+        let userResponse;
+        for (let i = 0; i < 3; i++) {
+          userResponse = await api.get("/api/v1/users/me", {
+            withCredentials: true,
+          });
+          console.log("User data:", JSON.stringify(userResponse.data, null, 2));
+          if (region === "india" ? userResponse.data.plan : userResponse.data.planUsa) break;
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
 
-        // Normalize user object
         const normalizedUser = {
           ...userResponse.data,
           id: userResponse.data._id || userResponse.data.id,
+          plan: userResponse.data.plan || "basic",
+          planUsa: userResponse.data.planUsa || "basic",
         };
         delete normalizedUser._id;
-        delete normalizedUser.success; // Remove success field if present
+        delete normalizedUser.success;
 
         dispatch(updateUserSuccess(normalizedUser));
-        navigate(successResponse.data.redirect || "/india/AI-Trading-Bots", {
+        console.log(
+          "Updated Redux currentUser in PlanSelectDialog:",
+          JSON.stringify(normalizedUser, null, 2)
+        );
+        navigate(successResponse.data.redirect || `/${region}/dashboard`, {
           replace: true,
         });
         onClose();
       } catch (error) {
         console.error("Success error:", error.message);
         dispatch(updateUserFailure(error.message));
-        navigate("/payment/success", { replace: true });
+        navigate("/payment/cancel", { replace: true });
       }
     };
 
     handleSuccess();
-  }, [location.search, isOpen, dispatch, navigate, onClose]);
+  }, [location.search, isOpen, dispatch, navigate, onClose, region]);
 
   return (
     <Transition appear show={isOpen || false} as={Fragment}>

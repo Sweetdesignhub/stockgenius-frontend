@@ -93,32 +93,23 @@ function MainApp() {
   const showPlanSelectDialog = useSelector(
     (state) => state.pricing.showPlanSelectDialog
   );
-  const region = useSelector((state) => state.region);
+  const region = useSelector((state) => state.region) || localStorage.getItem("region") || "india";
+  const currentPlan = region === "usa" ? currentUser?.planUsa || "basic" : currentUser?.plan || "basic";
 
   // Effect to show pricing dialog after login/signup
-  useEffect(() => {
-    // Don't show dialog if user is coming from payment pages
+useEffect(() => {
     const isFromPayment = location.pathname.includes("/payment/");
-
-    if (
-      currentUser &&
-      (!currentUser.plan || currentUser.plan === "basic") &&
-      !isFromPayment
-    ) {
-      // Get the timestamp of when user logged in
+    if (currentUser && currentPlan === "basic" && !isFromPayment) {
       const loginTimestamp = localStorage.getItem("loginTimestamp");
       const now = new Date().getTime();
-
-      // Only show if user just logged in (within last 5 seconds)
       if (loginTimestamp && now - parseInt(loginTimestamp) < 5000) {
         const timer = setTimeout(() => {
           setShowPricingDialog(true);
         }, 2000);
-
         return () => clearTimeout(timer);
       }
     }
-  }, [currentUser, location.pathname]);
+  }, [currentUser, currentPlan, location.pathname]);
 
   const handleSignOut = async () => {
     try {
@@ -310,12 +301,12 @@ function MainApp() {
           <PricingDialog
             isOpen={showPricingDialog}
             onClose={() => setShowPricingDialog(false)}
-            currentPlan={currentUser?.plan || "basic"}
+            currentPlan={currentPlan}
           />
           <PlanSelectDialog
             isOpen={showPlanSelectDialog}
             onClose={() => dispatch(setShowPlanSelectDialog(false))}
-            currentPlan={currentUser?.plan || "basic"}
+            currentPlan={currentPlan}
           />
         </>
       )}

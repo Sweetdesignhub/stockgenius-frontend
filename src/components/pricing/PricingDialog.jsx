@@ -8,8 +8,10 @@ import PRICING_PLANS from "./PricingPlansValues";
 export default function PricingDialog({ isOpen = false, onClose }) {
   const { currentUser } = useSelector((state) => state.user);
   const region = useSelector((state) => state.region);
+  
 
-  const currentPlan = currentUser?.plan || "basic"; // Fallback to "basic" if undefined
+const currentPlan =
+    region === "india" ? currentUser?.plan : currentUser?.planUsa;
   // console.log(currentUser);
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(
