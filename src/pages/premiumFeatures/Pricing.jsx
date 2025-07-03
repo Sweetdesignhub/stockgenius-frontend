@@ -1,23 +1,47 @@
 import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../config";
-
-const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY);
+import { useSelector } from "react-redux";
+// const stripePromise = loadStripe(
+//   import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
+// );
 
 const Pricing = () => {
   const [loading, setLoading] = useState(false);
 
+  const region = useSelector((state) => state.region);
+  const stripeKey =
+    region === "usa"
+      ? import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY
+      : import.meta.env.VITE_APP_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = stripeKey
+    ? loadStripe(stripeKey)
+    : Promise.reject(new Error("Stripe publishable key not found"));
   const handleUpgrade = async (plan, billingCycle) => {
     setLoading(true);
     try {
-      console.log("Initiating checkout for plan:", plan, "billingCycle:", billingCycle);
-      const response = await api.post(
-        "/api/v1/stripe/plan/upgrade",
-        { plan, billingCycle },
-        {
-          withCredentials: true,
-        }
+      console.log(
+        "Initiating checkout for plan:",
+        plan,
+        "billingCycle:",
+        billingCycle,
+        "Region:",
+        region
       );
+
+      const endpoint =
+        region === "usa"
+          ? "/api/v1/stripe/usa/plan/upgrade-usa"
+          : "/api/v1/stripe/plan/upgrade";
+
+      const requestBody =
+        region === "usa"
+          ? { plan, billingCycle, region: "USA" }
+          : { plan, billingCycle };
+
+      const response = await api.post(endpoint, requestBody, {
+        withCredentials: true,
+      });
       console.log("Checkout session response:", response.data);
 
       if (!response.data.sessionId) {
@@ -29,13 +53,20 @@ const Pricing = () => {
         throw new Error("Stripe.js failed to load");
       }
 
-      console.log("Attempting redirect with sessionId:", response.data.sessionId);
-      const result = await stripe.redirectToCheckout({ sessionId: response.data.sessionId });
-      
+      console.log(
+        "Attempting redirect with sessionId:",
+        response.data.sessionId
+      );
+      const result = await stripe.redirectToCheckout({
+        sessionId: response.data.sessionId,
+      });
+
       // redirectToCheckout returns { error } if it fails
       if (result.error) {
         console.error("Stripe redirect result:", result);
-        throw new Error(result.error.message || "Failed to redirect to Stripe Checkout");
+        throw new Error(
+          result.error.message || "Failed to redirect to Stripe Checkout"
+        );
       }
     } catch (error) {
       console.error("Upgrade error details:", {
@@ -74,8 +105,8 @@ const Pricing = () => {
             Buy Pro (1 month)
           </button>
           <button
-            
-            disabled={loading}onClick={() => handleUpgrade("pro", "3_months")}
+            disabled={loading}
+            onClick={() => handleUpgrade("pro", "3_months")}
             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
           >
             Buy Pro (3 months)

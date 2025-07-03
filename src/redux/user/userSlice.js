@@ -31,10 +31,11 @@ const userSlice = createSlice({
       state.loading = true;
     },
     updateUserSuccess: (state, action) => {
-      const user = action.payload;
+      console.log('updateUserSuccess payload:', JSON.stringify(action.payload, null, 2));
       state.currentUser = {
-        ...user,
-        id: user.id || user._id,
+        ...state.currentUser, // Preserve existing fields
+        ...action.payload,
+        id: action.payload.id || action.payload._id,
       };
       delete state.currentUser._id;
       state.loading = false;

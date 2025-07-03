@@ -259,57 +259,63 @@ const OrdersPT = ({ selectedColumns, setColumnNames }) => {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 mt-4 items-center">
-        <span className="text-sm text-gray-700">Rows per page:</span>
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setCurrentPage(1); // Reset to page 1 when page size changes
-            setPageSize(Number(e.target.value));
-          }}
-          className="border text-black rounded px-2 py-1 text-sm"
-        >
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
-        </select>
-
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className="px-4 py-1 rounded bg-blue-500 text-white disabled:opacity-50"
-        >
-          Prev
-        </button>
-
-        <span className="text-sm flex flex-row justify-center items-center text-gray-700">
-          <h2>Page </h2>
-          <input
-            type="number"
-            min={1}
-            max={totalPages}
-            value={currentPage}
+      <div className="flex flex-col md:flex-row md:items-center mt-4 gap-4 md:relative">
+        {/* Rows per page selector - leftmost */}
+        <div className="flex flex-row items-center justify-center md:justify-start">
+          <span className="text-sm text-gray-600 mr-2">Rows per page:</span>
+          <select
+            value={pageSize}
             onChange={(e) => {
-              const value = Number(e.target.value);
-              if (!isNaN(value) && value >= 1 && value <= totalPages) {
-                setCurrentPage(value);
-              }
+              // setCurrentPage(1); // Reset to page 1 when page size changes
+              setPageSize(Number(e.target.value));
             }}
-            className="w-18 mx-2 text-center border rounded px-1 py-0.5"
-          />
-          of {totalPages}
-        </span>
+            className="border text-black rounded px-2 py-1 text-sm"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
 
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          className="px-4 py-1 rounded bg-blue-500 text-white disabled:opacity-50"
-        >
-          Next
-        </button>
+        {/* Pagination controls - centered on desktop, normal flow on mobile */}
+        <div className="flex flex-row justify-center items-center gap-2 md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="px-4 py-1 rounded bg-blue-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Prev
+          </button>
+
+          <span className="text-sm flex flex-row justify-center items-center text-gray-700">
+            <span className="mr-1">Page</span>
+            <input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={currentPage}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                if (!isNaN(value) && value >= 1 && value <= totalPages) {
+                  setCurrentPage(value);
+                }
+              }}
+              className="w-12 mx-2 text-center border rounded px-1 py-0.5 text-black"
+            />
+            <span className="ml-1">of {totalPages}</span>
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            className="px-4 py-1 rounded bg-blue-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

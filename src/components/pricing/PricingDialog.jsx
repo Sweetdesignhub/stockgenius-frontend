@@ -3,10 +3,14 @@ import { Fragment, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import PlanDetailsDialog from "./PlanDetailsDialog";
 import { useSelector } from "react-redux";
+import PRICING_PLANS from "./PricingPlansValues";
 
 export default function PricingDialog({ isOpen = false, onClose }) {
   const { currentUser } = useSelector((state) => state.user);
-  const currentPlan = currentUser?.plan || "basic"; // Fallback to "basic" if undefined
+  const region = useSelector((state) => state.region);
+  const currentPlan =
+    region === "india" ? currentUser?.plan : currentUser?.planUsa;
+
   // console.log(currentUser);
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(
@@ -118,7 +122,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                               </p>
                             </div>{" "}
                             <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
-                              <span className="font-bold">Free ($ 0)</span>
+                              <span className="font-bold">
+                                Free ({PRICING_PLANS[region]?.symbol}
+                                {PRICING_PLANS[region]?.basic?.price || "$ 0"})
+                              </span>
                             </p>
                           </div>{" "}
                           {/* Features list */}
@@ -138,7 +145,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              <span>Free Access</span>
+                              <span>
+                                {PRICING_PLANS[region]?.basic?.description ||
+                                  "Free Access"}
+                              </span>
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
@@ -152,7 +162,11 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              <span>1 lakh funds cap (Paper Trading)</span>
+                              <span>
+                                {PRICING_PLANS[region]?.basic
+                                  ?.paperTradeFundCap || "1 lakh"}{" "}
+                                funds cap (Paper Trading)
+                              </span>
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
@@ -166,7 +180,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              <span>5 simulations/month</span>
+                              <span>
+                                {PRICING_PLANS[region]?.basic
+                                  ?.simulationLimit || "5 simulations/month"}
+                              </span>
                             </li>
                           </ul>
                         </div>{" "}
@@ -213,7 +230,11 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                               </p>
                             </div>
                             <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
-                              <span className="font-bold">$ 25</span>/month
+                              <span className="font-bold">
+                                {PRICING_PLANS[region]?.symbol}
+                                {PRICING_PLANS[region]?.pro?.price || "$ 25"}
+                              </span>
+                              / month
                             </p>
                           </div>{" "}
                           {/* Features list */}
@@ -233,22 +254,10 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              <span>10 lakhs funds cap (Paper Trading)</span>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                              <svg
-                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                ></path>
-                              </svg>
                               <span>
-                                10 daily/50 weekly transactions using bots
+                                {PRICING_PLANS[region]?.pro
+                                  ?.paperTradeFundCap || "10 lakhs"}{" "}
+                                funds cap (Paper Trading)
                               </span>
                             </li>
                             <li className="flex items-center space-x-3">
@@ -264,7 +273,9 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                 ></path>
                               </svg>
                               <span>
-                                Past 7 days per ticker (News & Sentiments)
+                                {PRICING_PLANS[region]?.pro
+                                  ?.aiBotTransactionLimit ||
+                                  "10 daily/50 weekly transactions using bots"}
                               </span>
                             </li>
                             <li className="flex items-center space-x-3">
@@ -279,7 +290,28 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              <span>25 simulations/month</span>
+                              <span>
+                                {PRICING_PLANS[region]?.pro?.description ||
+                                  "Past 7 days per ticker (News & Sentiments)"}
+                              </span>
+                            </li>
+                            <li className="flex items-center space-x-3">
+                              <svg
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                ></path>
+                              </svg>
+                              <span>
+                                {" "}
+                                {PRICING_PLANS[region]?.pro?.simulationLimit ||
+                                  "25 simulations/month"}
+                              </span>
                             </li>
                           </ul>{" "}
                         </div>{" "}
@@ -343,7 +375,11 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                               </p>
                             </div>
                             <p className="text-sm sm:text-base md:text-sm lg:text-base xl:text-lg text-gray-900 dark:text-white">
-                              <span className="font-bold">$ 50</span>/month
+                              <span className="font-bold">
+                                {PRICING_PLANS[region]?.symbol}
+                                {PRICING_PLANS[region]?.master?.price || "$ 50"}
+                              </span>
+                              /month
                             </p>
                           </div>{" "}
                           {/* Features list */}
@@ -363,35 +399,11 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                   clipRule="evenodd"
                                 ></path>
                               </svg>
-                              <span>50 lakhs funds cap (Paper Trading)</span>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                              <svg
-                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                ></path>
-                              </svg>
-                              <span>Unlimited bots, full trading hours</span>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                              <svg
-                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                ></path>
-                              </svg>
-                              <span>Full history with insights</span>
+                              <span>
+                                {PRICING_PLANS[region]?.master
+                                  ?.paperTradeFundCap || "50 lakhs"}{" "}
+                                funds cap (Paper Trading)
+                              </span>
                             </li>
                             <li className="flex items-center space-x-3">
                               <svg
@@ -406,7 +418,44 @@ export default function PricingDialog({ isOpen = false, onClose }) {
                                 ></path>
                               </svg>
                               <span>
-                                Unlimited simulations (News & Sentiments)
+                                {PRICING_PLANS[region]?.master
+                                  ?.aiBotTransactionLimit ||
+                                  "Unlimited bots, full trading hours"}
+                              </span>
+                            </li>
+                            <li className="flex items-center space-x-3">
+                              <svg
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                ></path>
+                              </svg>
+                              <span>
+                                {PRICING_PLANS[region]?.master?.description ||
+                                  "Full history with insights"}
+                              </span>
+                            </li>
+                            <li className="flex items-center space-x-3">
+                              <svg
+                                className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 text-green-500"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                ></path>
+                              </svg>
+                              <span>
+                                {PRICING_PLANS[region]?.master
+                                  ?.simulationLimit || "Unlimited simulations "}
+                                (News & Sentiments)
                               </span>
                             </li>
                           </ul>{" "}

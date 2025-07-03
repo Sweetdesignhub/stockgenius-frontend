@@ -20,6 +20,7 @@ const featuresSlice = createSlice({
   name: "features",
   initialState: {
     plan: null,
+    planUsa: null, // Add planUsa
     usage: null,
     status: "idle",
     error: null,
@@ -32,7 +33,8 @@ const featuresSlice = createSlice({
       })
       .addCase(fetchFeatures.fulfilled, (state, action) => {
         state.status = "idle";
-        state.plan = action.payload.plan;
+        state.plan = action.payload.plan || "basic";
+        state.planUsa = action.payload.planUsa || "basic"; // Store planUsa
         state.usage = action.payload.usage;
       })
       .addCase(fetchFeatures.rejected, (state, action) => {
